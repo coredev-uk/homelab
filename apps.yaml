@@ -6,9 +6,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: {{ .Values.repo.mainUrl }}
+    repoURL: git@github.com:coredev-uk/homelab.git
     path: templates
-    targetRevision: {{ .Values.repo.mainBranch }}
+    targetRevision: HEAD
     kustomize: 
       commonLabels:
         app.kubernetes.io/managed-by: argocd

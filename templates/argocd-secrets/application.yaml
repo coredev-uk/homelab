@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: {{ .Values.repo.secretsUrl }}
+    repoURL: git@github.com:coredev-uk/secrets.git
     path: .
   destination:
     server: https://kubernetes.default.svc

@@ -8,8 +8,8 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: {{ .Values.repo.mainUrl }}    
-    targetRevision: {{ .Values.repo.mainBranch }}
+    repoURL: git@github.com:coredev-uk/homelab.git
+    targetRevision: HEAD
     path: charts/glance
   destination:
     server: 'https://kubernetes.default.svc'
