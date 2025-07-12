@@ -1,0 +1,128 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bazarr-exporter
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: bazarr-exporter
+    app.kubernetes.io/instance: bazarr-exporter
+spec:
+  clusterIP: None
+  selector:
+    app.kubernetes.io/name: bazarr-exporter
+    app.kubernetes.io/instance: bazarr-exporter
+  ports:
+    - name: monitoring
+      port: 9707
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: bazarr-exporter
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: bazarr-exporter
+    app.kubernetes.io/instance: bazarr-exporter
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: bazarr-exporter
+      app.kubernetes.io/instance: bazarr-exporter
+  endpoints:
+    - port: monitoring
+      interval: 4m
+      scrapeTimeout: 90s
+      path: /metrics
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: bazarr-exporter-lab-member87-xyz
+  namespace: monitoring
+spec:
+  secretName: bazarr-exporter-certificate-secret
+  issuerRef:
+    name: cloudflare-cluster-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - bazarr.metrics.lab.member87.xyz
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: bazarr-exporter-ingressroute
+  namespace: monitoring
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`bazarr.metrics.lab.member87.xyz`)
+      kind: Rule
+      services:
+        - name: bazarr-exporter
+          port: 9707
+  tls:
+    secretName: bazarr-exporter-certificate-secret
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: bazarr-exporter
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: bazarr-exporter
+    app.kubernetes.io/instance: bazarr-exporter
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: bazarr-exporter
+      app.kubernetes.io/instance: bazarr-exporter
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: bazarr-exporter
+        app.kubernetes.io/instance: bazarr-exporter
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "monitoring"
+    spec:
+      containers:
+        - name: bazarr-exporter
+          image: ghcr.io/onedr0p/exportarr:v2.2.0
+          imagePullPolicy: IfNotPresent
+          args:
+            - bazarr
+          env:
+            - name: PORT
+              value: "9707"
+            - name: URL
+              value: "http://192.168.1.123:6767/"
+            - name: APIKEY
+              valueFrom:
+                secretKeyRef:
+                  name: bazarr-exporter
+                  key: api-key
+          ports:
+            - name: monitoring
+              containerPort: 9707
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: monitoring
+            failureThreshold: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: monitoring
+            failureThreshold: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi

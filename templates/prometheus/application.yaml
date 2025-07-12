@@ -1,0 +1,149 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prometheus
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - ServerSideApply=true
+      - CreateNamespace=true
+      - PruneLast=true
+  project: default
+  sources:
+    - chart: kube-prometheus-stack
+      repoURL: https://prometheus-community.github.io/helm-charts
+      targetRevision: 72.3.0
+      helm:
+        values: |
+          grafana:
+            enabled: true
+            ingress:
+              enabled: false 
+            
+            adminUser: admin
+            adminPassword: prom-operator
+
+            sidecar:
+              datasources:
+                url:  https://prometheus.lab.member87.xyz
+
+          prometheus:
+            prometheusSpec:
+              externalUrl: "https://prometheus.lab.member87.xyz"
+              additionalScrapeConfigs:
+                - job_name: 'radarr-metrics'
+                  static_configs:
+                    - targets: ['radarr.metrics.lab.member87.xyz']
+                  scheme: https
+                  metrics_path: /metrics
+                  scrape_interval: 4m
+                  scrape_timeout: 90s
+                - job_name: 'prowlarr-metrics'
+                  static_configs:
+                    - targets: ['prowlarr.metrics.lab.member87.xyz']
+                  scheme: https
+                  metrics_path: /metrics
+                  scrape_interval: 4m
+                  scrape_timeout: 90s
+                - job_name: 'sonarr-metrics'
+                  static_configs:
+                    - targets: ['sonarr.metrics.lab.member87.xyz']
+                  scheme: https
+                  metrics_path: /metrics
+                  scrape_interval: 4m
+                  scrape_timeout: 90s
+                - job_name: 'bazarr-metrics'
+                  static_configs:
+                    - targets: ['bazarr.metrics.lab.member87.xyz']
+                  scheme: https
+                  metrics_path: /metrics
+                  scrape_interval: 4m
+                  scrape_timeout: 90s
+                - job_name: 'traefik-metrics'
+                  static_configs:
+                    - targets: ['metrics.traefik.lab.member87.xyz']
+                  scheme: https
+                  metrics_path: /metrics
+                  scrape_interval: 1m
+                  scrape_timeout: 30s
+                - job_name: 'qbittorrent-metrics'
+                  static_configs:
+                    - targets: ['qbittorrent.metrics.lab.member87.xyz']
+                  scheme: https
+                  metrics_path: /metrics
+                  scrape_interval: 4m
+                  scrape_timeout: 90s
+
+          alertmanager:
+            enabled: false
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: prometheus
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: prometheus
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: prometheus-lab-member87-xyz
+  namespace: prometheus
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  secretName: prometheus-certificate-secret
+  issuerRef:
+    name: cloudflare-cluster-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - prometheus.lab.member87.xyz
+    - grafana.lab.member87.xyz
+    - alertmanager.lab.member87.xyz
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: prometheus-prometheus
+  namespace: prometheus
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`prometheus.lab.member87.xyz`)
+      kind: Rule
+      services:
+        - name: prometheus-kube-prometheus-prometheus
+          port: 9090
+  tls:
+    secretName: prometheus-certificate-secret
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: prometheus-grafana
+  namespace: prometheus
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`grafana.lab.member87.xyz`)
+      kind: Rule
+      services:
+        - name: prometheus-grafana
+          port: 80
+  tls:
+    secretName: prometheus-certificate-secret
+

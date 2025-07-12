@@ -1,0 +1,86 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: glance
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: glance-service 
+  namespace: glance    
+spec:
+  selector:
+    app: glance   
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: glance-lab-member87-xyz
+  namespace: glance
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  secretName: glance-certificate-secret
+  issuerRef:
+    name: cloudflare-cluster-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - dashboard.lab.member87.xyz
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: glance-ingressroute
+  namespace: glance
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`dashboard.lab.member87.xyz`)
+      kind: Rule
+      services:
+        - name: glance-service
+          port: 8080
+  tls:
+    secretName: glance-certificate-secret
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: glance-deployment
+  namespace: glance
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: glance
+  template:
+    metadata:
+      labels:
+        app: glance
+    spec:
+      
+      volumes:
+      - name: config-volume
+        configMap:
+          name: glance-config 
+      containers:
+      - name: glance
+        image: glanceapp/glance
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: config-volume 
+          mountPath: /app/config
+          readOnly: true
+        env:
+        - name: JELLYFIN_KEY
+          value: "06d9613bae3d4eeeaa6005eb1cbd6784"
+        - name: JELLYFIN_URL
+          value: "http://192.168.1.123:8096"

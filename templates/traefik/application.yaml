@@ -1,0 +1,104 @@
+
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: traefik
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true
+  project: default
+  sources:
+    - chart: traefik
+      repoURL: https://traefik.github.io/charts
+      targetRevision: 35.2.0
+      helm:
+        values: |
+          dashboard:
+            enabled: true
+
+          metrics:
+            prometheus:
+              enabled: true
+              entryPoint: metrics
+
+          ingressRoute:
+            dashboard:
+              enabled: true
+              entryPoints: [websecure]
+              matchRule: Host(`traefik.lab.member87.xyz`)
+              tls:
+                secretName: traefik-dashboard-tls-secret
+            
+            metrics:
+              enabled: true
+              entryPoints: [websecure]
+              matchRule: Host(`metrics.traefik.lab.member87.xyz`) && PathPrefix(`/metrics`)
+              services:
+                - name: api@internal
+                  kind: TraefikService
+              tls:
+                secretName: traefik-metrics-tls-secret
+
+          rbac:
+            enabled: true
+
+          additionalArguments:
+            - "--serverstransport.insecureskipverify=true"
+            - "--log.level=DEBUG"
+
+          entryPoints:
+            metrics:
+              address: ":9100"
+            websecure:
+              address: ":8443"
+              http:
+                tls: {}
+
+          deployment:
+            enabled: true
+            replicas: 1
+
+          service:
+            spec:
+              loadBalancerIP: 192.168.1.250
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: traefik
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: traefik-dashboard-cert
+  namespace: traefik
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  secretName: traefik-dashboard-tls-secret 
+  issuerRef:
+    name: cloudflare-cluster-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - traefik.lab.member87.xyz
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: traefik-metrics-cert
+  namespace: traefik
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  secretName: traefik-metrics-tls-secret 
+  issuerRef:
+    name: cloudflare-cluster-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - metrics.traefik.lab.member87.xyz

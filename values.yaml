@@ -1,0 +1,5 @@
+repo:
+  secretsUrl: git@github.com:coredev-uk/argocd-secrets.git
+  mainUrl: git@github.com:coredev-uk/homelab.git
+  mainBranch: HEAD
+
