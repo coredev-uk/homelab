@@ -31,50 +31,50 @@ spec:
 
             sidecar:
               datasources:
-                url:  https://prometheus.lab.member87.xyz
+                              url:  https://prometheus.lab.coredev.uk
 
           prometheus:
             prometheusSpec:
-              externalUrl: "https://prometheus.lab.member87.xyz"
+              externalUrl: "https://prometheus.lab.coredev.uk"
               additionalScrapeConfigs:
                 - job_name: 'radarr-metrics'
                   static_configs:
-                    - targets: ['radarr.metrics.lab.member87.xyz']
+                    - targets: ['radarr.metrics.lab.coredev.uk']
                   scheme: https
                   metrics_path: /metrics
                   scrape_interval: 4m
                   scrape_timeout: 90s
                 - job_name: 'prowlarr-metrics'
                   static_configs:
-                    - targets: ['prowlarr.metrics.lab.member87.xyz']
+                    - targets: ['prowlarr.metrics.lab.coredev.uk']
                   scheme: https
                   metrics_path: /metrics
                   scrape_interval: 4m
                   scrape_timeout: 90s
                 - job_name: 'sonarr-metrics'
                   static_configs:
-                    - targets: ['sonarr.metrics.lab.member87.xyz']
+                    - targets: ['sonarr.metrics.lab.coredev.uk']
                   scheme: https
                   metrics_path: /metrics
                   scrape_interval: 4m
                   scrape_timeout: 90s
                 - job_name: 'bazarr-metrics'
                   static_configs:
-                    - targets: ['bazarr.metrics.lab.member87.xyz']
+                    - targets: ['bazarr.metrics.lab.coredev.uk']
                   scheme: https
                   metrics_path: /metrics
                   scrape_interval: 4m
                   scrape_timeout: 90s
                 - job_name: 'traefik-metrics'
                   static_configs:
-                    - targets: ['metrics.traefik.lab.member87.xyz']
+                    - targets: ['metrics.traefik.lab.coredev.uk']
                   scheme: https
                   metrics_path: /metrics
                   scrape_interval: 1m
                   scrape_timeout: 30s
                 - job_name: 'qbittorrent-metrics'
                   static_configs:
-                    - targets: ['qbittorrent.metrics.lab.member87.xyz']
+                    - targets: ['qbittorrent.metrics.lab.coredev.uk']
                   scheme: https
                   metrics_path: /metrics
                   scrape_interval: 4m
@@ -95,7 +95,7 @@ metadata:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: prometheus-lab-member87-xyz
+  name: prometheus-lab-coredev-uk
   namespace: prometheus
   annotations:
     argocd.argoproj.io/sync-wave: "3"
@@ -105,9 +105,9 @@ spec:
     name: cloudflare-cluster-issuer
     kind: ClusterIssuer
   dnsNames:
-    - prometheus.lab.member87.xyz
-    - grafana.lab.member87.xyz
-    - alertmanager.lab.member87.xyz
+    - prometheus.lab.coredev.uk
+    - grafana.lab.coredev.uk
+    - alertmanager.lab.coredev.uk
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
@@ -120,7 +120,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`prometheus.lab.member87.xyz`)
+    - match: Host(`prometheus.lab.coredev.uk`)
       kind: Rule
       services:
         - name: prometheus-kube-prometheus-prometheus
@@ -139,7 +139,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`grafana.lab.member87.xyz`)
+    - match: Host(`grafana.lab.coredev.uk`)
       kind: Rule
       services:
         - name: prometheus-grafana

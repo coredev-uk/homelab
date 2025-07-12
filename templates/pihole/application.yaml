@@ -16,12 +16,12 @@ spec:
           enabled: true
         dnsmasq:
           customDnsEntries:
-            - address=/.lab.member87.xyz/192.168.1.250
+                      - address=/.lab.coredev.uk/10.147.20.20
 
         serviceDns:
-          loadBalancerIP: 192.168.1.249
+          loadBalancerIP: 10.147.20.20
         serviceWeb:
-          loadBalancerIP: 192.168.1.249
+          loadBalancerIP: 10.147.20.20
           httpPort: 8080
   destination:
     server: https://kubernetes.default.svc

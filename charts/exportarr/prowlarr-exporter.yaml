@@ -37,7 +37,7 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: prowlarr-exporter-lab-member87-xyz
+  name: prowlarr-exporter-lab-coredev-uk
   namespace: monitoring
 spec:
   secretName: prowlarr-exporter-certificate-secret
@@ -45,7 +45,7 @@ spec:
     name: cloudflare-cluster-issuer
     kind: ClusterIssuer
   dnsNames:
-    - prowlarr.metrics.lab.member87.xyz
+    - prowlarr.metrics.lab.coredev.uk
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
@@ -56,7 +56,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`prowlarr.metrics.lab.member87.xyz`)
+    - match: Host(`prowlarr.metrics.lab.coredev.uk`)
       kind: Rule
       services:
         - name: prowlarr-exporter

@@ -37,7 +37,7 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: bazarr-exporter-lab-member87-xyz
+  name: bazarr-exporter-lab-coredev-uk
   namespace: monitoring
 spec:
   secretName: bazarr-exporter-certificate-secret
@@ -45,7 +45,7 @@ spec:
     name: cloudflare-cluster-issuer
     kind: ClusterIssuer
   dnsNames:
-    - bazarr.metrics.lab.member87.xyz
+    - bazarr.metrics.lab.coredev.uk
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
@@ -56,7 +56,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`bazarr.metrics.lab.member87.xyz`)
+    - match: Host(`bazarr.metrics.lab.coredev.uk`)
       kind: Rule
       services:
         - name: bazarr-exporter

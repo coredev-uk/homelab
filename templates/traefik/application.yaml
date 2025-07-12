@@ -32,14 +32,14 @@ spec:
             dashboard:
               enabled: true
               entryPoints: [websecure]
-              matchRule: Host(`traefik.lab.member87.xyz`)
+              matchRule: Host(`traefik.lab.coredev.uk`)
               tls:
                 secretName: traefik-dashboard-tls-secret
             
             metrics:
               enabled: true
               entryPoints: [websecure]
-              matchRule: Host(`metrics.traefik.lab.member87.xyz`) && PathPrefix(`/metrics`)
+              matchRule: Host(`metrics.traefik.lab.coredev.uk`) && PathPrefix(`/metrics`)
               services:
                 - name: api@internal
                   kind: TraefikService
@@ -86,7 +86,7 @@ spec:
     name: cloudflare-cluster-issuer
     kind: ClusterIssuer
   dnsNames:
-    - traefik.lab.member87.xyz
+    - traefik.lab.coredev.uk
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -101,4 +101,4 @@ spec:
     name: cloudflare-cluster-issuer
     kind: ClusterIssuer
   dnsNames:
-    - metrics.traefik.lab.member87.xyz
+    - metrics.traefik.lab.coredev.uk

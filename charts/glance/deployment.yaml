@@ -19,7 +19,7 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: glance-lab-member87-xyz
+  name: glance-lab-coredev-uk
   namespace: glance
   annotations:
     argocd.argoproj.io/sync-wave: "3"
@@ -29,7 +29,7 @@ spec:
     name: cloudflare-cluster-issuer
     kind: ClusterIssuer
   dnsNames:
-    - dashboard.lab.member87.xyz
+    - dashboard.lab.coredev.uk
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
@@ -42,7 +42,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`dashboard.lab.member87.xyz`)
+    - match: Host(`dashboard.lab.coredev.uk`)
       kind: Rule
       services:
         - name: glance-service

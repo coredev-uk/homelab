@@ -12,7 +12,7 @@ data:
             widgets:
               - type: dns-stats
                 service: pihole-v6
-                url: https://pihole.lab.member87.xyz/
+                url: https://pihole.lab.coredev.uk/
                 password: ntjL1reXlfV035OrKt2bcyIRajoU4Ngrfrj6TKqS5Dk=
 
               - type: calendar
@@ -42,10 +42,10 @@ data:
                     url: https://192.168.1.110:32316/
                     icon: di:argo-cd
                   - title: Traefik
-                    url: https://traefik.lab.member87.xyz
+                    url: https://traefik.lab.coredev.uk
                     icon: di:traefik
                   - title: Pi Hole
-                    url: https://pihole.lab.member87.xyz/admin/login
+                    url: https://pihole.lab.coredev.uk/admin/login
                     icon: di:pi-hole
 
               - type: monitor
@@ -77,10 +77,10 @@ data:
                 title: Monitoring
                 sites:
                   - title: Grafana
-                    url: https://grafana.lab.member87.xyz
+                    url: https://grafana.lab.coredev.uk
                     icon: di:grafana
                   - title: Prometheus
-                    url: https://prometheus.lab.member87.xyz
+                    url: https://prometheus.lab.coredev.uk
                     icon: di:prometheus
 
               - type: monitor

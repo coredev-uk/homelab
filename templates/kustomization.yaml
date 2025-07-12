@@ -9,6 +9,6 @@ resources:
   # - ingress-nginx/application.yaml
   # - longhorn/application.yaml
   # - metallb/application.yaml
-  # - pihole/application.yaml
+  - pihole/application.yaml
   # - prometheus/application.yaml
   # - exportarr/application.yaml
