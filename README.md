@@ -2,6 +2,8 @@
 
 This repository contains Kubernetes manifests for a complete homelab media stack managed via ArgoCD GitOps.
 
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
+
 ## Services Included
 
 ### Media Stack (arr-stack)
@@ -46,3 +48,7 @@ This repository contains Kubernetes manifests for a complete homelab media stack
 - Persistent storage (local-path or longhorn)
 - Storage paths: `/media` for media files, `/opt/homelab/config` for app configs
 - Ingress controller (traefik for k3s)
+
+## Contributing
+
+This project follows [Conventional Commits](https://www.conventionalcommits.org/) for commit messages. See [.conventionalcommits](.conventionalcommits) for details.

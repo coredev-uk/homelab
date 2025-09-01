@@ -1,0 +1,60 @@
+# Conventional Commits
+
+This repository follows the [Conventional Commits](https://www.conventionalcommits.org/) specification.
+
+## Format
+
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+## Types
+
+- **feat**: A new feature
+- **fix**: A bug fix
+- **docs**: Documentation only changes
+- **style**: Changes that do not affect the meaning of the code
+- **refactor**: A code change that neither fixes a bug nor adds a feature
+- **perf**: A code change that improves performance
+- **test**: Adding missing tests or correcting existing tests
+- **chore**: Changes to the build process or auxiliary tools
+
+## Scopes (optional)
+
+- **argocd**: ArgoCD bootstrap and configuration
+- **media**: Media stack services (radarr, sonarr, etc.)
+- **downloads**: Download clients (qbittorrent, sabnzbd)
+- **infra**: Infrastructure services (pihole, frigate)
+- **dashboard**: Glance dashboard configuration
+- **storage**: Persistent volumes and storage
+- **networking**: Ingress and network configuration
+- **docs**: Documentation changes
+
+## Examples
+
+```bash
+feat(media): add jellyfin media server deployment
+fix(argocd): resolve kustomization patch errors
+docs(setup): update deployment instructions
+chore(storage): migrate from /data to /media paths
+```
+
+## Breaking Changes
+
+For breaking changes, add `!` after the type/scope:
+
+```bash
+feat!: migrate from docker-compose to kubernetes
+```
+
+Or include `BREAKING CHANGE:` in the footer:
+
+```bash
+feat(storage): change default storage paths
+
+BREAKING CHANGE: storage paths changed from /data to /media
+```
