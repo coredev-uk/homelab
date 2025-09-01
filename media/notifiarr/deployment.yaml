@@ -16,42 +16,42 @@ spec:
         app: notifiarr
     spec:
       containers:
-      - name: notifiarr
-        image: golift/notifiarr:latest
-        ports:
-        - containerPort: 5454
-        env:
-        - name: PUID
-          value: "1000"
-        - name: PGID
-          value: "1000"
-        - name: TZ
-          value: "Europe/London"
-        - name: DN_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: notifiarr-secrets
-              key: API_KEY
-        volumeMounts:
-        - name: config
-          mountPath: /config
-        - name: data
-          mountPath: /media
-          readOnly: true
-        resources:
-          requests:
-            memory: "128Mi"
-            cpu: "50m"
-          limits:
-            memory: "512Mi"
-            cpu: "200m"
+        - name: notifiarr
+          image: golift/notifiarr:latest
+          ports:
+            - containerPort: 5454
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/London"
+            - name: DN_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: notifiarr-secrets
+                  key: API_KEY
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: data
+              mountPath: /media
+              readOnly: true
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "50m"
+            limits:
+              memory: "512Mi"
+              cpu: "200m"
       volumes:
-      - name: config
-        persistentVolumeClaim:
-          claimName: notifiarr-config
-      - name: data
-        persistentVolumeClaim:
-          claimName: media-data
+        - name: config
+          persistentVolumeClaim:
+            claimName: notifiarr-config
+        - name: data
+          persistentVolumeClaim:
+            claimName: media-data-v2
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -60,7 +60,7 @@ metadata:
   namespace: media
 spec:
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   resources:
     requests:
       storage: 1Gi
@@ -84,6 +84,7 @@ spec:
   selector:
     app: notifiarr
   ports:
-  - port: 5454
-    targetPort: 5454
+    - port: 5454
+      targetPort: 5454
   type: ClusterIP
+

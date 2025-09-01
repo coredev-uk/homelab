@@ -16,36 +16,36 @@ spec:
         app: bazarr
     spec:
       containers:
-      - name: bazarr
-        image: lscr.io/linuxserver/bazarr:latest
-        ports:
-        - containerPort: 6767
-        env:
-        - name: PUID
-          value: "1000"
-        - name: PGID
-          value: "1000"
-        - name: TZ
-          value: "Europe/London"
-        volumeMounts:
-        - name: config
-          mountPath: /config
-        - name: data
-          mountPath: /media
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "100m"
-          limits:
-            memory: "1Gi"
-            cpu: "1000m"
+        - name: bazarr
+          image: lscr.io/linuxserver/bazarr:latest
+          ports:
+            - containerPort: 6767
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/London"
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: data
+              mountPath: /media
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
       volumes:
-      - name: config
-        persistentVolumeClaim:
-          claimName: bazarr-config
-      - name: data
-        persistentVolumeClaim:
-          claimName: media-data
+        - name: config
+          persistentVolumeClaim:
+            claimName: bazarr-config
+        - name: data
+          persistentVolumeClaim:
+            claimName: media-data-v2
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -54,7 +54,7 @@ metadata:
   namespace: media
 spec:
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   resources:
     requests:
       storage: 1Gi
@@ -69,6 +69,7 @@ spec:
   selector:
     app: bazarr
   ports:
-  - port: 6767
-    targetPort: 6767
+    - port: 6767
+      targetPort: 6767
   type: ClusterIP
+

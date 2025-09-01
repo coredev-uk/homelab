@@ -9,17 +9,18 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   tls:
-  - hosts:
-    - argocd.home.coredev.uk
-    secretName: argocd-tls
+    - hosts:
+        - argocd.home.coredev.uk
+      secretName: argocd-tls
   rules:
-  - host: argocd.home.coredev.uk
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: argocd-server
-            port:
-              number: 80
+    - host: argocd.home.coredev.uk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: argocd-server
+                port:
+                  number: 80
+

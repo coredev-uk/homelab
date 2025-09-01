@@ -17,3 +17,4 @@ type: Opaque
 stringData:
   WIREGUARD_PRIVATE_KEY: "REPLACE_WITH_YOUR_PRIVATE_KEY"
   SERVER_COUNTRIES: "Netherlands"
+

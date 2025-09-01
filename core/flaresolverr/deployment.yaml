@@ -16,70 +16,70 @@ spec:
         app: flaresolverr
     spec:
       containers:
-      - name: gluetun
-        image: qmcgaw/gluetun:latest
-        securityContext:
-          capabilities:
-            add:
-              - NET_ADMIN
-        env:
-        - name: VPN_SERVICE_PROVIDER
-          value: "protonvpn"
-        - name: VPN_TYPE
-          value: "wireguard"
-        - name: WIREGUARD_PRIVATE_KEY
-          value: "YOUR_ACTUAL_PRIVATE_KEY"
-        - name: SERVER_COUNTRIES
-          value: "Netherlands"
-        - name: FIREWALL_OUTBOUND_SUBNETS
-          value: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
-        - name: UPDATER_PERIOD
-          value: "24h"
-        - name: TZ
-          value: "Europe/London"
-        ports:
-        - containerPort: 8191
-        volumeMounts:
-        - name: gluetun-config
-          mountPath: /gluetun
-        - name: dev-tun
-          mountPath: /dev/net/tun
-        resources:
-          requests:
-            memory: "64Mi"
-            cpu: "50m"
-          limits:
-            memory: "256Mi"
-            cpu: "500m"
-      - name: flaresolverr
-        image: flaresolverr/flaresolverr:latest
-        env:
-        - name: PUID
-          value: "1000"
-        - name: PGID
-          value: "1000"
-        - name: TZ
-          value: "Europe/London"
-        - name: LOG_LEVEL
-          value: "info"
-        - name: LOG_HTML
-          value: "false"
-        - name: CAPTCHA_SOLVER
-          value: "none"
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "100m"
-          limits:
-            memory: "1Gi"
-            cpu: "1000m"
+        - name: gluetun
+          image: qmcgaw/gluetun:latest
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+          env:
+            - name: VPN_SERVICE_PROVIDER
+              value: "protonvpn"
+            - name: VPN_TYPE
+              value: "wireguard"
+            - name: WIREGUARD_PRIVATE_KEY
+              value: "YOUR_ACTUAL_PRIVATE_KEY"
+            - name: SERVER_COUNTRIES
+              value: "Netherlands"
+            - name: FIREWALL_OUTBOUND_SUBNETS
+              value: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+            - name: UPDATER_PERIOD
+              value: "24h"
+            - name: TZ
+              value: "Europe/London"
+          ports:
+            - containerPort: 8191
+          volumeMounts:
+            - name: gluetun-config
+              mountPath: /gluetun
+            - name: dev-tun
+              mountPath: /dev/net/tun
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+        - name: flaresolverr
+          image: flaresolverr/flaresolverr:latest
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/London"
+            - name: LOG_LEVEL
+              value: "info"
+            - name: LOG_HTML
+              value: "false"
+            - name: CAPTCHA_SOLVER
+              value: "none"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
       volumes:
-      - name: gluetun-config
-        persistentVolumeClaim:
-          claimName: flaresolverr-gluetun-config
-      - name: dev-tun
-        hostPath:
-          path: /dev/net/tun
+        - name: gluetun-config
+          persistentVolumeClaim:
+            claimName: flaresolverr-gluetun-config
+        - name: dev-tun
+          hostPath:
+            path: /dev/net/tun
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -88,7 +88,7 @@ metadata:
   namespace: core
 spec:
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   resources:
     requests:
       storage: 1Gi
@@ -103,6 +103,7 @@ spec:
   selector:
     app: flaresolverr
   ports:
-  - port: 8191
-    targetPort: 8191
+    - port: 8191
+      targetPort: 8191
   type: ClusterIP
+

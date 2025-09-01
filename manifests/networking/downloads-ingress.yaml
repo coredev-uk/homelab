@@ -9,39 +9,40 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   tls:
-  - hosts:
-    - prowlarr.home.coredev.uk
-    - qbittorrent.home.coredev.uk
-    - sabnzbd.home.coredev.uk
-    secretName: downloads-tls
+    - hosts:
+        - prowlarr.home.coredev.uk
+        - qbittorrent.home.coredev.uk
+        - sabnzbd.home.coredev.uk
+      secretName: downloads-tls
   rules:
-  - host: prowlarr.home.coredev.uk
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: prowlarr
-            port:
-              number: 9696
-  - host: qbittorrent.home.coredev.uk
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: qbittorrent
-            port:
-              number: 8080
-  - host: sabnzbd.home.coredev.uk
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: sabnzbd
-            port:
-              number: 8090
+    - host: prowlarr.home.coredev.uk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: prowlarr
+                port:
+                  number: 9696
+    - host: qbittorrent.home.coredev.uk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: qbittorrent
+                port:
+                  number: 8080
+    - host: sabnzbd.home.coredev.uk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: sabnzbd
+                port:
+                  number: 8090
+

@@ -16,75 +16,75 @@ spec:
         app: cleanuparr
     spec:
       containers:
-      - name: gluetun
-        image: qmcgaw/gluetun:latest
-        securityContext:
-          capabilities:
-            add:
-              - NET_ADMIN
-        env:
-        - name: VPN_SERVICE_PROVIDER
-          value: "protonvpn"
-        - name: VPN_TYPE
-          value: "wireguard"
-        - name: WIREGUARD_PRIVATE_KEY
-          value: "YOUR_ACTUAL_PRIVATE_KEY"
-        - name: SERVER_COUNTRIES
-          value: "Netherlands"
-        - name: FIREWALL_OUTBOUND_SUBNETS
-          value: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
-        - name: UPDATER_PERIOD
-          value: "24h"
-        - name: TZ
-          value: "Europe/London"
-        ports:
-        - containerPort: 11011
-        volumeMounts:
-        - name: gluetun-config
-          mountPath: /gluetun
-        - name: dev-tun
-          mountPath: /dev/net/tun
-        resources:
-          requests:
-            memory: "64Mi"
-            cpu: "50m"
-          limits:
-            memory: "256Mi"
-            cpu: "500m"
-      - name: cleanuparr
-        image: ghcr.io/cleanuparr/cleanuparr:latest
-        env:
-        - name: PUID
-          value: "1000"
-        - name: PGID
-          value: "1000"
-        - name: TZ
-          value: "Europe/London"
-        volumeMounts:
-        - name: config
-          mountPath: /config
-        - name: media
-          mountPath: /media
-        resources:
-          requests:
-            memory: "128Mi"
-            cpu: "50m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
+        - name: gluetun
+          image: qmcgaw/gluetun:latest
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+          env:
+            - name: VPN_SERVICE_PROVIDER
+              value: "protonvpn"
+            - name: VPN_TYPE
+              value: "wireguard"
+            - name: WIREGUARD_PRIVATE_KEY
+              value: "YOUR_ACTUAL_PRIVATE_KEY"
+            - name: SERVER_COUNTRIES
+              value: "Netherlands"
+            - name: FIREWALL_OUTBOUND_SUBNETS
+              value: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+            - name: UPDATER_PERIOD
+              value: "24h"
+            - name: TZ
+              value: "Europe/London"
+          ports:
+            - containerPort: 11011
+          volumeMounts:
+            - name: gluetun-config
+              mountPath: /gluetun
+            - name: dev-tun
+              mountPath: /dev/net/tun
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+        - name: cleanuparr
+          image: ghcr.io/cleanuparr/cleanuparr:latest
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/London"
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: media
+              mountPath: /media
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "50m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
       volumes:
-      - name: config
-        persistentVolumeClaim:
-          claimName: cleanuparr-config
-      - name: media
-        persistentVolumeClaim:
-          claimName: media-data
-      - name: gluetun-config
-        persistentVolumeClaim:
-          claimName: gluetun-config
-      - name: dev-tun
-        hostPath:
-          path: /dev/net/tun
+        - name: config
+          persistentVolumeClaim:
+            claimName: cleanuparr-config
+        - name: media
+          persistentVolumeClaim:
+            claimName: media-data-v2
+        - name: gluetun-config
+          persistentVolumeClaim:
+            claimName: gluetun-config
+        - name: dev-tun
+          hostPath:
+            path: /dev/net/tun
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -93,7 +93,7 @@ metadata:
   namespace: media
 spec:
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   resources:
     requests:
       storage: 1Gi
@@ -106,7 +106,7 @@ metadata:
   namespace: media
 spec:
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   resources:
     requests:
       storage: 1Gi
@@ -121,6 +121,7 @@ spec:
   selector:
     app: cleanuparr
   ports:
-  - port: 11011
-    targetPort: 11011
+    - port: 11011
+      targetPort: 11011
   type: ClusterIP
+

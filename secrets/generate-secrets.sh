@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-echo $(pwd)
-
 # Load secrets from environment file
 if [ ! -f "secrets.env" ]; then
   echo "Error: secrets.env not found. Copy from secrets.env.example and fill in values."
