@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-1. **k3s cluster running** on your NixOS server (Hyperion)
+1. **NixOS servers** with k3s configured (see [NixOS config](https://github.com/coredev-uk/nixos))
 2. **Git access** to clone from GitHub  
 3. **Kubernetes v1.25+** required for Longhorn v1.9.1
 4. **Storage requirements**:
@@ -10,6 +10,98 @@
    - `/var/lib/longhorn/` directory will be created automatically for Longhorn data
    - Media PVC configured for 1TiB shared storage across media services
 5. **Network access** for pulling container images and accessing external services
+
+## Node-Specific Setup
+
+<details>
+<summary><strong>📋 Master Node Setup (Control Plane)</strong></summary>
+
+### System Requirements
+- **Minimum specs**: 2 CPU cores, 4GB RAM, 20GB storage
+- **Recommended**: 4+ CPU cores, 8GB+ RAM, 100GB+ storage
+- **Network**: Static IP address configured
+- **Role**: Runs Kubernetes control plane and workloads
+
+### Prerequisites
+- NixOS installed with k3s service enabled as server
+- k3s configured with cluster-init and required firewall ports (6443/tcp)
+- Built-in services disabled (servicelb, traefik, local-storage)
+
+### Master Node Configuration
+```bash
+# Verify k3s cluster is running
+sudo systemctl status k3s
+
+# Set up kubectl access (if not already configured)
+mkdir -p ~/.kube
+sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+sudo chown $(id -u):$(id -g) ~/.kube/config
+
+# Verify cluster access
+kubectl cluster-info
+kubectl get nodes -o wide
+```
+
+### Storage Setup (Master Node)
+```bash
+# Verify Longhorn prerequisites are installed (should be via NixOS config)
+sudo systemctl status iscsid
+
+# Verify Longhorn storage directory
+ls -la /var/lib/longhorn/
+
+# Check disk space
+df -h /var/lib/longhorn/
+```
+
+</details>
+
+<details>
+<summary><strong>🔧 Worker Node Setup</strong></summary>
+
+### System Requirements
+- **Minimum specs**: 1 CPU core, 2GB RAM, 10GB storage
+- **Recommended**: 2+ CPU cores, 4GB+ RAM, 50GB+ storage
+- **Network**: Access to master node
+- **Role**: Runs workloads, provides distributed storage
+
+### Prerequisites
+- NixOS installed with k3s service enabled as agent
+- k3s configured to join master server
+- iscsi services enabled for Longhorn storage
+
+### Worker Node Verification
+```bash
+# Verify k3s agent is running
+sudo systemctl status k3s
+
+# Check node joined cluster (run on master)
+kubectl get nodes -o wide
+```
+
+### Storage Setup (Worker Node)
+```bash
+# Verify iscsi service is running (should be via NixOS config)
+sudo systemctl status iscsid
+
+# Verify Longhorn storage directory exists
+ls -la /var/lib/longhorn/
+
+# Check available disk space
+df -h /var/lib/longhorn/
+```
+
+### Worker Node Labels (Optional)
+```bash
+# Label worker nodes for specific workloads (run on master)
+kubectl label node <worker-node-name> node-role.kubernetes.io/worker=worker
+kubectl label node <worker-node-name> storage=enabled
+
+# Verify labels
+kubectl get nodes --show-labels
+```
+
+</details>
 
 ## Initial Setup
 
@@ -31,14 +123,8 @@ cd secrets
 cp secrets.env.example secrets.env
 nano secrets.env
 
-# Generate Kubernetes secret files
+# Generate Kubernetes secret files (don't apply yet - namespaces need to be created first)
 ./generate-secrets.sh
-
-# Apply the generated secrets to appropriate namespaces
-kubectl apply -f pihole-secrets.yaml -n dns
-kubectl apply -f frigate-secrets.yaml -n security
-kubectl apply -f vpn-secrets.yaml -n downloads
-kubectl apply -f cloudflare-secrets.yaml -n cert-manager
 ```
 
 **Required secrets to configure:**
@@ -50,14 +136,23 @@ kubectl apply -f cloudflare-secrets.yaml -n cert-manager
 
 **Note**: Never commit `secrets.env` or generated `*.yaml` files to the repository.
 
-### 3. Configure Frigate Cameras (Optional)
+### 3. Apply Secrets
+```bash
+# Apply the generated secrets to appropriate namespaces (after bootstrap creates them)
+kubectl apply -f secrets/pihole-secrets.yaml -n dns
+kubectl apply -f secrets/frigate-secrets.yaml -n security
+kubectl apply -f secrets/vpn-secrets.yaml -n downloads
+kubectl apply -f secrets/cloudflare-secrets.yaml -n cert-manager
+```
+
+### 4. Configure Frigate Cameras (Optional)
 ```bash
 # Edit Frigate config to add your cameras
 nano core/frigate/deployment.yaml
 # Lines 70-87: Uncomment and configure with your camera RTSP URLs
 ```
 
-### 4. Storage Verification
+### 5. Storage Verification
 ```bash
 # Verify Longhorn prerequisites on nodes
 kubectl get nodes -o wide
@@ -71,7 +166,7 @@ kubectl get storageclass longhorn
 
 ## Deployment Steps
 
-### 1. Bootstrap ArgoCD
+### 1. Bootstrap ArgoCD and Create Namespaces
 ```bash
 kubectl apply -k bootstrap/
 ```
@@ -81,13 +176,22 @@ kubectl apply -k bootstrap/
 kubectl wait --for=condition=available --timeout=300s deployment/argocd-server -n argocd
 ```
 
-### 3. Get ArgoCD Admin Password
+### 3. Apply Secrets (After Namespaces are Created)
+```bash
+# Apply the generated secrets to appropriate namespaces
+kubectl apply -f secrets/pihole-secrets.yaml -n dns
+kubectl apply -f secrets/frigate-secrets.yaml -n security
+kubectl apply -f secrets/vpn-secrets.yaml -n downloads
+kubectl apply -f secrets/cloudflare-secrets.yaml -n cert-manager
+```
+
+### 4. Get ArgoCD Admin Password
 ```bash
 echo "ArgoCD Password:"
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
 ```
 
-### 4. Deploy Applications
+### 5. Deploy Applications
 ```bash
 kubectl apply -f apps/app-of-apps.yaml
 ```
