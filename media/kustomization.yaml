@@ -12,3 +12,5 @@ resources:
 - sabnzbd/
 - glance/
 - notifiarr/
+- cleanuparr/
+- huntarr/

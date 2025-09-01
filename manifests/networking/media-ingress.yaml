@@ -4,10 +4,24 @@ metadata:
   name: media-ingress
   namespace: media
   annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: web
+    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
+  tls:
+  - hosts:
+    - radarr.home.coredev.uk
+    - sonarr.home.coredev.uk
+    - bazarr.home.coredev.uk
+    - jellyfin.home.coredev.uk
+    - jellyseerr.home.coredev.uk
+    - glance.home.coredev.uk
+    - notifiarr.home.coredev.uk
+    - cleanuparr.home.coredev.uk
+    - huntarr.home.coredev.uk
+    secretName: media-tls
   rules:
-  - host: radarr.local
+  - host: radarr.home.coredev.uk
     http:
       paths:
       - path: /
@@ -17,7 +31,7 @@ spec:
             name: radarr
             port:
               number: 7878
-  - host: sonarr.local
+  - host: sonarr.home.coredev.uk
     http:
       paths:
       - path: /
@@ -27,7 +41,7 @@ spec:
             name: sonarr
             port:
               number: 8989
-  - host: bazarr.local
+  - host: bazarr.home.coredev.uk
     http:
       paths:
       - path: /
@@ -37,7 +51,7 @@ spec:
             name: bazarr
             port:
               number: 6767
-  - host: jellyfin.local
+  - host: jellyfin.home.coredev.uk
     http:
       paths:
       - path: /
@@ -47,7 +61,7 @@ spec:
             name: jellyfin
             port:
               number: 8096
-  - host: jellyseerr.local
+  - host: jellyseerr.home.coredev.uk
     http:
       paths:
       - path: /
@@ -57,7 +71,7 @@ spec:
             name: jellyseerr
             port:
               number: 5055
-  - host: glance.local
+  - host: glance.home.coredev.uk
     http:
       paths:
       - path: /
@@ -67,7 +81,7 @@ spec:
             name: glance
             port:
               number: 8080
-  - host: notifiarr.local
+  - host: notifiarr.home.coredev.uk
     http:
       paths:
       - path: /
@@ -77,3 +91,23 @@ spec:
             name: notifiarr
             port:
               number: 5454
+  - host: cleanuparr.home.coredev.uk
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: cleanuparr
+            port:
+              number: 11011
+  - host: huntarr.home.coredev.uk
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: huntarr
+            port:
+              number: 9705
