@@ -19,6 +19,7 @@ kubectl create secret generic frigate-secrets \
     --dry-run=client -o yaml > frigate-secrets.yaml
 
 # Generate VPN secrets
+# Note: WireGuard private key is automatically base64 encoded by kubectl
 kubectl create secret generic vpn-secrets \
     --from-literal=WIREGUARD_PRIVATE_KEY="$WIREGUARD_PRIVATE_KEY" \
     --from-literal=SERVER_COUNTRIES="$SERVER_COUNTRIES" \

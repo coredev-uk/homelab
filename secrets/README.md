@@ -13,6 +13,7 @@ This directory contains secret templates and examples.
 
 For the VPN (gluetun with WireGuard):
 - Get your WireGuard private key from your VPN provider (ProtonVPN, etc.)
+- Use the raw private key - kubectl will automatically base64 encode it
 - Specify server countries as comma-separated values (e.g., "Netherlands,Germany")
 
 ## Files
