@@ -1,27 +1,14 @@
+# Shared media storage PVC
+# This PVC is shared across all media services for storing movies, TV shows, etc.
 apiVersion: v1
-kind: PersistentVolume
+kind: PersistentVolumeClaim
 metadata:
-  name: media-storage
+  name: media-data
+  namespace: media
 spec:
-  capacity:
-    storage: 10Ti
   accessModes:
-    - ReadWriteMany
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: local-path
-  hostPath:
-    path: /media
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: config-storage
-spec:
-  capacity:
-    storage: 100Gi
-  accessModes:
-    - ReadWriteMany
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: local-path
-  hostPath:
-    path: /opt/homelab/config
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Ti
+  storageClassName: longhorn

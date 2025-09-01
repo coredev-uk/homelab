@@ -106,6 +106,7 @@ After Pihole is deployed and configured as your network DNS:
 | argocd.local | `<hyperion-ip>` |
 | glance.local | `<hyperion-ip>` |
 | pihole.local | `<hyperion-ip>` |
+| longhorn.local | `<hyperion-ip>` |
 | frigate.local | `<hyperion-ip>` |
 | radarr.local | `<hyperion-ip>` |
 | sonarr.local | `<hyperion-ip>` |
@@ -121,7 +122,7 @@ After Pihole is deployed and configured as your network DNS:
 For initial setup or if not using Pihole DNS:
 ```bash
 # Add to /etc/hosts on your client machine
-<hyperion-ip> argocd.local glance.local pihole.local frigate.local
+<hyperion-ip> argocd.local glance.local pihole.local longhorn.local frigate.local
 <hyperion-ip> radarr.local sonarr.local bazarr.local prowlarr.local
 <hyperion-ip> jellyfin.local jellyseerr.local qbittorrent.local sabnzbd.local notifiarr.local
 ```
@@ -133,6 +134,7 @@ For initial setup or if not using Pihole DNS:
 | ArgoCD | http://argocd.local | :80 | GitOps Dashboard |
 | Glance | http://glance.local | :8080 | Dashboard (Stocks, Crypto, RSS) |
 | Pihole | http://pihole.local | :80 | DNS Adblocking |
+| Longhorn | http://longhorn.local | :80 | Storage Management |
 | Frigate | http://frigate.local | :5000 | CCTV Management |
 | Jellyfin | http://jellyfin.local | :8096 | Media Server |
 | Jellyseerr | http://jellyseerr.local | :5055 | Media Requests |
