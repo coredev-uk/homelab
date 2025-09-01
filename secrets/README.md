@@ -9,6 +9,12 @@ This directory contains secret templates and examples.
 3. Run `./generate-secrets.sh` to create Kubernetes secrets
 4. **Never commit `secrets.env` or generated secret files**
 
+## VPN Configuration
+
+For the VPN (gluetun with WireGuard):
+- Get your WireGuard private key from your VPN provider (ProtonVPN, etc.)
+- Specify server countries as comma-separated values (e.g., "Netherlands,Germany")
+
 ## Files
 
 - `secrets.env.example` - Template with placeholder values (safe to commit)

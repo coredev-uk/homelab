@@ -20,8 +20,8 @@ kubectl create secret generic frigate-secrets \
 
 # Generate VPN secrets
 kubectl create secret generic vpn-secrets \
-    --from-literal=VPN_USERNAME="$VPN_USERNAME" \
-    --from-literal=VPN_PASSWORD="$VPN_PASSWORD" \
+    --from-literal=WIREGUARD_PRIVATE_KEY="$WIREGUARD_PRIVATE_KEY" \
+    --from-literal=SERVER_COUNTRIES="$SERVER_COUNTRIES" \
     --dry-run=client -o yaml > vpn-secrets.yaml
 
 # Generate Cloudflare secrets
