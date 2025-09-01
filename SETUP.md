@@ -3,10 +3,13 @@
 ## Prerequisites
 
 1. **k3s cluster running** on your NixOS server (Hyperion)
-2. **Git access** to clone from GitHub
-3. **Storage paths** available on the host:
-   - `/media` - for media files (movies, TV shows, etc.)
-   - `/opt/homelab/config` - for application configs
+2. **Git access** to clone from GitHub  
+3. **Kubernetes v1.25+** required for Longhorn v1.9.1
+4. **Storage requirements**:
+   - Sufficient disk space on nodes for Longhorn storage pool (recommended: 100GB+ per node)
+   - `/var/lib/longhorn/` directory will be created automatically for Longhorn data
+   - Media PVC configured for 1TiB shared storage across media services
+5. **Network access** for pulling container images and accessing external services
 
 ## Initial Setup
 
@@ -51,15 +54,16 @@ nano core/frigate/deployment.yaml
 # Lines 70-87: Uncomment and configure with your camera RTSP URLs
 ```
 
-### 4. Create Host Directories
+### 4. Storage Verification
 ```bash
-# Create required directories
-sudo mkdir -p /media /opt/homelab/config
-sudo chown 1000:1000 /media /opt/homelab/config
+# Verify Longhorn prerequisites on nodes
+kubectl get nodes -o wide
 
-# Create Frigate media directory  
-sudo mkdir -p /opt/homelab/frigate/media
-sudo chown 1000:1000 /opt/homelab/frigate/media
+# Check available disk space
+df -h /var/lib/longhorn/
+
+# Verify storage class is available after deployment
+kubectl get storageclass longhorn
 ```
 
 ## Deployment Steps
@@ -85,7 +89,21 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 kubectl apply -f apps/app-of-apps.yaml
 ```
 
-### 5. Watch Deployment Progress
+### 6. Verify Storage Deployment
+```bash
+# Check Longhorn system pods
+kubectl get pods -n longhorn-system
+
+# Verify storage class is ready
+kubectl get storageclass
+
+# Check that media PVC is bound
+kubectl get pvc -n media
+
+# Access Longhorn UI for storage management
+echo "Longhorn UI: http://longhorn.local"
+```
+### 7. Watch Deployment Progress
 ```bash
 kubectl get pods -A --watch
 ```
@@ -200,7 +218,20 @@ kubectl logs -f deployment/argocd-server -n argocd
 
 ### Check Storage
 ```bash
+# View all persistent volumes and claims
 kubectl get pv,pvc -A
+
+# Check Longhorn system status
+kubectl get pods -n longhorn-system
+
+# Check storage class
+kubectl get storageclass
+
+# View Longhorn volumes
+kubectl get volumes.longhorn.io -n longhorn-system
+
+# Check node storage capacity
+kubectl describe nodes | grep -A5 "Capacity:"
 ```
 
 ### Restart Specific Service
@@ -217,12 +248,88 @@ kubectl rollout restart deployment/radarr -n media
 4. **Update service connections** in each app to use Kubernetes service names
 5. **Test connectivity** between services
 
+## Storage Management with Longhorn
+
+### Overview
+This homelab uses **Longhorn v1.9.1** as the distributed storage system, providing:
+- **Replicated storage** with 2 replicas by default for high availability
+- **Dynamic volume provisioning** via CSI driver
+- **Volume expansion** support for growing storage needs
+- **Web UI management** at `http://longhorn.local`
+- **Backup and snapshot** capabilities
+- **Fast replica rebuilding** for improved performance
+- **Enhanced data integrity** features
+- **Kubernetes v1.25+** support
+
+### Longhorn Configuration
+- **Version**: v1.9.1 (latest stable)
+- **Default data path**: `/var/lib/longhorn/` on each node
+- **Replica count**: 2 (for redundancy)
+- **Storage class**: `longhorn` (default)
+- **File system**: ext4
+- **Reclaim policy**: Delete
+- **Volume binding**: Immediate
+- **Fast replica rebuilding**: Enabled for better performance
+- **Revision counter**: Disabled for improved performance
+- **Filesystem trim**: Enabled with snapshot removal
+
+### Storage Features
+- **Auto-salvage**: Enabled for automatic recovery
+- **Replica soft anti-affinity**: Zone-aware replica placement
+- **Storage over-provisioning**: 100% allowed
+- **Minimal available storage**: 25% threshold
+- **Volume expansion**: Supported for growing applications
+- **Fast replica rebuilding**: Enabled for reduced downtime
+- **Concurrent replica rebuilds**: Up to 5 per node
+- **Snapshot data integrity**: Optional integrity checking
+- **Filesystem trim**: Automatic snapshot cleanup during trim operations
+
+### Managing Storage
+```bash
+# Check storage classes
+kubectl get storageclass
+
+# View persistent volumes and claims
+kubectl get pv,pvc -A
+
+# Check Longhorn system status
+kubectl get pods -n longhorn-system
+
+# View Longhorn volumes
+kubectl get volumes.longhorn.io -n longhorn-system
+```
+
+### Backup Configuration
+Longhorn supports backups to various destinations:
+- **NFS**: Network File System shares
+- **S3**: Amazon S3 or S3-compatible storage
+- **Local**: Host filesystem paths
+
+To configure backups, access the Longhorn UI and set up a backup target under **Settings** → **General**.
+
+### Troubleshooting Storage Issues
+```bash
+# Check Longhorn manager logs
+kubectl logs -f daemonset/longhorn-manager -n longhorn-system
+
+# Check CSI plugin status
+kubectl get daemonset/longhorn-csi-plugin -n longhorn-system
+
+# Verify storage connectivity
+kubectl describe nodes | grep -A5 "Capacity:"
+
+# Check volume health
+kubectl get volumes.longhorn.io -n longhorn-system -o wide
+```
+
 ## Notes
 
 - **VPN Services**: All VPN-dependent services use Gluetun sidecars
-- **Storage**: Persistent storage uses local-path provisioner
+- **Storage**: Distributed persistent storage provided by Longhorn v1.9.1 with 2-replica redundancy
+- **Performance**: Fast replica rebuilding and revision counter disabled for optimal performance
 - **Ingress**: Services are accessible via Traefik ingress (built into k3s)
 - **GitOps**: ArgoCD automatically syncs changes from Git repository
 - **Pihole**: Set your router's DNS to Hyperion's IP for network-wide adblocking
 - **Frigate**: Requires hardware acceleration (Intel QSV) and camera configuration
 - **Glance**: All-in-one dashboard with service monitoring, stocks, crypto, and RSS feeds
+- **Longhorn**: Provides distributed block storage with web-based management interface and advanced features

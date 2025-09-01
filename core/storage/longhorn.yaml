@@ -41,6 +41,15 @@ data:
     backing-image-recovery-wait-interval: "300"
     guaranteed-engine-manager-cpu: "12"
     guaranteed-replica-manager-cpu: "12"
+    disable-revision-counter: "true"
+    remove-snapshots-during-filesystem-trim: "enabled"
+    fast-replica-rebuild-enabled: "true"
+    replica-replenishment-wait-interval: "600"
+    concurrent-replica-rebuild-per-node-limit: "5"
+    disable-snapshot-purge: "false"
+    snapshot-data-integrity: "disabled"
+    snapshot-data-integrity-immediate-check-after-snapshotting: "false"
+    snapshot-data-integrity-cronjob: "0 0 */7 * *"
 ---
 # Longhorn Manager DaemonSet
 apiVersion: apps/v1
@@ -61,7 +70,7 @@ spec:
     spec:
       containers:
       - name: longhorn-manager
-        image: longhornio/longhorn-manager:v1.5.3
+        image: longhornio/longhorn-manager:v1.9.1
         imagePullPolicy: IfNotPresent
         securityContext:
           privileged: true
@@ -70,17 +79,17 @@ spec:
         - -d
         - daemon
         - --engine-image
-        - longhornio/longhorn-engine:v1.5.3
+        - longhornio/longhorn-engine:v1.9.1
         - --instance-manager-image
-        - longhornio/longhorn-instance-manager:v1.5.3
+        - longhornio/longhorn-instance-manager:v1.9.1
         - --share-manager-image
-        - longhornio/longhorn-share-manager:v1.5.3
+        - longhornio/longhorn-share-manager:v1.9.1
         - --backing-image-manager-image
-        - longhornio/backing-image-manager:v1.5.3
+        - longhornio/backing-image-manager:v1.9.1
         - --support-bundle-manager-image
-        - longhornio/support-bundle-kit:v0.0.25
+        - longhornio/support-bundle-kit:v0.0.61
         - --manager-image
-        - longhornio/longhorn-manager:v1.5.3
+        - longhornio/longhorn-manager:v1.9.1
         - --service-account
         - longhorn-service-account
         ports:
@@ -178,7 +187,7 @@ spec:
     spec:
       containers:
       - name: longhorn-ui
-        image: longhornio/longhorn-ui:v1.5.3
+        image: longhornio/longhorn-ui:v1.9.1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8000
@@ -292,6 +301,15 @@ parameters:
   fromBackup: ""
   fsType: "ext4"
   dataLocality: "disabled"
+  replicaAutoBalance: "ignored"
+  diskSelector: ""
+  nodeSelector: ""
+  recurringJobSelector: ""
+  disableRevisionCounter: "true"
+  unmapMarkSnapChainRemoved: "ignored"
+  fastReplicaRebuildEnabled: "true"
+  nfsOptions: ""
+  backupTargetName: "default"
 ---
 # Longhorn CSI Plugin DaemonSet
 apiVersion: apps/v1
@@ -312,7 +330,7 @@ spec:
     spec:
       containers:
       - name: driver-registrar
-        image: k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.9.0
+        image: longhornio/csi-node-driver-registrar:v2.14.0
         args:
         - --v=2
         - --csi-address=/csi/csi.sock
@@ -328,120 +346,7 @@ spec:
         - name: registration-dir
           mountPath: /registration
       - name: longhorn-csi-plugin
-        image: longhornio/longhorn-manager:v1.5.3
-        args:
-        - longhorn-manager
-        - -d
-        - csi
-        - --nodeid=$(NODE_ID)
-        - --endpoint=$(CSI_ENDPOINT)
-        env:
-        - name: NODE_ID
-          valueFrom:
-            fieldRef:
-              fieldPath: spec.nodeName
-        - name: CSI_ENDPOINT
-          value: unix:///csi/csi.sock
-        imagePullPolicy: IfNotPresent
-        securityContext:
-          privileged: true
-          capabilities:
-            add: ["SYS_ADMIN"]
-          allowPrivilegeEscalation: true
-        volumeMounts:
-        - name: socket-dir
-          mountPath: /csi/
-        - name: mountpoint-dir
-          mountPath: /var/lib/kubelet/pods
-          mountPropagation: Bidirectional
-        - name: registration-dir
-          mountPath: /registration
-        - name: dev
-          mountPath: /dev
-        - name: sys
-          mountPath: /sys
-        - name: host
-          mountPath: /host
-          mountPropagation: HostToContainer
-        - name: lib-modules
-          mountPath: /lib/modules
-          readOnly: true
-        - name: longhorn
-          mountPath: /var/lib/longhorn/
-          mountPropagation: Bidirectional
-      hostNetwork: true
-      hostPID: true
-      serviceAccountName: longhorn-service-account
-      tolerations:
-      - key: "node.kubernetes.io/unreachable"
-        operator: "Exists"
-        effect: "NoExecute"
-        tolerationSeconds: 30
-      - key: "node.kubernetes.io/not-ready"
-        operator: "Exists"
-        effect: "NoExecute"
-        tolerationSeconds: 30
-      volumes:
-      - name: socket-dir
-        hostPath:
-          path: /var/lib/kubelet/plugins/driver.longhorn.io
-          type: DirectoryOrCreate
-      - name: mountpoint-dir
-        hostPath:
-          path: /var/lib/kubelet/pods
-          type: Directory
-      - name: registration-dir
-        hostPath:
-          path: /var/lib/kubelet/plugins_registry
-          type: Directory
-      - name: dev
-        hostPath:
-          path: /dev/
-      - name: sys
-        hostPath:
-          path: /sys/
-      - name: host
-        hostPath:
-          path: /
-      - name: lib-modules
-        hostPath:
-          path: /lib/modules
-      - name: longhorn
-        hostPath:
-          path: /var/lib/longhorn/
-  updateStrategy:
-    type: RollingUpdate
----
-# CSI attacher
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: csi-attacher
-  namespace: longhorn-system
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: csi-attacher
-  template:
-    metadata:
-      labels:
-        app: csi-attacher
-    spec:
-      containers:
-      - name: csi-attacher
-        image: k8s.gcr.io/sig-storage/csi-attacher:v4.4.0
-        args:
-        - --v=2
-        - --csi-address=/var/lib/csi/sockets/pluginproxy/csi.sock
-        - --timeout=60s
-        - --leader-election
-        - --leader-election-namespace=longhorn-system
-        volumeMounts:
-        - name: socket-dir
-          mountPath: /var/lib/csi/sockets/pluginproxy/
-      - name: longhorn-csi-plugin
-        image: longhornio/longhorn-manager:v1.5.3
+        image: longhornio/longhorn-manager:v1.9.1
         args:
         - longhorn-manager
         - -d
@@ -483,7 +388,7 @@ spec:
     spec:
       containers:
       - name: csi-provisioner
-        image: k8s.gcr.io/sig-storage/csi-provisioner:v3.6.0
+        image: longhornio/csi-provisioner:v5.3.0
         args:
         - --v=2
         - --csi-address=/var/lib/csi/sockets/pluginproxy/csi.sock
@@ -538,7 +443,7 @@ spec:
     spec:
       containers:
       - name: csi-resizer
-        image: k8s.gcr.io/sig-storage/csi-resizer:v1.9.0
+        image: longhornio/csi-resizer:v1.14.0
         args:
         - --v=2
         - --csi-address=/var/lib/csi/sockets/pluginproxy/csi.sock
