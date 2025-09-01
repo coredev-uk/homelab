@@ -25,8 +25,8 @@ spec:
           value: "Europe/London"
         volumeMounts:
         - name: config
-          mountPath: /app/config/glance.yml
-          subPath: glance.yml
+          mountPath: /app/config
+          readOnly: true
         resources:
           requests:
             memory: "128Mi"
@@ -50,8 +50,8 @@ data:
       port: 8080
     
     theme:
-      background-color: 240 244 248
-      primary-color: 14 165 233
+      background-color: "240 244 248"
+      primary-color: "14 165 233"
       contrast-multiplier: 1.2
     
     pages:
