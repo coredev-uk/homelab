@@ -136,23 +136,14 @@ nano secrets.env
 
 **Note**: Never commit `secrets.env` or generated `*.yaml` files to the repository.
 
-### 3. Apply Secrets
-```bash
-# Apply the generated secrets to appropriate namespaces (after bootstrap creates them)
-kubectl apply -f secrets/pihole-secrets.yaml -n dns
-kubectl apply -f secrets/frigate-secrets.yaml -n security
-kubectl apply -f secrets/vpn-secrets.yaml -n downloads
-kubectl apply -f secrets/cloudflare-secrets.yaml -n cert-manager
-```
-
-### 4. Configure Frigate Cameras (Optional)
+### 3. Configure Frigate Cameras (Optional)
 ```bash
 # Edit Frigate config to add your cameras
 nano core/frigate/deployment.yaml
 # Lines 70-87: Uncomment and configure with your camera RTSP URLs
 ```
 
-### 5. Storage Verification
+### 4. Storage Verification
 ```bash
 # Verify Longhorn prerequisites on nodes
 kubectl get nodes -o wide
