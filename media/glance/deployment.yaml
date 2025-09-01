@@ -1,0 +1,174 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: glance
+  namespace: media
+  labels:
+    app: glance
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: glance
+  template:
+    metadata:
+      labels:
+        app: glance
+    spec:
+      containers:
+      - name: glance
+        image: glanceapp/glance:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: TZ
+          value: "Europe/London"
+        volumeMounts:
+        - name: config
+          mountPath: /app/glance.yml
+          subPath: glance.yml
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "50m"
+          limits:
+            memory: "512Mi"
+            cpu: "200m"
+      volumes:
+      - name: config
+        configMap:
+          name: glance-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: glance-config
+  namespace: media
+data:
+  glance.yml: |
+    server:
+      port: 8080
+    
+    theme:
+      background-color: 240 244 248
+      primary-color: 14 165 233
+      contrast-multiplier: 1.2
+    
+    pages:
+      - name: Homelab
+        columns:
+          - size: small
+            widgets:
+              - type: calendar
+              
+              - type: weather
+                location: London, United Kingdom
+                show-area-name: true
+                
+              - type: stocks
+                title: Portfolio
+                stocks:
+                  - symbol: VUAG.L
+                    name: Vanguard FTSE
+                  - symbol: NVDA
+                    name: Nvidia
+                  - symbol: AAPL
+                    name: Apple
+                    
+              - type: markets
+                title: Crypto
+                markets:
+                  - symbol: BTCUSD
+                    name: Bitcoin
+                    
+          - size: full
+            widgets:
+              - type: bookmarks
+                title: Media Services
+                groups:
+                  - title: Management
+                    bookmarks:
+                      - title: ArgoCD
+                        url: http://argocd.local
+                        icon: si:argo
+                      - title: Pihole
+                        url: http://pihole.local
+                        icon: si:pihole
+                        
+                  - title: Media Stack
+                    bookmarks:
+                      - title: Jellyfin
+                        url: http://jellyfin.local
+                        icon: si:jellyfin
+                      - title: Jellyseerr
+                        url: http://jellyseerr.local
+                        icon: si:overseerr
+                      - title: Radarr
+                        url: http://radarr.local
+                        icon: si:radarr
+                      - title: Sonarr
+                        url: http://sonarr.local
+                        icon: si:sonarr
+                      - title: Bazarr
+                        url: http://bazarr.local
+                        icon: si:bazarr
+                      - title: Prowlarr
+                        url: http://prowlarr.local
+                        icon: si:prowlarr
+                        
+                  - title: Downloads
+                    bookmarks:
+                      - title: qBittorrent
+                        url: http://qbittorrent.local
+                        icon: si:qbittorrent
+                      - title: SABnzbd
+                        url: http://sabnzbd.local
+                        icon: si:sabnzbd
+                        
+                  - title: Security
+                    bookmarks:
+                      - title: Frigate
+                        url: http://frigate.local
+                        icon: si:frigate
+                        
+              - type: rss
+                title: Tech News
+                feed-url: https://itsfoss.com/rss/
+                limit: 8
+                
+              - type: rss
+                title: Technology News
+                feed-url: https://feeds.feedburner.com/oreilly/radar
+                limit: 10
+                
+              - type: monitor
+                title: Service Status
+                sites:
+                  - title: Jellyfin
+                    url: http://jellyfin.local
+                    icon: si:jellyfin
+                  - title: Radarr
+                    url: http://radarr.local
+                    icon: si:radarr
+                  - title: Sonarr
+                    url: http://sonarr.local
+                    icon: si:sonarr
+                  - title: Prowlarr
+                    url: http://prowlarr.local
+                    icon: si:prowlarr
+                  - title: qBittorrent
+                    url: http://qbittorrent.local
+                    icon: si:qbittorrent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: glance
+  namespace: media
+spec:
+  selector:
+    app: glance
+  ports:
+  - port: 8080
+    targetPort: 8080
+  type: ClusterIP

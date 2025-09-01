@@ -1,0 +1,113 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sabnzbd
+  namespace: downloads
+  labels:
+    app: sabnzbd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sabnzbd
+  template:
+    metadata:
+      labels:
+        app: sabnzbd
+    spec:
+      containers:
+      - name: gluetun
+        image: qmcgaw/gluetun:latest
+        ports:
+        - containerPort: 8090
+        securityContext:
+          capabilities:
+            add:
+            - NET_ADMIN
+        env:
+        - name: VPN_SERVICE_PROVIDER
+          valueFrom:
+            configMapKeyRef:
+              name: vpn-config
+              key: VPN_SERVICE_PROVIDER
+        - name: VPN_TYPE
+          valueFrom:
+            configMapKeyRef:
+              name: vpn-config
+              key: VPN_TYPE
+        - name: WIREGUARD_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: vpn-secrets
+              key: WIREGUARD_PRIVATE_KEY
+        - name: SERVER_COUNTRIES
+          valueFrom:
+            secretKeyRef:
+              name: vpn-secrets
+              key: SERVER_COUNTRIES
+        - name: FIREWALL_OUTBOUND_SUBNETS
+          valueFrom:
+            configMapKeyRef:
+              name: vpn-config
+              key: FIREWALL_OUTBOUND_SUBNETS
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "50m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+      - name: sabnzbd
+        image: lscr.io/linuxserver/sabnzbd:latest
+        env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        - name: TZ
+          value: "Europe/London"
+        volumeMounts:
+        - name: config
+          mountPath: /config
+        - name: downloads
+          mountPath: /downloads
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+      volumes:
+      - name: config
+        persistentVolumeClaim:
+          claimName: sabnzbd-config
+      - name: downloads
+        persistentVolumeClaim:
+          claimName: downloads-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sabnzbd-config
+  namespace: downloads
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: local-path
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sabnzbd
+  namespace: downloads
+spec:
+  selector:
+    app: sabnzbd
+  ports:
+  - port: 8090
+    targetPort: 8090
+  type: ClusterIP

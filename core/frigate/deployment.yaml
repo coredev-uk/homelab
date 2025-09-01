@@ -1,0 +1,186 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: security
+  labels:
+    name: security
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frigate
+  namespace: security
+  labels:
+    app: frigate
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frigate
+  template:
+    metadata:
+      labels:
+        app: frigate
+    spec:
+      containers:
+      - name: frigate
+        image: ghcr.io/blakeblackshear/frigate:stable
+        ports:
+        - containerPort: 5000
+        - containerPort: 8554
+        - containerPort: 8555
+        env:
+        - name: TZ
+          value: "Europe/London"
+        - name: FRIGATE_RTMP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: frigate-secrets
+              key: RTMP_PASSWORD
+        volumeMounts:
+        - name: config
+          mountPath: /config
+        - name: media
+          mountPath: /media/frigate
+        - name: cache
+          mountPath: /tmp/cache
+        - name: dev-dri
+          mountPath: /dev/dri
+        - name: shm
+          mountPath: /dev/shm
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "4Gi"
+            cpu: "2000m"
+        securityContext:
+          privileged: true
+      volumes:
+      - name: config
+        persistentVolumeClaim:
+          claimName: frigate-config
+      - name: media
+        persistentVolumeClaim:
+          claimName: frigate-media
+      - name: cache
+        emptyDir:
+          sizeLimit: 10Gi
+      - name: dev-dri
+        hostPath:
+          path: /dev/dri
+      - name: shm
+        emptyDir:
+          medium: Memory
+          sizeLimit: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: frigate-config
+  namespace: security
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: local-path
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: frigate-media
+  namespace: security
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 500Gi
+  storageClassName: local-path
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: frigate-secrets
+  namespace: security
+type: Opaque
+stringData:
+  RTMP_PASSWORD: "frigate123"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frigate
+  namespace: security
+spec:
+  selector:
+    app: frigate
+  ports:
+  - name: web
+    port: 5000
+    targetPort: 5000
+  - name: rtmp
+    port: 1935
+    targetPort: 1935
+  - name: rtsp
+    port: 8554
+    targetPort: 8554
+  - name: webrtc
+    port: 8555
+    targetPort: 8555
+  type: ClusterIP
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frigate-config
+  namespace: security
+data:
+  config.yml: |
+    mqtt:
+      enabled: false
+    
+    detectors:
+      cpu1:
+        type: cpu
+    
+    cameras:
+      # Add your cameras here
+      # front_door:
+      #   ffmpeg:
+      #     inputs:
+      #       - path: rtsp://username:password@camera-ip:554/stream
+      #         roles:
+      #           - detect
+      #           - record
+      #   detect:
+      #     width: 1920
+      #     height: 1080
+      #   record:
+      #     enabled: true
+      #     retain:
+      #       days: 7
+      #       mode: motion
+      #   snapshots:
+      #     enabled: true
+      #     retain:
+      #       default: 14
+    
+    record:
+      enabled: true
+      expire_interval: 60
+      retain:
+        days: 7
+        mode: motion
+      events:
+        retain:
+          default: 14
+          mode: motion
+    
+    snapshots:
+      enabled: true
+      retain:
+        default: 14
