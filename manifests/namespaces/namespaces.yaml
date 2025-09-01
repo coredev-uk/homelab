@@ -25,3 +25,10 @@ metadata:
   name: security
   labels:
     name: security
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: core
+  labels:
+    name: core
