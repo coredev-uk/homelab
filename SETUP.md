@@ -128,21 +128,34 @@ For initial setup or if not using Pihole DNS:
 
 ## Service URLs
 
-| Service | URL | Purpose |
-|---------|-----|---------|
-| ArgoCD | http://argocd.local | GitOps Dashboard |
-| Glance | http://glance.local | Dashboard (Stocks, Crypto, RSS) |
-| Pihole | http://pihole.local | DNS Adblocking |
-| Frigate | http://frigate.local | CCTV Management |
-| Jellyfin | http://jellyfin.local | Media Server |
-| Jellyseerr | http://jellyseerr.local | Media Requests |
-| Radarr | http://radarr.local | Movie Management |
-| Sonarr | http://sonarr.local | TV Management |
-| Bazarr | http://bazarr.local | Subtitle Management |
-| Prowlarr | http://prowlarr.local | Indexer Management |
-| qBittorrent | http://qbittorrent.local | Torrent Client |
-| SABnzbd | http://sabnzbd.local | Usenet Client |
-| Notifiarr | http://notifiarr.local | Notifications |
+| Service | URL | Direct Port | Purpose |
+|---------|-----|-------------|---------|
+| ArgoCD | http://argocd.local | :80 | GitOps Dashboard |
+| Glance | http://glance.local | :8080 | Dashboard (Stocks, Crypto, RSS) |
+| Pihole | http://pihole.local | :80 | DNS Adblocking |
+| Frigate | http://frigate.local | :5000 | CCTV Management |
+| Jellyfin | http://jellyfin.local | :8096 | Media Server |
+| Jellyseerr | http://jellyseerr.local | :5055 | Media Requests |
+| Radarr | http://radarr.local | :7878 | Movie Management |
+| Sonarr | http://sonarr.local | :8989 | TV Management |
+| Bazarr | http://bazarr.local | :6767 | Subtitle Management |
+| Prowlarr | http://prowlarr.local | :9696 | Indexer Management |
+| qBittorrent | http://qbittorrent.local | :8080 | Torrent Client |
+| SABnzbd | http://sabnzbd.local | :8090 | Usenet Client |
+| Notifiarr | http://notifiarr.local | :5454 | Notifications |
+
+### Direct IP Access (Troubleshooting)
+If ingress is not working, you can access services directly using:
+```
+http://<hyperion-ip>:<port>
+```
+
+For example:
+- Pihole: `http://10.147.20.20:80/admin` 
+- Jellyfin: `http://10.147.20.20:8096`
+- Radarr: `http://10.147.20.20:7878`
+
+**Note**: Direct IP access requires services to be configured as LoadBalancer or NodePort instead of ClusterIP.
 
 ## Post-Setup Configuration
 
