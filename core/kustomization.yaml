@@ -8,3 +8,4 @@ resources:
 - frigate/
 - flaresolverr/
 - cert-manager/
+- cert-issuers/
