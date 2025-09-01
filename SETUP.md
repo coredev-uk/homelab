@@ -21,31 +21,34 @@ git clone https://github.com/coredev-uk/homelab.git
 cd homelab
 ```
 
-### 2. Update Secrets & Configuration
-Edit these files with your actual values:
+### 2. Configure Secrets
+Use the automated secrets management system:
 ```bash
-# 1. VPN Configuration
-nano core/vpn/config.yaml
-# Replace:
-# - WIREGUARD_PRIVATE_KEY: "YOUR_ACTUAL_PRIVATE_KEY"
-# - SERVER_COUNTRIES: "Netherlands" (or your preferred country)
+# Navigate to secrets directory
+cd secrets
 
-# 2. Pihole Password
-nano core/pihole/deployment.yaml
-# Change line 42: WEBPASSWORD: "your_secure_password"
+# Copy the example file and fill in your values
+cp secrets.env.example secrets.env
+nano secrets.env
 
-# 3. Pihole LoadBalancer IP
-nano core/pihole/deployment.yaml
-# Update line 108: loadBalancerIP to Hyperion's IP or remove the line
+# Generate Kubernetes secret files
+./generate-secrets.sh
 
-# 4. Frigate RTMP Password
-nano core/frigate/deployment.yaml
-# Change line 50: RTMP_PASSWORD: "your_secure_password"
-
-# 5. Notifiarr API Key
-nano media/notifiarr/deployment.yaml
-# Change line 57: API_KEY: "YOUR_NOTIFIARR_API_KEY"
+# Apply the generated secrets to appropriate namespaces
+kubectl apply -f pihole-secrets.yaml -n dns
+kubectl apply -f frigate-secrets.yaml -n security
+kubectl apply -f vpn-secrets.yaml -n downloads
+kubectl apply -f cloudflare-secrets.yaml -n cert-manager
 ```
+
+**Required secrets to configure:**
+- **PIHOLE_WEBPASSWORD**: Web admin password for Pi-hole
+- **FRIGATE_MQTT_PASSWORD**: MQTT broker password for Frigate
+- **WIREGUARD_PRIVATE_KEY**: Your VPN provider's WireGuard private key (raw format)
+- **SERVER_COUNTRIES**: Comma-separated VPN server countries (e.g., "Netherlands,Germany")
+- **CLOUDFLARE_API_TOKEN**: API token for Cloudflare DNS challenges (cert-manager)
+
+**Note**: Never commit `secrets.env` or generated `*.yaml` files to the repository.
 
 ### 3. Configure Frigate Cameras (Optional)
 ```bash
