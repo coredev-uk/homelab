@@ -106,7 +106,7 @@ metadata:
   namespace: dns
 type: Opaque
 stringData:
-  WEBPASSWORD: "admin123"
+  WEBPASSWORD: "REPLACE_WITH_YOUR_PASSWORD"
 ---
 apiVersion: v1
 kind: Service

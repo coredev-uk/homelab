@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: huntarr-simple
+  namespace: media
+  labels:
+    app: huntarr-simple
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: huntarr-simple
+  template:
+    metadata:
+      labels:
+        app: huntarr-simple
+    spec:
+      containers:
+      - name: huntarr
+        image: huntarr/huntarr:latest
+        ports:
+        - containerPort: 9705
+        env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        - name: TZ
+          value: "Europe/London"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "50m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: huntarr-simple
+  namespace: media
+spec:
+  selector:
+    app: huntarr-simple
+  ports:
+  - port: 9705
+    targetPort: 9705
+  type: ClusterIP

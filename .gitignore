@@ -1,0 +1,22 @@
+# Secrets
+secrets/secrets.env
+secrets/*.yaml
+!secrets/secrets.env.example
+!secrets/README.md
+!secrets/generate-secrets.sh
+
+# Temporary files
+*.tmp
+.DS_Store
+
+# IDE files
+.vscode/
+.idea/
+
+# Local config
+kubeconfig
+*.local
+
+# Secret YAML files in manifests
+**/secrets.yaml
+**/secret.yaml
