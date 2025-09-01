@@ -50,8 +50,8 @@ data:
       port: 8080
     
     theme:
-      background-color: "240 244 248"
-      primary-color: "14 165 233"
+      background-color: "hsl(210, 20%, 96%)"
+      primary-color: "hsl(200, 90%, 50%)"
       contrast-multiplier: 1.2
     
     pages:
