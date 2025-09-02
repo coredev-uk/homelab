@@ -4,16 +4,8 @@ metadata:
   name: downloads-ingress
   namespace: downloads
   annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
-    traefik.ingress.kubernetes.io/router.tls: "true"
-    cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/router.entrypoints: web
 spec:
-  tls:
-    - hosts:
-        - prowlarr.home.coredev.uk
-        - qbittorrent.home.coredev.uk
-        - sabnzbd.home.coredev.uk
-      secretName: downloads-tls
   rules:
     - host: prowlarr.home.coredev.uk
       http:
