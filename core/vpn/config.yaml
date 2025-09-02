@@ -7,14 +7,4 @@ data:
   FIREWALL_OUTBOUND_SUBNETS: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
   VPN_SERVICE_PROVIDER: "protonvpn"
   VPN_TYPE: "wireguard"
-  SERVER_COUNTRIES: "Netherlands"
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: vpn-secrets
-  namespace: downloads
-type: Opaque
-stringData:
-  WIREGUARD_PRIVATE_KEY: "REPLACE_WITH_YOUR_PRIVATE_KEY"
-
+  SERVER_COUNTRIES: "United Kingdom,Netherlands,Switzerland"
