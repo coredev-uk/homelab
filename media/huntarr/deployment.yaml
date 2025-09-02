@@ -18,8 +18,8 @@ spec:
       containers:
         - name: huntarr
           image: huntarr/huntarr:latest
-          ports:
-            - containerPort: 9705
+           ports:
+             - containerPort: 9705
            env:
              - name: PUID
                value: "1000"
