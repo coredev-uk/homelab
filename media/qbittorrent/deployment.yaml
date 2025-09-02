@@ -147,6 +147,5 @@ spec:
       port: 6881
       targetPort: 6881
       protocol: UDP
-  type: LoadBalancer
-  loadBalancerIP: 10.147.20.24
+  type: ClusterIP
 

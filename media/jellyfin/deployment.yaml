@@ -29,7 +29,7 @@ spec:
             - name: TZ
               value: "Europe/London"
             - name: JELLYFIN_PublishedServerUrl
-              value: "https://10.147.20.23:8920"
+              value: "https://jellyfin.home.coredev.uk"
           volumeMounts:
             - name: config
               mountPath: /config
@@ -97,6 +97,5 @@ spec:
     - name: https
       port: 8920
       targetPort: 8920
-  type: LoadBalancer
-  loadBalancerIP: 10.147.20.23
+  type: ClusterIP
 
