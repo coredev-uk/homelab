@@ -7,6 +7,7 @@ resources:
   - namespace.yaml
   - controller.yaml
 
-commonLabels:
-  app.kubernetes.io/name: sealed-secrets
-  app.kubernetes.io/component: controller
+labels:
+  - pairs:
+      app.kubernetes.io/name: sealed-secrets
+      app.kubernetes.io/component: controller
