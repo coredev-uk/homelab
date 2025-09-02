@@ -23,6 +23,11 @@ spec:
           env:
             - name: TZ
               value: "Europe/London"
+            - name: PIHOLE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pihole-secrets
+                  key: WEBPASSWORD
           volumeMounts:
             - name: config
               mountPath: /app/config

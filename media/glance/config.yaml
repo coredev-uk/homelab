@@ -2,8 +2,8 @@ server:
   port: 8080
 
 theme:
-  background-color: "hsl(210, 20%, 96%)"
-  primary-color: "hsl(200, 90%, 50%)"
+  background-color: 210 20 96
+  primary-color: 200 90 50
   contrast-multiplier: 1.2
 
 pages:
@@ -17,9 +17,9 @@ pages:
             location: London, United Kingdom
             show-area-name: true
 
-          - type: stocks
+          - type: markets
             title: Portfolio
-            stocks:
+            markets:
               - symbol: VUAG.L
                 name: Vanguard FTSE
               - symbol: NVDA
@@ -30,8 +30,18 @@ pages:
           - type: markets
             title: Crypto
             markets:
-              - symbol: BTCUSD
+              - symbol: BTC-USD
                 name: Bitcoin
+
+          - type: server-stats
+            servers:
+              - type: local
+                name: Homelab Server
+
+          - type: dns-stats
+            service: pihole-v6
+            url: https://pihole.home.coredev.uk
+            password: ${PIHOLE_PASSWORD}
 
       - size: full
         widgets:
@@ -39,7 +49,7 @@ pages:
             title: Media Services
             groups:
               - title: Management
-                bookmarks:
+                links:
                   - title: ArgoCD
                     url: https://argocd.home.coredev.uk
                     icon: si:argo
@@ -51,7 +61,7 @@ pages:
                     icon: si:rancher
 
               - title: Media Stack
-                bookmarks:
+                links:
                   - title: Jellyfin
                     url: https://jellyfin.home.coredev.uk
                     icon: si:jellyfin
@@ -72,7 +82,7 @@ pages:
                     icon: si:prowlarr
 
               - title: Downloads
-                bookmarks:
+                links:
                   - title: qBittorrent
                     url: https://qbittorrent.home.coredev.uk
                     icon: si:qbittorrent
@@ -81,19 +91,25 @@ pages:
                     icon: si:sabnzbd
 
               - title: Security
-                bookmarks:
+                links:
                   - title: Frigate
                     url: https://frigate.home.coredev.uk
                     icon: si:frigate
 
           - type: rss
             title: Tech News
-            feed-url: https://itsfoss.com/rss/
+            feeds:
+              - url: https://itsfoss.com/rss/
+              - url: https://www.phoronix.com/rss.php
+                title: Phoronix
             limit: 8
 
           - type: rss
             title: Technology News
-            feed-url: https://feeds.feedburner.com/oreilly/radar
+            feeds:
+              - url: https://feeds.feedburner.com/oreilly/radar
+              - url: https://feeds.arstechnica.com/arstechnica/index
+                title: Ars Technica
             limit: 10
 
           - type: monitor
@@ -101,20 +117,47 @@ pages:
             sites:
               - title: Jellyfin
                 url: https://jellyfin.home.coredev.uk
+                check-url: http://jellyfin.media:8096
                 icon: si:jellyfin
               - title: Radarr
                 url: https://radarr.home.coredev.uk
+                check-url: http://radarr.media:7878
                 icon: si:radarr
               - title: Sonarr
                 url: https://sonarr.home.coredev.uk
+                check-url: http://sonarr.media:8989
                 icon: si:sonarr
               - title: Prowlarr
                 url: https://prowlarr.home.coredev.uk
+                check-url: http://prowlarr.downloads:9696
                 icon: si:prowlarr
               - title: qBittorrent
                 url: https://qbittorrent.home.coredev.uk
+                check-url: http://qbittorrent.downloads:8080
                 icon: si:qbittorrent
               - title: ArgoCD
                 url: https://argocd.home.coredev.uk
+                check-url: http://argocd-server.argocd:80
                 icon: si:argo
 
+          - type: releases
+            title: Software Updates
+            repositories:
+              - glanceapp/glance
+              - k3s-io/k3s
+              - argoproj/argo-cd
+              - longhorn/longhorn
+              - traefik/traefik
+            limit: 8
+            collapse-after: 5
+
+          - type: videos
+            title: Tech Videos
+            channels:
+              - UCXuqSBlHAE6Xw-yeJA0Tunw # Linus Tech Tips
+              - UCBJycsmduvYEL83R_U4JriQ # MKBHD
+              - UCHnyfMqiRRG1u-2MsSQLbXA # Veritasium
+              - UCF9IOB2TExg3QIBupFtBDxg # Jeff Geerling
+            limit: 8
+            collapse-after: 4
+            style: horizontal-cards
