@@ -125,6 +125,21 @@ spec:
       storage: 1Gi
   storageClassName: longhorn
 ---
+# Host-path downloads storage PV
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: downloads-data
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /opt/downloads-data
+  storageClassName: ""
+---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -135,8 +150,9 @@ spec:
     - ReadWriteMany
   resources:
     requests:
-      storage: 5Ti
-  storageClassName: longhorn
+      storage: 100Gi
+  volumeName: downloads-data
+  storageClassName: ""
 ---
 apiVersion: v1
 kind: Service

@@ -1,3 +1,19 @@
+# Host-path media storage PV
+# This PV uses local host storage instead of Longhorn for large media files
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: media-data
+spec:
+  capacity:
+    storage: 300Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /opt/media-data
+  storageClassName: ""
+---
 # Shared media storage PVC
 # This PVC is shared across all media services for storing movies, TV shows, etc.
 apiVersion: v1
@@ -11,5 +27,6 @@ spec:
   resources:
     requests:
       storage: 300Gi
-  storageClassName: longhorn
+  volumeName: media-data
+  storageClassName: ""
 
