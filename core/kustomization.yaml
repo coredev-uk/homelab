@@ -10,4 +10,5 @@ resources:
   - pihole/
   - frigate/
   - metallb/
+  - traefik/
 
