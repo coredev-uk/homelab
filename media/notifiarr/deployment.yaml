@@ -35,9 +35,6 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /config
-            - name: data
-              mountPath: /media
-              readOnly: true
           resources:
             requests:
               memory: "128Mi"
@@ -49,9 +46,6 @@ spec:
         - name: config
           persistentVolumeClaim:
             claimName: notifiarr-config
-        - name: data
-          persistentVolumeClaim:
-            claimName: media-data-host
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
