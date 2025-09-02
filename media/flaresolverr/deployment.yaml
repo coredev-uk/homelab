@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: flaresolverr
-  namespace: core
+  namespace: downloads
   labels:
     app: flaresolverr
 spec:
@@ -100,7 +100,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: flaresolverr-gluetun-config
-  namespace: core
+  namespace: downloads
 spec:
   accessModes:
     - ReadWriteOnce
@@ -113,7 +113,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: flaresolverr
-  namespace: core
+  namespace: downloads
 spec:
   selector:
     app: flaresolverr

@@ -10,5 +10,4 @@ resources:
   - vpn/
   - pihole/
   - frigate/
-  - flaresolverr/
 
