@@ -1,4 +1,3 @@
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -44,7 +43,7 @@ spec:
             - name: shm
               mountPath: /dev/shm
             - name: tls-certs
-              mountPath: /etc/ssl/frigate/
+              mountPath: /etc/letsencrypt/live/frigate/
               readOnly: true
           resources:
             requests:
@@ -77,9 +76,9 @@ spec:
             secretName: security-tls
             items:
               - key: tls.crt
-                path: cert.pem
+                path: fullchain.pem
               - key: tls.key
-                path: key.pem
+                path: privkey.pem
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -185,4 +184,3 @@ data:
       enabled: true
       retain:
         default: 14
-
