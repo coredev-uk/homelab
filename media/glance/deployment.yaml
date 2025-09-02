@@ -20,9 +20,19 @@ spec:
           image: glanceapp/glance:latest
           ports:
             - containerPort: 8080
-          env:
-            - name: TZ
-              value: "Europe/London"
+           env:
+             - name: TZ
+               value: "Europe/London"
+             - name: PIHOLE_PASSWORD
+               valueFrom:
+                 secretKeyRef:
+                   name: glance-secrets
+                   key: PIHOLE_WEBPASSWORD
+             - name: GLANCE_WEATHER_LOCATION
+               valueFrom:
+                 secretKeyRef:
+                   name: glance-secrets
+                   key: GLANCE_WEATHER_LOCATION
           volumeMounts:
             - name: config
               mountPath: /app/config

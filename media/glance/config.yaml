@@ -14,7 +14,7 @@ pages:
           - type: calendar
 
           - type: weather
-            location: London, United Kingdom
+            location: ${GLANCE_WEATHER_LOCATION}
             show-area-name: true
 
           - type: markets
@@ -37,6 +37,11 @@ pages:
             servers:
               - type: local
                 name: Homelab Server
+
+          - type: dns-stats
+            service: pihole-v6
+            url: https://pihole.home.coredev.uk
+            password: ${PIHOLE_PASSWORD}
 
       - size: full
         widgets:
@@ -62,7 +67,7 @@ pages:
                     icon: si:jellyfin
                   - title: Jellyseerr
                     url: https://jellyseerr.home.coredev.uk
-                    icon: si:overseerr
+                    icon: sh:jellyseerr
                   - title: Radarr
                     url: https://radarr.home.coredev.uk
                     icon: si:radarr
@@ -71,10 +76,10 @@ pages:
                     icon: si:sonarr
                   - title: Bazarr
                     url: https://bazarr.home.coredev.uk
-                    icon: si:bazarr
+                    icon: sh:bazarr
                   - title: Prowlarr
                     url: https://prowlarr.home.coredev.uk
-                    icon: si:prowlarr
+                    icon: sh:prowlarr
 
               - title: Downloads
                 links:
@@ -83,7 +88,7 @@ pages:
                     icon: si:qbittorrent
                   - title: SABnzbd
                     url: https://sabnzbd.home.coredev.uk
-                    icon: si:sabnzbd
+                    icon: sh:sabnzbd
 
               - title: Security
                 links:
@@ -95,17 +100,10 @@ pages:
             title: Tech News
             feeds:
               - url: https://itsfoss.com/rss/
-              - url: https://www.phoronix.com/rss.php
-                title: Phoronix
-            limit: 8
-
-          - type: rss
-            title: Technology News
-            feeds:
-              - url: https://feeds.feedburner.com/oreilly/radar
+                title: It's FOSS
               - url: https://feeds.arstechnica.com/arstechnica/index
                 title: Ars Technica
-            limit: 10
+            limit: 8
 
           - type: monitor
             title: Service Status
@@ -125,7 +123,7 @@ pages:
               - title: Prowlarr
                 url: https://prowlarr.home.coredev.uk
                 check-url: http://prowlarr.downloads:9696
-                icon: si:prowlarr
+                icon: sh:prowlarr
               - title: qBittorrent
                 url: https://qbittorrent.home.coredev.uk
                 check-url: http://qbittorrent.downloads:8080
