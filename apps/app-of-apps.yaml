@@ -21,8 +21,8 @@ spec:
             jobEnabled: false
           longhornUI:
             replicas: 1
-          service:
-            ui:
+          longhornUI:
+            service:
               type: NodePort
               nodePort: 30880
   destination:
