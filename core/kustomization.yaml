@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - storage/
+  - traefik/
   - vpn/
   - pihole/
   - frigate/

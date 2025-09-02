@@ -1,6 +1,37 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
+  name: longhorn
+  namespace: argocd
+spec:
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true
+  project: default
+  sources:
+    - chart: longhorn
+      repoURL: https://charts.longhorn.io/
+      targetRevision: v1.9.1
+      helm:
+        values: |
+          preUpgradeChecker:
+            jobEnabled: false
+          longhornUI:
+            replicas: 1
+          service:
+            ui:
+              type: NodePort
+              nodePort: 30880
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: longhorn-system
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
   name: core-apps
   namespace: argocd
 spec:
