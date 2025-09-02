@@ -28,7 +28,7 @@ spec:
           env:
             - name: TZ
               value: "Europe/London"
-            - name: WEBPASSWORD
+            - name: FTLCONF_webserver_api_password
               valueFrom:
                 secretKeyRef:
                   name: pihole-secrets
@@ -37,10 +37,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.podIP
-            - name: DNS1
-              value: "1.1.1.1"
-            - name: DNS2
-              value: "1.0.0.1"
+            - name: FTLCONF_dns_upstreams
+              value: "1.1.1.1;1.0.0.1"
             - name: DNSMASQ_LISTENING
               value: "all"
           volumeMounts:
