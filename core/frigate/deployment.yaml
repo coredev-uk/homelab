@@ -159,7 +159,7 @@ data:
       # front_door:
       #   ffmpeg:
       #     inputs:
-      #       - path: rtsp://username:password@camera-ip:554/stream
+      #       - path: rtsp://USERNAME:PASSWORD@CAMERA_IP:554/stream
       #         roles:
       #           - detect
       #           - record
