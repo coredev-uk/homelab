@@ -40,7 +40,7 @@ pages:
 
           - type: dns-stats
             service: pihole-v6
-            url: https://pihole.home.coredev.uk
+            url: http://pihole.dns
             password: ${PIHOLE_PASSWORD}
 
       - size: full
@@ -67,7 +67,7 @@ pages:
                     icon: si:jellyfin
                   - title: Jellyseerr
                     url: https://jellyseerr.home.coredev.uk
-                    icon: sh:jellyseerr
+                    icon: sh:jellyseerr-light
                   - title: Radarr
                     url: https://radarr.home.coredev.uk
                     icon: si:radarr
@@ -76,10 +76,10 @@ pages:
                     icon: si:sonarr
                   - title: Bazarr
                     url: https://bazarr.home.coredev.uk
-                    icon: sh:bazarr
+                    icon: sh:bazarr-light
                   - title: Prowlarr
                     url: https://prowlarr.home.coredev.uk
-                    icon: sh:prowlarr
+                    icon: sh:prowlarr-light
 
               - title: Downloads
                 links:
@@ -88,7 +88,7 @@ pages:
                     icon: si:qbittorrent
                   - title: SABnzbd
                     url: https://sabnzbd.home.coredev.uk
-                    icon: sh:sabnzbd
+                    icon: sh:sabnzbd-light
 
               - title: Security
                 links:
@@ -123,7 +123,7 @@ pages:
               - title: Prowlarr
                 url: https://prowlarr.home.coredev.uk
                 check-url: http://prowlarr.downloads:9696
-                icon: sh:prowlarr
+                icon: sh:prowlarr-light
               - title: qBittorrent
                 url: https://qbittorrent.home.coredev.uk
                 check-url: http://qbittorrent.downloads:8080
