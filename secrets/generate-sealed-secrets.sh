@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+
+# Script to generate SealedSecrets from the existing secrets.env file
+# This script requires kubeseal to be installed and the sealed-secrets controller to be running
+
+set -e
+
+if [ ! -f "secrets.env" ]; then
+  echo "Error: secrets.env not found. Copy from secrets.env.example and fill in values."
+  exit 1
+fi
+
+# Source the secrets
+source secrets.env
+
+# Create sealed-secrets directory if it doesn't exist
+mkdir -p sealed-secrets
+
+# Function to create and seal a secret
+create_sealed_secret() {
+  local name=$1
+  local namespace=$2
+  local key=$3
+  local value=$4
+  local output_file=$5
+  
+  echo "Creating SealedSecret for $name in namespace $namespace..."
+  
+  # Create temporary secret
+  kubectl create secret generic "$name" \
+    --from-literal="$key=$value" \
+    --namespace="$namespace" \
+    --dry-run=client -o yaml > /tmp/temp-secret.yaml
+  
+  # Seal the secret with appropriate scope
+  kubeseal --controller-namespace=sealed-secrets \
+    --format yaml \
+    < /tmp/temp-secret.yaml > "sealed-secrets/$output_file"
+  
+  # Clean up temporary file
+  rm /tmp/temp-secret.yaml
+  
+  echo "Generated sealed-secrets/$output_file"
+}
+
+# Generate Pihole SealedSecret
+create_sealed_secret "pihole-secrets" "dns" "WEBPASSWORD" "$PIHOLE_WEBPASSWORD" "pihole-sealed-secret.yaml"
+
+# Generate Frigate SealedSecret  
+create_sealed_secret "frigate-secrets" "security" "MQTT_PASSWORD" "$FRIGATE_MQTT_PASSWORD" "frigate-sealed-secret.yaml"
+
+# Generate VPN SealedSecret (only the private key, countries moved to ConfigMap)
+create_sealed_secret "vpn-secrets" "downloads" "WIREGUARD_PRIVATE_KEY" "$WIREGUARD_PRIVATE_KEY" "vpn-sealed-secret.yaml"
+
+# Generate Cloudflare SealedSecret
+create_sealed_secret "cloudflare-api-token-secret" "cert-manager" "api-token" "$CLOUDFLARE_API_TOKEN" "cloudflare-sealed-secret.yaml"
+
+# Generate Notifiarr SealedSecret
+create_sealed_secret "notifiarr-secrets" "media" "API_KEY" "$NOTIFIARR_API_KEY" "notifiarr-sealed-secret.yaml"
+
+echo ""
+echo "All SealedSecrets generated successfully!"
+echo ""
+echo "Apply them with:"
+echo "kubectl apply -f sealed-secrets/pihole-sealed-secret.yaml"
+echo "kubectl apply -f sealed-secrets/frigate-sealed-secret.yaml" 
+echo "kubectl apply -f sealed-secrets/vpn-sealed-secret.yaml"
+echo "kubectl apply -f sealed-secrets/cloudflare-sealed-secret.yaml"
+echo "kubectl apply -f sealed-secrets/notifiarr-sealed-secret.yaml"
+echo ""
+echo "After applying, you can remove the old plain text secrets:"
+echo "kubectl delete secret pihole-secrets -n dns --ignore-not-found"
+echo "kubectl delete secret frigate-secrets -n security --ignore-not-found"
+echo "kubectl delete secret vpn-secrets -n downloads --ignore-not-found"
+echo "kubectl delete secret cloudflare-api-token-secret -n cert-manager --ignore-not-found"
+echo "kubectl delete secret notifiarr-secrets -n media --ignore-not-found"

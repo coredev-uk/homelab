@@ -2,12 +2,13 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
+  - sealed-secrets/
+  - cert-manager/
+  - cert-issuers/
   - storage/
   - traefik/
   - vpn/
   - pihole/
   - frigate/
   - flaresolverr/
-  - cert-manager/
-  - cert-issuers/
 

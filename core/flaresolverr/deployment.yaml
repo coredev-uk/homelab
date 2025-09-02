@@ -24,15 +24,30 @@ spec:
                 - NET_ADMIN
           env:
             - name: VPN_SERVICE_PROVIDER
-              value: "protonvpn"
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: VPN_SERVICE_PROVIDER
             - name: VPN_TYPE
-              value: "wireguard"
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: VPN_TYPE
             - name: WIREGUARD_PRIVATE_KEY
-              value: "YOUR_ACTUAL_PRIVATE_KEY"
+              valueFrom:
+                secretKeyRef:
+                  name: vpn-secrets
+                  key: WIREGUARD_PRIVATE_KEY
             - name: SERVER_COUNTRIES
-              value: "Netherlands"
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: SERVER_COUNTRIES
             - name: FIREWALL_OUTBOUND_SUBNETS
-              value: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: FIREWALL_OUTBOUND_SUBNETS
             - name: UPDATER_PERIOD
               value: "24h"
             - name: TZ

@@ -1,9 +1,10 @@
 # Secrets
 secrets/secrets.env
 secrets/*.yaml
+secrets/sealed-secrets/*.yaml
 !secrets/secrets.env.example
 !secrets/README.md
-!secrets/generate-secrets.sh
+!secrets/generate-sealed-secrets.sh
 
 # Temporary files
 *.tmp

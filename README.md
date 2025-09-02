@@ -40,7 +40,8 @@ This repository contains Kubernetes manifests for a complete homelab media stack
 
 1. Install ArgoCD: `kubectl apply -k bootstrap/`
 2. Wait for ArgoCD to be ready
-3. Apply app-of-apps: `kubectl apply -f apps/`
+3. Set up secrets (see [SETUP.md](SETUP.md))
+4. Apply app-of-apps: `kubectl apply -f apps/`
 
 ## Requirements
 

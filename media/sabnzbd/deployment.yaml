@@ -43,8 +43,8 @@ spec:
                   key: WIREGUARD_PRIVATE_KEY
             - name: SERVER_COUNTRIES
               valueFrom:
-                secretKeyRef:
-                  name: vpn-secrets
+                configMapKeyRef:
+                  name: vpn-config
                   key: SERVER_COUNTRIES
             - name: FIREWALL_OUTBOUND_SUBNETS
               valueFrom:

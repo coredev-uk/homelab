@@ -67,15 +67,6 @@ spec:
   storageClassName: longhorn
 ---
 apiVersion: v1
-kind: Secret
-metadata:
-  name: notifiarr-secrets
-  namespace: media
-type: Opaque
-stringData:
-  API_KEY: "REPLACE_WITH_YOUR_NOTIFIARR_API_KEY"
----
-apiVersion: v1
 kind: Service
 metadata:
   name: notifiarr

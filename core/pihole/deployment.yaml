@@ -100,15 +100,6 @@ spec:
   storageClassName: longhorn
 ---
 apiVersion: v1
-kind: Secret
-metadata:
-  name: pihole-secrets
-  namespace: dns
-type: Opaque
-stringData:
-  WEBPASSWORD: "REPLACE_WITH_YOUR_PASSWORD"
----
-apiVersion: v1
 kind: Service
 metadata:
   name: pihole-web

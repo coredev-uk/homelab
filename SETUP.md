@@ -114,7 +114,27 @@ cd homelab
 ```
 
 ### 2. Configure Secrets
-Use the automated secrets management system:
+This project uses Sealed Secrets for secure secret management. Follow these steps:
+
+#### a. Install kubeseal CLI
+```bash
+# Install kubeseal (on your local machine or the cluster)
+KUBESEAL_VERSION='0.31.0'
+curl -OL "https://github.com/bitnami-labs/sealed-secrets/releases/download/v${KUBESEAL_VERSION}/kubeseal-${KUBESEAL_VERSION}-linux-amd64.tar.gz"
+tar -xvzf kubeseal-${KUBESEAL_VERSION}-linux-amd64.tar.gz kubeseal
+sudo install -m 755 kubeseal /usr/local/bin/kubeseal
+```
+
+#### b. Deploy Sealed Secrets Controller
+```bash
+# Apply the sealed-secrets controller (included in core deployment)
+kubectl apply -k core/sealed-secrets/
+
+# Wait for controller to be ready
+kubectl wait --for=condition=available --timeout=300s deployment/sealed-secrets-controller -n sealed-secrets
+```
+
+#### c. Generate SealedSecrets
 ```bash
 # Navigate to secrets directory
 cd secrets
@@ -123,18 +143,34 @@ cd secrets
 cp secrets.env.example secrets.env
 nano secrets.env
 
-# Generate Kubernetes secret files (don't apply yet - namespaces need to be created first)
-./generate-secrets.sh
+# Generate SealedSecret files (requires controller to be running)
+./generate-sealed-secrets.sh
+
+# Apply the SealedSecrets to appropriate namespaces
+kubectl apply -f sealed-secrets/pihole-sealed-secret.yaml
+kubectl apply -f sealed-secrets/frigate-sealed-secret.yaml
+kubectl apply -f sealed-secrets/vpn-sealed-secret.yaml
+kubectl apply -f sealed-secrets/cloudflare-sealed-secret.yaml
+kubectl apply -f sealed-secrets/notifiarr-sealed-secret.yaml
 ```
 
 **Required secrets to configure:**
 - **PIHOLE_WEBPASSWORD**: Web admin password for Pi-hole
 - **FRIGATE_MQTT_PASSWORD**: MQTT broker password for Frigate
 - **WIREGUARD_PRIVATE_KEY**: Your VPN provider's WireGuard private key (raw format)
-- **SERVER_COUNTRIES**: Comma-separated VPN server countries (e.g., "Netherlands,Germany")
 - **CLOUDFLARE_API_TOKEN**: API token for Cloudflare DNS challenges (cert-manager)
+- **NOTIFIARR_API_KEY**: API key for Notifiarr notification service
 
-**Note**: Never commit `secrets.env` or generated `*.yaml` files to the repository.
+**Note**: SERVER_COUNTRIES is now managed via ConfigMap (not secret) and defaults to "Netherlands".
+
+**Required secrets to configure:**
+- **PIHOLE_WEBPASSWORD**: Web admin password for Pi-hole
+- **FRIGATE_MQTT_PASSWORD**: MQTT broker password for Frigate
+- **WIREGUARD_PRIVATE_KEY**: Your VPN provider's WireGuard private key (raw format)
+- **CLOUDFLARE_API_TOKEN**: API token for Cloudflare DNS challenges (cert-manager)
+- **NOTIFIARR_API_KEY**: API key for Notifiarr notification service
+
+**Note**: SERVER_COUNTRIES is now managed via ConfigMap (not secret) and defaults to "Netherlands".
 
 ### 3. Configure Frigate Cameras (Optional)
 ```bash
@@ -168,12 +204,11 @@ kubectl wait --for=condition=available --timeout=300s deployment/argocd-server -
 ```
 
 ### 3. Apply Secrets (After Namespaces are Created)
+The secrets are now managed via SealedSecrets and should already be applied in step 2c above. If you need to verify:
 ```bash
-# Apply the generated secrets to appropriate namespaces
-kubectl apply -f secrets/pihole-secrets.yaml -n dns
-kubectl apply -f secrets/frigate-secrets.yaml -n security
-kubectl apply -f secrets/vpn-secrets.yaml -n downloads
-kubectl apply -f secrets/cloudflare-secrets.yaml -n cert-manager
+# Check that SealedSecrets were created and unsealed
+kubectl get sealedsecrets -A
+kubectl get secrets -A | grep -E "(pihole|frigate|vpn|cloudflare|notifiarr)-secrets"
 ```
 
 ### 4. Get ArgoCD Admin Password

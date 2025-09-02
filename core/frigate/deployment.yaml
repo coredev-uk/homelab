@@ -33,11 +33,11 @@ spec:
           env:
             - name: TZ
               value: "Europe/London"
-            - name: FRIGATE_RTMP_PASSWORD
+            - name: FRIGATE_MQTT_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: frigate-secrets
-                  key: RTMP_PASSWORD
+                  key: MQTT_PASSWORD
           volumeMounts:
             - name: config
               mountPath: /config
@@ -112,15 +112,6 @@ spec:
     requests:
       storage: 500Gi
   storageClassName: longhorn
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: frigate-secrets
-  namespace: security
-type: Opaque
-stringData:
-  RTMP_PASSWORD: "frigate123"
 ---
 apiVersion: v1
 kind: Service
