@@ -75,3 +75,4 @@ globalArguments:
 
 # Install in traefik namespace
 namespaceOverride: traefik
+

@@ -23,4 +23,3 @@ spec:
                 name: frigate
                 port:
                   number: 5000
-

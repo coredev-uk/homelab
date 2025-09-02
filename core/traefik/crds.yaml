@@ -16,7 +16,7 @@ spec:
     targetRevision: HEAD
     helm:
       valueFiles:
-      - kubernetes-crd-definition-v1.yml
+        - kubernetes-crd-definition-v1.yml
   destination:
     server: https://kubernetes.default.svc
     namespace: traefik-system
@@ -24,3 +24,4 @@ spec:
     automated:
       prune: true
       selfHeal: true
+

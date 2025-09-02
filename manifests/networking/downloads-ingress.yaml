@@ -45,4 +45,3 @@ spec:
                 name: sabnzbd
                 port:
                   number: 8090
-

@@ -72,4 +72,3 @@ spec:
     - port: 11011
       targetPort: 11011
   type: ClusterIP
-

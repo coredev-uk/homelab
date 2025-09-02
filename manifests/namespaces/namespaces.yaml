@@ -39,4 +39,3 @@ metadata:
   name: traefik
   labels:
     name: traefik
-

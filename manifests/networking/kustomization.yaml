@@ -7,4 +7,3 @@ resources:
   - dns-ingress.yaml
   - security-ingress.yaml
   - argocd-ingress.yaml
-

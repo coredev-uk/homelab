@@ -9,9 +9,9 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   tls:
-  - hosts:
-    - longhorn.home.coredev.uk
-    secretName: longhorn-tls
+    - hosts:
+        - longhorn.home.coredev.uk
+      secretName: longhorn-tls
   rules:
     - host: longhorn.home.coredev.uk
       http:
@@ -23,4 +23,3 @@ spec:
                 name: longhorn-frontend
                 port:
                   number: 80
-

@@ -4,4 +4,3 @@ kind: Kustomization
 resources:
   - persistent-volumes.yaml
   - host-path-volumes.yaml
-

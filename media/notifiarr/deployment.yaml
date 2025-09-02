@@ -72,4 +72,3 @@ spec:
     - port: 5454
       targetPort: 5454
   type: ClusterIP
-

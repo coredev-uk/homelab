@@ -11,3 +11,4 @@ labels:
   - pairs:
       app.kubernetes.io/name: sealed-secrets
       app.kubernetes.io/component: controller
+

@@ -29,4 +29,3 @@ spec:
       storage: 300Gi
   volumeName: media-data
   storageClassName: ""
-

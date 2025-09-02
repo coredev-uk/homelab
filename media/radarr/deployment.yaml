@@ -72,4 +72,3 @@ spec:
     - port: 7878
       targetPort: 7878
   type: ClusterIP
-

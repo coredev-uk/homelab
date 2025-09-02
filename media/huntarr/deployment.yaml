@@ -18,17 +18,17 @@ spec:
       containers:
         - name: huntarr
           image: huntarr/huntarr:latest
-           ports:
-             - containerPort: 9705
-           env:
-             - name: PUID
-               value: "1000"
-             - name: PGID
-               value: "1000"
-             - name: TZ
-               value: "Europe/London"
-             - name: PORT
-               value: "9705"
+          ports:
+            - containerPort: 9705
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/London"
+            - name: PORT
+              value: "9705"
           volumeMounts:
             - name: config
               mountPath: /config
@@ -69,4 +69,3 @@ spec:
     - port: 9705
       targetPort: 9705
   type: ClusterIP
-

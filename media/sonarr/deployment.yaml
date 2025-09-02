@@ -72,4 +72,3 @@ spec:
     - port: 8989
       targetPort: 8989
   type: ClusterIP
-

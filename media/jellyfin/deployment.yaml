@@ -98,4 +98,3 @@ spec:
       port: 8920
       targetPort: 8920
   type: ClusterIP
-
