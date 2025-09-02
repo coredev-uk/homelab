@@ -40,7 +40,7 @@ pages:
 
           - type: dns-stats
             service: pihole-v6
-            url: http://pihole.dns
+            url: http://pihole-web.dns
             password: ${PIHOLE_PASSWORD}
 
       - size: full
