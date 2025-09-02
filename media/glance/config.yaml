@@ -1,0 +1,120 @@
+server:
+  port: 8080
+
+theme:
+  background-color: "hsl(210, 20%, 96%)"
+  primary-color: "hsl(200, 90%, 50%)"
+  contrast-multiplier: 1.2
+
+pages:
+  - name: Homelab
+    columns:
+      - size: small
+        widgets:
+          - type: calendar
+
+          - type: weather
+            location: London, United Kingdom
+            show-area-name: true
+
+          - type: stocks
+            title: Portfolio
+            stocks:
+              - symbol: VUAG.L
+                name: Vanguard FTSE
+              - symbol: NVDA
+                name: Nvidia
+              - symbol: AAPL
+                name: Apple
+
+          - type: markets
+            title: Crypto
+            markets:
+              - symbol: BTCUSD
+                name: Bitcoin
+
+      - size: full
+        widgets:
+          - type: bookmarks
+            title: Media Services
+            groups:
+              - title: Management
+                bookmarks:
+                  - title: ArgoCD
+                    url: https://argocd.home.coredev.uk
+                    icon: si:argo
+                  - title: Pihole
+                    url: https://pihole.home.coredev.uk
+                    icon: si:pihole
+                  - title: Longhorn
+                    url: https://longhorn.home.coredev.uk
+                    icon: si:rancher
+
+              - title: Media Stack
+                bookmarks:
+                  - title: Jellyfin
+                    url: https://jellyfin.home.coredev.uk
+                    icon: si:jellyfin
+                  - title: Jellyseerr
+                    url: https://jellyseerr.home.coredev.uk
+                    icon: si:overseerr
+                  - title: Radarr
+                    url: https://radarr.home.coredev.uk
+                    icon: si:radarr
+                  - title: Sonarr
+                    url: https://sonarr.home.coredev.uk
+                    icon: si:sonarr
+                  - title: Bazarr
+                    url: https://bazarr.home.coredev.uk
+                    icon: si:bazarr
+                  - title: Prowlarr
+                    url: https://prowlarr.home.coredev.uk
+                    icon: si:prowlarr
+
+              - title: Downloads
+                bookmarks:
+                  - title: qBittorrent
+                    url: https://qbittorrent.home.coredev.uk
+                    icon: si:qbittorrent
+                  - title: SABnzbd
+                    url: https://sabnzbd.home.coredev.uk
+                    icon: si:sabnzbd
+
+              - title: Security
+                bookmarks:
+                  - title: Frigate
+                    url: https://frigate.home.coredev.uk
+                    icon: si:frigate
+
+          - type: rss
+            title: Tech News
+            feed-url: https://itsfoss.com/rss/
+            limit: 8
+
+          - type: rss
+            title: Technology News
+            feed-url: https://feeds.feedburner.com/oreilly/radar
+            limit: 10
+
+          - type: monitor
+            title: Service Status
+            sites:
+              - title: Jellyfin
+                url: https://jellyfin.home.coredev.uk
+                icon: si:jellyfin
+              - title: Radarr
+                url: https://radarr.home.coredev.uk
+                icon: si:radarr
+              - title: Sonarr
+                url: https://sonarr.home.coredev.uk
+                icon: si:sonarr
+              - title: Prowlarr
+                url: https://prowlarr.home.coredev.uk
+                icon: si:prowlarr
+              - title: qBittorrent
+                url: https://qbittorrent.home.coredev.uk
+                icon: si:qbittorrent
+              - title: ArgoCD
+                url: https://argocd.home.coredev.uk
+                icon: si:argo
+
