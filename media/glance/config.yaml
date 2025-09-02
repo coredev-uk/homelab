@@ -38,11 +38,6 @@ pages:
               - type: local
                 name: Homelab Server
 
-          - type: dns-stats
-            service: pihole-v6
-            url: https://pihole.home.coredev.uk
-            password: ${PIHOLE_PASSWORD}
-
       - size: full
         widgets:
           - type: bookmarks
