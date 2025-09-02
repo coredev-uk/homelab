@@ -20,15 +20,17 @@ spec:
           image: huntarr/huntarr:latest
           ports:
             - containerPort: 9705
-          env:
-            - name: PUID
-              value: "1000"
-            - name: PGID
-              value: "1000"
-            - name: TZ
-              value: "Europe/London"
-            - name: PORT
-              value: "9705"
+           env:
+             - name: PUID
+               value: "1000"
+             - name: PGID
+               value: "1000"
+             - name: TZ
+               value: "Europe/London"
+             - name: HUNTARR_PORT
+               value: "9705"
+             - name: HUNTARR_SERVICE_PORT
+               value: "9705"
           volumeMounts:
             - name: config
               mountPath: /config
