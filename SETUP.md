@@ -163,20 +163,11 @@ kubectl apply -f sealed-secrets/notifiarr-sealed-secret.yaml
 
 **Note**: SERVER_COUNTRIES is now managed via ConfigMap (not secret) and defaults to "Netherlands".
 
-**Required secrets to configure:**
-- **PIHOLE_WEBPASSWORD**: Web admin password for Pi-hole
-- **FRIGATE_MQTT_PASSWORD**: MQTT broker password for Frigate
-- **WIREGUARD_PRIVATE_KEY**: Your VPN provider's WireGuard private key (raw format)
-- **CLOUDFLARE_API_TOKEN**: API token for Cloudflare DNS challenges (cert-manager)
-- **NOTIFIARR_API_KEY**: API key for Notifiarr notification service
-
-**Note**: SERVER_COUNTRIES is now managed via ConfigMap (not secret) and defaults to "Netherlands".
-
 ### 3. Configure Frigate Cameras (Optional)
 ```bash
 # Edit Frigate config to add your cameras
 nano core/frigate/deployment.yaml
-# Lines 70-87: Uncomment and configure with your camera RTSP URLs
+# Lines 150-170: Uncomment and configure with your camera RTSP URLs
 ```
 
 ### 4. Storage Verification
@@ -268,6 +259,9 @@ After Pihole is deployed and configured as your network DNS:
 | qbittorrent.local | `<hyperion-ip>` |
 | sabnzbd.local | `<hyperion-ip>` |
 | notifiarr.local | `<hyperion-ip>` |
+| cleanuparr.local | `<hyperion-ip>` |
+| flaresolverr.local | `<hyperion-ip>` |
+| huntarr.local | `<hyperion-ip>` |
 
 #### Option 2: Local /etc/hosts (Temporary)
 For initial setup or if not using Pihole DNS:
@@ -276,6 +270,7 @@ For initial setup or if not using Pihole DNS:
 <hyperion-ip> argocd.local glance.local pihole.local longhorn.local frigate.local
 <hyperion-ip> radarr.local sonarr.local bazarr.local prowlarr.local
 <hyperion-ip> jellyfin.local jellyseerr.local qbittorrent.local sabnzbd.local notifiarr.local
+<hyperion-ip> cleanuparr.local flaresolverr.local huntarr.local
 ```
 
 ## Service URLs
@@ -296,6 +291,9 @@ For initial setup or if not using Pihole DNS:
 | qBittorrent | http://qbittorrent.local | :8080 | Torrent Client |
 | SABnzbd | http://sabnzbd.local | :8090 | Usenet Client |
 | Notifiarr | http://notifiarr.local | :5454 | Notifications |
+| Cleanuparr | http://cleanuparr.local | :11011 | Media Cleanup |
+| Flaresolverr | http://flaresolverr.local | :8191 | Cloudflare Bypass |
+| Huntarr | http://huntarr.local | :9705 | Torrent Management |
 
 ### Direct IP Access (Troubleshooting)
 If ingress is not working, you can access services directly using:
