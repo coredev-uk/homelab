@@ -16,58 +16,10 @@ spec:
         app: cleanuparr
     spec:
       containers:
-        - name: gluetun
-          image: qmcgaw/gluetun:latest
-          securityContext:
-            capabilities:
-              add:
-                - NET_ADMIN
-          env:
-            - name: VPN_SERVICE_PROVIDER
-              valueFrom:
-                configMapKeyRef:
-                  name: vpn-config
-                  key: VPN_SERVICE_PROVIDER
-            - name: VPN_TYPE
-              valueFrom:
-                configMapKeyRef:
-                  name: vpn-config
-                  key: VPN_TYPE
-            - name: WIREGUARD_PRIVATE_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: vpn-secrets
-                  key: WIREGUARD_PRIVATE_KEY
-            - name: SERVER_COUNTRIES
-              valueFrom:
-                configMapKeyRef:
-                  name: vpn-config
-                  key: SERVER_COUNTRIES
-            - name: FIREWALL_OUTBOUND_SUBNETS
-              valueFrom:
-                configMapKeyRef:
-                  name: vpn-config
-                  key: FIREWALL_OUTBOUND_SUBNETS
-            - name: UPDATER_PERIOD
-              value: "24h"
-            - name: TZ
-              value: "Europe/London"
-          ports:
-            - containerPort: 11011
-          volumeMounts:
-            - name: gluetun-config
-              mountPath: /gluetun
-            - name: dev-tun
-              mountPath: /dev/net/tun
-          resources:
-            requests:
-              memory: "64Mi"
-              cpu: "50m"
-            limits:
-              memory: "256Mi"
-              cpu: "500m"
         - name: cleanuparr
           image: ghcr.io/cleanuparr/cleanuparr:latest
+          ports:
+            - containerPort: 11011
           env:
             - name: PUID
               value: "1000"
@@ -94,30 +46,11 @@ spec:
         - name: media
           persistentVolumeClaim:
             claimName: media-data-v2
-        - name: gluetun-config
-          persistentVolumeClaim:
-            claimName: gluetun-config
-        - name: dev-tun
-          hostPath:
-            path: /dev/net/tun
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: cleanuparr-config
-  namespace: media
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: longhorn
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: gluetun-config
   namespace: media
 spec:
   accessModes:
