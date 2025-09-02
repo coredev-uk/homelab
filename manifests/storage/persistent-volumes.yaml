@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: media-data
+  name: media-data-host
 spec:
   capacity:
     storage: 300Gi
@@ -14,12 +14,12 @@ spec:
     path: /opt/media-data
   storageClassName: ""
 ---
-# Shared media storage PVC
+# Shared media storage PVC using host-path
 # This PVC is shared across all media services for storing movies, TV shows, etc.
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: media-data-v2
+  name: media-data-host
   namespace: media
 spec:
   accessModes:
@@ -27,6 +27,6 @@ spec:
   resources:
     requests:
       storage: 300Gi
-  volumeName: media-data
+  volumeName: media-data-host
   storageClassName: ""
 

@@ -51,7 +51,7 @@ spec:
             claimName: notifiarr-config
         - name: data
           persistentVolumeClaim:
-            claimName: media-data-v2
+            claimName: media-data-host
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

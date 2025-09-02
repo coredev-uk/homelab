@@ -85,7 +85,7 @@ spec:
             claimName: sabnzbd-config
         - name: downloads
           persistentVolumeClaim:
-            claimName: downloads-data
+            claimName: downloads-data-host
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
