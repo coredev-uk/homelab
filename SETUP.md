@@ -146,12 +146,8 @@ nano secrets.env
 # Generate SealedSecret files (requires controller to be running)
 ./generate-sealed-secrets.sh
 
-# Apply the SealedSecrets to appropriate namespaces
-kubectl apply -f sealed-secrets/pihole-sealed-secret.yaml
-kubectl apply -f sealed-secrets/frigate-sealed-secret.yaml
-kubectl apply -f sealed-secrets/vpn-sealed-secret.yaml
-kubectl apply -f sealed-secrets/cloudflare-sealed-secret.yaml
-kubectl apply -f sealed-secrets/notifiarr-sealed-secret.yaml
+# Note: Do NOT apply the SealedSecrets yet - namespaces don't exist yet!
+# These will be applied after ArgoCD creates the namespaces
 ```
 
 **Required secrets to configure:**
@@ -194,26 +190,43 @@ kubectl apply -k bootstrap/
 kubectl wait --for=condition=available --timeout=300s deployment/argocd-server -n argocd
 ```
 
-### 3. Apply Secrets (After Namespaces are Created)
-The secrets are now managed via SealedSecrets and should already be applied in step 2c above. If you need to verify:
+### 3. Deploy Applications
 ```bash
-# Check that SealedSecrets were created and unsealed
-kubectl get sealedsecrets -A
-kubectl get secrets -A | grep -E "(pihole|frigate|vpn|cloudflare|notifiarr)-secrets"
+kubectl apply -f apps/app-of-apps.yaml
 ```
 
-### 4. Get ArgoCD Admin Password
+### 4. Wait for Namespaces to be Created
+```bash
+# Wait for all namespaces to be created by ArgoCD
+kubectl wait --for=condition=available --timeout=300s deployment/argocd-applicationset-controller -n argocd
+
+# Verify namespaces exist
+kubectl get namespaces | grep -E "(dns|security|downloads|cert-manager|media)"
+```
+
+### 5. Apply Sealed Secrets (After Namespaces Exist)
+```bash
+# Now apply the SealedSecrets to the created namespaces
+cd secrets
+kubectl apply -f sealed-secrets/pihole-sealed-secret.yaml
+kubectl apply -f sealed-secrets/frigate-sealed-secret.yaml
+kubectl apply -f sealed-secrets/vpn-sealed-secret.yaml
+kubectl apply -f sealed-secrets/cloudflare-sealed-secret.yaml
+kubectl apply -f sealed-secrets/notifiarr-sealed-secret.yaml
+
+# Verify SealedSecrets were created and unsealed
+kubectl get sealedsecrets -A
+kubectl get secrets -A | grep -E "(pihole|frigate|vpn|cloudflare|notifiarr)-secrets"
+cd ..
+```
+
+### 6. Get ArgoCD Admin Password
 ```bash
 echo "ArgoCD Password:"
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
 ```
 
-### 5. Deploy Applications
-```bash
-kubectl apply -f apps/app-of-apps.yaml
-```
-
-### 6. Verify Storage Deployment
+### 7. Verify Storage Deployment
 ```bash
 # Check Longhorn system pods
 kubectl get pods -n longhorn-system
@@ -227,7 +240,7 @@ kubectl get pvc -n media
 # Access Longhorn UI for storage management
 echo "Longhorn UI: http://longhorn.local"
 ```
-### 7. Watch Deployment Progress
+### 8. Watch Deployment Progress
 ```bash
 kubectl get pods -A --watch
 ```
