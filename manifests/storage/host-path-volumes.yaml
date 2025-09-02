@@ -10,7 +10,7 @@ spec:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   hostPath:
-    path: /opt/downloads-data-host
+    path: /opt/downloads-data
   storageClassName: ""
 ---
 apiVersion: v1
