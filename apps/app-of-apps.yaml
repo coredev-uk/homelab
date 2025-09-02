@@ -21,10 +21,9 @@ spec:
             jobEnabled: false
           longhornUI:
             replicas: 1
-          longhornUI:
-            service:
-              type: NodePort
-              nodePort: 30880
+          service:
+            ui:
+              type: ClusterIP
   destination:
     server: https://kubernetes.default.svc
     namespace: longhorn-system
