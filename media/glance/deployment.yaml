@@ -86,50 +86,53 @@ data:
               - type: bookmarks
                 title: Media Services
                 groups:
-                  - title: Management
-                    bookmarks:
-                      - title: ArgoCD
-                        url: http://argocd.local
-                        icon: si:argo
-                      - title: Pihole
-                        url: http://pihole.local
-                        icon: si:pihole
-                        
-                  - title: Media Stack
-                    bookmarks:
-                      - title: Jellyfin
-                        url: http://jellyfin.local
-                        icon: si:jellyfin
-                      - title: Jellyseerr
-                        url: http://jellyseerr.local
-                        icon: si:overseerr
-                      - title: Radarr
-                        url: http://radarr.local
-                        icon: si:radarr
-                      - title: Sonarr
-                        url: http://sonarr.local
-                        icon: si:sonarr
-                      - title: Bazarr
-                        url: http://bazarr.local
-                        icon: si:bazarr
-                      - title: Prowlarr
-                        url: http://prowlarr.local
-                        icon: si:prowlarr
-                        
-                  - title: Downloads
-                    bookmarks:
-                      - title: qBittorrent
-                        url: http://qbittorrent.local
-                        icon: si:qbittorrent
-                      - title: SABnzbd
-                        url: http://sabnzbd.local
-                        icon: si:sabnzbd
-                        
-                  - title: Security
-                    bookmarks:
-                      - title: Frigate
-                        url: http://frigate.local
-                        icon: si:frigate
+                   - title: Management
+                     bookmarks:
+                       - title: ArgoCD
+                         url: https://argocd.home.coredev.uk
+                         icon: si:argo
+                       - title: Pihole
+                         url: https://pihole.home.coredev.uk
+                         icon: si:pihole
+                       - title: Longhorn
+                         url: https://longhorn.home.coredev.uk
+                         icon: si:rancher
+                         
+                   - title: Media Stack
+                     bookmarks:
+                       - title: Jellyfin
+                         url: https://jellyfin.home.coredev.uk
+                         icon: si:jellyfin
+                       - title: Jellyseerr
+                         url: https://jellyseerr.home.coredev.uk
+                         icon: si:overseerr
+                       - title: Radarr
+                         url: https://radarr.home.coredev.uk
+                         icon: si:radarr
+                       - title: Sonarr
+                         url: https://sonarr.home.coredev.uk
+                         icon: si:sonarr
+                       - title: Bazarr
+                         url: https://bazarr.home.coredev.uk
+                         icon: si:bazarr
+                       - title: Prowlarr
+                         url: https://prowlarr.home.coredev.uk
+                         icon: si:prowlarr
+                         
+                   - title: Downloads
+                     bookmarks:
+                       - title: qBittorrent
+                         url: https://qbittorrent.home.coredev.uk
+                         icon: si:qbittorrent
+                       - title: SABnzbd
+                         url: https://sabnzbd.home.coredev.uk
+                         icon: si:sabnzbd
+                         
+                   - title: Security
+                     bookmarks:
+                       - title: Frigate
+                         url: https://frigate.home.coredev.uk
+                         icon: si:frigate
                         
               - type: rss
                 title: Tech News
@@ -141,24 +144,27 @@ data:
                 feed-url: https://feeds.feedburner.com/oreilly/radar
                 limit: 10
                 
-              - type: monitor
-                title: Service Status
-                sites:
-                  - title: Jellyfin
-                    url: http://jellyfin.local
-                    icon: si:jellyfin
-                  - title: Radarr
-                    url: http://radarr.local
-                    icon: si:radarr
-                  - title: Sonarr
-                    url: http://sonarr.local
-                    icon: si:sonarr
-                  - title: Prowlarr
-                    url: http://prowlarr.local
-                    icon: si:prowlarr
-                  - title: qBittorrent
-                    url: http://qbittorrent.local
-                    icon: si:qbittorrent
+               - type: monitor
+                 title: Service Status
+                 sites:
+                   - title: Jellyfin
+                     url: https://jellyfin.home.coredev.uk
+                     icon: si:jellyfin
+                   - title: Radarr
+                     url: https://radarr.home.coredev.uk
+                     icon: si:radarr
+                   - title: Sonarr
+                     url: https://sonarr.home.coredev.uk
+                     icon: si:sonarr
+                   - title: Prowlarr
+                     url: https://prowlarr.home.coredev.uk
+                     icon: si:prowlarr
+                   - title: qBittorrent
+                     url: https://qbittorrent.home.coredev.uk
+                     icon: si:qbittorrent
+                   - title: ArgoCD
+                     url: https://argocd.home.coredev.uk
+                     icon: si:argo
 ---
 apiVersion: v1
 kind: Service
