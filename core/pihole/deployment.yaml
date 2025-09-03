@@ -1,3 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pihole-network-config
+  namespace: dns
+data:
+  99-network.conf: |
+    # Allow queries from home network
+    listen-address=0.0.0.0
+    # Accept queries from any interface
+    bind-interfaces
+    # Don't bind to specific interfaces only
+    except-interface=lo
+    # Local network ranges that are allowed to query
+    local-service=false
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -50,11 +66,18 @@ spec:
               value: "10.147.0.0/16"
             - name: FTLCONF_dns_revlookup
               value: "true"
+            - name: FTLCONF_dns_interface
+              value: "all"
+            - name: FTLCONF_dns_listeningMode
+              value: "all"
           volumeMounts:
             - name: config
               mountPath: /etc/pihole
             - name: dnsmasq
               mountPath: /etc/dnsmasq.d
+            - name: network-config
+              mountPath: /etc/dnsmasq.d/99-network.conf
+              subPath: 99-network.conf
           resources:
             requests:
               memory: "256Mi"
@@ -73,6 +96,9 @@ spec:
         - name: dnsmasq
           persistentVolumeClaim:
             claimName: pihole-dnsmasq
+        - name: network-config
+          configMap:
+            name: pihole-network-config
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
