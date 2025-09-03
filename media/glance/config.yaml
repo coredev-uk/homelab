@@ -17,11 +17,13 @@ pages:
             location: ${GLANCE_WEATHER_LOCATION}
             show-area-name: true
 
-          - type: server-stats
-            servers:
-              - type: prometheus
-                name: Homelab Server
-                url: http://prometheus.monitoring:9090
+          - type: monitor
+            title: System Status
+            sites:
+              - title: Prometheus Metrics
+                url: https://prometheus.home.coredev.uk
+                check-url: http://prometheus.monitoring:9090/api/v1/status/buildinfo
+                icon: si:prometheus
 
           - type: dns-stats
             service: pihole-v6
