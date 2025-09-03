@@ -15,6 +15,7 @@ spec:
       labels:
         app: notifiarr
     spec:
+      hostname: notifiarr-homelab
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
