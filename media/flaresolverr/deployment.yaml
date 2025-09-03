@@ -52,6 +52,10 @@ spec:
               value: "24h"
             - name: TZ
               value: "Europe/London"
+            - name: DOT
+              value: "off"
+            - name: DNS_ADDRESS
+              value: "1.1.1.1"
           ports:
             - containerPort: 8191
           volumeMounts:

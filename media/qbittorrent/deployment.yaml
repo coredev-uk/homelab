@@ -57,6 +57,10 @@ spec:
                   key: FIREWALL_OUTBOUND_SUBNETS
             - name: VPN_PORT_FORWARDING
               value: "on"
+            - name: DOT
+              value: "off"
+            - name: DNS_ADDRESS
+              value: "1.1.1.1"
           resources:
             requests:
               memory: "128Mi"
