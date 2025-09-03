@@ -9,55 +9,55 @@ theme:
 pages:
   - name: Homelab
     columns:
-       - size: small
-         widgets:
-           - type: calendar
+      - size: small
+        widgets:
+          - type: calendar
 
-           - type: weather
-             location: ${GLANCE_WEATHER_LOCATION}
-             show-area-name: true
+          - type: weather
+            location: ${GLANCE_WEATHER_LOCATION}
+            show-area-name: true
 
-           - type: server-stats
-             servers:
-               - type: prometheus
-                 name: Homelab Server
-                 url: http://prometheus.monitoring:9090
+          - type: server-stats
+            servers:
+              - type: prometheus
+                name: Homelab Server
+                url: http://prometheus.monitoring:9090
 
-           - type: dns-stats
-             service: pihole-v6
-             url: http://pihole-web.dns
-             password: ${PIHOLE_PASSWORD}
+          - type: dns-stats
+            service: pihole-v6
+            url: http://pihole-web.dns
+            password: ${PIHOLE_PASSWORD}
 
-           - type: bookmarks
-             title: Monitoring
-             groups:
-               - title: Dashboards
-                 links:
-                   - title: Grafana
-                     url: https://grafana.home.coredev.uk
-                     icon: si:grafana
-                   - title: Prometheus
-                     url: https://prometheus.home.coredev.uk
-                     icon: si:prometheus
-                   - title: Node Exporter
-                     url: https://prometheus.home.coredev.uk/targets
-                     icon: mdi:server-network
+          - type: bookmarks
+            title: Monitoring
+            groups:
+              - title: Dashboards
+                links:
+                  - title: Grafana
+                    url: https://grafana.home.coredev.uk
+                    icon: si:grafana
+                  - title: Prometheus
+                    url: https://prometheus.home.coredev.uk
+                    icon: si:prometheus
+                  - title: Node Exporter
+                    url: https://prometheus.home.coredev.uk/targets
+                    icon: mdi:server-network
 
-           - type: markets
-             title: Portfolio
-             markets:
-               - symbol: VUAG.L
-                 name: Vanguard FTSE
-               - symbol: NVDA
-                 name: Nvidia
-               - symbol: AAPL
-                 name: Apple
+          - type: markets
+            title: Portfolio
+            markets:
+              - symbol: VUAG.L
+                name: Vanguard FTSE
+              - symbol: NVDA
+                name: Nvidia
+              - symbol: AAPL
+                name: Apple
 
-           - type: markets
-             title: Crypto
-             markets:
-               - symbol: BTC-USD
-                 name: Bitcoin
+          - type: markets
+            title: Crypto
+            markets:
+              - symbol: BTC-USD
+                name: Bitcoin
 
       - size: full
         widgets:
