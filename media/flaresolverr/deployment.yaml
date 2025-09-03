@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: gluetun
-          image: qmcgaw/gluetun:latest
+          image: qmcgaw/gluetun:v3.40.0
           securityContext:
             capabilities:
               add:
@@ -71,7 +71,7 @@ spec:
               memory: "256Mi"
               cpu: "500m"
         - name: flaresolverr
-          image: flaresolverr/flaresolverr:latest
+          image: flaresolverr/flaresolverr:v3.4.0
           env:
             - name: PUID
               value: "1000"

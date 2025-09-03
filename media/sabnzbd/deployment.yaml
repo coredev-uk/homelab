@@ -40,7 +40,7 @@ spec:
               mountPath: /tmp/config
       containers:
         - name: gluetun
-          image: qmcgaw/gluetun:latest
+          image: qmcgaw/gluetun:v3.40.0
           ports:
             - containerPort: 8090
           securityContext:
@@ -86,7 +86,7 @@ spec:
               memory: "256Mi"
               cpu: "200m"
         - name: sabnzbd
-          image: lscr.io/linuxserver/sabnzbd:latest
+          image: lscr.io/linuxserver/sabnzbd:4.5.3
           env:
             - name: PUID
               value: "1000"

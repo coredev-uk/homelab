@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: flaresolverr
-          image: flaresolverr/flaresolverr:latest
+          image: flaresolverr/flaresolverr:v3.4.0
           ports:
             - containerPort: 8191
           env:
@@ -41,7 +41,7 @@ spec:
               memory: "1Gi"
               cpu: "1000m"
         - name: prowlarr
-          image: lscr.io/linuxserver/prowlarr:latest
+          image: lscr.io/linuxserver/prowlarr:2.0.5
           ports:
             - containerPort: 9696
           env:

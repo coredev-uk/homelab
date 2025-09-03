@@ -22,7 +22,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: notifiarr
-          image: golift/notifiarr:latest
+          image: golift/notifiarr:0.8.3
           securityContext:
             privileged: true  # Required for smartctl drive monitoring
           ports:

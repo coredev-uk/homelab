@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: cleanuparr
-          image: ghcr.io/cleanuparr/cleanuparr:latest
+          image: ghcr.io/cleanuparr/cleanuparr:2.2.1
           ports:
             - containerPort: 11011
           env:
