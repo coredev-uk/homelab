@@ -185,6 +185,7 @@ pages:
               - argoproj/argo-cd
               - jellyfin/jellyfin
               - lscambo13/ElegantFin
+              - NotAShelf/nvf
             limit: 10
             collapse-after: 6
 
