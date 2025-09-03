@@ -121,71 +121,71 @@ pages:
                 title: "Ars Technica"
             limit: 8
 
-           - type: monitor
-             title: Infrastructure Status
-             sites:
-               - title: Prometheus
-                 url: https://prometheus.home.coredev.uk
-                 check-url: http://prometheus.monitoring:9090
-                 icon: si:prometheus
-               - title: Grafana
-                 url: https://grafana.home.coredev.uk
-                 check-url: http://grafana.monitoring:3000
-                 icon: si:grafana
-               - title: Pi-hole
-                 url: https://pihole.home.coredev.uk
-                 check-url: http://pihole-web.dns:80
-                 icon: si:pihole
-               - title: Longhorn
-                 url: https://longhorn.home.coredev.uk
-                 check-url: http://longhorn-frontend.longhorn-system:80
-                 icon: si:rancher
-               - title: Traefik
-                 url: https://traefik.home.coredev.uk
-                 check-url: http://traefik.kube-system:8080
-                 icon: si:traefikproxy
+          - type: monitor
+            title: Infrastructure Status
+            sites:
+              - title: Prometheus
+                url: https://prometheus.home.coredev.uk
+                check-url: http://prometheus.monitoring:9090
+                icon: si:prometheus
+              - title: Grafana
+                url: https://grafana.home.coredev.uk
+                check-url: http://grafana.monitoring:3000
+                icon: si:grafana
+              - title: Pi-hole
+                url: https://pihole.home.coredev.uk
+                check-url: http://pihole-web.dns:80
+                icon: si:pihole
+              - title: Longhorn
+                url: https://longhorn.home.coredev.uk
+                check-url: http://longhorn-frontend.longhorn-system:80
+                icon: si:rancher
+              - title: Traefik
+                url: https://traefik.home.coredev.uk
+                check-url: http://traefik.kube-system:8080
+                icon: si:traefikproxy
 
-           - type: monitor
-             title: Media Services
-             sites:
-               - title: Jellyfin
-                 url: https://jellyfin.home.coredev.uk
-                 check-url: http://jellyfin.media:8096
-                 icon: si:jellyfin
-               - title: Jellyseerr
-                 url: https://jellyseerr.home.coredev.uk
-                 check-url: http://jellyseerr.media:5055
-                 icon: sh:jellyseerr-light
-               - title: Radarr
-                 url: https://radarr.home.coredev.uk
-                 check-url: http://radarr.media:7878
-                 icon: si:radarr
-               - title: Sonarr
-                 url: https://sonarr.home.coredev.uk
-                 check-url: http://sonarr.media:8989
-                 icon: si:sonarr
-               - title: Prowlarr
-                 url: https://prowlarr.home.coredev.uk
-                 check-url: http://prowlarr.downloads:9696
-                 icon: sh:prowlarr-light
-               - title: qBittorrent
-                 url: https://qbittorrent.home.coredev.uk
-                 check-url: http://qbittorrent.downloads:8080
-                 icon: si:qbittorrent
+          - type: monitor
+            title: Media Services
+            sites:
+              - title: Jellyfin
+                url: https://jellyfin.home.coredev.uk
+                check-url: http://jellyfin.media:8096
+                icon: si:jellyfin
+              - title: Jellyseerr
+                url: https://jellyseerr.home.coredev.uk
+                check-url: http://jellyseerr.media:5055
+                icon: sh:jellyseerr-light
+              - title: Radarr
+                url: https://radarr.home.coredev.uk
+                check-url: http://radarr.media:7878
+                icon: si:radarr
+              - title: Sonarr
+                url: https://sonarr.home.coredev.uk
+                check-url: http://sonarr.media:8989
+                icon: si:sonarr
+              - title: Prowlarr
+                url: https://prowlarr.home.coredev.uk
+                check-url: http://prowlarr.downloads:9696
+                icon: sh:prowlarr-light
+              - title: qBittorrent
+                url: https://qbittorrent.home.coredev.uk
+                check-url: http://qbittorrent.downloads:8080
+                icon: si:qbittorrent
 
-           - type: releases
-             title: Monitoring & Infra Updates
-             repositories:
-               - prometheus/prometheus
-               - grafana/grafana
-               - prometheus/node_exporter
-               - glanceapp/glance
-               - k3s-io/k3s
-               - argoproj/argo-cd
-               - longhorn/longhorn
-               - traefik/traefik
-             limit: 10
-             collapse-after: 6
+          - type: releases
+            title: Monitoring & Infra Updates
+            repositories:
+              - prometheus/prometheus
+              - grafana/grafana
+              - prometheus/node_exporter
+              - glanceapp/glance
+              - k3s-io/k3s
+              - argoproj/argo-cd
+              - longhorn/longhorn
+              - traefik/traefik
+            limit: 10
+            collapse-after: 6
 
           - type: videos
             title: Tech Videos
