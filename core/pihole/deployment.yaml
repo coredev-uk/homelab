@@ -13,6 +13,28 @@ data:
     except-interface=lo
     # Local network ranges that are allowed to query
     local-service=false
+    # Enable hostname resolution via network scan
+    enable-ra
+    # Use system resolver for reverse lookups
+    resolv-file=/etc/resolv.conf
+  hostname-refresh.sh: |
+    #!/bin/bash
+    # Script to refresh hostnames by network scanning
+    while true; do
+      # Scan local network for active hosts and update hostnames
+      for ip in $(seq 1 254); do
+        target="10.147.20.$ip"
+        if ping -c 1 -W 1 "$target" >/dev/null 2>&1; then
+          # Try to get hostname via system tools
+          hostname=$(getent hosts "$target" | awk '{print $2}' | head -1)
+          if [[ -n "$hostname" && "$hostname" != "$target" ]]; then
+            echo "Found: $target -> $hostname"
+          fi
+        fi
+      done
+      # Run every 5 minutes
+      sleep 300
+    done
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -61,7 +83,7 @@ spec:
             - name: REV_SERVER_DOMAIN
               value: "home.coredev.uk"
             - name: REV_SERVER_TARGET
-              value: "10.147.20.1"
+              value: "10.147.1.10"
             - name: REV_SERVER_CIDR
               value: "10.147.0.0/16"
             - name: FTLCONF_dns_revlookup
@@ -70,6 +92,8 @@ spec:
               value: "all"
             - name: FTLCONF_dns_listeningMode
               value: "all"
+            - name: FTLCONF_misc_refresh_hostnames
+              value: "true"
           volumeMounts:
             - name: config
               mountPath: /etc/pihole
@@ -89,6 +113,7 @@ spec:
             capabilities:
               add:
                 - NET_ADMIN
+                - NET_RAW
       volumes:
         - name: config
           persistentVolumeClaim:
