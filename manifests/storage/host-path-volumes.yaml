@@ -25,4 +25,34 @@ spec:
       storage: 100Gi
   volumeName: downloads-data-host
   storageClassName: ""
+---
+# Second PV for the same downloads data (for media namespace access)
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: downloads-data-media
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /opt/downloads-data
+  storageClassName: ""
+---
+# Downloads volume claim for media namespace (*arr apps)
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: downloads-data-host
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
+  volumeName: downloads-data-media
+  storageClassName: ""
 

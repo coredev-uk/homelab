@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: qbittorrent-config
+  namespace: media
+data:
+  qBittorrent.conf: |
+    [Application]
+    FileLogger\Enabled=false
+    FileLogger\Path=
+    FileLogger\Backup=true
+    FileLogger\MaxSizeBytes=66560
+    FileLogger\DeleteOld=true
+    FileLogger\AgeType=1
+    FileLogger\MaxAgeType=6
+
+    [BitTorrent]
+    Session\DefaultSavePath=/downloads/torrents/movies
+    Session\TempPath=/downloads/torrents/incomplete
+    Session\TempPathEnabled=true
+    Session\Categories=movies;/downloads/torrents/movies\ntv;/downloads/torrents/tv
+
+    [LegalNotice]
+    Accepted=true
+
+    [Network]
+    Cookies=@Invalid()
+
+    [Preferences]
+    Connection\PortRangeMin=6881
+    Connection\UPnP=false
+    Downloads\SavePath=/downloads/torrents/movies
+    Downloads\TempPath=/downloads/torrents/incomplete
+    Downloads\TempPathEnabled=true
+    General\Locale=en
+    WebUI\Port=8080
+    WebUI\Username=admin
+    WebUI\Password_PBKDF2="@ByteArray(ARQ77eY1NUZaQsuDHbIMCA==:0WMRkYTUWVT9wVvdDtHAjU9b3b7uB8NR1Gur2hmQCvCDpm39Q+PsJRJPaCU51dEiz+dTzh8qbPsL8WkFljQYFQ==)"
+    WebUI\LocalHostAuth=false

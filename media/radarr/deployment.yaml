@@ -30,8 +30,10 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /config
-            - name: data
+            - name: media
               mountPath: /media
+            - name: downloads
+              mountPath: /downloads
           resources:
             requests:
               memory: "256Mi"
@@ -43,9 +45,12 @@ spec:
         - name: config
           persistentVolumeClaim:
             claimName: radarr-config
-        - name: data
+        - name: media
           persistentVolumeClaim:
             claimName: media-data-host
+        - name: downloads
+          persistentVolumeClaim:
+            claimName: downloads-data-host
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

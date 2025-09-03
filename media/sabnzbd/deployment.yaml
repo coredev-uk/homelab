@@ -67,11 +67,21 @@ spec:
               value: "1000"
             - name: TZ
               value: "Europe/London"
+            # Pre-configure download paths
+            - name: SAB_DOWNLOADS_MOVIES
+              value: "/downloads/usenet/movies"
+            - name: SAB_DOWNLOADS_TV
+              value: "/downloads/usenet/tv"
+            - name: SAB_INCOMPLETE_DIR
+              value: "/downloads/usenet/incomplete"
           volumeMounts:
             - name: config
               mountPath: /config
             - name: downloads
               mountPath: /downloads
+            - name: app-config
+              mountPath: /config/sabnzbd.ini
+              subPath: sabnzbd.ini
           resources:
             requests:
               memory: "256Mi"
@@ -86,6 +96,9 @@ spec:
         - name: downloads
           persistentVolumeClaim:
             claimName: downloads-data-host
+        - name: app-config
+          configMap:
+            name: sabnzbd-config
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

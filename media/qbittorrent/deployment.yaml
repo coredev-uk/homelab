@@ -81,6 +81,13 @@ spec:
               value: "/config/ssl/server.crt"
             - name: WEBUI_HTTPS_KEY_PATH
               value: "/config/ssl/server.key"
+            # Pre-configure download paths
+            - name: QB_DOWNLOADS_MOVIES
+              value: "/downloads/torrents/movies"
+            - name: QB_DOWNLOADS_TV
+              value: "/downloads/torrents/tv"
+            - name: QB_INCOMPLETE_DIR
+              value: "/downloads/torrents/incomplete"
           volumeMounts:
             - name: config
               mountPath: /config
@@ -89,6 +96,9 @@ spec:
             - name: tls-certs
               mountPath: /config/ssl/
               readOnly: true
+            - name: app-config
+              mountPath: /config/qBittorrent/qBittorrent.conf
+              subPath: qBittorrent.conf
           resources:
             requests:
               memory: "512Mi"
@@ -111,6 +121,9 @@ spec:
                 path: server.crt
               - key: tls.key
                 path: server.key
+        - name: app-config
+          configMap:
+            name: qbittorrent-config
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
