@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: sabnzbd-config
-  namespace: media
+  namespace: downloads
 data:
   sabnzbd.ini: |
     __version__ = 19
