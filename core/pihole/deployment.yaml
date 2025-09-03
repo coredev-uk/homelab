@@ -1,3 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pihole-network-config
+  namespace: dns
+data:
+  99-network.conf: |
+    # Allow queries from home network
+    listen-address=0.0.0.0
+    bind-interfaces
+    except-interface=lo
+    local-service=false
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -45,6 +58,9 @@ spec:
               mountPath: /etc/pihole
             - name: dnsmasq
               mountPath: /etc/dnsmasq.d
+            - name: network-config
+              mountPath: /etc/dnsmasq.d/99-network.conf
+              subPath: 99-network.conf
           resources:
             requests:
               memory: "256Mi"
@@ -63,6 +79,9 @@ spec:
         - name: dnsmasq
           persistentVolumeClaim:
             claimName: pihole-dnsmasq
+        - name: network-config
+          configMap:
+            name: pihole-network-config
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
