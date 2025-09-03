@@ -116,9 +116,9 @@ pages:
             title: Tech News
             feeds:
               - url: https://itsfoss.com/rss/
-                title: It's FOSS
+                title: "It's FOSS"
               - url: https://feeds.arstechnica.com/arstechnica/index
-                title: Ars Technica
+                title: "Ars Technica"
             limit: 8
 
            - type: monitor
