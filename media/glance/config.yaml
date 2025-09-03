@@ -140,16 +140,10 @@ pages:
                 url: https://grafana.home.coredev.uk
                 check-url: http://grafana.monitoring:3000
                 icon: si:grafana
-              - title: Pi-hole
-                url: https://pihole.home.coredev.uk/admin
-                icon: si:pihole
               - title: Longhorn
                 url: https://longhorn.home.coredev.uk
                 check-url: http://longhorn-frontend.longhorn-system:80
                 icon: si:rancher
-              - title: Traefik
-                url: https://traefik.home.coredev.uk
-                icon: si:traefikproxy
 
           - type: monitor
             title: Media Services
