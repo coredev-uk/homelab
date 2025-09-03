@@ -55,16 +55,8 @@ create_sealed_secret "vpn-secrets" "downloads" "WIREGUARD_PRIVATE_KEY" "$WIREGUA
 # Generate Cloudflare SealedSecret
 create_sealed_secret "cloudflare-api-token-secret" "cert-manager" "api-token" "$CLOUDFLARE_API_TOKEN" "cloudflare-sealed-secret.yaml"
 
-# Generate Notifiarr SealedSecret with multiple API keys
-create_sealed_secret_multi "notifiarr-secrets" "media" "notifiarr-sealed-secret.yaml" \
-  "API_KEY" "$NOTIFIARR_API_KEY" \
-  "SONARR_API_KEY" "$NOTIFIARR_SONARR_API_KEY" \
-  "RADARR_API_KEY" "$NOTIFIARR_RADARR_API_KEY" \
-  "PROWLARR_API_KEY" "$NOTIFIARR_PROWLARR_API_KEY" \
-  "BAZARR_API_KEY" "$NOTIFIARR_BAZARR_API_KEY" \
-  "QBIT_USER" "$NOTIFIARR_QBIT_USER" \
-  "QBIT_PASS" "$NOTIFIARR_QBIT_PASS" \
-  "SABNZBD_API_KEY" "$NOTIFIARR_SABNZBD_API_KEY"
+# Generate Notifiarr SealedSecret
+create_sealed_secret "notifiarr-secrets" "media" "API_KEY" "$NOTIFIARR_API_KEY" "notifiarr-sealed-secret.yaml"
 
 # Generate Glance SealedSecret (reusing pihole password for media namespace)
 create_sealed_secret() {
