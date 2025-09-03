@@ -94,14 +94,6 @@ spec:
               value: "1000"
             - name: TZ
               value: "Europe/London"
-            - name: SABNZBD__special__host_whitelist
-              value: "sabnzbd.home.coredev.uk,sabnzbd.downloads"
-            - name: SAB__misc__enable_https
-              value: "1"
-            - name: SAB__misc__https_port
-              value: ""
-            - name: SABNZBD__folders__script_dir
-              value: "/scripts"
           volumeMounts:
             - name: config
               mountPath: /config
@@ -109,6 +101,9 @@ spec:
               mountPath: /downloads
             - name: scripts-volume
               mountPath: /scripts
+            - name: sabnzbd-config-file
+              mountPath: /config/sabnzbd.ini
+              subPath: sabnzbd.ini
           resources:
             requests:
               memory: "256Mi"
@@ -129,6 +124,9 @@ spec:
           configMap:
             name: sabnzbd-scripts
             defaultMode: 0755
+        - name: sabnzbd-config-file
+          configMap:
+            name: sabnzbd-config
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
