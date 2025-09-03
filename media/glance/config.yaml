@@ -35,8 +35,9 @@ pages:
 
           - type: server-stats
             servers:
-              - type: local
+              - type: prometheus
                 name: Homelab Server
+                url: http://prometheus.monitoring:9090
 
           - type: dns-stats
             service: pihole-v6
