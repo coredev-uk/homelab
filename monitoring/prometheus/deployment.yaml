@@ -34,7 +34,7 @@ spec:
             - --web.console.libraries=/etc/prometheus/console_libraries
             - --web.console.templates=/etc/prometheus/consoles
             - --web.enable-lifecycle
-            - --storage.tsdb.retention.time=7d
+            - --storage.tsdb.retention.time=30d
           ports:
             - containerPort: 9090
           volumeMounts:
@@ -57,7 +57,8 @@ spec:
           configMap:
             name: prometheus-config
         - name: storage
-          emptyDir: {}
+          persistentVolumeClaim:
+            claimName: prometheus-storage
 ---
 apiVersion: v1
 kind: ServiceAccount

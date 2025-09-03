@@ -1,18 +1,4 @@
 apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: prometheus-storage
-spec:
-  capacity:
-    storage: 10Gi
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  storageClassName: local-path
-  hostPath:
-    path: /opt/local-path-provisioner/prometheus-data
----
-apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: prometheus-storage
@@ -23,4 +9,4 @@ spec:
   resources:
     requests:
       storage: 10Gi
-  storageClassName: local-path
+  storageClassName: longhorn
