@@ -194,12 +194,12 @@ pages:
             collapse-after: 6
 
           - type: videos
-            title: Tech Videos
+            title: Video Feed
             channels:
-              - UCXuqSBlHAE6Xw-yeJA0Tunw # Linus Tech Tips
-              - UCBJycsmduvYEL83R_U4JriQ # MKBHD
+              - UCeeFfhMcJa1kjtfZAGskOCA # Tech Linked
               - UCHnyfMqiRRG1u-2MsSQLbXA # Veritasium
-              - UCF9IOB2TExg3QIBupFtBDxg # Jeff Geerling
+              - UCsBjURrPoezykLs9EqgamOA # Fireship
+              - UCUyeluBRhGPCW4rPe_UvBZQ # ThePrimeagen
             limit: 8
             collapse-after: 4
             style: horizontal-cards
