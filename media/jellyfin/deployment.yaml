@@ -15,6 +15,11 @@ spec:
       labels:
         app: jellyfin
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        supplementalGroups:
+          - 303  # render group for Intel GPU access
       containers:
         - name: jellyfin
           image: jellyfin/jellyfin:preview
@@ -30,6 +35,8 @@ spec:
               value: "Europe/London"
             - name: JELLYFIN_PublishedServerUrl
               value: "https://jellyfin.home.coredev.uk"
+          securityContext:
+            privileged: true  # Required for hardware acceleration
           volumeMounts:
             - name: config
               mountPath: /config
@@ -38,6 +45,8 @@ spec:
             - name: data
               mountPath: /media
               readOnly: true
+            - name: render-device
+              mountPath: /dev/dri/renderD128
           resources:
             requests:
               memory: "1Gi"
@@ -55,6 +64,9 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: media-data-host
+        - name: render-device
+          hostPath:
+            path: /dev/dri/renderD128
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
