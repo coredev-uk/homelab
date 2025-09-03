@@ -7,6 +7,8 @@ metadata:
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/redirect-to-https: "true"
     cert-manager.io/cluster-issuer: letsencrypt-prod
+    traefik.ingress.kubernetes.io/service.serversscheme: http
+    traefik.ingress.kubernetes.io/router.middlewares: dns-pihole-headers@kubernetescrd
 spec:
   tls:
     - hosts:

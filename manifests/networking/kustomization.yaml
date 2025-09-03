@@ -8,3 +8,4 @@ resources:
   - security-ingress.yaml
   - argocd-ingress.yaml
   - monitoring-ingress.yaml
+  - pihole-middleware.yaml

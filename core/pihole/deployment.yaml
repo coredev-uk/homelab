@@ -40,6 +40,14 @@ spec:
               value: "1.1.1.1;1.0.0.1"
             - name: DNSMASQ_LISTENING
               value: "all"
+            - name: FTLCONF_dns_listeningMode
+              value: "all"
+            - name: FTLCONF_dns_CNAMEdeepInspection
+              value: "true"
+            - name: FTLCONF_misc_log_queries
+              value: "true"
+            - name: FTLCONF_misc_log_replies
+              value: "true"
           volumeMounts:
             - name: config
               mountPath: /etc/pihole
@@ -114,6 +122,7 @@ spec:
     app: pihole
   type: LoadBalancer
   loadBalancerIP: 10.147.20.26
+  externalTrafficPolicy: Local
   ports:
     - name: dns-tcp
       port: 53
