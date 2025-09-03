@@ -70,7 +70,7 @@ pages:
                     url: https://argocd.home.coredev.uk
                     icon: si:argo
                   - title: Pihole
-                    url: https://pihole.home.coredev.uk
+                    url: https://pihole.home.coredev.uk/admin
                     icon: si:pihole
                   - title: Longhorn
                     url: https://longhorn.home.coredev.uk
@@ -133,7 +133,7 @@ pages:
                 check-url: http://grafana.monitoring:3000
                 icon: si:grafana
               - title: Pi-hole
-                url: https://pihole.home.coredev.uk
+                url: https://pihole.home.coredev.uk/admin
                 check-url: http://pihole-web.dns:80
                 icon: si:pihole
               - title: Longhorn
