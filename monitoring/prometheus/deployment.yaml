@@ -16,6 +16,13 @@ spec:
         app: prometheus
     spec:
       serviceAccountName: prometheus
+      initContainers:
+        - name: fix-permissions
+          image: busybox:1.35
+          command: ['sh', '-c', 'chown -R 65534:65534 /prometheus']
+          volumeMounts:
+            - name: storage
+              mountPath: /prometheus
       containers:
         - name: prometheus
           image: prom/prometheus:v2.48.0
