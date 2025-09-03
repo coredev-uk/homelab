@@ -101,6 +101,12 @@ pages:
                   - title: Notifiarr
                     url: https://notifiarr.home.coredev.uk
                     icon: mdi:bell-ring
+                  - title: Cleanuparr
+                    url: https://cleanuparr.home.coredev.uk
+                    icon: mdi:broom
+                  - title: Huntarr
+                    url: https://huntarr.home.coredev.uk
+                    icon: mdi:magnify
 
               - title: Downloads
                 links:
@@ -177,6 +183,14 @@ pages:
                 url: https://qbittorrent.home.coredev.uk
                 check-url: http://qbittorrent.tunnelled:8080
                 icon: si:qbittorrent
+              - title: Cleanuparr
+                url: https://cleanuparr.home.coredev.uk
+                check-url: http://cleanuparr.media:11011
+                icon: mdi:broom
+              - title: Huntarr
+                url: https://huntarr.home.coredev.uk
+                check-url: http://huntarr.media:9705
+                icon: mdi:magnify
 
           - type: releases
             title: Monitoring & Infra Updates
