@@ -60,6 +60,8 @@ pages:
             markets:
               - symbol: BTC-USD
                 name: Bitcoin
+              - symbol: ETH-USD
+                name: Ethereum
 
       - size: full
         widgets:
