@@ -142,7 +142,7 @@ pages:
                 icon: si:grafana
               - title: Pi-hole
                 url: https://pihole.home.coredev.uk/admin
-                check-url: https://pihole.home.coredev.uk
+                check-url: https://pihole.home.coredev.uk/admin/api.php
                 icon: si:pihole
               - title: Longhorn
                 url: https://longhorn.home.coredev.uk
@@ -150,7 +150,7 @@ pages:
                 icon: si:rancher
               - title: Traefik
                 url: https://traefik.home.coredev.uk
-                check-url: https://traefik.home.coredev.uk
+                check-url: https://traefik.home.coredev.uk/ping
                 icon: si:traefikproxy
 
           - type: monitor
