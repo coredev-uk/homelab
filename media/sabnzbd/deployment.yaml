@@ -95,7 +95,7 @@ spec:
             - name: TZ
               value: "Europe/London"
             - name: SAB__misc__host_whitelist
-              value: "sabnzbd.home.coredev.uk"
+              value: "sabnzbd.home.coredev.uk,sabnzbd.downloads"
             - name: SAB__misc__enable_https
               value: "1"
             - name: SAB__misc__https_port
