@@ -15,10 +15,10 @@ data:
     FileLogger\MaxAgeType=6
 
     [BitTorrent]
-    Session\DefaultSavePath=/downloads/torrents/movies
+    Session\DefaultSavePath=/downloads/torrents/complete/movies
     Session\TempPath=/downloads/torrents/incomplete
     Session\TempPathEnabled=true
-    Session\Categories=movies;/downloads/torrents/movies\ntv;/downloads/torrents/tv
+    Session\Categories=movies;/downloads/torrents/complete/movies\ntv;/downloads/torrents/complete/tv
 
     [LegalNotice]
     Accepted=true
@@ -29,7 +29,7 @@ data:
     [Preferences]
     Connection\PortRangeMin=6881
     Connection\UPnP=false
-    Downloads\SavePath=/downloads/torrents/movies
+    Downloads\SavePath=/downloads/torrents/complete/movies
     Downloads\TempPath=/downloads/torrents/incomplete
     Downloads\TempPathEnabled=true
     General\Locale=en

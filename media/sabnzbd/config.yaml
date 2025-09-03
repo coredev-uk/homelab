@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sabnzbd-config
+  namespace: downloads
+data:
+  sabnzbd.ini: |
+    [misc]
+    host_whitelist = sabnzbd.local
+    enable_https = 1
+    https_port = 8080
+    script_dir = /config/scripts
+    pre_script = Clean.py
+    
+    [categories]
+    [[movies]]
+    name = movies
+    script = replace_for.py
+    priority = 0
+    pp = ""
+    dir = /downloads/usenet/complete/movies
+    
+    [[tv]]
+    name = tv  
+    script = replace_for.py
+    priority = 0
+    pp = ""
+    dir = /downloads/usenet/complete/tv
+    
+    [switches]
+    create_group_folders = 1
+    
+    [folders]
+    dirscan_dir = ""
+    complete_dir = /downloads/usenet/complete
+    download_dir = /downloads/usenet/incomplete
+    download_free = ""
+    permissions = 755
+    script_dir = /config/scripts
+    
+    [servers]
+    # Add your usenet provider configuration here

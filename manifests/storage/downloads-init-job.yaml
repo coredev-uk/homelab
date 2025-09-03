@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: downloads-structure-init
+  namespace: downloads
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+      - name: init-directories
+        image: busybox:latest
+        command: ['sh', '-c']
+        args:
+        - |
+          echo "Creating downloads directory structure..."
+          
+          # Create usenet structure
+          mkdir -p /downloads/usenet/complete/tv
+          mkdir -p /downloads/usenet/complete/movies
+          mkdir -p /downloads/usenet/incomplete/tv
+          mkdir -p /downloads/usenet/incomplete/movies
+          
+          # Create torrents structure
+          mkdir -p /downloads/torrents/complete/tv
+          mkdir -p /downloads/torrents/complete/movies
+          mkdir -p /downloads/torrents/incomplete/tv
+          mkdir -p /downloads/torrents/incomplete/movies
+          
+          # Set permissions
+          chmod -R 755 /downloads
+          
+          echo "Directory structure created successfully:"
+          find /downloads -type d | sort
+        volumeMounts:
+        - name: downloads
+          mountPath: /downloads
+      volumes:
+      - name: downloads
+        persistentVolumeClaim:
+          claimName: downloads-data-host
