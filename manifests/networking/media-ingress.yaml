@@ -19,7 +19,6 @@ spec:
         - notifiarr.home.coredev.uk
         - cleanuparr.home.coredev.uk
         - huntarr.home.coredev.uk
-        - prowlarr.home.coredev.uk
       secretName: media-tls
   rules:
     - host: radarr.home.coredev.uk
@@ -112,14 +111,4 @@ spec:
                 name: huntarr
                 port:
                   number: 9705
-    - host: prowlarr.home.coredev.uk
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: prowlarr
-                port:
-                  number: 9696
 

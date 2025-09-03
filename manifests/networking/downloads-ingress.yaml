@@ -12,6 +12,7 @@ spec:
     - hosts:
         - qbittorrent.home.coredev.uk
         - sabnzbd.home.coredev.uk
+        - prowlarr.home.coredev.uk
       secretName: downloads-tls
   rules:
     - host: qbittorrent.home.coredev.uk
@@ -34,4 +35,14 @@ spec:
                 name: sabnzbd
                 port:
                   number: 8080
+    - host: prowlarr.home.coredev.uk
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: prowlarr
+                port:
+                  number: 9696
 

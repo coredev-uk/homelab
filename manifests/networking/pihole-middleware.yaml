@@ -4,8 +4,10 @@ metadata:
   name: pihole-real-ip
   namespace: dns
 spec:
-  forwardAuth:
-    trustForwardHeader: true
+  headers:
+    customRequestHeaders:
+      X-Real-IP: ""
+      X-Forwarded-For: ""
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
