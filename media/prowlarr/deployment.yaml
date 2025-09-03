@@ -51,6 +51,10 @@ spec:
               value: "1000"
             - name: TZ
               value: "Europe/London"
+            - name: DOTNET_SYSTEM_NET_HTTP_USESOCKETSHTTPHANDLER
+              value: "0"
+            - name: ASPNETCORE_URLS
+              value: "http://*:9696"
           volumeMounts:
             - name: config
               mountPath: /config
