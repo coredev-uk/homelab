@@ -53,8 +53,8 @@ spec:
                   key: FIREWALL_OUTBOUND_SUBNETS
             - name: DOT
               value: "off"
-            - name: DNS_PLAINTEXT_ADDRESS
-              value: "1.1.1.1,8.8.8.8"
+            - name: DNS_ADDRESS
+              value: "1.1.1.1"
           resources:
             requests:
               memory: "128Mi"
