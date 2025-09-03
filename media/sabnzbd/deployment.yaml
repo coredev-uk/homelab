@@ -94,7 +94,7 @@ spec:
               value: "1000"
             - name: TZ
               value: "Europe/London"
-            - name: SAB__misc__host_whitelist
+            - name: SABNZBD__misc__host_whitelist
               value: "sabnzbd.home.coredev.uk,sabnzbd.downloads"
             - name: SAB__misc__enable_https
               value: "1"
