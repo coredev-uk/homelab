@@ -10,6 +10,10 @@ data:
     bind-interfaces
     except-interface=lo
     local-service=false
+    # Explicitly allow network range
+    interface=eth0
+    # Don't check for bogus private reverse lookups
+    bogus-priv=false
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -52,6 +56,10 @@ spec:
             - name: FTLCONF_dns_upstreams
               value: "1.1.1.1;1.0.0.1"
             - name: DNSMASQ_LISTENING
+              value: "all"
+            - name: FTLCONF_dns_interface
+              value: "all"
+            - name: FTLCONF_dns_listeningMode
               value: "all"
           volumeMounts:
             - name: config
