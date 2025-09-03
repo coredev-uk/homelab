@@ -99,7 +99,7 @@ pages:
                     url: https://prowlarr.home.coredev.uk
                     icon: sh:prowlarr-light
 
-              - title: Helper Containers
+              - title: Helper Apps
                 links:
                   - title: Notifiarr
                     url: https://notifiarr.home.coredev.uk
