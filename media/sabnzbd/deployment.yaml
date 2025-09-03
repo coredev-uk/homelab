@@ -22,20 +22,22 @@ spec:
           args:
             - |
               # Create scripts directory
-              mkdir -p /config/scripts
+              mkdir -p /scripts
               
               # Copy scripts from ConfigMap
-              cp /tmp/scripts/* /config/scripts/
+              cp /tmp/scripts/* /scripts/
               
               # Set executable permissions
-              chmod +x /config/scripts/*.py
+              chmod +x /scripts/*.py
               
               echo "Scripts setup completed"
           volumeMounts:
-            - name: config
-              mountPath: /config
+            - name: scripts-volume
+              mountPath: /scripts
             - name: scripts-temp
               mountPath: /tmp/scripts
+            - name: sabnzbd-config
+              mountPath: /tmp/config
       containers:
         - name: gluetun
           image: qmcgaw/gluetun:latest
@@ -98,14 +100,15 @@ spec:
               value: "1"
             - name: SAB__misc__https_port
               value: ""
+            - name: SABNZBD__folders__script_dir
+              value: "/scripts"
           volumeMounts:
             - name: config
               mountPath: /config
             - name: downloads
               mountPath: /downloads
-            - name: sabnzbd-config
-              mountPath: /config/sabnzbd.ini
-              subPath: sabnzbd.ini
+            - name: scripts-volume
+              mountPath: /scripts
           resources:
             requests:
               memory: "256Mi"
@@ -120,9 +123,8 @@ spec:
         - name: downloads
           persistentVolumeClaim:
             claimName: downloads-data-host
-        - name: sabnzbd-config
-          configMap:
-            name: sabnzbd-config
+        - name: scripts-volume
+          emptyDir: {}
         - name: scripts-temp
           configMap:
             name: sabnzbd-scripts
