@@ -98,6 +98,9 @@ pages:
                   - title: Prowlarr
                     url: https://prowlarr.home.coredev.uk
                     icon: sh:prowlarr-light
+
+              - title: Helper Containers
+                links:
                   - title: Notifiarr
                     url: https://notifiarr.home.coredev.uk
                     icon: mdi:bell-ring
@@ -173,7 +176,7 @@ pages:
                 icon: si:sonarr
               - title: Prowlarr
                 url: https://prowlarr.home.coredev.uk
-                check-url: http://prowlarr.media:9696
+                check-url: http://prowlarr.tunnelled:9696
                 icon: sh:prowlarr-light
               - title: Notifiarr
                 url: https://notifiarr.home.coredev.uk
