@@ -164,10 +164,10 @@ pages:
                 url: https://sonarr.home.coredev.uk
                 check-url: http://sonarr.media:8989
                 icon: si:sonarr
-              - title: Prowlarr
-                url: https://prowlarr.home.coredev.uk
-                check-url: http://prowlarr.downloads:9696
-                icon: sh:prowlarr-light
+               - title: Prowlarr
+                 url: https://prowlarr.home.coredev.uk
+                 check-url: http://prowlarr.media:9696
+                 icon: sh:prowlarr-light
               - title: qBittorrent
                 url: https://qbittorrent.home.coredev.uk
                 check-url: http://qbittorrent.downloads:8080
