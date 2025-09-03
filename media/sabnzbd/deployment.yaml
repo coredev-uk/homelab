@@ -18,8 +18,8 @@ spec:
       containers:
         - name: gluetun
           image: qmcgaw/gluetun:latest
-           ports:
-             - containerPort: 8080
+          ports:
+            - containerPort: 8090
           securityContext:
             privileged: true
             capabilities:
@@ -67,18 +67,11 @@ spec:
               value: "1000"
             - name: TZ
               value: "Europe/London"
-            # Pre-configure download paths
-            - name: SAB_DOWNLOADS_MOVIES
-              value: "/downloads/usenet/movies"
-            - name: SAB_DOWNLOADS_TV
-              value: "/downloads/usenet/tv"
-            - name: SAB_INCOMPLETE_DIR
-              value: "/downloads/usenet/incomplete"
-           volumeMounts:
-             - name: config
-               mountPath: /config
-             - name: downloads
-               mountPath: /downloads
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: downloads
+              mountPath: /downloads
           resources:
             requests:
               memory: "256Mi"
@@ -86,13 +79,13 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "1000m"
-       volumes:
-         - name: config
-           persistentVolumeClaim:
-             claimName: sabnzbd-config
-         - name: downloads
-           persistentVolumeClaim:
-             claimName: downloads-data-host
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: sabnzbd-config
+        - name: downloads
+          persistentVolumeClaim:
+            claimName: downloads-data-host
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -115,7 +108,7 @@ metadata:
 spec:
   selector:
     app: sabnzbd
-   ports:
-     - port: 8080
-       targetPort: 8080
+  ports:
+    - port: 8090
+      targetPort: 8090
   type: ClusterIP
