@@ -15,10 +15,15 @@ spec:
       labels:
         app: grafana
     spec:
-      securityContext:
-        runAsUser: 472
-        runAsGroup: 472
-        fsGroup: 472
+      initContainers:
+        - name: fix-permissions
+          image: busybox:1.35
+          command: ['sh', '-c', 'mkdir -p /var/lib/grafana && chown -R 472:472 /var/lib/grafana']
+          volumeMounts:
+            - name: storage
+              mountPath: /var/lib/grafana
+          securityContext:
+            runAsUser: 0
       containers:
         - name: grafana
           image: grafana/grafana:10.2.0
@@ -41,6 +46,9 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "500m"
+          securityContext:
+            runAsUser: 472
+            runAsGroup: 472
       volumes:
         - name: config
           configMap:
@@ -49,5 +57,4 @@ spec:
           configMap:
             name: grafana-datasources
         - name: storage
-          persistentVolumeClaim:
-            claimName: grafana-storage
+          emptyDir: {}
