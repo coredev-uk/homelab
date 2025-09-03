@@ -1,6 +1,24 @@
 # Agent Tools Configuration
 
-This document describes specialized agent tools and commands available for this homelab GitOps repository.
+This document provides coding guidelines and available tools for this homelab GitOps repository.
+
+## Build/Test/Lint Commands
+
+- **Validate YAML**: `kubectl apply --dry-run=client -k .` (validate Kubernetes manifests)
+- **Test deployment**: `kubectl apply --dry-run=server -k <directory>` (server-side validation)
+- **Lint commits**: `npx commitlint --from HEAD~1` (if commitlint installed)
+- **Generate secrets**: `cd secrets && ./generate-sealed-secrets.sh` (create sealed secrets)
+- **Deploy changes**: Commit and push to trigger ArgoCD sync (preferred over direct kubectl)
+
+## Code Style Guidelines
+
+- **YAML**: 2-space indentation, lowercase keys, no trailing spaces
+- **Naming**: Use kebab-case for resource names, lowercase for namespaces
+- **Labels**: Always include `app` label, use descriptive values
+- **Comments**: Include purpose/context for complex configurations
+- **Secrets**: Use SealedSecrets, never commit plaintext secrets
+- **GitOps**: Prefer git commits over direct kubectl for changes (ArgoCD auto-syncs)
+- **Commits**: Follow conventional commits (feat/fix/docs/chore) with scopes (media/core/infra)
 
 ## Available Agents
 
