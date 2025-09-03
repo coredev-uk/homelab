@@ -1,35 +1,3 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: pihole-dnsmasq-config
-  namespace: dns
-data:
-  custom.conf: |
-    # Enable reverse DNS resolution
-    server=/in-addr.arpa/10.147.20.1
-    server=/ip6.arpa/10.147.20.1
-    
-    # Local domain resolution 
-    local=/home.coredev.uk/
-    domain=home.coredev.uk
-    expand-hosts
-    
-    # Network discovery settings
-    dhcp-fqdn
-    dhcp-option=option:domain-name,home.coredev.uk
-    
-    # Enhance hostname resolution
-    log-dhcp
-    log-queries
-    
-    # Cache settings for better performance
-    cache-size=10000
-    dns-forward-max=1000
-    
-    # Local network settings
-    listen-address=0.0.0.0
-    bind-interfaces
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -72,41 +40,11 @@ spec:
               value: "1.1.1.1;1.0.0.1"
             - name: DNSMASQ_LISTENING
               value: "all"
-            - name: FTLCONF_dns_listeningMode
-              value: "all"
-            - name: FTLCONF_dns_CNAMEdeepInspection
-              value: "true"
-            - name: FTLCONF_misc_log_queries
-              value: "true"
-            - name: FTLCONF_misc_log_replies
-              value: "true"
-            - name: FTLCONF_dns_revlookup
-              value: "true"
-            - name: FTLCONF_dns_resolveipv6
-              value: "true"
-            - name: FTLCONF_dns_resolveipv4
-              value: "true"
-            - name: FTLCONF_misc_refresh_hostnames
-              value: "true"
-            - name: REV_SERVER
-              value: "true"
-            - name: REV_SERVER_DOMAIN
-              value: "home.coredev.uk"
-            - name: REV_SERVER_TARGET
-              value: "10.147.20.1"
-            - name: REV_SERVER_CIDR
-              value: "10.147.0.0/16"
           volumeMounts:
             - name: config
               mountPath: /etc/pihole
             - name: dnsmasq
               mountPath: /etc/dnsmasq.d
-            - name: custom-dnsmasq
-              mountPath: /etc/dnsmasq.d/02-custom.conf
-              subPath: custom.conf
-            - name: network-scan
-              mountPath: /usr/local/bin/network-scan.sh
-              subPath: network-scan.sh
           resources:
             requests:
               memory: "256Mi"
@@ -118,9 +56,6 @@ spec:
             capabilities:
               add:
                 - NET_ADMIN
-                - NET_RAW
-                - SYS_NICE
-            privileged: false
       volumes:
         - name: config
           persistentVolumeClaim:
@@ -128,13 +63,6 @@ spec:
         - name: dnsmasq
           persistentVolumeClaim:
             claimName: pihole-dnsmasq
-        - name: custom-dnsmasq
-          configMap:
-            name: pihole-dnsmasq-config
-        - name: network-scan
-          configMap:
-            name: pihole-dnsmasq-config
-            defaultMode: 0755
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
