@@ -33,5 +33,5 @@ spec:
               service:
                 name: sabnzbd
                 port:
-                  number: 8090
+                  number: 8080
 
