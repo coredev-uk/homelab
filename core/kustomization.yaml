@@ -11,3 +11,4 @@ resources:
   - frigate/
   - metallb/
   - traefik/
+  - auto-updater/
