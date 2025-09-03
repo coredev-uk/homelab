@@ -119,14 +119,14 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: downloads-apps
+  name: tunnelled-apps
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: https://github.com/coredev-uk/homelab
     targetRevision: HEAD
-    path: downloads
+    path: tunnelled
   destination:
     server: https://kubernetes.default.svc
   syncPolicy:

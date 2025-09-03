@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: sabnzbd-scripts
-  namespace: downloads
+  namespace: tunnelled
 data:
   Clean.py: |
     #!/usr/bin/python3 -OO

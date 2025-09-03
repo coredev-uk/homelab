@@ -175,7 +175,7 @@ pages:
                 icon: mdi:bell-ring
               - title: qBittorrent
                 url: https://qbittorrent.home.coredev.uk
-                check-url: http://qbittorrent.downloads:8080
+                check-url: http://qbittorrent.tunnelled:8080
                 icon: si:qbittorrent
 
           - type: releases

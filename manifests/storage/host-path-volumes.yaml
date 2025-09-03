@@ -16,7 +16,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: downloads-data-host
-  namespace: downloads
+  namespace: tunnelled
 spec:
   accessModes:
     - ReadWriteMany

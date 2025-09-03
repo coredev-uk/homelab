@@ -1,24 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: flaresolverr
-  namespace: downloads
+  name: prowlarr
+  namespace: tunnelled
   labels:
-    app: flaresolverr
+    app: prowlarr
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: flaresolverr
+      app: prowlarr
   template:
     metadata:
       labels:
-        app: flaresolverr
+        app: prowlarr
     spec:
       containers:
         - name: gluetun
           image: qmcgaw/gluetun:v3.40.0
           securityContext:
+            privileged: true
             capabilities:
               add:
                 - NET_ADMIN
@@ -48,30 +49,21 @@ spec:
                 configMapKeyRef:
                   name: vpn-config
                   key: FIREWALL_OUTBOUND_SUBNETS
-            - name: UPDATER_PERIOD
-              value: "24h"
-            - name: TZ
-              value: "Europe/London"
             - name: DOT
               value: "off"
             - name: DNS_ADDRESS
               value: "1.1.1.1"
-          ports:
-            - containerPort: 8191
-          volumeMounts:
-            - name: gluetun-config
-              mountPath: /gluetun
-            - name: dev-tun
-              mountPath: /dev/net/tun
           resources:
             requests:
-              memory: "64Mi"
+              memory: "128Mi"
               cpu: "50m"
             limits:
               memory: "256Mi"
-              cpu: "500m"
+              cpu: "200m"
         - name: flaresolverr
           image: flaresolverr/flaresolverr:v3.4.0
+          ports:
+            - containerPort: 8191
           env:
             - name: PUID
               value: "1000"
@@ -92,19 +84,37 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "1000m"
+        - name: prowlarr
+          image: lscr.io/linuxserver/prowlarr:2.0.5
+          ports:
+            - containerPort: 9696
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/London"
+          volumeMounts:
+            - name: config
+              mountPath: /config
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
       volumes:
-        - name: gluetun-config
+        - name: config
           persistentVolumeClaim:
-            claimName: flaresolverr-gluetun-config
-        - name: dev-tun
-          hostPath:
-            path: /dev/net/tun
+            claimName: prowlarr-config
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: flaresolverr-gluetun-config
-  namespace: downloads
+  name: prowlarr-config
+  namespace: tunnelled
 spec:
   accessModes:
     - ReadWriteOnce
@@ -116,12 +126,16 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: flaresolverr
-  namespace: downloads
+  name: prowlarr
+  namespace: tunnelled
 spec:
   selector:
-    app: flaresolverr
+    app: prowlarr
   ports:
-    - port: 8191
+    - name: prowlarr-web
+      port: 9696
+      targetPort: 9696
+    - name: flaresolverr
+      port: 8191
       targetPort: 8191
   type: ClusterIP

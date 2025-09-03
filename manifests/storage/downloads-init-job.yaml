@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: downloads-structure-init
-  namespace: downloads
+  namespace: tunnelled
 spec:
   template:
     spec:
