@@ -103,13 +103,13 @@ pages:
                 links:
                   - title: Notifiarr
                     url: https://notifiarr.home.coredev.uk
-                    icon: mdi:bell-ring
+                    icon: di:notifiarr
                   - title: Cleanuparr
                     url: https://cleanuparr.home.coredev.uk
-                    icon: mdi:broom
+                    icon: di:cleanuparr
                   - title: Huntarr
                     url: https://huntarr.home.coredev.uk
-                    icon: mdi:magnify
+                    icon: di:huntarr
 
               - title: Downloads
                 links:
