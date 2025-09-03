@@ -40,6 +40,16 @@ spec:
               value: "1.1.1.1;1.0.0.1"
             - name: DNSMASQ_LISTENING
               value: "all"
+            - name: REV_SERVER
+              value: "true"
+            - name: REV_SERVER_DOMAIN
+              value: "home.coredev.uk"
+            - name: REV_SERVER_TARGET
+              value: "10.147.20.1"
+            - name: REV_SERVER_CIDR
+              value: "10.147.0.0/16"
+            - name: FTLCONF_dns_revlookup
+              value: "true"
           volumeMounts:
             - name: config
               mountPath: /etc/pihole
