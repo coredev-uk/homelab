@@ -17,18 +17,18 @@ pages:
             location: ${GLANCE_WEATHER_LOCATION}
             show-area-name: true
 
-          - type: monitor
-            title: System Status
-            sites:
-              - title: Prometheus Metrics
-                url: https://prometheus.home.coredev.uk
-                check-url: http://prometheus.monitoring:9090/api/v1/status/buildinfo
-                icon: si:prometheus
+
 
           - type: dns-stats
             service: pihole-v6
             url: http://pihole-web.dns
             password: ${PIHOLE_PASSWORD}
+
+          - type: server-stats
+            title: Server Performance
+            servers:
+              - type: local
+                name: Homelab Server
 
           - type: bookmarks
             title: Monitoring
@@ -48,12 +48,12 @@ pages:
           - type: markets
             title: Portfolio
             markets:
-              - symbol: VUAG.L
-                name: Vanguard FTSE
+              - symbol: VUSA.L
+                name: S&P 500 ACC
               - symbol: NVDA
                 name: Nvidia
-              - symbol: AAPL
-                name: Apple
+              - symbol: MAB.L
+                name: Mitchells & Butlers
 
           - type: markets
             title: Crypto
@@ -121,6 +121,10 @@ pages:
                 title: "It's FOSS"
               - url: https://feeds.arstechnica.com/arstechnica/index
                 title: "Ars Technica"
+              - url: https://www.techradar.com/uk/feeds.xml
+                title: "TechRadar"
+              - url: https://9to5mac.com/feed/
+                title: "9to5Mac"
             limit: 8
 
           - type: monitor
