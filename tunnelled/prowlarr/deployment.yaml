@@ -49,10 +49,8 @@ spec:
                 configMapKeyRef:
                   name: vpn-config
                   key: FIREWALL_OUTBOUND_SUBNETS
-            - name: DOT
-              value: "off"
-            - name: DNS_ADDRESS
-              value: "1.1.1.1"
+            - name: DNS_KEEP_NAMESERVER
+              value: "on"
           resources:
             requests:
               memory: "128Mi"
