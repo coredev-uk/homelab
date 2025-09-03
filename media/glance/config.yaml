@@ -17,8 +17,6 @@ pages:
             location: ${GLANCE_WEATHER_LOCATION}
             show-area-name: true
 
-
-
           - type: dns-stats
             service: pihole-v6
             url: http://pihole-web.dns
@@ -176,14 +174,10 @@ pages:
           - type: releases
             title: Monitoring & Infra Updates
             repositories:
-              - prometheus/prometheus
-              - grafana/grafana
-              - prometheus/node_exporter
               - glanceapp/glance
-              - k3s-io/k3s
               - argoproj/argo-cd
-              - longhorn/longhorn
-              - traefik/traefik
+              - jellyfin/jellyfin
+              - lscambo13/ElegantFin
             limit: 10
             collapse-after: 6
 
