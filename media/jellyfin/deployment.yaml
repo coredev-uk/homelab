@@ -16,26 +16,33 @@ spec:
         app: jellyfin
     spec:
       securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
         supplementalGroups:
           - 303  # render group for Intel GPU access
+      initContainers:
+        - name: fix-permissions
+          image: busybox:latest
+          command: ['sh', '-c', 'chown -R 1000:1000 /config /cache && chmod -R 755 /config /cache']
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: cache
+              mountPath: /cache
+          securityContext:
+            runAsUser: 0
       containers:
         - name: jellyfin
-          image: jellyfin/jellyfin:latest
+          image: jellyfin/jellyfin:preview
           ports:
             - containerPort: 8096
             - containerPort: 8920
           env:
-            - name: PUID
-              value: "1000"
-            - name: PGID
-              value: "1000"
             - name: TZ
               value: "Europe/London"
             - name: JELLYFIN_PublishedServerUrl
               value: "https://jellyfin.home.coredev.uk"
           securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
             privileged: true  # Required for hardware acceleration
           volumeMounts:
             - name: config
