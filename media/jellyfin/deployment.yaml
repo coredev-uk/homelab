@@ -22,7 +22,7 @@ spec:
           - 303  # render group for Intel GPU access
       containers:
         - name: jellyfin
-          image: jellyfin/jellyfin:preview
+          image: jellyfin/jellyfin:latest
           ports:
             - containerPort: 8096
             - containerPort: 8920
