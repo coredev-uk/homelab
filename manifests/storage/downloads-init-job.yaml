@@ -27,8 +27,9 @@ spec:
           mkdir -p /downloads/torrents/incomplete/tv
           mkdir -p /downloads/torrents/incomplete/movies
           
-          # Set permissions
+          # Set permissions and ownership (abc:users = 1000:1000 in linuxserver containers)
           chmod -R 755 /downloads
+          chown -R 1000:1000 /downloads
           
           echo "Directory structure created successfully:"
           find /downloads -type d | sort
