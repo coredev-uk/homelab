@@ -102,11 +102,13 @@ create_sealed_secret "cloudflare-api-token-secret" "cert-manager" "api-token" "$
 # Generate Notifiarr SealedSecret
 create_sealed_secret "notifiarr-secrets" "media" "API_KEY" "$NOTIFIARR_API_KEY" "notifiarr-sealed-secret.yaml"
 
-# Generate Glance SealedSecret with multiple values including API key
+# Generate Glance API key secret (API key only for VPN widget access)
+create_sealed_secret "glance-vpn-api-key" "media" "GLUETUN_API_KEY" "$GLUETUN_API_KEY" "glance-vpn-api-key-sealed-secret.yaml"
+
+# Generate Glance SealedSecret with weather location and pihole password
 create_sealed_secret_multi "glance-secrets" "media" "glance-sealed-secret.yaml" \
   "PIHOLE_WEBPASSWORD" "$PIHOLE_WEBPASSWORD" \
-  "GLANCE_WEATHER_LOCATION" "$GLANCE_WEATHER_LOCATION" \
-  "GLUETUN_API_KEY" "$GLUETUN_API_KEY"
+  "GLANCE_WEATHER_LOCATION" "$GLANCE_WEATHER_LOCATION"
 
 echo ""
 echo "All SealedSecrets generated successfully!"
@@ -118,6 +120,7 @@ echo "kubectl apply -f sealed-secrets/vpn-sealed-secret.yaml"
 echo "kubectl apply -f sealed-secrets/cloudflare-sealed-secret.yaml"
 echo "kubectl apply -f sealed-secrets/notifiarr-sealed-secret.yaml"
 echo "kubectl apply -f sealed-secrets/glance-sealed-secret.yaml"
+echo "kubectl apply -f sealed-secrets/glance-vpn-api-key-sealed-secret.yaml"
 echo ""
 echo "After applying, you can remove the old plain text secrets:"
 echo "kubectl delete secret pihole-secrets -n dns --ignore-not-found"
@@ -126,4 +129,5 @@ echo "kubectl delete secret vpn-secrets -n tunnelled --ignore-not-found"
 echo "kubectl delete secret cloudflare-api-token-secret -n cert-manager --ignore-not-found"
 echo "kubectl delete secret notifiarr-secrets -n media --ignore-not-found"
 echo "kubectl delete secret glance-secrets -n media --ignore-not-found"
+echo "kubectl delete secret glance-vpn-api-key -n media --ignore-not-found"
 
