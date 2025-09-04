@@ -13,13 +13,26 @@ fi
 # Source the secrets
 source secrets.env
 
+# Function to generate base58 encoded string
+generate_base58() {
+  local length=$1
+  local alphabet="123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+  local result=""
+  
+  for ((i=0; i<length; i++)); do
+    local rand_index=$((RANDOM % 58))
+    result="${result}${alphabet:$rand_index:1}"
+  done
+  
+  echo "$result"
+}
+
 # Generate Gluetun API key if not provided
 if [ -z "$GLUETUN_API_KEY" ]; then
   echo "Generating Gluetun API key..."
   # Generate a base58 22-character API key similar to what gluetun genkey produces
-  GLUETUN_API_KEY=$(openssl rand -base64 32 | tr -d "=+/" | cut -c1-22)
+  GLUETUN_API_KEY=$(generate_base58 22)
   echo "Generated API key: $GLUETUN_API_KEY"
-  echo "Add this to your secrets.env file: GLUETUN_API_KEY=$GLUETUN_API_KEY"
 fi
 
 # Create sealed-secrets directory if it doesn't exist
