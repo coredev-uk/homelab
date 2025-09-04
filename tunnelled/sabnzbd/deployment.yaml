@@ -102,7 +102,7 @@ spec:
             - name: DOT
               value: "off"
             - name: DNS_ADDRESS
-              value: "8.8.8.8,1.1.1.1"
+              value: "1.1.1.1"
             - name: DNS_KEEP_NAMESERVER
               value: "on"
             - name: HTTPPROXY
