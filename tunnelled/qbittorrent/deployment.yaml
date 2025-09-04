@@ -68,6 +68,8 @@ spec:
               value: ":8888"
             - name: HTTPPROXY_STEALTH
               value: "on"
+            - name: HTTP_CONTROL_SERVER_LOG
+              value: "on"
           resources:
             requests:
               memory: "128Mi"
