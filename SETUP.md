@@ -201,7 +201,7 @@ kubectl apply -f apps/app-of-apps.yaml
 kubectl wait --for=condition=available --timeout=300s deployment/argocd-applicationset-controller -n argocd
 
 # Verify namespaces exist
-kubectl get namespaces | grep -E "(dns|security|downloads|cert-manager|media)"
+kubectl get namespaces | grep -E "(dns|security|tunnelled|cert-manager|media)"
 ```
 
 ### 5. Apply Sealed Secrets (After Namespaces Exist)

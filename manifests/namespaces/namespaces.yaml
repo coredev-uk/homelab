@@ -8,9 +8,9 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: downloads
+  name: tunnelled
   labels:
-    name: downloads
+    name: tunnelled
 ---
 apiVersion: v1
 kind: Namespace
