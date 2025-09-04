@@ -92,7 +92,7 @@ spec:
   resources:
     requests:
       storage: 5Gi
-  storageClassName: longhorn
+  storageClassName: local-path
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
