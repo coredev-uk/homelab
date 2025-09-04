@@ -18,6 +18,8 @@ spec:
       containers:
         - name: gluetun
           image: qmcgaw/gluetun:v3.40.0
+          ports:
+            - containerPort: 8000
           securityContext:
             privileged: true
             capabilities:
@@ -50,6 +52,14 @@ spec:
                   name: vpn-config
                   key: FIREWALL_OUTBOUND_SUBNETS
             - name: DNS_KEEP_NAMESERVER
+              value: "on"
+            - name: HTTPPROXY
+              value: "on"
+            - name: HTTPPROXY_LISTENING_ADDRESS
+              value: ":8888"
+            - name: HTTPPROXY_STEALTH
+              value: "on"
+            - name: VPN_PORT_FORWARDING
               value: "on"
           resources:
             requests:

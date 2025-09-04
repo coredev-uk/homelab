@@ -61,21 +61,65 @@ pages:
               - symbol: ETH-USD
                 name: Ethereum
 
-          - type: monitor
-            title: VPN Protected Apps
-            sites:
-              - title: Prowlarr VPN
-                url: https://prowlarr.home.coredev.uk
-                check-url: http://prowlarr.tunnelled:9696
-                icon: sh:prowlarr-light
-              - title: qBittorrent VPN
-                url: https://qbittorrent.home.coredev.uk
-                check-url: http://qbittorrent.tunnelled:8080
-                icon: si:qbittorrent
-              - title: SABnzbd VPN
-                url: https://sabnzbd.home.coredev.uk
-                check-url: http://sabnzbd.tunnelled:8080
-                icon: sh:sabnzbd-light
+          - type: custom-api
+            title: VPN Status
+            cache: 30s
+            url: http://prowlarr.tunnelled:8000/v1/openvpn/status
+            template: |
+              <div class="flex flex-column gap-10">
+                <div class="flex items-center gap-10">
+                  <span class="color-highlight">Prowlarr VPN</span>
+                  <span class="size-h6 {{ if eq (.JSON.String "status") "running" }}color-positive{{ else }}color-negative{{ end }}">
+                    {{ .JSON.String "status" | upper }}
+                  </span>
+                </div>
+                {{ if .JSON.String "country" }}
+                <p class="size-h6">📍 {{ .JSON.String "country" }} - {{ .JSON.String "city" }}</p>
+                {{ end }}
+                {{ if .JSON.String "public_ip" }}
+                <p class="size-h6">🌐 {{ .JSON.String "public_ip" }}</p>
+                {{ end }}
+              </div>
+
+          - type: custom-api
+            title: qBittorrent VPN Status
+            cache: 30s
+            url: http://qbittorrent.tunnelled:8000/v1/openvpn/status
+            template: |
+              <div class="flex flex-column gap-10">
+                <div class="flex items-center gap-10">
+                  <span class="color-highlight">qBittorrent VPN</span>
+                  <span class="size-h6 {{ if eq (.JSON.String "status") "running" }}color-positive{{ else }}color-negative{{ end }}">
+                    {{ .JSON.String "status" | upper }}
+                  </span>
+                </div>
+                {{ if .JSON.String "country" }}
+                <p class="size-h6">📍 {{ .JSON.String "country" }} - {{ .JSON.String "city" }}</p>
+                {{ end }}
+                {{ if .JSON.String "public_ip" }}
+                <p class="size-h6">🌐 {{ .JSON.String "public_ip" }}</p>
+                {{ end }}
+              </div>
+
+          - type: custom-api
+            title: SABnzbd VPN Status  
+            cache: 30s
+            url: http://sabnzbd.tunnelled:8000/v1/openvpn/status
+            template: |
+              <div class="flex flex-column gap-10">
+                <div class="flex items-center gap-10">
+                  <span class="color-highlight">SABnzbd VPN</span>
+                  <span class="size-h6 {{ if eq (.JSON.String "status") "running" }}color-positive{{ else }}color-negative{{ end }}">
+                    {{ .JSON.String "status" | upper }}
+                  </span>
+                </div>
+                {{ if .JSON.String "country" }}
+                <p class="size-h6">📍 {{ .JSON.String "country" }} - {{ .JSON.String "city" }}</p>
+                {{ end }}
+                {{ if .JSON.String "public_ip" }}
+                <p class="size-h6">🌐 {{ .JSON.String "public_ip" }}</p>
+                {{ end }}
+              </div>
 
       - size: full
         widgets:
