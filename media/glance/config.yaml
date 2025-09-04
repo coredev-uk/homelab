@@ -19,7 +19,7 @@ pages:
 
           - type: dns-stats
             service: pihole-v6
-            url: https://pihole-web.dns
+            url: http://pihole-web.dns
             username: admin
             password: ${PIHOLE_PASSWORD}
 
