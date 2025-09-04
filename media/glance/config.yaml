@@ -18,8 +18,9 @@ pages:
             show-area-name: true
 
           - type: dns-stats
-            service: pihole
-            url: http://pihole.core
+            service: pihole-v6
+            url: https://pihole-web.dns
+            username: admin
             password: ${PIHOLE_PASSWORD}
 
           - type: server-stats
