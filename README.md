@@ -1,6 +1,7 @@
 <div align="center">
 
-# Core's Homelab
+# Homelab Configuration
+═══════════════════════════
 
 </div>
 
@@ -14,10 +15,16 @@ See [SETUP.md](SETUP.md) for detailed setup instructions.
 
 ## Structure
 
-- `bootstrap/` - ArgoCD installation
-- `core/` - Core infrastructure services  
-- `media/` - Media stack applications
-- `apps/` - ArgoCD application definitions
-- `manifests/` - Kubernetes manifests
+```
+├── apps/                    # ArgoCD application definitions
+├── bootstrap/               # ArgoCD installation and initial setup
+├── core/                    # Core infrastructure services
+├── manifests/               # Shared Kubernetes manifests
+├── media/                   # Media automation stack
+├── monitoring/              # Observability stack
+├── scripts/                 # Deployment and utility scripts
+├── secrets/                 # Sealed secrets configuration
+└── tunnelled/               # VPN-routed services
+```
 
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
