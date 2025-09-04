@@ -9,3 +9,27 @@ data:
   VPN_TYPE: "wireguard"
   SERVER_COUNTRIES: "United Kingdom"
   UPDATER_PERIOD: "24h"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gluetun-auth-config
+  namespace: tunnelled
+data:
+  config.toml: |
+    [[roles]]
+    name = "glance"
+    routes = [
+      "GET /v1/openvpn/status",
+      "GET /v1/publicip/ip",
+      "GET /v1/openvpn/portforwarded"
+    ]
+    auth = "apikey"
+    apikey = "GLUETUN_API_KEY_PLACEHOLDER"
+
+    [[roles]]
+    name = "qbittorrent"
+    routes = [
+      "GET /v1/openvpn/portforwarded"
+    ]
+    auth = "none"

@@ -68,6 +68,11 @@ spec:
               value: "on"
             - name: HTTP_CONTROL_SERVER_LOG
               value: "on"
+            - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
+              value: "/gluetun/auth/config.toml"
+          volumeMounts:
+            - name: gluetun-auth-config
+              mountPath: /gluetun/auth
           resources:
             requests:
               memory: "128Mi"
@@ -124,6 +129,9 @@ spec:
         - name: config
           persistentVolumeClaim:
             claimName: prowlarr-config
+        - name: gluetun-auth-config
+          configMap:
+            name: gluetun-auth-config
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

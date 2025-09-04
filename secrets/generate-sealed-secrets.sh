@@ -13,6 +13,15 @@ fi
 # Source the secrets
 source secrets.env
 
+# Generate Gluetun API key if not provided
+if [ -z "$GLUETUN_API_KEY" ]; then
+  echo "Generating Gluetun API key..."
+  # Generate a base58 22-character API key similar to what gluetun genkey produces
+  GLUETUN_API_KEY=$(openssl rand -base64 32 | tr -d "=+/" | cut -c1-22)
+  echo "Generated API key: $GLUETUN_API_KEY"
+  echo "Add this to your secrets.env file: GLUETUN_API_KEY=$GLUETUN_API_KEY"
+fi
+
 # Create sealed-secrets directory if it doesn't exist
 mkdir -p sealed-secrets
 
@@ -116,8 +125,10 @@ create_sealed_secret "pihole-secrets" "dns" "WEBPASSWORD" "$PIHOLE_WEBPASSWORD" 
 # Generate Frigate SealedSecret
 create_sealed_secret "frigate-secrets" "security" "MQTT_PASSWORD" "$FRIGATE_MQTT_PASSWORD" "frigate-sealed-secret.yaml"
 
-# Generate VPN SealedSecret (only the private key, countries moved to ConfigMap)
-create_sealed_secret "vpn-secrets" "tunnelled" "WIREGUARD_PRIVATE_KEY" "$WIREGUARD_PRIVATE_KEY" "vpn-sealed-secret.yaml"
+# Generate VPN SealedSecret (including API key for control server auth)
+create_sealed_secret_multi "vpn-secrets" "tunnelled" "vpn-sealed-secret.yaml" \
+  "WIREGUARD_PRIVATE_KEY" "$WIREGUARD_PRIVATE_KEY" \
+  "GLUETUN_API_KEY" "$GLUETUN_API_KEY"
 
 # Generate Cloudflare SealedSecret
 create_sealed_secret "cloudflare-api-token-secret" "cert-manager" "api-token" "$CLOUDFLARE_API_TOKEN" "cloudflare-sealed-secret.yaml"
