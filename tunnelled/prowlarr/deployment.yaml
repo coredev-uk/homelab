@@ -51,6 +51,11 @@ spec:
                 configMapKeyRef:
                   name: vpn-config
                   key: FIREWALL_OUTBOUND_SUBNETS
+            - name: UPDATER_PERIOD
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: UPDATER_PERIOD
             - name: DNS_KEEP_NAMESERVER
               value: "on"
             - name: HTTPPROXY
@@ -152,3 +157,4 @@ spec:
       port: 8000
       targetPort: 8000
   type: ClusterIP
+

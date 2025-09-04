@@ -56,6 +56,11 @@ spec:
                 configMapKeyRef:
                   name: vpn-config
                   key: FIREWALL_OUTBOUND_SUBNETS
+            - name: UPDATER_PERIOD
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: UPDATER_PERIOD
             - name: VPN_PORT_FORWARDING
               value: "on"
             - name: DOT
@@ -74,10 +79,6 @@ spec:
               value: "on"
             - name: VPN_PORT_FORWARDING_UP_COMMAND
               value: '/bin/sh -c "wget -O- --retry-connrefused --post-data \"json={\\\"listen_port\\\":{{PORTS}}}\" http://localhost:8080/api/v2/app/setPreferences 2>&1"'
-            - name: UPDATER_PERIOD
-              value: "24h"
-            - name: FIREWALL_OUTBOUND_SUBNETS
-              value: "10.147.20.0/24"
           resources:
             requests:
               memory: "128Mi"

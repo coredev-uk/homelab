@@ -18,18 +18,18 @@ spec:
       initContainers:
         - name: scripts-setup
           image: busybox:latest
-          command: ['sh', '-c']
+          command: ["sh", "-c"]
           args:
             - |
               # Create scripts directory
               mkdir -p /scripts
-              
+
               # Copy scripts from ConfigMap
               cp /tmp/scripts/* /scripts/
-              
+
               # Set executable permissions
               chmod +x /scripts/*.py
-              
+
               echo "Scripts setup completed"
           volumeMounts:
             - name: scripts-volume
@@ -38,7 +38,7 @@ spec:
               mountPath: /tmp/scripts
         - name: config-setup
           image: busybox:latest
-          command: ['sh', '-c']
+          command: ["sh", "-c"]
           args:
             - |
               # Ensure sabnzbd.ini exists and has essential settings
@@ -99,6 +99,11 @@ spec:
                 configMapKeyRef:
                   name: vpn-config
                   key: FIREWALL_OUTBOUND_SUBNETS
+            - name: UPDATER_PERIOD
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: UPDATER_PERIOD
             - name: DOT
               value: "off"
             - name: DNS_ADDRESS
@@ -112,8 +117,6 @@ spec:
             - name: HTTPPROXY_STEALTH
               value: "on"
             - name: VPN_PORT_FORWARDING
-              value: "on"
-            - name: HTTP_CONTROL_SERVER_LOG
               value: "on"
           resources:
             requests:
