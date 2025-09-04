@@ -1,55 +1,24 @@
-# Homelab GitOps Repository
+<div align="center">
 
-This repository contains Kubernetes manifests for a complete homelab media stack managed via ArgoCD GitOps.
+# Core's Kubernetes Homelab
+═══════════════════════════
 
-[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
+</div>
 
-## Services Included
+A personal Kubernetes homelab configuration using ArgoCD for GitOps deployment of a complete media automation stack, DNS services, storage management, and monitoring tools. This setup includes the popular *arr media management suite, torrent/usenet clients with VPN integration, and essential infrastructure services.
 
-### Media Stack (arr-stack)
-- **Radarr** - Movie management
-- **Sonarr** - TV show management  
-- **Bazarr** - Subtitle management
-- **Prowlarr** - Indexer management
-- **Jellyfin** - Media server
-- **Jellyseerr** - Media requests
-
-### Download Clients
-- **qBittorrent** - Torrent client
-- **SABnzbd** - Usenet client
-
-### Infrastructure
-- **Pihole** - DNS adblocking
-- **Frigate** - CCTV and object detection
-
-### Utilities
-- **Glance** - Modern dashboard with stocks, crypto, and RSS
-- **Notifiarr** - Notifications
-
-## Repository Structure
-
-```
-├── bootstrap/           # ArgoCD installation
-├── core/               # Core infrastructure apps
-├── media/              # Media stack applications
-├── apps/               # Application definitions
-└── manifests/          # Raw Kubernetes manifests
-```
+**Note:** This configuration is tailored for my specific environment and setup. You can fork this repository and modify the configurations to work with your own infrastructure.
 
 ## Quick Start
 
-1. Install ArgoCD: `kubectl apply -k bootstrap/`
-2. Wait for ArgoCD to be ready
-3. Set up secrets (see [SETUP.md](SETUP.md))
-4. Apply app-of-apps: `kubectl apply -f apps/`
+See [SETUP.md](SETUP.md) for detailed setup instructions.
 
-## Requirements
+## Structure
 
-- k3s/k8s cluster
-- Persistent storage (local-path or longhorn)
-- Storage paths: `/media` for media files, `/opt/homelab/config` for app configs
-- Ingress controller (traefik for k3s)
+- `bootstrap/` - ArgoCD installation
+- `core/` - Core infrastructure services  
+- `media/` - Media stack applications
+- `apps/` - ArgoCD application definitions
+- `manifests/` - Kubernetes manifests
 
-## Contributing
-
-This project follows [Conventional Commits](https://www.conventionalcommits.org/) for commit messages. See [.conventionalcommits](.conventionalcommits) for details.
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)

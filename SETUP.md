@@ -195,12 +195,15 @@ kubectl wait --for=condition=available --timeout=300s deployment/argocd-server -
 kubectl apply -f apps/app-of-apps.yaml
 ```
 
-### 4. Wait for Namespaces to be Created
+### 4. Wait for ArgoCD Applications to Deploy
 ```bash
-# Wait for all namespaces to be created by ArgoCD
-kubectl wait --for=condition=available --timeout=300s deployment/argocd-applicationset-controller -n argocd
+# Wait for ArgoCD to sync all applications
+kubectl wait --for=condition=available --timeout=600s deployment/argocd-applicationset-controller -n argocd
 
-# Verify namespaces exist
+# Monitor application sync status
+kubectl get applications -n argocd
+
+# Verify namespaces are created
 kubectl get namespaces | grep -E "(dns|security|tunnelled|cert-manager|media)"
 ```
 
@@ -234,11 +237,15 @@ kubectl get pods -n longhorn-system
 # Verify storage class is ready
 kubectl get storageclass
 
-# Check that media PVC is bound
-kubectl get pvc -n media
+# Check that PVCs are bound (may take a few minutes)
+kubectl get pvc -A
+
+# If PVCs are still pending, restart affected pods:
+kubectl delete pods -l app=pihole -n dns
+kubectl delete pods -l app=radarr -n media  # etc.
 
 # Access Longhorn UI for storage management
-echo "Longhorn UI: http://longhorn.local"
+echo "Longhorn UI: https://longhorn.home.coredev.uk"
 ```
 ### 8. Watch Deployment Progress
 ```bash
@@ -258,55 +265,55 @@ After Pihole is deployed and configured as your network DNS:
 
 | Domain | IP Address |
 |--------|------------|
-| argocd.local | `<hyperion-ip>` |
-| glance.local | `<hyperion-ip>` |
-| pihole.local | `<hyperion-ip>` |
-| longhorn.local | `<hyperion-ip>` |
-| frigate.local | `<hyperion-ip>` |
-| radarr.local | `<hyperion-ip>` |
-| sonarr.local | `<hyperion-ip>` |
-| bazarr.local | `<hyperion-ip>` |
-| prowlarr.local | `<hyperion-ip>` |
-| jellyfin.local | `<hyperion-ip>` |
-| jellyseerr.local | `<hyperion-ip>` |
-| qbittorrent.local | `<hyperion-ip>` |
-| sabnzbd.local | `<hyperion-ip>` |
-| notifiarr.local | `<hyperion-ip>` |
-| cleanuparr.local | `<hyperion-ip>` |
-| flaresolverr.local | `<hyperion-ip>` |
-| huntarr.local | `<hyperion-ip>` |
+| argocd.home.coredev.uk | `<hyperion-ip>` |
+| glance.home.coredev.uk | `<hyperion-ip>` |
+| pihole.home.coredev.uk | `<hyperion-ip>` |
+| longhorn.home.coredev.uk | `<hyperion-ip>` |
+| frigate.home.coredev.uk | `<hyperion-ip>` |
+| radarr.home.coredev.uk | `<hyperion-ip>` |
+| sonarr.home.coredev.uk | `<hyperion-ip>` |
+| bazarr.home.coredev.uk | `<hyperion-ip>` |
+| prowlarr.home.coredev.uk | `<hyperion-ip>` |
+| jellyfin.home.coredev.uk | `<hyperion-ip>` |
+| jellyseerr.home.coredev.uk | `<hyperion-ip>` |
+| qbittorrent.home.coredev.uk | `<hyperion-ip>` |
+| sabnzbd.home.coredev.uk | `<hyperion-ip>` |
+| notifiarr.home.coredev.uk | `<hyperion-ip>` |
+| cleanuparr.home.coredev.uk | `<hyperion-ip>` |
+| flaresolverr.home.coredev.uk | `<hyperion-ip>` |
+| huntarr.home.coredev.uk | `<hyperion-ip>` |
 
 #### Option 2: Local /etc/hosts (Temporary)
 For initial setup or if not using Pihole DNS:
 ```bash
 # Add to /etc/hosts on your client machine
-<hyperion-ip> argocd.local glance.local pihole.local longhorn.local frigate.local
-<hyperion-ip> radarr.local sonarr.local bazarr.local prowlarr.local
-<hyperion-ip> jellyfin.local jellyseerr.local qbittorrent.local sabnzbd.local notifiarr.local
-<hyperion-ip> cleanuparr.local flaresolverr.local huntarr.local
+<hyperion-ip> argocd.home.coredev.uk glance.home.coredev.uk pihole.home.coredev.uk longhorn.home.coredev.uk frigate.home.coredev.uk
+<hyperion-ip> radarr.home.coredev.uk sonarr.home.coredev.uk bazarr.home.coredev.uk prowlarr.home.coredev.uk
+<hyperion-ip> jellyfin.home.coredev.uk jellyseerr.home.coredev.uk qbittorrent.home.coredev.uk sabnzbd.home.coredev.uk notifiarr.home.coredev.uk
+<hyperion-ip> cleanuparr.home.coredev.uk flaresolverr.home.coredev.uk huntarr.home.coredev.uk
 ```
 
 ## Service URLs
 
 | Service | URL | Direct Port | Purpose |
 |---------|-----|-------------|---------|
-| ArgoCD | http://argocd.local | :80 | GitOps Dashboard |
-| Glance | http://glance.local | :8080 | Dashboard (Stocks, Crypto, RSS) |
-| Pihole | http://pihole.local | :80 | DNS Adblocking |
-| Longhorn | http://longhorn.local | :80 | Storage Management |
-| Frigate | http://frigate.local | :5000 | CCTV Management |
-| Jellyfin | http://jellyfin.local | :8096 | Media Server |
-| Jellyseerr | http://jellyseerr.local | :5055 | Media Requests |
-| Radarr | http://radarr.local | :7878 | Movie Management |
-| Sonarr | http://sonarr.local | :8989 | TV Management |
-| Bazarr | http://bazarr.local | :6767 | Subtitle Management |
-| Prowlarr | http://prowlarr.local | :9696 | Indexer Management |
-| qBittorrent | http://qbittorrent.local | :8080 | Torrent Client |
-| SABnzbd | http://sabnzbd.local | :8090 | Usenet Client |
-| Notifiarr | http://notifiarr.local | :5454 | Notifications |
-| Cleanuparr | http://cleanuparr.local | :11011 | Media Cleanup |
-| Flaresolverr | http://flaresolverr.local | :8191 | Cloudflare Bypass |
-| Huntarr | http://huntarr.local | :9705 | Torrent Management |
+| ArgoCD | https://argocd.home.coredev.uk | :80 | GitOps Dashboard |
+| Glance | https://glance.home.coredev.uk | :8080 | Dashboard (Stocks, Crypto, RSS) |
+| Pihole | https://pihole.home.coredev.uk | :80 | DNS Adblocking |
+| Longhorn | https://longhorn.home.coredev.uk | :80 | Storage Management |
+| Frigate | https://frigate.home.coredev.uk | :5000 | CCTV Management |
+| Jellyfin | https://jellyfin.home.coredev.uk | :8096 | Media Server |
+| Jellyseerr | https://jellyseerr.home.coredev.uk | :5055 | Media Requests |
+| Radarr | https://radarr.home.coredev.uk | :7878 | Movie Management |
+| Sonarr | https://sonarr.home.coredev.uk | :8989 | TV Management |
+| Bazarr | https://bazarr.home.coredev.uk | :6767 | Subtitle Management |
+| Prowlarr | https://prowlarr.home.coredev.uk | :9696 | Indexer Management |
+| qBittorrent | https://qbittorrent.home.coredev.uk | :8080 | Torrent Client |
+| SABnzbd | https://sabnzbd.home.coredev.uk | :8090 | Usenet Client |
+| Notifiarr | https://notifiarr.home.coredev.uk | :5454 | Notifications |
+| Cleanuparr | https://cleanuparr.home.coredev.uk | :11011 | Media Cleanup |
+| Flaresolverr | https://flaresolverr.home.coredev.uk | :8191 | Cloudflare Bypass |
+| Huntarr | https://huntarr.home.coredev.uk | :9705 | Torrent Management |
 
 ### Direct IP Access (Troubleshooting)
 If ingress is not working, you can access services directly using:
@@ -324,9 +331,9 @@ For example:
 ## Post-Setup Configuration
 
 ### 1. Access Primary Services
-- **ArgoCD**: `http://argocd.local` (username: `admin`, password from step 3 above)
-- **Glance**: `http://glance.local` (your main dashboard)
-- **Pihole**: `http://pihole.local` (admin interface)
+- **ArgoCD**: `https://argocd.home.coredev.uk` (username: `admin`, password from step 3 above)
+- **Glance**: `https://glance.home.coredev.uk` (your main dashboard)
+- **Pihole**: `https://pihole.home.coredev.uk` (admin interface)
 
 ### 2. Configure Network DNS
 - **Set Pihole as DNS**: Update router to use Hyperion's IP as DNS server for network-wide adblocking
@@ -378,6 +385,28 @@ kubectl get volumes.longhorn.io -n longhorn-system
 kubectl describe nodes | grep -A5 "Capacity:"
 ```
 
+### Longhorn-Specific Troubleshooting
+```bash
+# If PVCs are stuck in Pending:
+# 1. Check if Longhorn CRDs are installed
+kubectl get crd | grep longhorn
+
+# 2. Check replica count for single-node setup
+kubectl get settings.longhorn.io default-replica-count -n longhorn-system -o jsonpath='{.value}'
+
+# 3. For single-node clusters, set replica count to 1
+NODE_COUNT=$(kubectl get nodes --no-headers | wc -l)
+if [ $NODE_COUNT -eq 1 ]; then
+  kubectl patch settings.longhorn.io default-replica-count -n longhorn-system --type='merge' -p='{"value": "1"}'
+fi
+
+# 4. Check Longhorn manager logs
+kubectl logs -l app=longhorn-manager -n longhorn-system -c longhorn-manager | tail -20
+
+# 5. Restart pending pods after Longhorn configuration
+kubectl get pods -A | grep Pending | awk '{print "kubectl delete pod " $2 " -n " $1}' | sh
+```
+
 ### Restart Specific Service
 ```bash
 # Example: Restart Radarr
@@ -399,16 +428,16 @@ This homelab uses **Longhorn v1.9.1** as the distributed storage system, providi
 - **Replicated storage** with 2 replicas by default for high availability
 - **Dynamic volume provisioning** via CSI driver
 - **Volume expansion** support for growing storage needs
-- **Web UI management** at `http://longhorn.local`
+- **Web UI management** at `https://longhorn.home.coredev.uk`
 - **Backup and snapshot** capabilities
 - **Fast replica rebuilding** for improved performance
 - **Enhanced data integrity** features
 - **Kubernetes v1.25+** support
 
 ### Longhorn Configuration
-- **Version**: v1.9.1 (latest stable)
+- **Version**: v1.9.1 (deployed via Helm chart)
 - **Default data path**: `/var/lib/longhorn/` on each node
-- **Replica count**: 2 (for redundancy)
+- **Replica count**: Automatically configured (1 for single-node, 2+ for multi-node)
 - **Storage class**: `longhorn` (default)
 - **File system**: ext4
 - **Reclaim policy**: Delete
@@ -469,7 +498,7 @@ kubectl get volumes.longhorn.io -n longhorn-system -o wide
 ## Notes
 
 - **VPN Services**: All VPN-dependent services use Gluetun sidecars
-- **Storage**: Distributed persistent storage provided by Longhorn v1.9.1 with 2-replica redundancy
+- **Storage**: Distributed persistent storage provided by Longhorn v1.9.1 with automated replica configuration
 - **Performance**: Fast replica rebuilding and revision counter disabled for optimal performance
 - **Ingress**: Services are accessible via Traefik ingress (built into k3s)
 - **GitOps**: ArgoCD automatically syncs changes from Git repository
