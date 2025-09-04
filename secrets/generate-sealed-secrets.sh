@@ -136,10 +136,11 @@ create_sealed_secret "cloudflare-api-token-secret" "cert-manager" "api-token" "$
 # Generate Notifiarr SealedSecret
 create_sealed_secret "notifiarr-secrets" "media" "API_KEY" "$NOTIFIARR_API_KEY" "notifiarr-sealed-secret.yaml"
 
-# Generate Glance SealedSecret with multiple values
+# Generate Glance SealedSecret with multiple values including API key
 create_sealed_secret_multi "glance-secrets" "media" "glance-sealed-secret.yaml" \
   "PIHOLE_WEBPASSWORD" "$PIHOLE_WEBPASSWORD" \
-  "GLANCE_WEATHER_LOCATION" "$GLANCE_WEATHER_LOCATION"
+  "GLANCE_WEATHER_LOCATION" "$GLANCE_WEATHER_LOCATION" \
+  "GLUETUN_API_KEY" "$GLUETUN_API_KEY"
 
 echo ""
 echo "All SealedSecrets generated successfully!"
