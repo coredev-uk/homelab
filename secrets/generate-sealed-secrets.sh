@@ -25,7 +25,7 @@ fi
 # Create sealed-secrets directory if it doesn't exist
 mkdir -p sealed-secrets
 
-# Function to create and seal a secret
+# Function to create and seal a secret with a single key-value pair
 create_sealed_secret() {
   local name=$1
   local namespace=$2
@@ -52,41 +52,7 @@ create_sealed_secret() {
   echo "Generated sealed-secrets/$output_file"
 }
 
-# Generate Glance SealedSecret (reusing pihole password for media namespace)
-create_sealed_secret() {
-  local name=$1
-  local namespace=$2
-  shift 2
-  local keys_values=("$@")
-  local output_file="${keys_values[-1]}"
-  unset 'keys_values[-1]'
-
-  echo "Creating SealedSecret for $name in namespace $namespace..."
-
-  # Build kubectl command with multiple key-value pairs
-  local kubectl_cmd="kubectl create secret generic \"$name\" --namespace=\"$namespace\" --dry-run=client -o yaml"
-
-  for ((i = 0; i < ${#keys_values[@]}; i += 2)); do
-    local key="${keys_values[i]}"
-    local value="${keys_values[i + 1]}"
-    kubectl_cmd="$kubectl_cmd --from-literal=\"$key=$value\""
-  done
-
-  # Create temporary secret
-  eval "$kubectl_cmd" >/tmp/temp-secret.yaml
-
-  # Seal the secret with appropriate scope
-  kubeseal --controller-namespace=sealed-secrets \
-    --format yaml \
-    </tmp/temp-secret.yaml >"sealed-secrets/$output_file"
-
-  # Clean up temporary file
-  rm /tmp/temp-secret.yaml
-
-  echo "Generated sealed-secrets/$output_file"
-}
-
-# Override the function to handle multiple key-value pairs
+# Function to create and seal a secret with multiple key-value pairs
 create_sealed_secret_multi() {
   local name=$1
   local namespace=$2
@@ -156,7 +122,7 @@ echo ""
 echo "After applying, you can remove the old plain text secrets:"
 echo "kubectl delete secret pihole-secrets -n dns --ignore-not-found"
 echo "kubectl delete secret frigate-secrets -n security --ignore-not-found"
-echo "kubectl delete secret vpn-secrets -n downloads --ignore-not-found"
+echo "kubectl delete secret vpn-secrets -n tunnelled --ignore-not-found"
 echo "kubectl delete secret cloudflare-api-token-secret -n cert-manager --ignore-not-found"
 echo "kubectl delete secret notifiarr-secrets -n media --ignore-not-found"
 echo "kubectl delete secret glance-secrets -n media --ignore-not-found"
