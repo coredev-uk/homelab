@@ -73,7 +73,7 @@ spec:
             claimName: jellyfin-config
         - name: cache
           persistentVolumeClaim:
-            claimName: jellyfin-cache
+            claimName: jellyfin-cache-single
         - name: data
           persistentVolumeClaim:
             claimName: media-data-host
@@ -97,7 +97,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: jellyfin-cache
+  name: jellyfin-cache-single
   namespace: media
 spec:
   accessModes:
@@ -105,7 +105,7 @@ spec:
   resources:
     requests:
       storage: 50Gi
-  storageClassName: longhorn
+  storageClassName: longhorn-single
 ---
 apiVersion: v1
 kind: Service
