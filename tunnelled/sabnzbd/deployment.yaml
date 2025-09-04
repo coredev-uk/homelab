@@ -105,10 +105,6 @@ spec:
                   name: vpn-config
                   key: UPDATER_PERIOD
             - name: DOT
-              value: "off"
-            - name: DNS_ADDRESS
-              value: "1.1.1.1"
-            - name: DNS_KEEP_NAMESERVER
               value: "on"
             - name: HTTPPROXY
               value: "on"
@@ -117,6 +113,8 @@ spec:
             - name: HTTPPROXY_STEALTH
               value: "on"
             - name: VPN_PORT_FORWARDING
+              value: "on"
+            - name: HTTP_CONTROL_SERVER_LOG
               value: "on"
             - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
               value: "/gluetun/auth/config.toml"
