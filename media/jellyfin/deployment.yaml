@@ -17,11 +17,17 @@ spec:
     spec:
       securityContext:
         supplementalGroups:
-          - 303  # render group for Intel GPU access
+          - 303 # render group for Intel GPU access
+          - 26 # same as above
       initContainers:
         - name: fix-permissions
           image: busybox:latest
-          command: ['sh', '-c', 'chown -R 1000:1000 /config /cache && chmod -R 755 /config /cache']
+          command:
+            [
+              "sh",
+              "-c",
+              "chown -R 1000:1000 /config /cache && chmod -R 755 /config /cache",
+            ]
           volumeMounts:
             - name: config
               mountPath: /config
@@ -43,7 +49,7 @@ spec:
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
-            privileged: true  # Required for hardware acceleration
+            privileged: true # Required for hardware acceleration
           volumeMounts:
             - name: config
               mountPath: /config
