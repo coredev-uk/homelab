@@ -18,8 +18,8 @@ pages:
             show-area-name: true
 
           - type: dns-stats
-            service: pihole-v6
-            url: http://pihole-web.dns
+            service: pihole
+            url: http://pihole.core
             password: ${PIHOLE_PASSWORD}
 
           - type: server-stats
@@ -78,7 +78,7 @@ pages:
                           Your VPN is not connected!
                           <span class="color-negative">●</span> 
                         </div>
-                      </dv>
+                      </div>
                     </div>
                   </div>
                 {{ else }}
@@ -117,7 +117,7 @@ pages:
                           Your VPN is not connected!
                           <span class="color-negative">●</span> 
                         </div>
-                      </dv>
+                      </div>
                     </div>
                   </div>
                 {{ else }}
@@ -156,7 +156,7 @@ pages:
                           Your VPN is not connected!
                           <span class="color-negative">●</span> 
                         </div>
-                      </dv>
+                      </div>
                     </div>
                   </div>
                 {{ else }}
