@@ -1,6 +1,7 @@
 <div align="center">
 
-# Homelab Configuration
+# Core's Kubernetes Homelab
+═══════════════════════════
 
 </div>
 
@@ -21,7 +22,6 @@ See [SETUP.md](SETUP.md) for detailed setup instructions.
 ├── manifests/               # Shared Kubernetes manifests
 ├── media/                   # Media automation stack
 ├── monitoring/              # Observability stack
-├── scripts/                 # Deployment and utility scripts
 ├── secrets/                 # Sealed secrets configuration
 └── tunnelled/               # VPN-routed services
 ```
