@@ -70,7 +70,7 @@ pages:
                 <div class="flex items-center gap-10">
                   <span class="color-highlight">Prowlarr VPN</span>
                   <span class="size-h6 {{ if eq (.JSON.String "status") "running" }}color-positive{{ else }}color-negative{{ end }}">
-                    {{ .JSON.String "status" | upper }}
+                    {{ if eq (.JSON.String "status") "running" }}CONNECTED{{ else }}DISCONNECTED{{ end }}
                   </span>
                 </div>
                 {{ if .JSON.String "country" }}
@@ -90,7 +90,7 @@ pages:
                 <div class="flex items-center gap-10">
                   <span class="color-highlight">qBittorrent VPN</span>
                   <span class="size-h6 {{ if eq (.JSON.String "status") "running" }}color-positive{{ else }}color-negative{{ end }}">
-                    {{ .JSON.String "status" | upper }}
+                    {{ if eq (.JSON.String "status") "running" }}CONNECTED{{ else }}DISCONNECTED{{ end }}
                   </span>
                 </div>
                 {{ if .JSON.String "country" }}
@@ -110,7 +110,7 @@ pages:
                 <div class="flex items-center gap-10">
                   <span class="color-highlight">SABnzbd VPN</span>
                   <span class="size-h6 {{ if eq (.JSON.String "status") "running" }}color-positive{{ else }}color-negative{{ end }}">
-                    {{ .JSON.String "status" | upper }}
+                    {{ if eq (.JSON.String "status") "running" }}CONNECTED{{ else }}DISCONNECTED{{ end }}
                   </span>
                 </div>
                 {{ if .JSON.String "country" }}
