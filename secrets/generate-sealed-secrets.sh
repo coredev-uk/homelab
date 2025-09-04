@@ -13,28 +13,6 @@ fi
 # Source the secrets
 source secrets.env
 
-# Function to generate base58 encoded string
-generate_base58() {
-  local length=$1
-  local alphabet="123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
-  local result=""
-  
-  for ((i=0; i<length; i++)); do
-    local rand_index=$((RANDOM % 58))
-    result="${result}${alphabet:$rand_index:1}"
-  done
-  
-  echo "$result"
-}
-
-# Generate Gluetun API key if not provided
-if [ -z "$GLUETUN_API_KEY" ]; then
-  echo "Generating Gluetun API key..."
-  # Generate a base58 22-character API key similar to what gluetun genkey produces
-  GLUETUN_API_KEY=$(generate_base58 22)
-  echo "Generated API key: $GLUETUN_API_KEY"
-fi
-
 # Create sealed-secrets directory if it doesn't exist
 mkdir -p sealed-secrets
 
@@ -104,10 +82,8 @@ create_sealed_secret "pihole-secrets" "dns" "WEBPASSWORD" "$PIHOLE_WEBPASSWORD" 
 # Generate Frigate SealedSecret
 create_sealed_secret "frigate-secrets" "security" "MQTT_PASSWORD" "$FRIGATE_MQTT_PASSWORD" "frigate-sealed-secret.yaml"
 
-# Generate VPN SealedSecret (including API key for control server auth)
-create_sealed_secret_multi "vpn-secrets" "tunnelled" "vpn-sealed-secret.yaml" \
-  "WIREGUARD_PRIVATE_KEY" "$WIREGUARD_PRIVATE_KEY" \
-  "GLUETUN_API_KEY" "$GLUETUN_API_KEY"
+# Generate VPN SealedSecret
+create_sealed_secret "vpn-secrets" "tunnelled" "WIREGUARD_PRIVATE_KEY" "$WIREGUARD_PRIVATE_KEY" "vpn-sealed-secret.yaml"
 
 # Generate Cloudflare SealedSecret
 create_sealed_secret "cloudflare-api-token-secret" "cert-manager" "api-token" "$CLOUDFLARE_API_TOKEN" "cloudflare-sealed-secret.yaml"
@@ -115,11 +91,10 @@ create_sealed_secret "cloudflare-api-token-secret" "cert-manager" "api-token" "$
 # Generate Notifiarr SealedSecret
 create_sealed_secret "notifiarr-secrets" "media" "API_KEY" "$NOTIFIARR_API_KEY" "notifiarr-sealed-secret.yaml"
 
-# Generate Glance SealedSecret with weather location, pihole password, and API key
+# Generate Glance SealedSecret with weather location and pihole password
 create_sealed_secret_multi "glance-secrets" "media" "glance-sealed-secret.yaml" \
   "PIHOLE_WEBPASSWORD" "$PIHOLE_WEBPASSWORD" \
-  "GLANCE_WEATHER_LOCATION" "$GLANCE_WEATHER_LOCATION" \
-  "GLUETUN_API_KEY" "$GLUETUN_API_KEY"
+  "GLANCE_WEATHER_LOCATION" "$GLANCE_WEATHER_LOCATION"
 
 echo ""
 echo "All SealedSecrets generated successfully!"

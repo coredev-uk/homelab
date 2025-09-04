@@ -64,9 +64,7 @@ pages:
           - type: custom-api
             title: Prowlarr VPN Status
             cache: 1m
-            url: http://prowlarr.tunnelled:8000/v1/publicip/ip
-            headers:
-              X-API-Key: ${GLUETUN_API_KEY}
+            url: http://admin:admin@prowlarr.tunnelled:8000/v1/publicip/ip
             template: |
               {{ if eq .Response.StatusCode 200 }}
                 {{ $ip := (.JSON.String "public_ip") }}
@@ -105,9 +103,7 @@ pages:
           - type: custom-api
             title: qBittorrent VPN Status
             cache: 1m
-            url: http://qbittorrent.tunnelled:8000/v1/publicip/ip
-            headers:
-              X-API-Key: ${GLUETUN_API_KEY}
+            url: http://admin:admin@qbittorrent.tunnelled:8000/v1/publicip/ip
             template: |
               {{ if eq .Response.StatusCode 200 }}
                 {{ $ip := (.JSON.String "public_ip") }}
@@ -146,9 +142,7 @@ pages:
           - type: custom-api
             title: SABnzbd VPN Status
             cache: 1m
-            url: http://sabnzbd.tunnelled:8000/v1/publicip/ip
-            headers:
-              X-API-Key: ${GLUETUN_API_KEY}
+            url: http://admin:admin@sabnzbd.tunnelled:8000/v1/publicip/ip
             template: |
               {{ if eq .Response.StatusCode 200 }}
                 {{ $ip := (.JSON.String "public_ip") }}
@@ -183,19 +177,6 @@ pages:
                   Error: {{ .Response.StatusCode }} - {{ .Response.Status }}
                 </div>
               {{ end }}
-
-          - type: custom-api
-            title: VPN Public IPs
-            cache: 60s
-            url: http://prowlarr.tunnelled:8000/v1/publicip/ip
-            template: |
-              <div class="flex flex-column gap-10">
-                <div class="flex items-center gap-10">
-                  <span class="color-highlight">Shared VPN IP</span>
-                  <span class="size-h6 color-positive">{{ .JSON.String "public_ip" }}</span>
-                </div>
-                <p class="size-h6">🌐 All services share this IP</p>
-              </div>
 
       - size: full
         widgets:

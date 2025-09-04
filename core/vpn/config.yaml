@@ -24,8 +24,9 @@ data:
       "GET /v1/publicip/ip",
       "GET /v1/openvpn/portforwarded"
     ]
-    auth = "apikey"
-    apikey = "GLUETUN_API_KEY_PLACEHOLDER"
+    auth = "basic"
+    username = "admin"
+    password = "admin"
 
     [[roles]]
     name = "qbittorrent"
