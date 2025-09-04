@@ -173,4 +173,7 @@ spec:
     - name: http
       port: 8080
       targetPort: 8080
+    - name: gluetun-control
+      port: 8000
+      targetPort: 8000
   type: ClusterIP

@@ -61,6 +61,22 @@ pages:
               - symbol: ETH-USD
                 name: Ethereum
 
+          - type: monitor
+            title: VPN Protected Apps
+            sites:
+              - title: Prowlarr VPN
+                url: https://prowlarr.home.coredev.uk
+                check-url: http://prowlarr.tunnelled:9696
+                icon: sh:prowlarr-light
+              - title: qBittorrent VPN
+                url: https://qbittorrent.home.coredev.uk
+                check-url: http://qbittorrent.tunnelled:8080
+                icon: si:qbittorrent
+              - title: SABnzbd VPN
+                url: https://sabnzbd.home.coredev.uk
+                check-url: http://sabnzbd.tunnelled:8080
+                icon: sh:sabnzbd-light
+
       - size: full
         widgets:
           - type: bookmarks
@@ -216,3 +232,132 @@ pages:
             limit: 8
             collapse-after: 4
             style: horizontal-cards
+
+  - name: Formula 1
+    columns:
+      - size: small
+        widgets:
+          - type: custom-api
+            title: Next Race
+            cache: 1h
+            url: https://f1api.dev/api/current/next?timezone=Europe/London
+            template: |
+              <div class="flex flex-column gap-10">
+                {{ $session := index (.JSON.Array "race") 0 }}
+                <p class="size-h5">
+                  Round {{ .JSON.String "round" }}
+                </p>
+
+                <div class="margin-block-4">
+                  <p class="color-highlight">{{ $session.String "raceName" }}</p>
+
+                  <div class="margin-block-10"></div>
+
+                  <!-- Race -->
+                  <p class="color-primary">
+                    <span>Race</span>
+                    {{ $raceDate := $session.String "schedule.race.date" }}
+                    {{ $raceTime := $session.String "schedule.race.time" }}
+                    {{ $raceDateTime := concat $raceDate "T" $raceTime }}
+                    {{ $parsedRaceTime := parseLocalTime "2006-01-02T15:04:05" $raceDateTime }}
+                    {{ $now := now }}
+                    {{ if $parsedRaceTime.Before $now }}
+                      <span class="color-highlight">Completed</span>
+                    {{ else }}
+                      <span class="color-highlight" {{ $parsedRaceTime | toRelativeTime }}></span>
+                    {{ end }}
+                  </p>
+                  <p class="size-h5">{{ $raceDate }} at {{ $raceTime }}</p>
+
+                  <!-- Qualifying -->
+                  <p class="color-primary">
+                    <span>Qualifying</span>
+                    {{ $qualyDate := $session.String "schedule.qualy.date" }}
+                    {{ $qualyTime := $session.String "schedule.qualy.time" }}
+                    {{ $qualyDateTime := concat $qualyDate "T" $qualyTime }}
+                    {{ $parsedQualyTime := parseLocalTime "2006-01-02T15:04:05" $qualyDateTime }}
+                    {{ $now := now }}
+                    {{ if $parsedQualyTime.Before $now }}
+                      <span class="color-highlight">Completed</span>
+                    {{ else }}
+                      <span class="color-highlight" {{ $parsedQualyTime | toRelativeTime }}></span>
+                    {{ end }}
+                  </p>
+                  <p class="size-h5">{{ $qualyDate }} at {{ $qualyTime }}</p>
+
+                  <!-- Sprint Race - only if date is not null -->
+                  {{ if and (ne ($session.String "schedule.sprintRace.date") "null") (ne ($session.String "schedule.sprintRace.date") "") }}
+                  <p class="color-primary">
+                    <span>Sprint Race</span>
+                    {{ $sprintRaceDate := $session.String "schedule.sprintRace.date" }}
+                    {{ $sprintRaceTime := $session.String "schedule.sprintRace.time" }}
+                    {{ $sprintRaceDateTime := concat $sprintRaceDate "T" $sprintRaceTime }}
+                    {{ $parsedSprintRaceTime := parseLocalTime "2006-01-02T15:04:05" $sprintRaceDateTime }}
+                    {{ $now := now }}
+                    {{ if $parsedSprintRaceTime.Before $now }}
+                      <span class="color-highlight">Completed</span>
+                    {{ else }}
+                      <span class="color-highlight" {{ $parsedSprintRaceTime | toRelativeTime }}></span>
+                    {{ end }}
+                  </p>
+                  <p class="size-h5">{{ $sprintRaceDate }} at {{ $sprintRaceTime }}</p>
+                  {{ end }}
+                </div>
+
+                <ul class="size-h5 attachments">
+                  <li>{{ $session.String "circuit.country" }}</li>
+                  <li>{{ $session.String "circuit.city" }}</li>
+                  <li>{{ $session.String "laps" }} Laps</li>
+                  <li>{{ $session.String "circuit.circuitName" }}</li>
+                </ul>
+              </div>
+
+      - size: full
+        widgets:
+          - type: custom-api
+            title: Last Race Results
+            cache: 1d
+            url: https://f1api.dev/api/current/last/race
+            template: |
+              <div class="flex flex-column gap-10">
+                <p class="size-h5">{{ .JSON.String "races.raceName" }}</p>
+                <ul class="list collapsible-container" data-collapse-after="5">
+                  {{ range $i, $v := .JSON.Array "races.results" }}
+                  <li class="flex items-center {{ if eq $i 0 }}color-primary{{ else if eq $i 1 }}color-highlight{{ end }}">
+                    <span class="grow min-width-0">{{ .String "position" }}. {{ .String "driver.shortName" }}</span>
+                    <span class="shrink-0 text-right">{{ .String "time" }}</span>
+                  </li>
+                  {{ end }}
+                </ul>
+              </div>
+
+          - type: custom-api
+            title: Drivers Championship
+            cache: 1d
+            url: https://f1api.dev/api/current/drivers-championship
+            template: |
+              <ul class="list collapsible-container" data-collapse-after="5">
+                {{ range $i, $v := .JSON.Array "drivers_championship" }}
+                <li class="flex items-center {{ if eq $i 0 }}color-primary{{ else if eq $i 1 }}color-highlight{{ end }}">
+                  <div class="grow min-width-0">
+                    <span>{{ .String "position" }}. {{ .String "driver.shortName" }}</span>
+                    <span class="size-h6">({{ .String "team.teamName" }})</span>
+                  </div>
+                  <span class="shrink-0 text-right">{{ .String "points" }}</span>
+                </li>
+                {{ end }}
+              </ul>
+
+          - type: custom-api
+            title: Constructors Championship
+            cache: 1d
+            url: https://f1api.dev/api/current/constructors-championship
+            template: |
+              <ul class="list collapsible-container" data-collapse-after="5">
+                {{ range $i, $v := .JSON.Array "constructors_championship" }}
+                <li class="flex items-center {{ if eq $i 0 }}color-primary{{ else if eq $i 1 }}color-highlight{{ end }}">
+                  <span class="grow min-width-0">{{ .String "position" }}. {{ .String "team.teamName" }}</span>
+                  <span class="shrink-0 text-right">{{ .String "points" }}</span>
+                </li>
+                {{ end }}
+              </ul>

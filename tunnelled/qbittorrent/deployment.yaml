@@ -134,4 +134,7 @@ spec:
       port: 6881
       targetPort: 6881
       protocol: UDP
+    - name: gluetun-control
+      port: 8000
+      targetPort: 8000
   type: ClusterIP
