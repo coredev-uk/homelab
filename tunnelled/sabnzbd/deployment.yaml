@@ -106,6 +106,8 @@ spec:
                   key: UPDATER_PERIOD
             - name: DOT
               value: "on"
+            - name: DNS_ADDRESS
+              value: "127.0.0.1"
             - name: HTTPPROXY
               value: "on"
             - name: HTTPPROXY_LISTENING_ADDRESS
