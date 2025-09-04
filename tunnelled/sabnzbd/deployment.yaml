@@ -105,9 +105,9 @@ spec:
                   name: vpn-config
                   key: UPDATER_PERIOD
             - name: DOT
-              value: "on"
+              value: "off"
             - name: DNS_ADDRESS
-              value: "127.0.0.1"
+              value: "1.1.1.1"
             - name: HTTPPROXY
               value: "on"
             - name: HTTPPROXY_LISTENING_ADDRESS
