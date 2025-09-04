@@ -1,7 +1,6 @@
 <div align="center">
 
-# Core's Kubernetes Homelab
-═══════════════════════════
+# Core's Homelab
 
 </div>
 
