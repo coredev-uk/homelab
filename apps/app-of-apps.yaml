@@ -24,6 +24,11 @@ spec:
           service:
             ui:
               type: ClusterIP
+          defaultSettings:
+            defaultReplicaCount: 1
+            storageOverProvisioningPercentage: 200
+            storageMinimalAvailablePercentage: 10
+            defaultDataLocality: "best-effort"
   destination:
     server: https://kubernetes.default.svc
     namespace: longhorn-system
