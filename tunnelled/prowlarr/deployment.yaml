@@ -56,8 +56,8 @@ spec:
                 configMapKeyRef:
                   name: vpn-config
                   key: UPDATER_PERIOD
-            - name: DNS_KEEP_NAMESERVER
-              value: "on"
+            - name: DNS_ADDRESS
+              value: 127.0.0.11
             - name: HTTPPROXY
               value: "on"
             - name: HTTPPROXY_LISTENING_ADDRESS
@@ -165,4 +165,3 @@ spec:
       port: 8000
       targetPort: 8000
   type: ClusterIP
-
