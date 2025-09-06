@@ -20,9 +20,9 @@ data:
     [[roles]]
     name = "glance"
     routes = [
-      "GET /v1/openvpn/status",
+      "GET /v1/wireguard/status",
       "GET /v1/publicip/ip",
-      "GET /v1/openvpn/portforwarded"
+      "GET /v1/portforwarded"
     ]
     auth = "basic"
     username = "admin"
@@ -31,6 +31,6 @@ data:
     [[roles]]
     name = "qbittorrent"
     routes = [
-      "GET /v1/openvpn/portforwarded"
+      "GET /v1/portforwarded"
     ]
     auth = "none"
