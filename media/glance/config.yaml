@@ -105,7 +105,7 @@ pages:
           - type: custom-api
             title: QBittorrent Port Status
             cache: 30s
-            url: http://admin:admin@gluetun-gateway.tunnelled:8000/v1/portforwarded
+            url: http://admin:admin@gluetun-gateway.tunnelled:8000/v1/openvpn/portforwarded
             template: |
               {{ if eq .Response.StatusCode 200 }}
                 {{ $port := .JSON.String "port" }}
@@ -267,33 +267,33 @@ pages:
           - type: releases
             title: Infrastructure & Core Updates
             repositories:
-              - glanceapp/glance                    # Dashboard
-              - argoproj/argo-cd                   # GitOps
-              - qmcgaw/gluetun                     # VPN Gateway
-              - longhorn/longhorn                  # Storage
-              - bitnami/sealed-secrets-controller  # Secret Management
-              - prometheus/prometheus              # Monitoring
-              - grafana/grafana                    # Visualization
-              - prometheus/node_exporter           # System Metrics
-              - blakeblackshear/frigate           # CCTV/AI
+              - glanceapp/glance # Dashboard
+              - argoproj/argo-cd # GitOps
+              - qmcgaw/gluetun # VPN Gateway
+              - longhorn/longhorn # Storage
+              - bitnami/sealed-secrets-controller # Secret Management
+              - prometheus/prometheus # Monitoring
+              - grafana/grafana # Visualization
+              - prometheus/node_exporter # System Metrics
+              - blakeblackshear/frigate # CCTV/AI
             limit: 8
             collapse-after: 5
 
           - type: releases
             title: Media Stack Updates
             repositories:
-              - jellyfin/jellyfin                  # Media Server
-              - fallenbagel/jellyseerr            # Request Management
-              - linuxserver/radarr                 # Movies
-              - linuxserver/sonarr                 # TV Shows
-              - linuxserver/bazarr                 # Subtitles
-              - linuxserver/prowlarr               # Indexers
-              - linuxserver/qbittorrent           # Torrents
-              - linuxserver/sabnzbd               # Usenet
-              - golift/notifiarr                  # Notifications
-              - flaresolverr/flaresolverr         # Cloudflare Bypass
-              - cleanuparr/cleanuparr             # Media Cleanup
-              - huntarr/huntarr                   # Duplicate Hunter
+              - jellyfin/jellyfin # Media Server
+              - fallenbagel/jellyseerr # Request Management
+              - linuxserver/radarr # Movies
+              - linuxserver/sonarr # TV Shows
+              - linuxserver/bazarr # Subtitles
+              - linuxserver/prowlarr # Indexers
+              - linuxserver/qbittorrent # Torrents
+              - linuxserver/sabnzbd # Usenet
+              - golift/notifiarr # Notifications
+              - flaresolverr/flaresolverr # Cloudflare Bypass
+              - cleanuparr/cleanuparr # Media Cleanup
+              - huntarr/huntarr # Duplicate Hunter
             limit: 10
             collapse-after: 6
 
