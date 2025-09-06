@@ -6,88 +6,62 @@ kind: Namespace
 metadata:
   name: intel-gpu
 ---
-# Intel Device Plugins Operator
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: intel-device-plugins-operator
-  namespace: intel-gpu
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: intel-device-plugins-operator
-rules:
-- apiGroups: [""]
-  resources: ["nodes"]
-  verbs: ["get", "list", "watch"]
-- apiGroups: ["apps"]
-  resources: ["daemonsets"]
-  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
-- apiGroups: ["deviceplugin.intel.com"]
-  resources: ["*"]
-  verbs: ["*"]
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: intel-device-plugins-operator
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: intel-device-plugins-operator
-subjects:
-- kind: ServiceAccount
-  name: intel-device-plugins-operator
-  namespace: intel-gpu
----
+# Direct Intel GPU Device Plugin DaemonSet
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
-  name: intel-device-plugins-operator
+  name: intel-gpu-plugin
   namespace: intel-gpu
   labels:
-    app: intel-device-plugins-operator
+    app: intel-gpu-plugin
 spec:
-  replicas: 1
   selector:
     matchLabels:
-      app: intel-device-plugins-operator
+      app: intel-gpu-plugin
   template:
     metadata:
       labels:
-        app: intel-device-plugins-operator
+        app: intel-gpu-plugin
     spec:
-      serviceAccountName: intel-device-plugins-operator
+      nodeSelector:
+        intel.feature.node.kubernetes.io/gpu: 'true'
+      tolerations:
+      - operator: Exists
+        effect: NoSchedule
       containers:
-      - name: operator
-        image: intel/intel-device-plugins-operator:0.29.0
+      - name: intel-gpu-plugin
+        image: intel/intel-gpu-plugin:0.29.0
         imagePullPolicy: IfNotPresent
         env:
-        - name: WATCH_NAMESPACE
-          value: ""
-        ports:
-        - containerPort: 8080
-          name: metrics
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        securityContext:
+          readOnlyRootFilesystem: true
+        volumeMounts:
+        - name: devfs
+          mountPath: /dev/dri
+          readOnly: true
+        - name: sysfs
+          mountPath: /sys/class/drm
+          readOnly: true
+        - name: kubeletsockets
+          mountPath: /var/lib/kubelet/device-plugins
         resources:
-          limits:
-            cpu: 100m
-            memory: 100Mi
           requests:
-            cpu: 100m
-            memory: 100Mi
----
-# GPU Device Plugin Custom Resource
-apiVersion: deviceplugin.intel.com/v1
-kind: GpuDevicePlugin
-metadata:
-  name: gpudeviceplugin-sample
-  namespace: intel-gpu
-spec:
-  sharedDevNum: 1
-  logLevel: 2
-  resourceManager: false
-  enableMonitoring: true
-  allocationPolicy: "none"
-  nodeSelector:
-    intel.feature.node.kubernetes.io/gpu: 'true'
+            cpu: "50m"
+            memory: "50Mi"
+          limits:
+            cpu: "100m"
+            memory: "100Mi"
+      volumes:
+      - name: devfs
+        hostPath:
+          path: /dev/dri
+      - name: sysfs
+        hostPath:
+          path: /sys/class/drm
+      - name: kubeletsockets
+        hostPath:
+          path: /var/lib/kubelet/device-plugins
