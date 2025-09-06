@@ -6,10 +6,22 @@ metadata:
 spec:
   headers:
     customRequestHeaders:
+      X-Forwarded-For: ""
+      X-Real-IP: ""
       X-Forwarded-Proto: "https"
-    customResponseHeaders:
-      X-Real-IP: "{{ .ClientIP }}"
-    trustedIPs:
+    hostsProxyHeaders:
+      - "X-Forwarded-Host"
+    customResponseHeaders: {}
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: ip-allowlist-trust
+  namespace: tunnelled
+spec:
+  ipAllowList:
+    sourceRange:
       - "10.0.0.0/8"
-      - "172.16.0.0/12"
+      - "172.16.0.0/12" 
       - "192.168.0.0/16"
+      - "127.0.0.1/32"

@@ -9,3 +9,4 @@ resources:
   - argocd-ingress.yaml
   - monitoring-ingress.yaml
   - pihole-middleware.yaml
+  - ip-forwarding-middleware.yaml
