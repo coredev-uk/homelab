@@ -10,27 +10,27 @@ data:
   SERVER_COUNTRIES: "United Kingdom"
   UPDATER_PERIOD: "24h"
 ---
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: gluetun-auth-config
-  namespace: tunnelled
-data:
-  config.toml: |
-    [[roles]]
-    name = "glance"
-    routes = [
-      "GET /v1/wireguard/status",
-      "GET /v1/publicip/ip",
-      "GET /v1/portforwarded"
-    ]
-    auth = "basic"
-    username = "admin"
-    password = "admin"
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: gluetun-auth-config
+#   namespace: tunnelled
+# data:
+#   config.toml: |
+#     [[roles]]
+#     name = "glance"
+#     routes = [
+#       "GET /v1/wireguard/status",
+#       "GET /v1/publicip/ip",
+#       "GET /v1/portforwarded"
+#     ]
+#     auth = "basic"
+#     username = "admin"
+#     password = "admin"
 
-    [[roles]]
-    name = "qbittorrent"
-    routes = [
-      "GET /v1/portforwarded"
-    ]
-    auth = "none"
+#     [[roles]]
+#     name = "qbittorrent"
+#     routes = [
+#       "GET /v1/portforwarded"
+#     ]
+#     auth = "none"
