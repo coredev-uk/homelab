@@ -9,6 +9,7 @@ secrets/sealed-secrets/*.yaml
 # Temporary files
 *.tmp
 .DS_Store
+.opencode
 
 # IDE files
 .vscode/

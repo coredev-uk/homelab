@@ -14,6 +14,22 @@ spec:
     path: /opt/media-data
   storageClassName: ""
 ---
+# Jellyfin cache storage PV
+# This PV uses local host storage for cache and transcoding to handle high I/O
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: jellyfin-cache
+spec:
+  capacity:
+    storage: 50Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /opt/jellyfin-cache
+  storageClassName: ""
+---
 # Shared media storage PVC using host-path
 # This PVC is shared across all media services for storing movies, TV shows, etc.
 apiVersion: v1

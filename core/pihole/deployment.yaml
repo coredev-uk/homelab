@@ -61,6 +61,29 @@ spec:
               value: "all"
             - name: FTLCONF_dns_listeningMode
               value: "all"
+            - name: FTLCONF_dns_hosts
+              value: |
+                10.147.20.27 pihole.home.coredev.uk
+                10.147.20.27 frigate.home.coredev.uk
+                10.147.20.27 argocd.home.coredev.uk
+                10.147.20.27 longhorn.home.coredev.uk
+
+                10.147.20.27 bazarr.home.coredev.uk
+                10.147.20.27 cleanuparr.home.coredev.uk
+                10.147.20.27 glance.home.coredev.uk
+                10.147.20.27 huntarr.home.coredev.uk
+                10.147.20.27 jellyfin.home.coredev.uk
+                10.147.20.27 jellyseerr.home.coredev.uk
+                10.147.20.27 notifiarr.home.coredev.uk
+                10.147.20.27 radarr.home.coredev.uk
+                10.147.20.27 sonarr.home.coredev.uk
+
+                10.147.20.27 prowlarr.home.coredev.uk
+                10.147.20.27 sabnzbd.home.coredev.uk
+                10.147.20.27 qbittorrent.home.coredev.uk
+
+                10.147.20.27 grafana.home.coredev.uk
+                10.147.20.27 prometheus.home.coredev.uk
           volumeMounts:
             - name: config
               mountPath: /etc/pihole

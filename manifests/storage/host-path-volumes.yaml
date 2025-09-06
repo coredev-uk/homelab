@@ -55,4 +55,34 @@ spec:
       storage: 100Gi
   volumeName: downloads-data-media
   storageClassName: ""
+---
+# Frigate video footage storage PV
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: frigate-media-data
+spec:
+  capacity:
+    storage: 30Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /opt/frigate-media
+  storageClassName: ""
+---
+# Frigate video footage storage PVC
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: frigate-media-host
+  namespace: security
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 30Gi
+  volumeName: frigate-media-data
+  storageClassName: ""
 

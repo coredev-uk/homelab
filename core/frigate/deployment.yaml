@@ -60,7 +60,7 @@ spec:
             claimName: frigate-config
         - name: media
           persistentVolumeClaim:
-            claimName: frigate-media
+            claimName: frigate-media-host
         - name: cache
           emptyDir:
             sizeLimit: 10Gi
@@ -91,19 +91,6 @@ spec:
   resources:
     requests:
       storage: 2Gi
-  storageClassName: longhorn
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: frigate-media
-  namespace: security
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 50Gi
   storageClassName: longhorn
 ---
 apiVersion: v1
