@@ -98,18 +98,18 @@ spec:
             # Control server
             - name: HTTP_CONTROL_SERVER_LOG
               value: "on"
-            - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
-              value: "/gluetun/auth/config.toml"
+            # - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
+            #   value: "/gluetun/auth/config.toml"
             # Port forwarding
-            - name: VPN_PORT_FORWARDING
-              value: "on"
-            - name: PORT_FORWARD_ONLY
-              value: "on"
-            - name: VPN_PORT_FORWARDING_UP_COMMAND
-              value: '/bin/sh -c "wget -O- --retry-connrefused --post-data \"json={\\\"listen_port\\\":{{PORTS}}}\" http://localhost:8080/api/v2/app/setPreferences 2>&1"'
+            # - name: VPN_PORT_FORWARDING
+            #   value: "on"
+            # - name: PORT_FORWARD_ONLY
+            #   value: "on"
+            # - name: VPN_PORT_FORWARDING_UP_COMMAND
+            #   value: '/bin/sh -c "wget -O- --retry-connrefused --post-data \"json={\\\"listen_port\\\":{{PORTS}}}\" http://localhost:8080/api/v2/app/setPreferences 2>&1"'
           volumeMounts:
-            - name: gluetun-auth-config
-              mountPath: /gluetun/auth
+            # - name: gluetun-auth-config
+            #   mountPath: /gluetun/auth
           resources:
             requests:
               memory: "256Mi"
@@ -147,9 +147,9 @@ spec:
               memory: "2Gi"
               cpu: "1000m"
       volumes:
-        - name: gluetun-auth-config
-          configMap:
-            name: gluetun-auth-config
+        # - name: gluetun-auth-config
+        #   configMap:
+        #     name: gluetun-auth-config
         - name: qbittorrent-config
           persistentVolumeClaim:
             claimName: qbittorrent-config
