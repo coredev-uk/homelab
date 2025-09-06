@@ -68,10 +68,14 @@ resources:
     memory: "512Mi"
     cpu: "500m"
 
-# Disable version checking and anonymous usage
+# Disable version checking and anonymous usage, enable real IP forwarding
 globalArguments:
   - "--global.checknewversion=false"
   - "--global.sendanonymoususage=false"
+  - "--entryPoints.web.forwardedHeaders.trustedIPs=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+  - "--entryPoints.websecure.forwardedHeaders.trustedIPs=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+  - "--entryPoints.web.forwardedHeaders.insecure=false"
+  - "--entryPoints.websecure.forwardedHeaders.insecure=false"
 
 # Install in traefik namespace
 namespaceOverride: traefik
