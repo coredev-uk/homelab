@@ -63,9 +63,9 @@ pages:
                 name: Ethereum
 
           - type: custom-api
-            title: Prowlarr VPN Status
+            title: Centralized VPN Status (All Tunnelled Apps)
             cache: 1m
-            url: http://admin:admin@prowlarr.tunnelled:8000/v1/publicip/ip
+            url: http://admin:admin@gluetun-gateway.tunnelled:8000/v1/publicip/ip
             template: |
               {{ if eq .Response.StatusCode 200 }}
                 {{ $ip := (.JSON.String "public_ip") }}
@@ -76,7 +76,7 @@ pages:
                     <div>
                       <div>
                         <div class="color-highlight size-h3">
-                          Your VPN is not connected!
+                          VPN Gateway Disconnected!
                           <span class="color-negative">●</span> 
                         </div>
                       </div>
@@ -87,11 +87,12 @@ pages:
                     <div>
                       <div>
                         <div class="color-highlight size-h3">
-                          Your VPN is connected!
+                          VPN Gateway Connected!
                           <span class="color-positive">●</span> 
                         </div>
                       </div>
                       <div class="size-h5">{{ $ip }} - {{ $city }}, {{ $country }}</div>
+                      <div class="size-h6">Serving: QBittorrent (network), Prowlarr + Sabnzbd (proxy)</div>
                     </div>
                   </div>
                 {{ end }}
@@ -102,80 +103,30 @@ pages:
               {{ end }}
 
           - type: custom-api
-            title: qBittorrent VPN Status
-            cache: 1m
-            url: http://admin:admin@qbittorrent.tunnelled:8000/v1/publicip/ip
+            title: QBittorrent Port Status
+            cache: 30s
+            url: http://admin:admin@gluetun-gateway.tunnelled:8000/v1/portforwarded
             template: |
               {{ if eq .Response.StatusCode 200 }}
-                {{ $ip := (.JSON.String "public_ip") }}
-                {{ $city := (.JSON.String "city") }}
-                {{ $country := (.JSON.String "country") }}
-                {{ if eq $ip "" }}
+                {{ $port := .JSON.String "port" }}
+                {{ if eq $port "0" }}
                   <div>
-                    <div>
-                      <div>
-                        <div class="color-highlight size-h3">
-                          Your VPN is not connected!
-                          <span class="color-negative">●</span> 
-                        </div>
-                      </div>
+                    <div class="color-highlight size-h4">
+                      Port Forwarding: <span class="color-warning">In Progress...</span>
                     </div>
+                    <div class="size-h6">Waiting for ProtonVPN port assignment</div>
                   </div>
                 {{ else }}
                   <div>
-                    <div>
-                      <div>
-                        <div class="color-highlight size-h3">
-                          Your VPN is connected!
-                          <span class="color-positive">●</span> 
-                        </div>
-                      </div>
-                      <div class="size-h5">{{ $ip }} - {{ $city }}, {{ $country }}</div>
+                    <div class="color-highlight size-h4">
+                      Port Forwarding: <span class="color-positive">Active</span>
                     </div>
+                    <div class="size-h5">Port: {{ $port }}</div>
                   </div>
                 {{ end }}
               {{ else }}
                 <div style="text-align: center; color: var(--color-negative);">
-                  Error: {{ .Response.StatusCode }} - {{ .Response.Status }}
-                </div>
-              {{ end }}
-
-          - type: custom-api
-            title: SABnzbd VPN Status
-            cache: 1m
-            url: http://admin:admin@sabnzbd.tunnelled:8000/v1/publicip/ip
-            template: |
-              {{ if eq .Response.StatusCode 200 }}
-                {{ $ip := (.JSON.String "public_ip") }}
-                {{ $city := (.JSON.String "city") }}
-                {{ $country := (.JSON.String "country") }}
-                {{ if eq $ip "" }}
-                  <div>
-                    <div>
-                      <div>
-                        <div class="color-highlight size-h3">
-                          Your VPN is not connected!
-                          <span class="color-negative">●</span> 
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                {{ else }}
-                  <div>
-                    <div>
-                      <div>
-                        <div class="color-highlight size-h3">
-                          Your VPN is connected!
-                          <span class="color-positive">●</span> 
-                        </div>
-                      </div>
-                      <div class="size-h5">{{ $ip }} - {{ $city }}, {{ $country }}</div>
-                    </div>
-                  </div>
-                {{ end }}
-              {{ else }}
-                <div style="text-align: center; color: var(--color-negative);">
-                  Error: {{ .Response.StatusCode }} - {{ .Response.Status }}
+                  Port Forward Check Failed: {{ .Response.StatusCode }}
                 </div>
               {{ end }}
 
@@ -314,13 +265,35 @@ pages:
                 icon: mdi:magnify
 
           - type: releases
-            title: Monitoring & Infra Updates
+            title: Infrastructure & Core Updates
             repositories:
-              - glanceapp/glance
-              - argoproj/argo-cd
-              - jellyfin/jellyfin
-              - lscambo13/ElegantFin
-              - NotAShelf/nvf
+              - glanceapp/glance                    # Dashboard
+              - argoproj/argo-cd                   # GitOps
+              - qmcgaw/gluetun                     # VPN Gateway
+              - longhorn/longhorn                  # Storage
+              - bitnami/sealed-secrets-controller  # Secret Management
+              - prometheus/prometheus              # Monitoring
+              - grafana/grafana                    # Visualization
+              - prometheus/node_exporter           # System Metrics
+              - blakeblackshear/frigate           # CCTV/AI
+            limit: 8
+            collapse-after: 5
+
+          - type: releases
+            title: Media Stack Updates
+            repositories:
+              - jellyfin/jellyfin                  # Media Server
+              - fallenbagel/jellyseerr            # Request Management
+              - linuxserver/radarr                 # Movies
+              - linuxserver/sonarr                 # TV Shows
+              - linuxserver/bazarr                 # Subtitles
+              - linuxserver/prowlarr               # Indexers
+              - linuxserver/qbittorrent           # Torrents
+              - linuxserver/sabnzbd               # Usenet
+              - golift/notifiarr                  # Notifications
+              - flaresolverr/flaresolverr         # Cloudflare Bypass
+              - cleanuparr/cleanuparr             # Media Cleanup
+              - huntarr/huntarr                   # Duplicate Hunter
             limit: 10
             collapse-after: 6
 
