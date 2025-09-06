@@ -46,10 +46,29 @@ spec:
               value: "Europe/London"
             - name: JELLYFIN_PublishedServerUrl
               value: "https://jellyfin.home.coredev.uk"
+            - name: JELLYFIN_CACHE_DIR
+              value: "/cache"
+            - name: JELLYFIN_CONFIG_DIR
+              value: "/config"
           securityContext:
             runAsUser: 1000
             runAsGroup: 1000
-            privileged: true # Required for hardware acceleration
+            capabilities:
+              add:
+                - SYS_ADMIN # Required for Intel VA-API access
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8096
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8096
+            initialDelaySeconds: 30
+            periodSeconds: 10
           volumeMounts:
             - name: config
               mountPath: /config
@@ -62,11 +81,12 @@ spec:
               mountPath: /dev/dri/renderD128
           resources:
             requests:
-              memory: "1Gi"
-              cpu: "500m"
+              memory: "2Gi"
+              cpu: "1000m"
             limits:
-              memory: "4Gi"
-              cpu: "2000m"
+              memory: "8Gi"
+              cpu: "4000m"
+              gpu.intel.com/i915: 1
       volumes:
         - name: config
           persistentVolumeClaim:
