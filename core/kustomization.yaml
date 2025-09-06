@@ -9,5 +9,6 @@ resources:
   - vpn/
   - pihole/
   - frigate/
+  - intel-gpu/
   - metallb/
   - traefik/

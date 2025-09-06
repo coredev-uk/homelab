@@ -1,0 +1,93 @@
+# Intel GPU Device Plugin for i5-13500H Hardware Acceleration
+# Based on: https://jonathangazeley.com/2025/02/11/intel-gpu-acceleration-on-kubernetes/
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: intel-gpu
+---
+# Intel Device Plugins Operator
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: intel-device-plugins-operator
+  namespace: intel-gpu
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: intel-device-plugins-operator
+rules:
+- apiGroups: [""]
+  resources: ["nodes"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["apps"]
+  resources: ["daemonsets"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: ["deviceplugin.intel.com"]
+  resources: ["*"]
+  verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: intel-device-plugins-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: intel-device-plugins-operator
+subjects:
+- kind: ServiceAccount
+  name: intel-device-plugins-operator
+  namespace: intel-gpu
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: intel-device-plugins-operator
+  namespace: intel-gpu
+  labels:
+    app: intel-device-plugins-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: intel-device-plugins-operator
+  template:
+    metadata:
+      labels:
+        app: intel-device-plugins-operator
+    spec:
+      serviceAccountName: intel-device-plugins-operator
+      containers:
+      - name: operator
+        image: intel/intel-device-plugins-operator:0.29.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: WATCH_NAMESPACE
+          value: ""
+        ports:
+        - containerPort: 8080
+          name: metrics
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+---
+# GPU Device Plugin Custom Resource
+apiVersion: deviceplugin.intel.com/v1
+kind: GpuDevicePlugin
+metadata:
+  name: gpudeviceplugin-sample
+  namespace: intel-gpu
+spec:
+  sharedDevNum: 1
+  logLevel: 2
+  resourceManager: false
+  enableMonitoring: true
+  allocationPolicy: "none"
+  nodeSelector:
+    intel.feature.node.kubernetes.io/gpu: 'true'
