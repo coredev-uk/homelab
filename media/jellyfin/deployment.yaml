@@ -86,7 +86,7 @@ spec:
             limits:
               memory: "8Gi"
               cpu: "4000m"
-              gpu.intel.com/i915: 1
+              # gpu.intel.com/i915: 1  # Disabled until Intel GPU device plugin is installed
       volumes:
         - name: config
           persistentVolumeClaim:
