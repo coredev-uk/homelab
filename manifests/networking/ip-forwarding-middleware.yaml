@@ -1,4 +1,4 @@
-apiVersion: traefik.containo.us/v1alpha1
+apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
   name: real-ip-headers
@@ -11,9 +11,8 @@ spec:
       X-Forwarded-Proto: "https"
     hostsProxyHeaders:
       - "X-Forwarded-Host"
-    customResponseHeaders: {}
 ---
-apiVersion: traefik.containo.us/v1alpha1
+apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
   name: ip-allowlist-trust
