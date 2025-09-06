@@ -1,30 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: qbittorrent
+  name: gluetun-gateway
   namespace: tunnelled
   labels:
-    app: qbittorrent
+    app: gluetun-gateway
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: qbittorrent
+      app: gluetun-gateway
   template:
     metadata:
       labels:
-        app: qbittorrent
+        app: gluetun-gateway
     spec:
       containers:
         - name: gluetun
           image: qmcgaw/gluetun:v3.40.0
           ports:
-            - containerPort: 8000
-            - containerPort: 8080
-            - containerPort: 8443
-            - containerPort: 6881
-            - containerPort: 6881
-              protocol: UDP
+            - containerPort: 8000  # Control server
+            - containerPort: 8888  # HTTP proxy
+            - containerPort: 8388  # SOCKS5 proxy
           securityContext:
             privileged: true
             capabilities:
@@ -61,38 +58,58 @@ spec:
                 configMapKeyRef:
                   name: vpn-config
                   key: UPDATER_PERIOD
-            - name: VPN_PORT_FORWARDING
-              value: "on"
-            - name: DOT
+            - name: DNS_KEEP_NAMESERVER
               value: "off"
             - name: DNS_ADDRESS
               value: "1.1.1.1"
+            - name: DOT
+              value: "off"
+            - name: DNS_UPDATE_PERIOD
+              value: "24h"
+            # HTTP Proxy settings
             - name: HTTPPROXY
               value: "on"
             - name: HTTPPROXY_LISTENING_ADDRESS
               value: ":8888"
             - name: HTTPPROXY_STEALTH
               value: "on"
+            # SOCKS5 Proxy settings
+            - name: SHADOWSOCKS
+              value: "on"
+            - name: SHADOWSOCKS_LISTENING_ADDRESS
+              value: ":8388"
+            - name: SHADOWSOCKS_METHOD
+              value: "chacha20-ietf-poly1305"
+            - name: SHADOWSOCKS_PASSWORD
+              value: "gluetun-proxy"
+            # Control server
             - name: HTTP_CONTROL_SERVER_LOG
               value: "on"
-            - name: PORT_FORWARD_ONLY
+            - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
+              value: "/gluetun/auth/config.toml"
+            # Port forwarding
+            - name: VPN_PORT_FORWARDING
               value: "on"
             - name: VPN_PORT_FORWARDING_UP_COMMAND
               value: '/bin/sh -c "wget -O- --retry-connrefused --post-data \"json={\\\"listen_port\\\":{{PORTS}}}\" http://localhost:8080/api/v2/app/setPreferences 2>&1"'
-            - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
-              value: "/gluetun/auth/config.toml"
           volumeMounts:
             - name: gluetun-auth-config
               mountPath: /gluetun/auth
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "50m"
-            limits:
               memory: "256Mi"
-              cpu: "200m"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
         - name: qbittorrent
           image: lscr.io/linuxserver/qbittorrent:5.1.2
+          ports:
+            - containerPort: 8080
+            - containerPort: 8443
+            - containerPort: 6881
+            - containerPort: 6881
+              protocol: UDP
           env:
             - name: PUID
               value: "1000"
@@ -103,7 +120,7 @@ spec:
             - name: WEBUI_PORT
               value: "8080"
           volumeMounts:
-            - name: config
+            - name: qbittorrent-config
               mountPath: /config
             - name: downloads
               mountPath: /downloads
@@ -115,52 +132,47 @@ spec:
               memory: "2Gi"
               cpu: "1000m"
       volumes:
-        - name: config
+        - name: gluetun-auth-config
+          configMap:
+            name: gluetun-auth-config
+        - name: qbittorrent-config
           persistentVolumeClaim:
             claimName: qbittorrent-config
         - name: downloads
           persistentVolumeClaim:
             claimName: downloads-data-host
-        - name: gluetun-auth-config
-          configMap:
-            name: gluetun-auth-config
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: qbittorrent-config
-  namespace: tunnelled
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: longhorn
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: qbittorrent
+  name: gluetun-gateway
   namespace: tunnelled
+  labels:
+    app: gluetun-gateway
 spec:
   selector:
-    app: qbittorrent
+    app: gluetun-gateway
   ports:
-    - name: web-http
+    - name: control
+      port: 8000
+      targetPort: 8000
+    - name: http-proxy
+      port: 8888
+      targetPort: 8888
+    - name: socks5-proxy
+      port: 8388
+      targetPort: 8388
+    - name: qbt-web-http
       port: 8080
       targetPort: 8080
-    - name: web-https
+    - name: qbt-web-https
       port: 8443
       targetPort: 8443
-    - name: torrent-tcp
+    - name: qbt-torrent-tcp
       port: 6881
       targetPort: 6881
-    - name: torrent-udp
+    - name: qbt-torrent-udp
       port: 6881
       targetPort: 6881
       protocol: UDP
-    - name: gluetun-control
-      port: 8000
-      targetPort: 8000
   type: ClusterIP

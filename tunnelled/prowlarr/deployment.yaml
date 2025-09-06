@@ -16,70 +16,33 @@ spec:
         app: prowlarr
     spec:
       containers:
-        - name: gluetun
-          image: qmcgaw/gluetun:v3.40.0
+        - name: prowlarr
+          image: lscr.io/linuxserver/prowlarr:2.0.5
           ports:
-            - containerPort: 8000
-          securityContext:
-            privileged: true
-            capabilities:
-              add:
-                - NET_ADMIN
+            - containerPort: 9696
           env:
-            - name: VPN_SERVICE_PROVIDER
-              valueFrom:
-                configMapKeyRef:
-                  name: vpn-config
-                  key: VPN_SERVICE_PROVIDER
-            - name: VPN_TYPE
-              valueFrom:
-                configMapKeyRef:
-                  name: vpn-config
-                  key: VPN_TYPE
-            - name: WIREGUARD_PRIVATE_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: vpn-secrets
-                  key: WIREGUARD_PRIVATE_KEY
-            - name: SERVER_COUNTRIES
-              valueFrom:
-                configMapKeyRef:
-                  name: vpn-config
-                  key: SERVER_COUNTRIES
-            - name: FIREWALL_OUTBOUND_SUBNETS
-              valueFrom:
-                configMapKeyRef:
-                  name: vpn-config
-                  key: FIREWALL_OUTBOUND_SUBNETS
-            - name: UPDATER_PERIOD
-              valueFrom:
-                configMapKeyRef:
-                  name: vpn-config
-                  key: UPDATER_PERIOD
-            - name: DNS_ADDRESS
-              value: 127.0.0.11
-            - name: HTTPPROXY
-              value: "on"
-            - name: HTTPPROXY_LISTENING_ADDRESS
-              value: ":8888"
-            - name: HTTPPROXY_STEALTH
-              value: "on"
-            - name: VPN_PORT_FORWARDING
-              value: "on"
-            - name: HTTP_CONTROL_SERVER_LOG
-              value: "on"
-            - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
-              value: "/gluetun/auth/config.toml"
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/London"
+            - name: HTTP_PROXY
+              value: "http://gluetun-gateway:8888"
+            - name: HTTPS_PROXY
+              value: "http://gluetun-gateway:8888"
+            - name: NO_PROXY
+              value: "localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,.svc,.cluster.local"
           volumeMounts:
-            - name: gluetun-auth-config
-              mountPath: /gluetun/auth
+            - name: config
+              mountPath: /config
           resources:
             requests:
-              memory: "128Mi"
-              cpu: "50m"
-            limits:
               memory: "256Mi"
-              cpu: "200m"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
         - name: flaresolverr
           image: flaresolverr/flaresolverr:v3.4.0
           ports:
@@ -104,34 +67,10 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "1000m"
-        - name: prowlarr
-          image: lscr.io/linuxserver/prowlarr:2.0.5
-          ports:
-            - containerPort: 9696
-          env:
-            - name: PUID
-              value: "1000"
-            - name: PGID
-              value: "1000"
-            - name: TZ
-              value: "Europe/London"
-          volumeMounts:
-            - name: config
-              mountPath: /config
-          resources:
-            requests:
-              memory: "256Mi"
-              cpu: "100m"
-            limits:
-              memory: "1Gi"
-              cpu: "1000m"
       volumes:
         - name: config
           persistentVolumeClaim:
             claimName: prowlarr-config
-        - name: gluetun-auth-config
-          configMap:
-            name: gluetun-auth-config
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -161,7 +100,4 @@ spec:
     - name: flaresolverr
       port: 8191
       targetPort: 8191
-    - name: gluetun-control
-      port: 8000
-      targetPort: 8000
   type: ClusterIP
