@@ -149,62 +149,62 @@ data:
       front_driveway:
         ffmpeg:
           inputs:
-            - path: rtsp://admin:password@10.147.5.10:554/stream0?username=admin&password=AD3281E649B94649491A30500550423E
+            - path: rtsp://10.147.5.10:554/stream0?username=admin&password=AD3281E649B94649491A30500550423E
               roles:
                 - detect
                 - record
-              detect:
-                width: 1920
-                height: 1080
-              record:
-                enabled: true
-                retain:
-                  days: 7
-                  mode: motion
-              snapshots:
-                enabled: true
-                retain:
-                  default: 14
+        detect:
+          width: 1920
+          height: 1080
+        record:
+          enabled: true
+          retain:
+            days: 7
+            mode: motion
+        snapshots:
+          enabled: true
+          retain:
+            default: 14
       
       garage:
         ffmpeg:
           inputs:
-            - path: rtsp://admin:password@10.147.5.9:554/livestream/11?action=play&media=video_audio_data
+            - path: rtsp://admin:password@10.147.5.9:554/stream0
               roles:
                 - detect
                 - record
-              detect:
-                width: 1920
-                height: 1080
-              record:
-                enabled: true
-                retain:
-                  days: 7
-                  mode: motion
-              snapshots:
-                enabled: true
-                retain:
-                  default: 14
+        detect:
+          width: 1920
+          height: 1080
+        record:
+          enabled: true
+          retain:
+            days: 7
+            mode: motion
+        snapshots:
+          enabled: true
+          retain:
+            default: 14
       
       garden:
         ffmpeg:
           inputs:
-            - path: rtsp://admin:password@10.147.5.8:554/livestream/11?action=play&media=video_audio_data
+            - path: rtsp://admin:password@10.147.5.8:554/stream0
               roles:
                 - detect
                 - record
-              detect:
-                width: 1920
-                height: 1080
-              record:
-                enabled: true
-                retain:
-                  days: 7
-                  mode: motion
-              snapshots:
-                enabled: true
-                retain:
-                  default: 14
+        detect:
+          width: 1920
+          height: 1080
+        record:
+          enabled: true
+          retain:
+            days: 7
+            mode: motion
+        snapshots:
+          enabled: true
+          retain:
+            default: 14
 
     record:
       enabled: true
