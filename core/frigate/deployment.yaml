@@ -14,8 +14,10 @@ spec:
     metadata:
       labels:
         app: frigate
-    spec:
-      containers:
+     spec:
+       hostNetwork: true
+       dnsPolicy: ClusterFirstWithHostNet
+       containers:
         - name: frigate
           image: ghcr.io/blakeblackshear/frigate:stable
           ports:
