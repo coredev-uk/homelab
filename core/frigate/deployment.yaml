@@ -150,21 +150,21 @@ data:
         ffmpeg:
           inputs:
             - path: rtsp://admin:password@10.147.5.10:554/stream0?username=admin&password=AD3281E649B94649491A30500550423E
-          roles:
-            - detect
-            - record
-          detect:
-            width: 1920
-            height: 1080
-          record:
-            enabled: true
-            retain:
-              days: 7
-              mode: motion
-          snapshots:
-            enabled: true
-            retain:
-              default: 14
+              roles:
+                - detect
+                - record
+        detect:
+          width: 1920
+          height: 1080
+        record:
+          enabled: false
+          retain:
+            days: 7
+            mode: motion
+        snapshots:
+          enabled: true
+          retain:
+            default: 14
       
       garage:
         ffmpeg:
@@ -173,18 +173,14 @@ data:
               roles:
                 - detect
                 - record
-              detect:
-                width: 1920
-                height: 1080
-              record:
-                enabled: true
-                retain:
-                  days: 7
-                  mode: motion
-              snapshots:
-                enabled: true
-                retain:
-                  default: 14
+        detect:
+          width: 1920
+          height: 1080
+        record:
+          enabled: false
+          retain:
+            days: 7
+            mode: motion
       
       garden:
         ffmpeg:
@@ -193,18 +189,14 @@ data:
               roles:
                 - detect
                 - record
-              detect:
-                width: 1920
-                height: 1080
-              record:
-                enabled: true
-                retain:
-                  days: 7
-                  mode: motion
-              snapshots:
-                enabled: true
-                retain:
-                  default: 14
+        detect:
+          width: 1920
+          height: 1080
+        record:
+          enabled: false
+          retain:
+            days: 7
+            mode: motion
 
     record:
       enabled: true
