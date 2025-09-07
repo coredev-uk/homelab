@@ -14,51 +14,51 @@ spec:
     metadata:
       labels:
         app: frigate
-      spec:
-        hostNetwork: true
-        dnsPolicy: ClusterFirstWithHostNet
-        containers:
-          - name: frigate
-            image: ghcr.io/blakeblackshear/frigate:stable
-            ports:
-              - containerPort: 5000
-              - containerPort: 5443
-              - containerPort: 8554
-              - containerPort: 8555
-            env:
-              - name: TZ
-                value: "Europe/London"
-              - name: FRIGATE_MQTT_PASSWORD
-                valueFrom:
-                  secretKeyRef:
-                    name: frigate-secrets
-                    key: MQTT_PASSWORD
-            volumeMounts:
-              - name: data
-                mountPath: /config
-              - name: config
-                mountPath: /config/config.yml
-                subPath: config.yml
-              - name: media
-                mountPath: /media/frigate
-              - name: cache
-                mountPath: /tmp/cache
-              - name: dev-dri
-                mountPath: /dev/dri
-              - name: shm
-                mountPath: /dev/shm
-              - name: tls-certs
-                mountPath: /etc/letsencrypt/live/frigate/
-                readOnly: true
-            resources:
-              requests:
-                memory: "1Gi"
-                cpu: "500m"
-              limits:
-                memory: "4Gi"
-                cpu: "2000m"
-            securityContext:
-              privileged: true
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+        - name: frigate
+          image: ghcr.io/blakeblackshear/frigate:stable
+          ports:
+            - containerPort: 5000
+            - containerPort: 5443
+            - containerPort: 8554
+            - containerPort: 8555
+          env:
+            - name: TZ
+              value: "Europe/London"
+            - name: FRIGATE_MQTT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: frigate-secrets
+                  key: MQTT_PASSWORD
+          volumeMounts:
+            - name: data
+              mountPath: /config
+            - name: config
+              mountPath: /config/config.yml
+              subPath: config.yml
+            - name: media
+              mountPath: /media/frigate
+            - name: cache
+              mountPath: /tmp/cache
+            - name: dev-dri
+              mountPath: /dev/dri
+            - name: shm
+              mountPath: /dev/shm
+            - name: tls-certs
+              mountPath: /etc/letsencrypt/live/frigate/
+              readOnly: true
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "4Gi"
+              cpu: "2000m"
+          securityContext:
+            privileged: true
       volumes:
         - name: config
           configMap:
