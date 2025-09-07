@@ -17,6 +17,33 @@ spec:
     spec:
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
+      initContainers:
+        - name: config-processor
+          image: alpine:latest
+          command: ["/bin/sh"]
+          args:
+            - -c
+            - |
+              apk add --no-cache gettext
+              envsubst < /config-template/config.yml > /config-output/config.yml
+              echo "Processed config file:"
+              cat /config-output/config.yml
+          env:
+            - name: FRIGATE_RTSP_USER
+              valueFrom:
+                secretKeyRef:
+                  name: frigate-secrets
+                  key: RTSP_USER
+            - name: FRIGATE_RTSP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: frigate-secrets
+                  key: RTSP_PASSWORD
+          volumeMounts:
+            - name: config-template
+              mountPath: /config-template
+            - name: config-processed
+              mountPath: /config-output
       containers:
         - name: frigate
           image: ghcr.io/blakeblackshear/frigate:stable
@@ -46,7 +73,7 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /config
-            - name: config
+            - name: config-processed
               mountPath: /config/config.yml
               subPath: config.yml
             - name: media
@@ -70,12 +97,14 @@ spec:
           securityContext:
             privileged: true
       volumes:
-        - name: config
+        - name: config-template
           configMap:
             name: frigate-config
             items:
               - key: config.yml
                 path: config.yml
+        - name: config-processed
+          emptyDir: {}
         - name: data
           persistentVolumeClaim:
             claimName: frigate-config
@@ -159,7 +188,7 @@ data:
       front_driveway:
         ffmpeg:
           inputs:
-            - path: rtsp://${FRIGATE_RTSP_USER}:${FRIGATE_RTSP_PASSWORD}@10.147.5.10:554/stream0?username=admin&password=AD3281E649B94649491A30500550423E
+            - path: http://${FRIGATE_RTSP_USER}:${FRIGATE_RTSP_PASSWORD}@10.147.5.5:3381/image/FRNT
               roles:
                 - detect
                 - record
@@ -179,7 +208,7 @@ data:
       garage:
         ffmpeg:
           inputs:
-            - path: rtsp://${FRIGATE_RTSP_USER}:${FRIGATE_RTSP_PASSWORD}@10.147.5.9:554/livestream/11?action=play&media=video_audio_data
+            - path: http://${FRIGATE_RTSP_USER}:${FRIGATE_RTSP_PASSWORD}@10.147.5.5:3381/image/DRV
               roles:
                 - detect
                 - record
@@ -195,7 +224,7 @@ data:
       garden:
         ffmpeg:
           inputs:
-            - path: rtsp://${FRIGATE_RTSP_USER}:${FRIGATE_RTSP_PASSWORD}@10.147.5.8:554/livestream/11?action=play&media=video_audio_data
+            - path: http://${FRIGATE_RTSP_USER}:${FRIGATE_RTSP_PASSWORD}@10.147.5.5:3381/image/GDN
               roles:
                 - detect
                 - record
