@@ -153,18 +153,18 @@ data:
               roles:
                 - detect
                 - record
-        detect:
-          width: 1920
-          height: 1080
-        record:
-          enabled: true
-          retain:
-            days: 7
-            mode: motion
-        snapshots:
-          enabled: true
-          retain:
-            default: 14
+              detect:
+                width: 1920
+                height: 1080
+              record:
+                enabled: true
+                retain:
+                  days: 7
+                  mode: motion
+              snapshots:
+                enabled: true
+                retain:
+                  default: 14
       
       garage:
         ffmpeg:
@@ -173,18 +173,18 @@ data:
               roles:
                 - detect
                 - record
-        detect:
-          width: 1920
-          height: 1080
-        record:
-          enabled: true
-          retain:
-            days: 7
-            mode: motion
-        snapshots:
-          enabled: true
-          retain:
-            default: 14
+          detect:
+            width: 1920
+            height: 1080
+          record:
+            enabled: true
+            retain:
+              days: 7
+              mode: motion
+          snapshots:
+            enabled: true
+            retain:
+              default: 14
       
       garden:
         ffmpeg:
@@ -193,18 +193,18 @@ data:
               roles:
                 - detect
                 - record
-        detect:
-          width: 1920
-          height: 1080
-        record:
-          enabled: true
-          retain:
-            days: 7
-            mode: motion
-        snapshots:
-          enabled: true
-          retain:
-            default: 14
+          detect:
+            width: 1920
+            height: 1080
+          record:
+            enabled: true
+            retain:
+              days: 7
+              mode: motion
+          snapshots:
+            enabled: true
+            retain:
+              default: 14
 
     record:
       enabled: true
