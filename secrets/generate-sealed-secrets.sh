@@ -79,8 +79,11 @@ create_sealed_secret_multi() {
 # Generate Pihole SealedSecret
 create_sealed_secret "pihole-secrets" "dns" "WEBPASSWORD" "$PIHOLE_WEBPASSWORD" "pihole-sealed-secret.yaml"
 
-# Generate Frigate SealedSecret
-create_sealed_secret "frigate-secrets" "security" "MQTT_PASSWORD" "$FRIGATE_MQTT_PASSWORD" "frigate-sealed-secret.yaml"
+# Generate Frigate SealedSecret with MQTT and RTSP credentials
+create_sealed_secret_multi "frigate-secrets" "security" "frigate-sealed-secret.yaml" \
+  "MQTT_PASSWORD" "$FRIGATE_MQTT_PASSWORD" \
+  "RTSP_USER" "$FRIGATE_RTSP_USER" \
+  "RTSP_PASSWORD" "$FRIGATE_RTSP_PASSWORD"
 
 # Generate VPN SealedSecret
 create_sealed_secret "vpn-secrets" "tunnelled" "WIREGUARD_PRIVATE_KEY" "$WIREGUARD_PRIVATE_KEY" "vpn-sealed-secret.yaml"
