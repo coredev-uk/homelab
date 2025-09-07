@@ -14,51 +14,51 @@ spec:
     metadata:
       labels:
         app: frigate
-     spec:
-       hostNetwork: true
-       dnsPolicy: ClusterFirstWithHostNet
-       containers:
-        - name: frigate
-          image: ghcr.io/blakeblackshear/frigate:stable
-          ports:
-            - containerPort: 5000
-            - containerPort: 5443
-            - containerPort: 8554
-            - containerPort: 8555
-          env:
-            - name: TZ
-              value: "Europe/London"
-            - name: FRIGATE_MQTT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: frigate-secrets
-                  key: MQTT_PASSWORD
-          volumeMounts:
-            - name: data
-              mountPath: /config
-            - name: config
-              mountPath: /config/config.yml
-              subPath: config.yml
-            - name: media
-              mountPath: /media/frigate
-            - name: cache
-              mountPath: /tmp/cache
-            - name: dev-dri
-              mountPath: /dev/dri
-            - name: shm
-              mountPath: /dev/shm
-            - name: tls-certs
-              mountPath: /etc/letsencrypt/live/frigate/
-              readOnly: true
-          resources:
-            requests:
-              memory: "1Gi"
-              cpu: "500m"
-            limits:
-              memory: "4Gi"
-              cpu: "2000m"
-          securityContext:
-            privileged: true
+      spec:
+        hostNetwork: true
+        dnsPolicy: ClusterFirstWithHostNet
+        containers:
+          - name: frigate
+            image: ghcr.io/blakeblackshear/frigate:stable
+            ports:
+              - containerPort: 5000
+              - containerPort: 5443
+              - containerPort: 8554
+              - containerPort: 8555
+            env:
+              - name: TZ
+                value: "Europe/London"
+              - name: FRIGATE_MQTT_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: frigate-secrets
+                    key: MQTT_PASSWORD
+            volumeMounts:
+              - name: data
+                mountPath: /config
+              - name: config
+                mountPath: /config/config.yml
+                subPath: config.yml
+              - name: media
+                mountPath: /media/frigate
+              - name: cache
+                mountPath: /tmp/cache
+              - name: dev-dri
+                mountPath: /dev/dri
+              - name: shm
+                mountPath: /dev/shm
+              - name: tls-certs
+                mountPath: /etc/letsencrypt/live/frigate/
+                readOnly: true
+            resources:
+              requests:
+                memory: "1Gi"
+                cpu: "500m"
+              limits:
+                memory: "4Gi"
+                cpu: "2000m"
+            securityContext:
+              privileged: true
       volumes:
         - name: config
           configMap:
@@ -149,62 +149,62 @@ data:
       front_driveway:
         ffmpeg:
           inputs:
-            - path: rtsp://admin:AD3281E649B94649491A30500550423E@10.147.5.10:554/stream0
+            - path: rtsp://admin:password@10.147.5.10:554/stream0?username=admin&password=AD3281E649B94649491A30500550423E
               roles:
                 - detect
                 - record
-        detect:
-          width: 1920
-          height: 1080
-        record:
-          enabled: true
-          retain:
-            days: 7
-            mode: motion
-        snapshots:
-          enabled: true
-          retain:
-            default: 14
+              detect:
+                width: 1920
+                height: 1080
+              record:
+                enabled: true
+                retain:
+                  days: 7
+                  mode: motion
+              snapshots:
+                enabled: true
+                retain:
+                  default: 14
       
       garage:
         ffmpeg:
           inputs:
-            - path: rtsp://10.147.5.9:554/livestream/11?action=play&media=video_audio_data
+            - path: rtsp://admin:password@10.147.5.9:554/livestream/11?action=play&media=video_audio_data
               roles:
                 - detect
                 - record
-        detect:
-          width: 1920
-          height: 1080
-        record:
-          enabled: true
-          retain:
-            days: 7
-            mode: motion
-        snapshots:
-          enabled: true
-          retain:
-            default: 14
+              detect:
+                width: 1920
+                height: 1080
+              record:
+                enabled: true
+                retain:
+                  days: 7
+                  mode: motion
+              snapshots:
+                enabled: true
+                retain:
+                  default: 14
       
       garden:
         ffmpeg:
           inputs:
-            - path: rtsp://10.147.5.8:554/livestream/11?action=play&media=video_audio_data
+            - path: rtsp://admin:password@10.147.5.8:554/livestream/11?action=play&media=video_audio_data
               roles:
                 - detect
                 - record
-        detect:
-          width: 1920
-          height: 1080
-        record:
-          enabled: true
-          retain:
-            days: 7
-            mode: motion
-        snapshots:
-          enabled: true
-          retain:
-            default: 14
+              detect:
+                width: 1920
+                height: 1080
+              record:
+                enabled: true
+                retain:
+                  days: 7
+                  mode: motion
+              snapshots:
+                enabled: true
+                retain:
+                  default: 14
 
     record:
       enabled: true
