@@ -32,8 +32,11 @@ spec:
                   name: frigate-secrets
                   key: MQTT_PASSWORD
           volumeMounts:
-            - name: config
+            - name: data
               mountPath: /config
+            - name: config
+              mountPath: /config/config.yml
+              subPath: config.yml
             - name: media
               mountPath: /media/frigate
             - name: cache
@@ -56,6 +59,12 @@ spec:
             privileged: true
       volumes:
         - name: config
+          configMap:
+            name: frigate-config
+            items:
+              - key: config.yml
+                path: config.yml
+        - name: data
           persistentVolumeClaim:
             claimName: frigate-config
         - name: media
@@ -201,10 +210,6 @@ data:
       retain:
         days: 7
         mode: motion
-      events:
-        retain:
-          default: 14
-          mode: motion
 
     snapshots:
       enabled: true
