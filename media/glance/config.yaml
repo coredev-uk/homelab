@@ -259,7 +259,6 @@ pages:
                 url: https://sabnzbd.home.coredev.uk
                 check-url: http://sabnzbd.tunnelled:8080
                 icon: sh:sabnzbd-light
-                icon: si:qbittorrent
               - title: Cleanuparr
                 url: https://cleanuparr.home.coredev.uk
                 check-url: http://cleanuparr.media:11011
