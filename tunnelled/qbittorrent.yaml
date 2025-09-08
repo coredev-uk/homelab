@@ -7,11 +7,11 @@ data:
   qBittorrent.conf: |
     [Application]
     FileLogger\Enabled=true
-    FileLogger\Age=1
+    FileLogger\Age=6
     FileLogger\AgeType=1
     FileLogger\Backup=true
     FileLogger\DeleteOld=true
-    FileLogger\MaxSizeBytes=66560
+    FileLogger\MaxSizeBytes=67108864
     FileLogger\Path=/config/qBittorrent/logs
 
     [BitTorrent]
@@ -20,12 +20,23 @@ data:
     Session\Interface=
     Session\InterfaceName=
     Session\InterfaceAddress=
+    Session\DefaultSavePath=/downloads/torrents/complete
+    Session\TempPath=/downloads/torrents/incomplete
+    Session\TempPathEnabled=true
+    Session\DisableAutoTMMByDefault=false
+    Session\DisableAutoTMMTriggers\CategorySavePathChanged=true
+    Session\DisableAutoTMMTriggers\DefaultSavePathChanged=true
+    Session\GlobalMaxSeedingMinutes=-1
+    Session\QueueingSystemEnabled=true
+    Session\MaxActiveDownloads=5
+    Session\MaxActiveTorrents=10
+    Session\MaxActiveUploads=5
 
     [Core]
     AutoDeleteAddedTorrentFile=Never
 
     [Meta]
-    MigrationVersion=4
+    MigrationVersion=5
 
     [Network]
     Cookies=@Invalid()
@@ -38,63 +49,107 @@ data:
     Proxy\Password=gluetun-proxy
 
     [Preferences]
+    # Performance Settings
     Advanced\RecheckOnCompletion=false
     Advanced\TrayIconStyle=Normal
+    Advanced\useSystemIconTheme=true
+    Advanced\confirmTorrentDeletion=true
+    Advanced\confirmRemoveAllTags=true
+    Advanced\trackerExchangeEnabled=true
+    Advanced\checkAlternativeGUI=false
+    Advanced\useSystemIconTheme=true
+    Advanced\embedTracker=true
+    Advanced\superSeedingEnabled=false
+    Advanced\recheckTorrentsOnCompletion=false
+    Advanced\osCache=true
+    Advanced\guidedReadCache=true
+    Advanced\sendBufferWatermark=500
+    Advanced\sendBufferLowWatermark=10
+    Advanced\sendBufferWatermarkFactor=50
+    Advanced\socketBacklogSize=30
+    Advanced\outgoingPortsMin=0
+    Advanced\outgoingPortsMax=0
+    Advanced\checkingMemUsage=32
+    Advanced\diskIOType=0
+    Advanced\diskIOReadMode=0
+    Advanced\diskIOWriteMode=0
+    Advanced\coalesceReadsWrites=true
+    Advanced\pieceExtentAffinity=false
+    Advanced\suggestMode=false
+    Advanced\sendUploadPieceSuggestions=false
+    Advanced\sendBufferWatermark=500
+    Advanced\sendBufferLowWatermark=10
+    Advanced\sendBufferWatermarkFactor=50
+    Advanced\connectionSpeed=50
+    Advanced\socketBacklogSize=30
+    Advanced\anonymousMode=false
+    Advanced\superSeedingEnabled=false
+    Advanced\strictSuperSeeding=false
+    Advanced\validateHTTPSTrackerCertificate=true
+    Advanced\disableRecursiveDownload=false
+    Advanced\enableEmbeddedTracker=true
+    Advanced\embeddedTrackerPort=9000
+    Advanced\markOfTheWeb=true
+    Advanced\enableSpeedWidget=true
+
+    # BitTorrent Protocol Settings
     Bittorrent\AddTrackers=false
     Bittorrent\DHT=true
     Bittorrent\Encryption=1
     Bittorrent\LSD=true
-    Bittorrent\MaxConnections=-1
-    Bittorrent\MaxConnectionsPerTorrent=-1
+    Bittorrent\MaxConnections=200
+    Bittorrent\MaxConnectionsPerTorrent=100
     Bittorrent\MaxRatio=-1
     Bittorrent\MaxRatioAction=0
     Bittorrent\MaxUploads=-1
-    Bittorrent\MaxUploadsPerTorrent=-1
+    Bittorrent\MaxUploadsPerTorrent=4
     Bittorrent\PeX=true
     Bittorrent\uTP=true
     Bittorrent\uTP_rate_limited=true
+    Bittorrent\MaxTrackers=8
+
+    # Connection Settings
     Connection\PortRangeMin=6881
     Connection\PortRangeMax=6881
     Connection\UPnP=false
     Connection\ResolvePeerCountries=true
-    Downloads\DiskWriteCacheSize=64
+    Connection\ResolvePeerHostNames=false
+    Connection\GlobalDLLimit=0
+    Connection\GlobalUPLimit=0
+    Connection\GlobalDLLimitAlt=0
+    Connection\GlobalUPLimitAlt=0
+    Connection\alt_speeds_on=false
+
+    # Download Settings  
+    Downloads\DiskWriteCacheSize=128
     Downloads\DiskWriteCacheTTL=60
     Downloads\SavePath=/downloads/torrents/complete
     Downloads\ScanDirsV2=@Invalid()
     Downloads\TempPath=/downloads/torrents/incomplete
     Downloads\TempPathEnabled=true
-    DynDNS\DomainName=changeme.dyndns.org
-    DynDNS\Enabled=false
-    DynDNS\Password=
-    DynDNS\Service=0
-    DynDNS\Username=
-    General\AlternatingRowColors=true
-    General\CloseToTray=true
-    General\CloseToTrayNotified=true
-    General\CustomUIThemePath=
-    General\ExitConfirm=true
-    General\HideZeroComboValues=0
-    General\HideZeroValues=false
-    General\Locale=
-    General\MinimizeToTray=false
-    General\NoSplashScreen=true
-    General\PreventFromSuspendWhenDownloading=false
-    General\PreventFromSuspendWhenSeeding=false
-    General\StartMinimized=false
-    General\SystrayEnabled=true
-    General\UseCustomUITheme=false
-    MailNotification\email=
-    MailNotification\enabled=false
-    MailNotification\password=
-    MailNotification\req_auth=true
-    MailNotification\req_ssl=false
-    MailNotification\sender=qBittorrent_notification@example.com
-    MailNotification\smtp_server=smtp.changeme.com
-    MailNotification\username=
+    Downloads\UseIncompleteExtension=false
+    Downloads\FinishedTorrentExportDir=
+    Downloads\PreAllocation=false
+    Downloads\UseIncompleteExtension=false
+    Downloads\StartInPause=false
+
+    # RSS Settings
+    RSS\AutoDownloader\DownloadRepacks=true
+    RSS\AutoDownloader\SmartEpisodeFilter=s(\\d+)e(\\d+), (\\d+)x(\\d+), "(\\d{4}[.\\-]\\d{1,2}[.\\-]\\d{1,2})", "(\\d{1,2}[.\\-]\\d{1,2}[.\\-]\\d{4})"
+    RSS\Session\EnableProcessing=false
+    RSS\Session\MaxArticlesPerFeed=50
+    RSS\Session\ProcessingEnabled=false
+    RSS\Session\RefreshInterval=30
+
+    # Scheduler (disabled by default)
     Scheduler\days=EveryDay
-    Scheduler\end_time=@Variant(\0\0\0\xf\x4J\xa2\0)
-    Scheduler\start_time=@Variant(\0\0\0\xf\x1\xb7t\0)
+    Scheduler\end_time=@Variant(\\0\\0\\0\\xf\\x4J\\xa2\\0)
+    Scheduler\start_time=@Variant(\\0\\0\\0\\xf\\x1\\xb7t\\0)
+
+    # Search Settings
     Search\SearchEnabled=true
+
+    # WebUI Settings
     WebUI\Address=*
     WebUI\AlternativeUIEnabled=false
     WebUI\AuthSubnetWhitelist=@Invalid()
@@ -118,6 +173,42 @@ data:
     WebUI\SessionTimeout=3600
     WebUI\UseUPnP=false
     WebUI\Username=admin
+    WebUI\TrustedReverseProxiesList=
+
+    # General Settings
+    General\AlternatingRowColors=true
+    General\CloseToTray=true
+    General\CloseToTrayNotified=true
+    General\CustomUIThemePath=
+    General\ExitConfirm=true
+    General\HideZeroComboValues=0
+    General\HideZeroValues=false
+    General\Locale=en
+    General\MinimizeToTray=false
+    General\NoSplashScreen=true
+    General\PreventFromSuspendWhenDownloading=false
+    General\PreventFromSuspendWhenSeeding=false
+    General\StartMinimized=false
+    General\SystrayEnabled=false
+    General\UseCustomUITheme=false
+    General\UseRandomPort=false
+
+    # Mail Notifications (disabled)
+    MailNotification\email=
+    MailNotification\enabled=false
+    MailNotification\password=
+    MailNotification\req_auth=true
+    MailNotification\req_ssl=false
+    MailNotification\sender=qBittorrent_notification@example.com
+    MailNotification\smtp_server=smtp.changeme.com
+    MailNotification\username=
+
+    # Dynamic DNS (disabled)
+    DynDNS\DomainName=changeme.dyndns.org
+    DynDNS\Enabled=false
+    DynDNS\Password=
+    DynDNS\Service=0
+    DynDNS\Username=
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
