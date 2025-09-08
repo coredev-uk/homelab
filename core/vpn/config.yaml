@@ -17,20 +17,20 @@ metadata:
   namespace: tunnelled
 data:
   config.toml: |
-    [[roles]]
-    name = "glance"
-    routes = [
-      "GET /v1/openvpn/status",
-      "GET /v1/publicip/ip",
-      "GET /v1/openvpn/portforwarded"
-    ]
-    auth = "basic"
-    username = "admin"
-    password = "admin"
+     [[roles]]
+     name = "glance"
+     routes = [
+       "GET /v1/openvpn/status",
+       "GET /v1/publicip/ip",
+       "GET /v1/openvpn/portforwarded"
+     ]
+     auth = "basic"
+     username = "admin"
+     password = "admin"
 
-    [[roles]]
-    name = "qbittorrent"
-    routes = [
-      "GET /v1/openvpn/portforwarded"
-    ]
-    auth = "none"
+     [[roles]]
+     name = "qbittorrent"
+     routes = [
+       "GET /v1/openvpn/portforwarded"
+     ]
+     auth = "none"

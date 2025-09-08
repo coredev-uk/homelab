@@ -108,7 +108,7 @@ pages:
             url: http://qbittorrent.tunnelled:8080/api/v2/app/preferences
             subrequests:
               gluetun-port:
-                url: http://admin:admin@gluetun.tunnelled:8000/v1/portforwarded
+                url: http://admin:admin@gluetun.tunnelled:8000/v1/openvpn/portforwarded
             template: |
               {{ $gluetunPort := .Subrequest "gluetun-port" }}
               {{ if eq .Response.StatusCode 200 }}
