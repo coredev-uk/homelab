@@ -105,28 +105,50 @@ pages:
           - type: custom-api
             title: QBittorrent Port Status
             cache: 30s
-            url: http://admin:admin@gluetun.tunnelled:8000/v1/portforwarded
+            url: http://qbittorrent.tunnelled:8080/api/v2/app/preferences
+            subrequests:
+              gluetun-port:
+                url: http://admin:admin@gluetun.tunnelled:8000/v1/portforwarded
             template: |
+              {{ $gluetunPort := .Subrequest "gluetun-port" }}
               {{ if eq .Response.StatusCode 200 }}
-                {{ $port := .JSON.String "port" }}
-                {{ if eq $port "0" }}
-                  <div>
-                    <div class="color-highlight size-h4">
-                      Port Forwarding: <span class="color-warning">In Progress...</span>
+                {{ $qbitPort := .JSON.Int "listen_port" }}
+                {{ if eq $gluetunPort.Response.StatusCode 200 }}
+                  {{ $forwardedPort := $gluetunPort.JSON.Int "port" }}
+                  {{ if eq $forwardedPort 0 }}
+                    <div>
+                      <div class="color-highlight size-h4">
+                        Port Forwarding: <span class="color-warning">In Progress...</span>
+                      </div>
+                      <div class="size-h6">Waiting for ProtonVPN port assignment</div>
+                      <div class="size-h6">Current qBittorrent port: {{ $qbitPort }}</div>
                     </div>
-                    <div class="size-h6">Waiting for ProtonVPN port assignment</div>
-                  </div>
+                  {{ else if eq $qbitPort $forwardedPort }}
+                    <div>
+                      <div class="color-highlight size-h4">
+                        Port Forwarding: <span class="color-positive">Synced</span>
+                      </div>
+                      <div class="size-h5">Port: {{ $qbitPort }}</div>
+                    </div>
+                  {{ else }}
+                    <div>
+                      <div class="color-highlight size-h4">
+                        Port Forwarding: <span class="color-warning">Out of Sync</span>
+                      </div>
+                      <div class="size-h6">qBittorrent: {{ $qbitPort }}, VPN: {{ $forwardedPort }}</div>
+                    </div>
+                  {{ end }}
                 {{ else }}
                   <div>
                     <div class="color-highlight size-h4">
-                      Port Forwarding: <span class="color-positive">Active</span>
+                      Port Status: <span class="color-negative">VPN Check Failed</span>
                     </div>
-                    <div class="size-h5">Port: {{ $port }}</div>
+                    <div class="size-h6">qBittorrent listening on: {{ $qbitPort }}</div>
                   </div>
                 {{ end }}
               {{ else }}
                 <div style="text-align: center; color: var(--color-negative);">
-                  Port Forward Check Failed: {{ .Response.StatusCode }}
+                  qBittorrent API Check Failed: {{ .Response.StatusCode }}
                 </div>
               {{ end }}
 

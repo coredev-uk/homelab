@@ -336,7 +336,6 @@ spec:
             - name: config-template
               mountPath: /config/qBittorrent/qBittorrent.conf
               subPath: qBittorrent.conf
-              readOnly: true
             - name: downloads
               mountPath: /downloads
           resources:
