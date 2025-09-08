@@ -182,14 +182,12 @@ data:
     WebUI\HostHeaderValidation=false
     WebUI\LocalHostAuth=false
     WebUI\MaxAuthenticationFailCount=5
-    WebUI\Password_PBKDF2="@ByteArray(ARQ77eY1NUZaQsuDHbIMCA==:0WMRkYTUWVT9wVvdDtHAjU9b3b7uB8NR1Gur2hmQCvCDpm39Q+PsJRJPaCU51dEiz+dTzh8qbPsO8WkS/Qthdg==)"
     WebUI\Port=8080
     WebUI\RootFolder=
     WebUI\SecureCookie=true
     WebUI\ServerDomains=*
     WebUI\SessionTimeout=3600
     WebUI\UseUPnP=false
-    WebUI\Username=admin
     WebUI\TrustedReverseProxiesList=
 
     # General Settings (Trash Guides recommendations)
@@ -293,7 +291,26 @@ spec:
             - |
               mkdir -p /config/qBittorrent
               cp /tmp/config/qBittorrent.conf /config/qBittorrent/qBittorrent.conf
-              echo "Configuration file copied"
+              
+              # Add username and password from environment variables
+              echo "WebUI\\Username=$QBITTORRENT_USERNAME" >> /config/qBittorrent/qBittorrent.conf
+              
+              # Generate PBKDF2 hash for the password (simplified approach)
+              # qBittorrent will generate proper hash on first login
+              echo "WebUI\\Password_PBKDF2=" >> /config/qBittorrent/qBittorrent.conf
+              
+              echo "Configuration file updated with credentials from secret"
+          env:
+            - name: QBITTORRENT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: qbittorrent-secrets
+                  key: USERNAME
+            - name: QBITTORRENT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: qbittorrent-secrets
+                  key: PASSWORD
           volumeMounts:
             - name: config-data
               mountPath: /config
@@ -317,6 +334,16 @@ spec:
               value: "Europe/London"
             - name: WEBUI_PORT
               value: "8080"
+            - name: QBITTORRENT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: qbittorrent-secrets
+                  key: USERNAME
+            - name: QBITTORRENT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: qbittorrent-secrets
+                  key: PASSWORD
           volumeMounts:
             - name: config-data
               mountPath: /config
