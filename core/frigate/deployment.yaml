@@ -31,8 +31,21 @@ spec:
                 secretKeyRef:
                   name: frigate-secrets
                   key: MQTT_PASSWORD
+                  optional: true
+            - name: FRIGATE_RTSP_USER
+              valueFrom:
+                secretKeyRef:
+                  name: frigate-secrets
+                  key: RTSP_USER
+                  optional: true
+            - name: FRIGATE_RTSP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: frigate-secrets
+                  key: RTSP_PASSWORD
+                  optional: true
           volumeMounts:
-            - name: config
+            - name: data
               mountPath: /config
             - name: media
               mountPath: /media/frigate
@@ -55,7 +68,10 @@ spec:
           securityContext:
             privileged: true
       volumes:
-        - name: config
+        - name: config-template
+          configMap:
+            name: frigate-config
+        - name: data
           persistentVolumeClaim:
             claimName: frigate-config
         - name: media
@@ -135,26 +151,64 @@ data:
         type: cpu
 
     cameras:
-      # Add your cameras here
-      # front_door:
-      #   ffmpeg:
-      #     inputs:
-      #       - path: rtsp://USERNAME:PASSWORD@CAMERA_IP:554/stream
-      #         roles:
-      #           - detect
-      #           - record
-      #   detect:
-      #     width: 1920
-      #     height: 1080
-      #   record:
-      #     enabled: true
-      #     retain:
-      #       days: 7
-      #       mode: motion
-      #   snapshots:
-      #     enabled: true
-      #     retain:
-      #       default: 14
+      # Cameras temporarily disabled due to network connectivity issues
+      # Camera IPs (10.147.5.8, 10.147.5.9, 10.147.5.10) are not reachable
+      # Re-enable by changing enabled: true when network is restored
+      
+      front_driveway:
+        enabled: false
+        ffmpeg:
+          inputs:
+            - path: rtsp://$${FRIGATE_RTSP_USER}:$${FRIGATE_RTSP_PASSWORD}@10.147.5.10:554/stream0?username=admin&password=AD3281E649B94649491A30500550423E
+              roles:
+                - detect
+                - record
+        detect:
+          width: 1920
+          height: 1080
+        record:
+          enabled: false
+          retain:
+            days: 7
+            mode: motion
+        snapshots:
+          enabled: true
+          retain:
+            default: 14
+
+      garage:
+        enabled: false
+        ffmpeg:
+          inputs:
+            - path: rtsp://$${FRIGATE_RTSP_USER}:$${FRIGATE_RTSP_PASSWORD}@10.147.5.9:554/livestream/11?action=play&media=video_audio_data
+              roles:
+                - detect
+                - record
+        detect:
+          width: 1920
+          height: 1080
+        record:
+          enabled: false
+          retain:
+            days: 7
+            mode: motion
+
+      garden:
+        enabled: false
+        ffmpeg:
+          inputs:
+            - path: rtsp://$${FRIGATE_RTSP_USER}:$${FRIGATE_RTSP_PASSWORD}@10.147.5.8:554/livestream/11?action=play&media=video_audio_data
+              roles:
+                - detect
+                - record
+        detect:
+          width: 1920
+          height: 1080
+        record:
+          enabled: false
+          retain:
+            days: 7
+            mode: motion
 
     record:
       enabled: true
