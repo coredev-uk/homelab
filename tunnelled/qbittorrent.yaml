@@ -182,6 +182,7 @@ data:
     WebUI\HostHeaderValidation=false
     WebUI\LocalHostAuth=false
     WebUI\MaxAuthenticationFailCount=5
+    WebUI\Password_PBKDF2="@ByteArray(wl6jTUj4W6lSQQOibo1GwQ==:b1TQa/+5FSo3J5kfTHBXAUl42oNOGwI848WcygPgDfI=)"
     WebUI\Port=8080
     WebUI\RootFolder=
     WebUI\SecureCookie=true
@@ -189,7 +190,6 @@ data:
     WebUI\SessionTimeout=3600
     WebUI\UseUPnP=false
     WebUI\Username=admin
-    WebUI\Password_PBKDF2=
     WebUI\TrustedReverseProxiesList=
 
     # General Settings (Trash Guides recommendations)
