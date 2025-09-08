@@ -59,9 +59,9 @@ data:
     Connection\ResolvePeerCountries=true
     Downloads\DiskWriteCacheSize=64
     Downloads\DiskWriteCacheTTL=60
-    Downloads\SavePath=/downloads/complete
+    Downloads\SavePath=/downloads/torrents/complete
     Downloads\ScanDirsV2=@Invalid()
-    Downloads\TempPath=/downloads/incomplete
+    Downloads\TempPath=/downloads/torrents/incomplete
     Downloads\TempPathEnabled=true
     DynDNS\DomainName=changeme.dyndns.org
     DynDNS\Enabled=false
