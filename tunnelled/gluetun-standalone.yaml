@@ -87,11 +87,9 @@ spec:
               value: "on"
             - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
               value: "/gluetun/auth/config.toml"
-            # Port forwarding for qBittorrent integration
+            # Port forwarding disabled - not supported by ProtonVPN with WireGuard
             - name: VPN_PORT_FORWARDING
-              value: "on"
-            - name: PORT_FORWARD_ONLY
-              value: "on"
+              value: "off"
           volumeMounts:
             - name: gluetun-auth-config
               mountPath: /gluetun/auth
