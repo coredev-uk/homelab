@@ -78,11 +78,11 @@ spec:
               mountPath: /scripts
           resources:
             requests:
-              memory: "256Mi"
+              memory: "512Mi"
               cpu: "100m"
             limits:
-              memory: "1Gi"
-              cpu: "1000m"
+              memory: "3Gi"
+              cpu: "2000m"
       volumes:
         - name: config
           persistentVolumeClaim:
