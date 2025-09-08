@@ -291,7 +291,26 @@ spec:
             - |
               mkdir -p /config/qBittorrent
               cp /tmp/config/qBittorrent.conf /config/qBittorrent/qBittorrent.conf
-              echo "Configuration file copied"
+              
+              # Add username and password from environment variables
+              echo "WebUI\\Username=$WEBUI_USERNAME" >> /config/qBittorrent/qBittorrent.conf
+              
+              # For password, we need to let qBittorrent generate the hash on first login
+              # We'll remove any existing password entry and let the environment variable handle it
+              sed -i '/^WebUI\\Password_PBKDF2=/d' /config/qBittorrent/qBittorrent.conf
+              
+              echo "Configuration file updated with credentials"
+          env:
+            - name: WEBUI_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: qbittorrent-secrets
+                  key: USERNAME
+            - name: WEBUI_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: qbittorrent-secrets
+                  key: PASSWORD
           volumeMounts:
             - name: config-data
               mountPath: /config
@@ -315,16 +334,6 @@ spec:
               value: "Europe/London"
             - name: WEBUI_PORT
               value: "8080"
-            - name: WEBUI_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: qbittorrent-secrets
-                  key: USERNAME
-            - name: WEBUI_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: qbittorrent-secrets
-                  key: PASSWORD
           volumeMounts:
             - name: config-data
               mountPath: /config
