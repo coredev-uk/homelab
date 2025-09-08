@@ -188,6 +188,8 @@ data:
     WebUI\ServerDomains=*
     WebUI\SessionTimeout=3600
     WebUI\UseUPnP=false
+    WebUI\Username=admin
+    WebUI\Password_PBKDF2=
     WebUI\TrustedReverseProxiesList=
 
     # General Settings (Trash Guides recommendations)
@@ -284,38 +286,6 @@ spec:
                 sleep 5
               done
               echo "Gluetun SOCKS5 proxy is ready"
-        - name: setup-config
-          image: busybox:latest
-          command: ["sh", "-c"]
-          args:
-            - |
-              mkdir -p /config/qBittorrent
-              cp /tmp/config/qBittorrent.conf /config/qBittorrent/qBittorrent.conf
-              
-              # Add username and password from environment variables
-              echo "WebUI\\Username=$WEBUI_USERNAME" >> /config/qBittorrent/qBittorrent.conf
-              
-              # For password, we need to let qBittorrent generate the hash on first login
-              # We'll remove any existing password entry and let the environment variable handle it
-              sed -i '/^WebUI\\Password_PBKDF2=/d' /config/qBittorrent/qBittorrent.conf
-              
-              echo "Configuration file updated with credentials"
-          env:
-            - name: WEBUI_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: qbittorrent-secrets
-                  key: USERNAME
-            - name: WEBUI_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: qbittorrent-secrets
-                  key: PASSWORD
-          volumeMounts:
-            - name: config-data
-              mountPath: /config
-            - name: config-template
-              mountPath: /tmp/config
       containers:
         - name: qbittorrent
           image: lscr.io/linuxserver/qbittorrent:5.1.2
@@ -337,6 +307,10 @@ spec:
           volumeMounts:
             - name: config-data
               mountPath: /config
+            - name: config-template
+              mountPath: /config/qBittorrent/qBittorrent.conf
+              subPath: qBittorrent.conf
+              readOnly: true
             - name: downloads
               mountPath: /downloads
           resources:
