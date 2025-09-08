@@ -182,14 +182,14 @@ data:
     WebUI\HostHeaderValidation=false
     WebUI\LocalHostAuth=false
     WebUI\MaxAuthenticationFailCount=5
-    WebUI\Password_PBKDF2="@ByteArray(wl6jTUj4W6lSQQOibo1GwQ==:b1TQa/+5FSo3J5kfTHBXAUl42oNOGwI848WcygPgDfI=)"
     WebUI\Port=8080
     WebUI\RootFolder=
     WebUI\SecureCookie=true
     WebUI\ServerDomains=*
     WebUI\SessionTimeout=3600
     WebUI\UseUPnP=false
-    WebUI\Username=admin
+    WebUI\Username=${QBITTORRENT_USERNAME}
+    WebUI\Password_PBKDF2="${QBITTORRENT_PASSWORD_HASH}"
     WebUI\TrustedReverseProxiesList=
 
     # General Settings (Trash Guides recommendations)
@@ -286,6 +286,32 @@ spec:
                 sleep 5
               done
               echo "Gluetun SOCKS5 proxy is ready"
+        - name: setup-config
+          image: alpine:latest
+          command: ["sh", "-c"]
+          args:
+            - |
+              apk add --no-cache gettext
+              mkdir -p /config/qBittorrent
+              envsubst < /tmp/config/qBittorrent.conf > /config/qBittorrent/qBittorrent.conf
+              chmod 444 /config/qBittorrent/qBittorrent.conf
+              echo "Configuration file created with credentials from secret"
+          env:
+            - name: QBITTORRENT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: qbittorrent-secrets
+                  key: USERNAME
+            - name: QBITTORRENT_PASSWORD_HASH
+              valueFrom:
+                secretKeyRef:
+                  name: qbittorrent-secrets
+                  key: PASSWORD_HASH
+          volumeMounts:
+            - name: config-data
+              mountPath: /config
+            - name: config-template
+              mountPath: /tmp/config
       containers:
         - name: qbittorrent
           image: lscr.io/linuxserver/qbittorrent:5.1.2

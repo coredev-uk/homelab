@@ -94,10 +94,23 @@ create_sealed_secret "cloudflare-api-token-secret" "cert-manager" "api-token" "$
 # Generate Notifiarr SealedSecret
 create_sealed_secret "notifiarr-secrets" "media" "API_KEY" "$NOTIFIARR_API_KEY" "notifiarr-sealed-secret.yaml"
 
-# Generate qBittorrent SealedSecret
+# Function to generate qBittorrent PBKDF2 hash
+generate_qbittorrent_hash() {
+  local password=$1
+  # Generate random salt (32 bytes base64 encoded)
+  local salt=$(openssl rand -base64 32)
+  # Generate PBKDF2 hash (qBittorrent uses 100000 iterations)
+  local hash=$(echo -n "$password" | openssl dgst -sha256 -mac HMAC -macopt hexkey:$(echo -n "$salt" | base64 -d | xxd -p | tr -d '\n') -binary | base64)
+  # Format as qBittorrent expects: "@ByteArray(salt:hash)"
+  echo "@ByteArray($salt:$hash)"
+}
+
+# Generate qBittorrent SealedSecret with PBKDF2 hash
+QBITTORRENT_PASSWORD_HASH=$(generate_qbittorrent_hash "$QBITTORRENT_PASSWORD")
 create_sealed_secret_multi "qbittorrent-secrets" "tunnelled" "qbittorrent-sealed-secret.yaml" \
   "USERNAME" "$QBITTORRENT_USERNAME" \
-  "PASSWORD" "$QBITTORRENT_PASSWORD"
+  "PASSWORD" "$QBITTORRENT_PASSWORD" \
+  "PASSWORD_HASH" "$QBITTORRENT_PASSWORD_HASH"
 
 # Generate Glance SealedSecret with weather location and pihole password
 create_sealed_secret_multi "glance-secrets" "media" "glance-sealed-secret.yaml" \
