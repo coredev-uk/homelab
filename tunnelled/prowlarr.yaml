@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: prowlarr-standalone
+  name: prowlarr
   namespace: tunnelled
   labels:
-    app: prowlarr-standalone
+    app: prowlarr
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: prowlarr-standalone
+      app: prowlarr
   template:
     metadata:
       labels:
-        app: prowlarr-standalone
+        app: prowlarr
     spec:
       initContainers:
         - name: wait-for-gluetun
@@ -23,7 +23,7 @@ spec:
             - |
               # Wait for gluetun to be ready
               echo "Waiting for gluetun HTTP proxy to be ready..."
-              until nc -z gluetun-standalone 8888; do
+              until nc -z gluetun 8888; do
                 echo "Gluetun HTTP proxy not ready, waiting..."
                 sleep 5
               done
@@ -42,11 +42,11 @@ spec:
               value: "Europe/London"
             # HTTP proxy configuration for indexer requests
             - name: HTTP_PROXY
-              value: "http://gluetun-standalone:8888"
+              value: "http://gluetun:8888"
             - name: HTTPS_PROXY
-              value: "http://gluetun-standalone:8888"
+              value: "http://gluetun:8888"
             - name: NO_PROXY
-              value: "localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,.svc,.cluster.local,gluetun-standalone"
+              value: "localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,.svc,.cluster.local,gluetun"
           volumeMounts:
             - name: config
               mountPath: /config
@@ -89,11 +89,11 @@ spec:
               value: "none"
             # FlareSolverr can also use proxy for cloudflare bypass
             - name: HTTP_PROXY
-              value: "http://gluetun-standalone:8888"
+              value: "http://gluetun:8888"
             - name: HTTPS_PROXY
-              value: "http://gluetun-standalone:8888"
+              value: "http://gluetun:8888"
             - name: NO_PROXY
-              value: "localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,.svc,.cluster.local,gluetun-standalone"
+              value: "localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,.svc,.cluster.local,gluetun"
           resources:
             requests:
               memory: "256Mi"
@@ -117,12 +117,12 @@ spec:
       volumes:
         - name: config
           persistentVolumeClaim:
-            claimName: prowlarr-standalone-config
+            claimName: prowlarr-config
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: prowlarr-standalone-config
+  name: prowlarr-config
   namespace: tunnelled
 spec:
   accessModes:
@@ -135,13 +135,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: prowlarr-standalone
+  name: prowlarr
   namespace: tunnelled
   labels:
-    app: prowlarr-standalone
+    app: prowlarr
 spec:
   selector:
-    app: prowlarr-standalone
+    app: prowlarr
   ports:
     - name: prowlarr-web
       port: 9696
