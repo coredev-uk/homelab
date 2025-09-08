@@ -28,12 +28,16 @@ data:
     Session\DisableAutoTMMTriggers\DefaultSavePathChanged=true
     Session\GlobalMaxSeedingMinutes=-1
     Session\QueueingSystemEnabled=true
-    Session\MaxActiveDownloads=5
-    Session\MaxActiveTorrents=10
-    Session\MaxActiveUploads=5
+    Session\MaxActiveDownloads=8
+    Session\MaxActiveTorrents=15
+    Session\MaxActiveUploads=8
+    Session\IgnoreSlowTorrentsForQueueing=false
+    Session\SlowTorrentsDownloadRate=2
+    Session\SlowTorrentsUploadRate=2
+    Session\SlowTorrentsInactivityTimer=60
 
     [Core]
-    AutoDeleteAddedTorrentFile=Never
+    AutoDeleteAddedTorrentFile=IfAdded
 
     [Meta]
     MigrationVersion=5
@@ -49,7 +53,7 @@ data:
     Proxy\Password=gluetun-proxy
 
     [Preferences]
-    # Performance Settings
+    # Advanced Performance Settings (Trash Guides recommendations)
     Advanced\RecheckOnCompletion=false
     Advanced\TrayIconStyle=Normal
     Advanced\useSystemIconTheme=true
@@ -57,7 +61,6 @@ data:
     Advanced\confirmRemoveAllTags=true
     Advanced\trackerExchangeEnabled=true
     Advanced\checkAlternativeGUI=false
-    Advanced\useSystemIconTheme=true
     Advanced\embedTracker=true
     Advanced\superSeedingEnabled=false
     Advanced\recheckTorrentsOnCompletion=false
@@ -77,13 +80,8 @@ data:
     Advanced\pieceExtentAffinity=false
     Advanced\suggestMode=false
     Advanced\sendUploadPieceSuggestions=false
-    Advanced\sendBufferWatermark=500
-    Advanced\sendBufferLowWatermark=10
-    Advanced\sendBufferWatermarkFactor=50
     Advanced\connectionSpeed=50
-    Advanced\socketBacklogSize=30
     Advanced\anonymousMode=false
-    Advanced\superSeedingEnabled=false
     Advanced\strictSuperSeeding=false
     Advanced\validateHTTPSTrackerCertificate=true
     Advanced\disableRecursiveDownload=false
@@ -91,8 +89,14 @@ data:
     Advanced\embeddedTrackerPort=9000
     Advanced\markOfTheWeb=true
     Advanced\enableSpeedWidget=true
+    Advanced\ignoreLimitsOnLAN=true
+    Advanced\includeOverhead=false
+    Advanced\announceIP=
+    Advanced\announceToAllTrackers=true
+    Advanced\announceToAllTiers=true
+    Advanced\asyncIOThreads=10
 
-    # BitTorrent Protocol Settings
+    # BitTorrent Protocol Settings (Trash Guides optimized)
     Bittorrent\AddTrackers=false
     Bittorrent\DHT=true
     Bittorrent\Encryption=1
@@ -107,8 +111,9 @@ data:
     Bittorrent\uTP=true
     Bittorrent\uTP_rate_limited=true
     Bittorrent\MaxTrackers=8
+    Bittorrent\TrackersPorts=9000
 
-    # Connection Settings
+    # Connection Settings (Trash Guides recommendations)
     Connection\PortRangeMin=6881
     Connection\PortRangeMax=6881
     Connection\UPnP=false
@@ -119,9 +124,12 @@ data:
     Connection\GlobalDLLimitAlt=0
     Connection\GlobalUPLimitAlt=0
     Connection\alt_speeds_on=false
+    Connection\InterfaceListenIPv6=false
+    Connection\InterfaceAddress=0.0.0.0
+    Connection\InterfaceName=
 
-    # Download Settings  
-    Downloads\DiskWriteCacheSize=128
+    # Download Settings (Trash Guides optimized)
+    Downloads\DiskWriteCacheSize=64
     Downloads\DiskWriteCacheTTL=60
     Downloads\SavePath=/downloads/torrents/complete
     Downloads\ScanDirsV2=@Invalid()
@@ -130,10 +138,19 @@ data:
     Downloads\UseIncompleteExtension=false
     Downloads\FinishedTorrentExportDir=
     Downloads\PreAllocation=false
-    Downloads\UseIncompleteExtension=false
     Downloads\StartInPause=false
+    Downloads\AutoDeleteAddedTorrentFile=IfAdded
+    Downloads\TorrentExportDir=
+    Downloads\AppendExtToIncompleteFiles=false
+    Downloads\CreateSubfolder=true
+    Downloads\UseDownloadPath=true
+    Downloads\NewAdditionDialog=false
+    Downloads\NewAdditionDialogFront=true
 
-    # RSS Settings
+    # Categories for *arr integration (Trash Guides structure)
+    # These will be created automatically when used by *arr apps
+
+    # RSS Settings (Trash Guides recommendations)
     RSS\AutoDownloader\DownloadRepacks=true
     RSS\AutoDownloader\SmartEpisodeFilter=s(\\d+)e(\\d+), (\\d+)x(\\d+), "(\\d{4}[.\\-]\\d{1,2}[.\\-]\\d{1,2})", "(\\d{1,2}[.\\-]\\d{1,2}[.\\-]\\d{4})"
     RSS\Session\EnableProcessing=false
@@ -149,11 +166,11 @@ data:
     # Search Settings
     Search\SearchEnabled=true
 
-    # WebUI Settings
+    # WebUI Settings (Trash Guides security recommendations)
     WebUI\Address=*
     WebUI\AlternativeUIEnabled=false
-    WebUI\AuthSubnetWhitelist=@Invalid()
-    WebUI\AuthSubnetWhitelistEnabled=false
+    WebUI\AuthSubnetWhitelist=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+    WebUI\AuthSubnetWhitelistEnabled=true
     WebUI\BanDuration=3600
     WebUI\CSRFProtection=true
     WebUI\ClickjackingProtection=true
@@ -175,12 +192,12 @@ data:
     WebUI\Username=admin
     WebUI\TrustedReverseProxiesList=
 
-    # General Settings
+    # General Settings (Trash Guides recommendations)
     General\AlternatingRowColors=true
-    General\CloseToTray=true
-    General\CloseToTrayNotified=true
+    General\CloseToTray=false
+    General\CloseToTrayNotified=false
     General\CustomUIThemePath=
-    General\ExitConfirm=true
+    General\ExitConfirm=false
     General\HideZeroComboValues=0
     General\HideZeroValues=false
     General\Locale=en
@@ -193,7 +210,7 @@ data:
     General\UseCustomUITheme=false
     General\UseRandomPort=false
 
-    # Mail Notifications (disabled)
+    # Mail Notifications (disabled for headless operation)
     MailNotification\email=
     MailNotification\enabled=false
     MailNotification\password=
@@ -209,6 +226,23 @@ data:
     DynDNS\Password=
     DynDNS\Service=0
     DynDNS\Username=
+
+    # Speed Settings (Trash Guides recommendations)
+    # These are set to unlimited (0) to let the VPN be the bottleneck
+    Speed\GlobalDLLimit=0
+    Speed\GlobalUPLimit=0
+    Speed\GlobalDLLimitAlt=0
+    Speed\GlobalUPLimitAlt=0
+    Speed\bSchedulerEnabled=false
+
+    # Seeding Settings (Trash Guides recommendations for private trackers)
+    # Adjust these based on your tracker requirements
+    Seeding\GlobalMaxSeedingMinutes=-1
+    Seeding\SeedChokingAlgorithm=RoundRobin
+    Seeding\upload_slots_behavior=0
+    Seeding\upload_choking_algorithm=1
+    Seeding\announce_to_all_trackers=true
+    Seeding\announce_to_all_tiers=true
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
