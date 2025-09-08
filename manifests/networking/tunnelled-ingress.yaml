@@ -23,7 +23,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: qbittorrent
+                name: qbittorrent-standalone
                 port:
                   number: 8080
     - host: sabnzbd.home.coredev.uk
@@ -33,7 +33,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: sabnzbd
+                name: sabnzbd-standalone
                 port:
                   number: 8080
     - host: prowlarr.home.coredev.uk
@@ -43,6 +43,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: prowlarr
+                name: prowlarr-standalone
                 port:
                   number: 9696

@@ -1,0 +1,149 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sabnzbd-standalone
+  namespace: tunnelled
+  labels:
+    app: sabnzbd-standalone
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sabnzbd-standalone
+  template:
+    metadata:
+      labels:
+        app: sabnzbd-standalone
+    spec:
+      initContainers:
+        - name: scripts-setup
+          image: busybox:latest
+          command: ["sh", "-c"]
+          args:
+            - |
+              mkdir -p /scripts
+              cp /tmp/scripts/* /scripts/
+              chmod +x /scripts/*.py
+              echo "Scripts setup completed"
+          volumeMounts:
+            - name: scripts-volume
+              mountPath: /scripts
+            - name: scripts-temp
+              mountPath: /tmp/scripts
+        - name: config-setup
+          image: busybox:latest
+          command: ["sh", "-c"]
+          args:
+            - |
+              # Wait for gluetun to be ready
+              echo "Waiting for gluetun HTTP proxy to be ready..."
+              until nc -z gluetun-standalone 8888; do
+                echo "Gluetun HTTP proxy not ready, waiting..."
+                sleep 5
+              done
+              echo "Gluetun HTTP proxy is ready"
+              
+              if [ -f /config/sabnzbd.ini ]; then
+                echo "sabnzbd.ini exists, updating essential settings..."
+                if ! grep -q "sabnzbd-standalone.tunnelled" /config/sabnzbd.ini; then
+                  sed -i 's/host_whitelist = .*/host_whitelist = sabnzbd.home.coredev.uk, sabnzbd-standalone.tunnelled, sabnzbd-standalone/' /config/sabnzbd.ini
+                  echo "Updated host_whitelist"
+                fi
+                if ! grep -q "script_dir = /scripts" /config/sabnzbd.ini; then
+                  sed -i 's|script_dir = .*|script_dir = /scripts|' /config/sabnzbd.ini
+                  echo "Updated script_dir"
+                fi
+              else
+                echo "sabnzbd.ini not found, will be created by SABnzbd on first run"
+              fi
+          volumeMounts:
+            - name: config
+              mountPath: /config
+      containers:
+        - name: sabnzbd
+          image: lscr.io/linuxserver/sabnzbd:4.5.3
+          ports:
+            - containerPort: 8080
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/London"
+            # HTTP proxy configuration for external traffic
+            - name: HTTP_PROXY
+              value: "http://gluetun-standalone:8888"
+            - name: HTTPS_PROXY
+              value: "http://gluetun-standalone:8888"
+            - name: NO_PROXY
+              value: "localhost,127.0.0.1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,.svc,.cluster.local,gluetun-standalone"
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: downloads
+              mountPath: /downloads
+            - name: scripts-volume
+              mountPath: /scripts
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+          # Health checks
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: sabnzbd-standalone-config
+        - name: downloads
+          persistentVolumeClaim:
+            claimName: downloads-data-host
+        - name: scripts-volume
+          emptyDir: {}
+        - name: scripts-temp
+          configMap:
+            name: sabnzbd-scripts
+            defaultMode: 0755
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sabnzbd-standalone-config
+  namespace: tunnelled
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: longhorn
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sabnzbd-standalone
+  namespace: tunnelled
+  labels:
+    app: sabnzbd-standalone
+spec:
+  selector:
+    app: sabnzbd-standalone
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP

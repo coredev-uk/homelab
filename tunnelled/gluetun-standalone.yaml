@@ -1,0 +1,130 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gluetun-standalone
+  namespace: tunnelled
+  labels:
+    app: gluetun-standalone
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gluetun-standalone
+  template:
+    metadata:
+      labels:
+        app: gluetun-standalone
+    spec:
+      containers:
+        - name: gluetun
+          image: qmcgaw/gluetun:v3.40.0
+          ports:
+            - containerPort: 8000 # Control server
+            - containerPort: 8888 # HTTP proxy
+            - containerPort: 8388 # SOCKS5 proxy
+          securityContext:
+            privileged: true
+            capabilities:
+              add:
+                - NET_ADMIN
+          env:
+            - name: VPN_SERVICE_PROVIDER
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: VPN_SERVICE_PROVIDER
+            - name: VPN_TYPE
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: VPN_TYPE
+            - name: WIREGUARD_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: vpn-secrets
+                  key: WIREGUARD_PRIVATE_KEY
+            - name: SERVER_COUNTRIES
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: SERVER_COUNTRIES
+            - name: FIREWALL_OUTBOUND_SUBNETS
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: FIREWALL_OUTBOUND_SUBNETS
+            - name: UPDATER_PERIOD
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: UPDATER_PERIOD
+            - name: DNS_KEEP_NAMESERVER
+              value: "off"
+            - name: DNS_ADDRESS
+              value: "1.1.1.1"
+            - name: DOT
+              value: "off"
+            - name: DNS_UPDATE_PERIOD
+              value: "24h"
+            # HTTP Proxy settings
+            - name: HTTPPROXY
+              value: "on"
+            - name: HTTPPROXY_LISTENING_ADDRESS
+              value: ":8888"
+            - name: HTTPPROXY_STEALTH
+              value: "on"
+            # SOCKS5 Proxy settings
+            - name: SHADOWSOCKS
+              value: "on"
+            - name: SHADOWSOCKS_LISTENING_ADDRESS
+              value: ":8388"
+            - name: SHADOWSOCKS_METHOD
+              value: "chacha20-ietf-poly1305"
+            - name: SHADOWSOCKS_PASSWORD
+              value: "gluetun-proxy"
+            # Control server
+            - name: HTTP_CONTROL_SERVER_LOG
+              value: "on"
+            - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
+              value: "/gluetun/auth/config.toml"
+            # Port forwarding for qBittorrent integration
+            - name: VPN_PORT_FORWARDING
+              value: "on"
+            - name: PORT_FORWARD_ONLY
+              value: "on"
+          volumeMounts:
+            - name: gluetun-auth-config
+              mountPath: /gluetun/auth
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      volumes:
+        - name: gluetun-auth-config
+          configMap:
+            name: gluetun-auth-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gluetun-standalone
+  namespace: tunnelled
+  labels:
+    app: gluetun-standalone
+spec:
+  selector:
+    app: gluetun-standalone
+  ports:
+    - name: control
+      port: 8000
+      targetPort: 8000
+    - name: http-proxy
+      port: 8888
+      targetPort: 8888
+    - name: socks5-proxy
+      port: 8388
+      targetPort: 8388
+  type: ClusterIP

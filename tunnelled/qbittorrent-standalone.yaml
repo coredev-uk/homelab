@@ -1,0 +1,231 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: qbittorrent-standalone-config
+  namespace: tunnelled
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: longhorn
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qbittorrent-standalone
+  namespace: tunnelled
+  labels:
+    app: qbittorrent-standalone
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qbittorrent-standalone
+  template:
+    metadata:
+      labels:
+        app: qbittorrent-standalone
+    spec:
+      initContainers:
+        - name: setup-proxy
+          image: busybox:latest
+          command: ["sh", "-c"]
+          args:
+            - |
+              # Wait for gluetun to be ready
+              echo "Waiting for gluetun SOCKS5 proxy to be ready..."
+              timeout=300
+              while [ $timeout -gt 0 ]; do
+                if nc -z gluetun-standalone 8388; then
+                  echo "Gluetun SOCKS5 proxy is ready"
+                  break
+                fi
+                echo "Gluetun SOCKS5 proxy not ready, waiting... ($timeout seconds left)"
+                sleep 5
+                timeout=$((timeout - 5))
+              done
+              
+              if [ $timeout -eq 0 ]; then
+                echo "ERROR: Gluetun SOCKS5 proxy not ready after 5 minutes"
+                exit 1
+              fi
+              
+              # Ensure config directory exists
+              mkdir -p /config/qBittorrent
+              
+              # Create or update qBittorrent configuration
+              CONFIG_FILE="/config/qBittorrent/qBittorrent.conf"
+              
+              if [ ! -f "$CONFIG_FILE" ]; then
+                echo "Creating new qBittorrent configuration with SOCKS5 proxy..."
+                cat > "$CONFIG_FILE" << 'EOF'
+              [BitTorrent]
+              Session\Port=6881
+              Session\UseRandomPort=false
+              
+              [Preferences]
+              Connection\ProxyType=2
+              Connection\Proxy\IP=gluetun-standalone
+              Connection\Proxy\Port=8388
+              Connection\Proxy\Username=
+              Connection\Proxy\Password=gluetun-proxy
+              Connection\Proxy\OnlyForTorrents=false
+              Connection\Proxy\PeerConnections=true
+              WebUI\Port=8080
+              WebUI\HostHeaderValidation=false
+              WebUI\LocalHostAuth=false
+              General\Locale=en
+              Downloads\SavePath=/downloads/complete
+              Downloads\TempPath=/downloads/incomplete
+              EOF
+                echo "✓ Created qBittorrent configuration with SOCKS5 proxy"
+              else
+                echo "Updating existing qBittorrent configuration with SOCKS5 proxy..."
+                
+                # Backup existing config
+                cp "$CONFIG_FILE" "$CONFIG_FILE.backup.$(date +%s)"
+                
+                # Remove existing proxy settings to avoid conflicts
+                sed -i '/^Connection\\Proxy/d' "$CONFIG_FILE"
+                sed -i '/^Connection\\ProxyType/d' "$CONFIG_FILE"
+                
+                # Add/update proxy configuration in [Preferences] section
+                if grep -q '^\[Preferences\]' "$CONFIG_FILE"; then
+                  # Add proxy settings after [Preferences] section
+                  sed -i '/^\[Preferences\]/a\
+              Connection\\ProxyType=2\
+              Connection\\Proxy\\IP=gluetun-standalone\
+              Connection\\Proxy\\Port=8388\
+              Connection\\Proxy\\Username=\
+              Connection\\Proxy\\Password=gluetun-proxy\
+              Connection\\Proxy\\OnlyForTorrents=false\
+              Connection\\Proxy\\PeerConnections=true' "$CONFIG_FILE"
+                else
+                  # Create [Preferences] section if it doesn't exist
+                  echo "" >> "$CONFIG_FILE"
+                  echo "[Preferences]" >> "$CONFIG_FILE"
+                  echo "Connection\\ProxyType=2" >> "$CONFIG_FILE"
+                  echo "Connection\\Proxy\\IP=gluetun-standalone" >> "$CONFIG_FILE"
+                  echo "Connection\\Proxy\\Port=8388" >> "$CONFIG_FILE"
+                  echo "Connection\\Proxy\\Username=" >> "$CONFIG_FILE"
+                  echo "Connection\\Proxy\\Password=gluetun-proxy" >> "$CONFIG_FILE"
+                  echo "Connection\\Proxy\\OnlyForTorrents=false" >> "$CONFIG_FILE"
+                  echo "Connection\\Proxy\\PeerConnections=true" >> "$CONFIG_FILE"
+                fi
+                
+                echo "✓ Updated qBittorrent configuration with SOCKS5 proxy"
+              fi
+              
+              echo "=== qBittorrent Proxy Configuration ==="
+              echo "Proxy Type: SOCKS5 (type 2)"
+              echo "Proxy Server: gluetun-standalone:8388"
+              echo "Proxy Password: gluetun-proxy"
+              echo "Proxy for all traffic: Yes"
+              echo "Peer connections via proxy: Yes"
+              echo "======================================="
+              
+              # Verify configuration was written correctly
+              if grep -q "Connection\\\\ProxyType=2" "$CONFIG_FILE" && \
+                 grep -q "Connection\\\\Proxy\\\\IP=gluetun-standalone" "$CONFIG_FILE" && \
+                 grep -q "Connection\\\\Proxy\\\\Port=8388" "$CONFIG_FILE"; then
+                echo "✓ Proxy configuration verified successfully"
+              else
+                echo "✗ ERROR: Proxy configuration verification failed"
+                echo "Current proxy settings in config:"
+                grep "Connection\\\\Proxy" "$CONFIG_FILE" || echo "No proxy settings found!"
+                exit 1
+              fi
+          volumeMounts:
+            - name: qbittorrent-config
+              mountPath: /config
+      containers:
+        - name: qbittorrent
+          image: lscr.io/linuxserver/qbittorrent:5.1.2
+          ports:
+            - containerPort: 8080
+            - containerPort: 8443
+            - containerPort: 6881
+            - containerPort: 6881
+              protocol: UDP
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/London"
+            - name: WEBUI_PORT
+              value: "8080"
+            # Add debugging to verify proxy usage
+            - name: QBT_LOGGING_LEVEL
+              value: "info"
+          volumeMounts:
+            - name: qbittorrent-config
+              mountPath: /config
+            - name: downloads
+              mountPath: /downloads
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "200m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+          # Startup probe to ensure qBittorrent starts properly with proxy config
+          startupProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 12  # Allow 2 minutes for startup
+          # Health check to ensure proxy is working
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+      volumes:
+        - name: qbittorrent-config
+          persistentVolumeClaim:
+            claimName: qbittorrent-standalone-config
+        - name: downloads
+          persistentVolumeClaim:
+            claimName: downloads-data-host
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qbittorrent-standalone
+  namespace: tunnelled
+  labels:
+    app: qbittorrent-standalone
+spec:
+  selector:
+    app: qbittorrent-standalone
+  ports:
+    - name: qbt-web-http
+      port: 8080
+      targetPort: 8080
+    - name: qbt-web-https
+      port: 8443
+      targetPort: 8443
+    - name: qbt-torrent-tcp
+      port: 6881
+      targetPort: 6881
+    - name: qbt-torrent-udp
+      port: 6881
+      targetPort: 6881
+      protocol: UDP
+  type: ClusterIP
