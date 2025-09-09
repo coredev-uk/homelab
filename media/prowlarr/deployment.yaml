@@ -86,9 +86,11 @@ spec:
                 configMapKeyRef:
                   name: vpn-config
                   key: DOT
-            # To resolve local containers (Arr-stack connection)
+            # DNS configuration for both local and external resolution
             - name: DNS_KEEP_NAMESERVER
-              value: "on"
+              value: "off"
+            - name: DNS_ADDRESS
+              value: "1.1.1.1"
 
             # VPN Credentials
             - name: WIREGUARD_PRIVATE_KEY
