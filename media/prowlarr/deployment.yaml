@@ -39,13 +39,9 @@ spec:
       labels:
         app: prowlarr
     spec:
-      # Required sysctls for VPN functionality
+      # VPN functionality with reduced privileges
       securityContext:
-        sysctls:
-          - name: net.ipv4.conf.all.src_valid_mark
-            value: "1"
-          - name: net.ipv6.conf.all.disable_ipv6
-            value: "1"
+        runAsNonRoot: false
 
       containers:
         # Gluetun VPN sidecar - optimized for indexer API calls
@@ -55,7 +51,6 @@ spec:
             - containerPort: 8001
               name: control-api
           securityContext:
-            privileged: true
             capabilities:
               add:
                 - NET_ADMIN

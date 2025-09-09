@@ -39,13 +39,9 @@ spec:
       labels:
         app: sabnzbd
     spec:
-      # Required sysctls for VPN functionality
+      # VPN functionality with reduced privileges
       securityContext:
-        sysctls:
-          - name: net.ipv4.conf.all.src_valid_mark
-            value: "1"
-          - name: net.ipv6.conf.all.disable_ipv6
-            value: "1"
+        runAsNonRoot: false
 
       # Initialize SABnzbd scripts and configuration
       initContainers:
@@ -96,7 +92,6 @@ spec:
             - containerPort: 8002
               name: control-api
           securityContext:
-            privileged: true
             capabilities:
               add:
                 - NET_ADMIN
