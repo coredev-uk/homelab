@@ -42,9 +42,15 @@ spec:
       # VPN functionality with reduced privileges
       securityContext:
         runAsNonRoot: false
-
-      # Use default Kubernetes DNS policy
-      # dnsPolicy: "ClusterFirst"
+      
+      # Custom DNS configuration to prevent search domain issues
+      dnsPolicy: "None"
+      dnsConfig:
+        nameservers:
+          - "127.0.0.1"        # gluetun internal DNS
+        options:
+          - name: ndots
+            value: "1"         # Prevent search domain appending to external domains
 
       containers:
         # Gluetun VPN sidecar - optimized for indexer API calls
