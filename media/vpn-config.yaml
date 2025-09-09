@@ -15,7 +15,7 @@ data:
   FIREWALL_OUTBOUND_SUBNETS: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,10.147.20.0/24"
   VPN_SERVICE_PROVIDER: "protonvpn"
   VPN_TYPE: "wireguard"
-  SERVER_COUNTRIES: "United Kingdom"
+  SERVER_COUNTRIES: "United Kingdom, Switzerland, Netherlands"
   UPDATER_PERIOD: "24h"
   DOT: "off"
   DNS_ADDRESS: "1.1.1.1"
@@ -39,18 +39,7 @@ data:
     [[roles]]
     name = "glance"
     routes = [
-      "GET /v1/openvpn/status",
       "GET /v1/publicip/ip",
-      "GET /v1/openvpn/portforwarded"
-    ]
-    auth = "basic"
-    username = "admin"
-    password = "admin"
-
-    # qBittorrent port forwarding access - no authentication needed for localhost
-    [[roles]]
-    name = "qbittorrent"
-    routes = [
       "GET /v1/openvpn/portforwarded"
     ]
     auth = "none"
