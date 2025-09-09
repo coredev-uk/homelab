@@ -43,19 +43,8 @@ spec:
       securityContext:
         runAsNonRoot: false
       
-      # Custom DNS configuration for VPN + cluster resolution
-      dnsPolicy: "None"
-      dnsConfig:
-        nameservers:
-          - "127.0.0.1"        # gluetun internal DNS for VPN traffic
-          - "10.43.0.10"       # CoreDNS for cluster domains
-        searches:
-          - "media.svc.cluster.local"
-          - "svc.cluster.local"
-          - "cluster.local"
-        options:
-          - name: ndots
-            value: "5"
+      # Use default Kubernetes DNS policy
+      # dnsPolicy: "ClusterFirst"
 
       containers:
         # Gluetun VPN sidecar - optimized for indexer API calls
@@ -98,8 +87,9 @@ spec:
                   name: vpn-config
                   key: LOG_LEVEL
 
-            # DNS Configuration - remove cluster DNS forwarding
-            # Let Kubernetes dnsPolicy handle this instead
+            # DNS Configuration - keep Kubernetes DNS for cluster domains
+            - name: DNS_KEEP_NAMESERVER
+              value: "on"
 
             # VPN Credentials
             - name: WIREGUARD_PRIVATE_KEY
