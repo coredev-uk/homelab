@@ -85,8 +85,10 @@ create_sealed_secret_multi "frigate-secrets" "security" "frigate-sealed-secret.y
   "RTSP_USER" "$FRIGATE_RTSP_USER" \
   "RTSP_PASSWORD" "$FRIGATE_RTSP_PASSWORD"
 
-# Generate VPN SealedSecret
-create_sealed_secret "vpn-secrets" "media" "WIREGUARD_PRIVATE_KEY" "$WIREGUARD_PRIVATE_KEY" "vpn-sealed-secret.yaml"
+# Generate VPN SealedSecret with both standard and NATPMP keys
+create_sealed_secret_multi "vpn-secrets" "media" "vpn-sealed-secret.yaml" \
+  "WIREGUARD_PRIVATE_KEY" "$WIREGUARD_PRIVATE_KEY" \
+  "WIREGUARD_PRIVATE_KEY_NATPMP" "$WIREGUARD_PRIVATE_KEY_NATPMP"
 
 # Generate Cloudflare SealedSecret
 create_sealed_secret "cloudflare-api-token-secret" "cert-manager" "api-token" "$CLOUDFLARE_API_TOKEN" "cloudflare-sealed-secret.yaml"

@@ -89,12 +89,12 @@ spec:
                   name: vpn-config
                   key: UPDATER_PERIOD
 
-            # VPN Credentials
+            # VPN Credentials - NATPMP-enabled key for port forwarding
             - name: WIREGUARD_PRIVATE_KEY
               valueFrom:
                 secretKeyRef:
                   name: vpn-secrets
-                  key: WIREGUARD_PRIVATE_KEY
+                  key: WIREGUARD_PRIVATE_KEY_NATPMP
 
             # Control server authentication
             - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
