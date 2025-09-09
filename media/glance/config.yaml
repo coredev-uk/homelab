@@ -65,7 +65,7 @@ pages:
           - type: custom-api
             title: SABnzbd VPN Status
             cache: 1m
-            url: http://admin:admin@sabnzbd.media:8002/v1/publicip/ip
+            url: http://admin:admin@sabnzbd.media:8001/v1/publicip/ip
             template: |
               {{ if eq .Response.StatusCode 200 }}
                 {{ $ip := (.JSON.String "public_ip") }}

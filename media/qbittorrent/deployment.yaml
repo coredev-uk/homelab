@@ -143,9 +143,6 @@ spec:
           volumeMounts:
             - name: config-data
               mountPath: /config
-            - name: config-template
-              mountPath: /config/qBittorrent/qBittorrent.conf
-              subPath: qBittorrent.conf
             - name: downloads
               mountPath: /downloads
           resources:
@@ -203,4 +200,3 @@ spec:
       port: 8000
       targetPort: control-api
   type: ClusterIP
-
