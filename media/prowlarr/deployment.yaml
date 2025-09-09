@@ -84,6 +84,12 @@ spec:
                   name: vpn-config
                   key: LOG_LEVEL
 
+            # DNS Configuration for cluster domain resolution
+            - name: DNS_PLAINTEXT_ADDRESS
+              value: "10.43.0.10"
+            - name: DNS_DOT_CACHING
+              value: "off"
+
             # VPN Credentials
             - name: WIREGUARD_PRIVATE_KEY
               valueFrom:
