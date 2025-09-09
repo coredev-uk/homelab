@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: traefik-system
+  name: traefik
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -19,7 +19,7 @@ spec:
         - kubernetes-crd-definition-v1.yml
   destination:
     server: https://kubernetes.default.svc
-    namespace: traefik-system
+    namespace: traefik
   syncPolicy:
     automated:
       prune: true
