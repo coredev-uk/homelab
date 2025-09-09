@@ -94,24 +94,6 @@ create_sealed_secret "cloudflare-api-token-secret" "cert-manager" "api-token" "$
 # Generate Notifiarr SealedSecret
 create_sealed_secret "notifiarr-secrets" "media" "API_KEY" "$NOTIFIARR_API_KEY" "notifiarr-sealed-secret.yaml"
 
-# Function to generate qBittorrent PBKDF2 hash
-generate_qbittorrent_hash() {
-  local password=$1
-  # Generate random salt (32 bytes base64 encoded)
-  local salt=$(openssl rand -base64 32)
-  # Generate PBKDF2 hash (qBittorrent uses 100000 iterations)
-  local hash=$(echo -n "$password" | openssl dgst -sha256 -mac HMAC -macopt hexkey:$(echo -n "$salt" | base64 -d | xxd -p | tr -d '\n') -binary | base64)
-  # Format as qBittorrent expects: "@ByteArray(salt:hash)"
-  echo "@ByteArray($salt:$hash)"
-}
-
-# Generate qBittorrent SealedSecret with PBKDF2 hash
-QBITTORRENT_PASSWORD_HASH=$(generate_qbittorrent_hash "$QBITTORRENT_PASSWORD")
-create_sealed_secret_multi "qbittorrent-secrets" "media" "qbittorrent-sealed-secret.yaml" \
-  "USERNAME" "$QBITTORRENT_USERNAME" \
-  "PASSWORD" "$QBITTORRENT_PASSWORD" \
-  "PASSWORD_HASH" "$QBITTORRENT_PASSWORD_HASH"
-
 # Generate Glance SealedSecret with weather location and pihole password
 create_sealed_secret_multi "glance-secrets" "media" "glance-sealed-secret.yaml" \
   "PIHOLE_WEBPASSWORD" "$PIHOLE_WEBPASSWORD" \
@@ -126,7 +108,6 @@ echo "kubectl apply -f sealed-secrets/frigate-sealed-secret.yaml"
 echo "kubectl apply -f sealed-secrets/vpn-sealed-secret.yaml"
 echo "kubectl apply -f sealed-secrets/cloudflare-sealed-secret.yaml"
 echo "kubectl apply -f sealed-secrets/notifiarr-sealed-secret.yaml"
-echo "kubectl apply -f sealed-secrets/qbittorrent-sealed-secret.yaml"
 echo "kubectl apply -f sealed-secrets/glance-sealed-secret.yaml"
 echo ""
 echo "After applying, you can remove the old plain text secrets:"
@@ -135,6 +116,5 @@ echo "kubectl delete secret frigate-secrets -n security --ignore-not-found"
 echo "kubectl delete secret vpn-secrets -n media --ignore-not-found"
 echo "kubectl delete secret cloudflare-api-token-secret -n cert-manager --ignore-not-found"
 echo "kubectl delete secret notifiarr-secrets -n media --ignore-not-found"
-echo "kubectl delete secret qbittorrent-secrets -n media --ignore-not-found"
 echo "kubectl delete secret glance-secrets -n media --ignore-not-found"
 

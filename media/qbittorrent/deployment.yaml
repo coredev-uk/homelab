@@ -43,35 +43,6 @@ spec:
       securityContext:
         runAsNonRoot: false
 
-      # Initialize qBittorrent configuration from template
-      initContainers:
-        - name: setup-config
-          image: alpine:latest
-          command: ["sh", "-c"]
-          args:
-            - |
-              apk add --no-cache gettext
-              mkdir -p /config/qBittorrent
-              envsubst < /tmp/config/qBittorrent.conf > /config/qBittorrent/qBittorrent.conf
-              chmod 444 /config/qBittorrent/qBittorrent.conf
-              echo "qBittorrent configuration initialized"
-          env:
-            - name: QBITTORRENT_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: qbittorrent-secrets
-                  key: USERNAME
-            - name: QBITTORRENT_PASSWORD_HASH
-              valueFrom:
-                secretKeyRef:
-                  name: qbittorrent-secrets
-                  key: PASSWORD_HASH
-          volumeMounts:
-            - name: config-data
-              mountPath: /config
-            - name: config-template
-              mountPath: /tmp/config
-
       containers:
         # Gluetun VPN sidecar - optimized for P2P traffic
         - name: gluetun
@@ -201,9 +172,6 @@ spec:
         - name: config-data
           persistentVolumeClaim:
             claimName: qbittorrent-data
-        - name: config-template
-          configMap:
-            name: qbittorrent-config
         - name: downloads
           persistentVolumeClaim:
             claimName: downloads-data-host
