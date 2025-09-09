@@ -132,26 +132,26 @@ spec:
                 configMapKeyRef:
                   name: vpn-config
                   key: DNS_ADDRESS
-            
+
             # VPN Credentials
             - name: WIREGUARD_PRIVATE_KEY
               valueFrom:
                 secretKeyRef:
                   name: vpn-secrets
                   key: WIREGUARD_PRIVATE_KEY
-            
+
             # Control server on unique port to avoid conflicts
             - name: HTTP_CONTROL_SERVER_ADDRESS
               value: ":8002"
             - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
               value: "/gluetun/auth/config.toml"
-          
+
           volumeMounts:
             - name: gluetun-auth-config
               mountPath: /gluetun/auth
             - name: tun-device
               mountPath: /dev/net/tun
-          
+
           resources:
             requests:
               memory: "128Mi"
@@ -241,3 +241,4 @@ spec:
       port: 8002
       targetPort: control-api
   type: ClusterIP
+
