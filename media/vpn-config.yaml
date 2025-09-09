@@ -17,6 +17,8 @@ data:
   VPN_TYPE: "wireguard"
   SERVER_COUNTRIES: "United Kingdom"
   UPDATER_PERIOD: "24h"
+  DOT: "off"
+  DNS_ADDRESS: "1.1.1.1,1.0.0.1"
 
 ---
 #
