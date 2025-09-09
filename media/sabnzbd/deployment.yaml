@@ -240,4 +240,3 @@ spec:
       port: 8001
       targetPort: control-api
   type: ClusterIP
-  clusterIP: 10.43.100.13  # Static IP for VPN containers

@@ -200,4 +200,3 @@ spec:
       port: 8000
       targetPort: control-api
   type: ClusterIP
-  clusterIP: 10.43.100.12  # Static IP for VPN containers
