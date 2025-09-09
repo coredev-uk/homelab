@@ -8,7 +8,8 @@ metadata:
   name: vpn-config
   namespace: media
   labels:
-    app: tunnelled-apps
+    app: vpn
+    component: config
 data:
   # VPN provider and connection settings
   FIREWALL_OUTBOUND_SUBNETS: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,10.147.20.0/24"
@@ -28,7 +29,8 @@ metadata:
   name: gluetun-auth-config
   namespace: media
   labels:
-    app: tunnelled-apps
+    app: vpn
+    component: auth
 data:
   config.toml: |
      # Glance dashboard access - read-only monitoring

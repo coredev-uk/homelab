@@ -11,4 +11,7 @@ resources:
   - notifiarr/
   - cleanuparr/
   - huntarr/
-  - tunnelled-apps/
+  - qbittorrent/
+  - prowlarr/
+  - sabnzbd/
+  - vpn-config.yaml

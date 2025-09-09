@@ -8,8 +8,8 @@ metadata:
   name: sabnzbd-scripts
   namespace: media
   labels:
-    app: tunnelled-apps
-    component: sabnzbd
+    app: sabnzbd
+    component: scripts
 data:
   # Clean NZB Renamer - Removes bot suffixes from NZB names
   Clean.py: |

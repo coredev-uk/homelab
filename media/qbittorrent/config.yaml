@@ -8,8 +8,8 @@ metadata:
   name: qbittorrent-config
   namespace: media
   labels:
-    app: tunnelled-apps
-    component: qbittorrent
+    app: qbittorrent
+    component: config
 data:
   qBittorrent.conf: |
     [Application]
