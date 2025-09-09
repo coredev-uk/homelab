@@ -43,12 +43,12 @@ spec:
       securityContext:
         runAsNonRoot: false
 
-      dnsConfig:
-        nameservers:
-          - "127.0.0.1" # gluetun internal DNS
-        options:
-          - name: ndots
-            value: "1" # Prevent search domain appending to external domains
+      # dnsConfig:
+      #   nameservers:
+      #     - "127.0.0.1" # gluetun internal DNS
+      #   options:
+      #     - name: ndots
+      #       value: "1" # Prevent search domain appending to external domains
 
       containers:
         # Gluetun VPN sidecar - optimized for P2P traffic
@@ -100,8 +100,8 @@ spec:
             - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
               value: "/gluetun/auth/config.toml"
 
-            - name: DOT
-              value: "off"
+            # - name: DOT
+            #   value: "off"
 
             # Port forwarding for BitTorrent
             - name: VPN_PORT_FORWARDING
