@@ -81,16 +81,6 @@ spec:
                 configMapKeyRef:
                   name: vpn-config
                   key: UPDATER_PERIOD
-            - name: DOT
-              valueFrom:
-                configMapKeyRef:
-                  name: vpn-config
-                  key: DOT
-            - name: DNS_ADDRESS
-              valueFrom:
-                configMapKeyRef:
-                  name: vpn-config
-                  key: DNS_ADDRESS
 
             # VPN Credentials
             - name: WIREGUARD_PRIVATE_KEY
@@ -103,13 +93,14 @@ spec:
             - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
               value: "/gluetun/auth/config.toml"
 
-            # Port forwarding for BitTorrent - automatically updates qBittorrent
+            # Port forwarding for BitTorrent
             - name: VPN_PORT_FORWARDING
               value: "on"
             - name: PORT_FORWARD_ONLY
               value: "on"
+            # Port Forward to qBittorrent
             - name: VPN_PORT_FORWARDING_UP_COMMAND
-              value: '/bin/sh -c "wget -O- --retry-connrefused --post-data \"json={\\\"listen_port\\\":{{PORTS}}}\" http://localhost:8080/api/v2/app/setPreferences 2>&1"'
+              value: /bin/sh -c 'wget -O- --retry-connrefused --post-data "json={\"listen_port\":{{PORTS}}}" http://localhost:8080/api/v2/app/setPreferences 2>&1'
 
           volumeMounts:
             - name: gluetun-auth-config

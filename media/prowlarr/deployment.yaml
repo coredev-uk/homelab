@@ -78,19 +78,11 @@ spec:
                 configMapKeyRef:
                   name: vpn-config
                   key: UPDATER_PERIOD
-            - name: DOT
+            - name: LOG_LEVEL
               valueFrom:
                 configMapKeyRef:
                   name: vpn-config
-                  key: DOT
-            # DNS configuration for both local and external resolution
-            - name: DNS_KEEP_NAMESERVER
-              value: "on"
-            - name: DNS_ADDRESS
-              valueFrom:
-                configMapKeyRef:
-                  name: vpn-config
-                  key: DNS_ADDRESS
+                  key: LOG_LEVEL
 
             # VPN Credentials
             - name: WIREGUARD_PRIVATE_KEY

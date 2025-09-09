@@ -122,16 +122,6 @@ spec:
                 configMapKeyRef:
                   name: vpn-config
                   key: UPDATER_PERIOD
-            - name: DOT
-              valueFrom:
-                configMapKeyRef:
-                  name: vpn-config
-                  key: DOT
-            - name: DNS_ADDRESS
-              valueFrom:
-                configMapKeyRef:
-                  name: vpn-config
-                  key: DNS_ADDRESS
 
             # VPN Credentials
             - name: WIREGUARD_PRIVATE_KEY
