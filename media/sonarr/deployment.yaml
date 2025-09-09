@@ -77,3 +77,4 @@ spec:
     - port: 8989
       targetPort: 8989
   type: ClusterIP
+  clusterIP: 10.43.100.11  # Static IP for VPN containers
