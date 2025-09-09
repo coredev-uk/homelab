@@ -8,13 +8,6 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: tunnelled
-  labels:
-    name: tunnelled
----
-apiVersion: v1
-kind: Namespace
-metadata:
   name: dns
   labels:
     name: dns

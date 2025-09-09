@@ -19,10 +19,9 @@ See [SETUP.md](SETUP.md) for detailed setup instructions.
 ├── bootstrap/               # ArgoCD installation and initial setup
 ├── core/                    # Core infrastructure services
 ├── manifests/               # Shared Kubernetes manifests
-├── media/                   # Media automation stack
+├── media/                   # Media automation stack (including VPN-secured apps)
 ├── monitoring/              # Observability stack
-├── secrets/                 # Sealed secrets configuration
-└── tunnelled/               # VPN-routed services
+└── secrets/                 # Sealed secrets configuration
 ```
 
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)

@@ -3,7 +3,7 @@ kind: Kustomization
 
 resources:
   - media-ingress.yaml
-  - tunnelled-ingress.yaml
+  - media-tunnelled-ingress.yaml
   - dns-ingress.yaml
   - security-ingress.yaml
   - argocd-ingress.yaml

@@ -1,0 +1,238 @@
+#
+# SABnzbd with dedicated Gluetun VPN sidecar
+# Optimized for high-bandwidth Usenet downloads
+#
+---
+# Persistent storage for SABnzbd configuration
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sabnzbd-config
+  namespace: media
+  labels:
+    app: sabnzbd
+    component: config
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: longhorn
+
+---
+# SABnzbd deployment with VPN sidecar
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sabnzbd
+  namespace: media
+  labels:
+    app: sabnzbd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sabnzbd
+  template:
+    metadata:
+      labels:
+        app: sabnzbd
+    spec:
+      # Required sysctls for VPN functionality
+      securityContext:
+        sysctls:
+          - name: net.ipv4.conf.all.src_valid_mark
+            value: "1"
+          - name: net.ipv6.conf.all.disable_ipv6
+            value: "1"
+
+      # Initialize SABnzbd scripts and configuration
+      initContainers:
+        # Setup post-processing scripts
+        - name: setup-scripts
+          image: busybox:latest
+          command: ["sh", "-c"]
+          args:
+            - |
+              mkdir -p /scripts
+              cp /tmp/scripts/* /scripts/
+              chmod +x /scripts/*.py
+              echo "SABnzbd scripts initialized"
+          volumeMounts:
+            - name: scripts-volume
+              mountPath: /scripts
+            - name: scripts-temp
+              mountPath: /tmp/scripts
+
+        # Configure SABnzbd settings
+        - name: setup-config
+          image: busybox:latest
+          command: ["sh", "-c"]
+          args:
+            - |
+              if [ -f /config/sabnzbd.ini ]; then
+                echo "sabnzbd.ini exists, updating host whitelist..."
+                if ! grep -q "sabnzbd.media" /config/sabnzbd.ini; then
+                  sed -i 's/host_whitelist = .*/host_whitelist = sabnzbd.home.coredev.uk, sabnzbd.media, sabnzbd/' /config/sabnzbd.ini
+                  echo "Updated host_whitelist for media namespace"
+                fi
+                if ! grep -q "script_dir = /scripts" /config/sabnzbd.ini; then
+                  sed -i 's|script_dir = .*|script_dir = /scripts|' /config/sabnzbd.ini
+                  echo "Updated script_dir"
+                fi
+              else
+                echo "sabnzbd.ini not found, will be created on first run"
+              fi
+          volumeMounts:
+            - name: sabnzbd-config
+              mountPath: /config
+
+      containers:
+        # Gluetun VPN sidecar - optimized for high-bandwidth downloads
+        - name: gluetun
+          image: qmcgaw/gluetun:v3.40.0
+          ports:
+            - containerPort: 8002
+              name: control-api
+          securityContext:
+            privileged: true
+            capabilities:
+              add:
+                - NET_ADMIN
+          env:
+            # VPN Provider Configuration
+            - name: VPN_SERVICE_PROVIDER
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: VPN_SERVICE_PROVIDER
+            - name: VPN_TYPE
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: VPN_TYPE
+            - name: SERVER_COUNTRIES
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: SERVER_COUNTRIES
+            - name: FIREWALL_OUTBOUND_SUBNETS
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: FIREWALL_OUTBOUND_SUBNETS
+            - name: UPDATER_PERIOD
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: UPDATER_PERIOD
+            
+            # VPN Credentials
+            - name: WIREGUARD_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: vpn-secrets
+                  key: WIREGUARD_PRIVATE_KEY
+            
+            # Control server on unique port to avoid conflicts
+            - name: HTTP_CONTROL_SERVER_ADDRESS
+              value: ":8002"
+            - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
+              value: "/gluetun/auth/config.toml"
+          
+          volumeMounts:
+            - name: gluetun-auth-config
+              mountPath: /gluetun/auth
+            - name: tun-device
+              mountPath: /dev/net/tun
+          
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+
+        # SABnzbd - Usenet downloader
+        - name: sabnzbd
+          image: lscr.io/linuxserver/sabnzbd:4.5.3
+          ports:
+            - containerPort: 8080
+              name: web-ui
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/London"
+          volumeMounts:
+            - name: sabnzbd-config
+              mountPath: /config
+            - name: downloads
+              mountPath: /downloads
+            - name: scripts-volume
+              mountPath: /scripts
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+      volumes:
+        - name: sabnzbd-config
+          persistentVolumeClaim:
+            claimName: sabnzbd-config
+        - name: downloads
+          persistentVolumeClaim:
+            claimName: downloads-data-host
+        - name: scripts-volume
+          emptyDir: {}
+        - name: scripts-temp
+          configMap:
+            name: sabnzbd-scripts
+            defaultMode: 0755
+        - name: gluetun-auth-config
+          configMap:
+            name: gluetun-auth-config
+        - name: tun-device
+          hostPath:
+            path: /dev/net/tun
+            type: CharDevice
+
+---
+# Service to expose SABnzbd web UI
+apiVersion: v1
+kind: Service
+metadata:
+  name: sabnzbd
+  namespace: media
+  labels:
+    app: sabnzbd
+spec:
+  selector:
+    app: sabnzbd
+  ports:
+    - name: web-ui
+      port: 8080
+      targetPort: web-ui
+    - name: gluetun-control
+      port: 8002
+      targetPort: control-api
+  type: ClusterIP

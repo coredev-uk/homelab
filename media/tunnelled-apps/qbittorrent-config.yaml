@@ -1,8 +1,15 @@
+#
+# qBittorrent Configuration Template
+# Used to generate qBittorrent.conf with environment variable substitution
+#
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: qbittorrent-config
-  namespace: tunnelled
+  namespace: media
+  labels:
+    app: tunnelled-apps
+    component: qbittorrent
 data:
   qBittorrent.conf: |
     [Application]
@@ -15,45 +22,46 @@ data:
     FileLogger\Path=/config/qBittorrent/logs
 
     [BitTorrent]
-    Session\Port=6881
+    Session\Port=
     Session\UseRandomPort=false
     Session\Interface=
-    Session\InterfaceName=
+    Session\InterfaceName=tun0
     Session\InterfaceAddress=
     Session\DefaultSavePath=/downloads/torrents/complete
     Session\TempPath=/downloads/torrents/incomplete
     Session\TempPathEnabled=true
     Session\DisableAutoTMMByDefault=false
-    Session\DisableAutoTMMTriggers\CategorySavePathChanged=true
-    Session\DisableAutoTMMTriggers\DefaultSavePathChanged=true
+    Session\DisableAutoTMMTriggers\CategorySavePathChanged=false
+    Session\DisableAutoTMMTriggers\DefaultSavePathChanged=false
     Session\GlobalMaxSeedingMinutes=-1
-    Session\QueueingSystemEnabled=true
-    Session\MaxActiveDownloads=8
-    Session\MaxActiveTorrents=15
-    Session\MaxActiveUploads=8
+    Session\QueueingSystemEnabled=false
+    Session\MaxActiveDownloads=-1
+    Session\MaxActiveTorrents=-1
+    Session\MaxActiveUploads=-1
     Session\IgnoreSlowTorrentsForQueueing=false
     Session\SlowTorrentsDownloadRate=2
     Session\SlowTorrentsUploadRate=2
     Session\SlowTorrentsInactivityTimer=60
 
     [Core]
-    AutoDeleteAddedTorrentFile=IfAdded
+    AutoDeleteAddedTorrentFile=Always
 
     [Meta]
     MigrationVersion=5
 
     [Network]
     Cookies=@Invalid()
+    # No proxy configuration - traffic routed through VPN sidecar
     Proxy\OnlyForTorrents=false
-    Proxy\PeerConnections=true
-    Proxy\IP=gluetun
-    Proxy\Port=8388
-    Proxy\Type=SOCKS5
+    Proxy\PeerConnections=false
+    Proxy\IP=
+    Proxy\Port=0
+    Proxy\Type=None
     Proxy\Username=
-    Proxy\Password=gluetun-proxy
+    Proxy\Password=
 
     [Preferences]
-    # Advanced Performance Settings (Trash Guides recommendations)
+    # Advanced Performance Settings 
     Advanced\RecheckOnCompletion=false
     Advanced\TrayIconStyle=Normal
     Advanced\useSystemIconTheme=true
@@ -96,26 +104,26 @@ data:
     Advanced\announceToAllTiers=true
     Advanced\asyncIOThreads=10
 
-    # BitTorrent Protocol Settings (Trash Guides optimized)
+    # BitTorrent Protocol Settings 
     Bittorrent\AddTrackers=false
     Bittorrent\DHT=true
     Bittorrent\Encryption=1
     Bittorrent\LSD=true
-    Bittorrent\MaxConnections=200
-    Bittorrent\MaxConnectionsPerTorrent=100
+    Bittorrent\MaxConnections=-1
+    Bittorrent\MaxConnectionsPerTorrent=-1
     Bittorrent\MaxRatio=-1
     Bittorrent\MaxRatioAction=0
     Bittorrent\MaxUploads=-1
-    Bittorrent\MaxUploadsPerTorrent=4
+    Bittorrent\MaxUploadsPerTorrent=-1
     Bittorrent\PeX=true
     Bittorrent\uTP=true
     Bittorrent\uTP_rate_limited=true
     Bittorrent\MaxTrackers=8
     Bittorrent\TrackersPorts=9000
 
-    # Connection Settings (Trash Guides recommendations)
-    Connection\PortRangeMin=6881
-    Connection\PortRangeMax=6881
+    # Connection Settings
+    Connection\PortRangeMin=58642
+    Connection\PortRangeMax=58642
     Connection\UPnP=false
     Connection\ResolvePeerCountries=true
     Connection\ResolvePeerHostNames=false
@@ -128,7 +136,7 @@ data:
     Connection\InterfaceAddress=0.0.0.0
     Connection\InterfaceName=
 
-    # Download Settings (Trash Guides optimized)
+    # Download Settings 
     Downloads\DiskWriteCacheSize=64
     Downloads\DiskWriteCacheTTL=60
     Downloads\SavePath=/downloads/torrents/complete
@@ -137,9 +145,9 @@ data:
     Downloads\TempPathEnabled=true
     Downloads\UseIncompleteExtension=false
     Downloads\FinishedTorrentExportDir=
-    Downloads\PreAllocation=false
+    Downloads\PreAllocation=true
     Downloads\StartInPause=false
-    Downloads\AutoDeleteAddedTorrentFile=IfAdded
+    Downloads\AutoDeleteAddedTorrentFile=Always
     Downloads\TorrentExportDir=
     Downloads\AppendExtToIncompleteFiles=false
     Downloads\CreateSubfolder=true
@@ -147,10 +155,7 @@ data:
     Downloads\NewAdditionDialog=false
     Downloads\NewAdditionDialogFront=true
 
-    # Categories for *arr integration (Trash Guides structure)
-    # These will be created automatically when used by *arr apps
-
-    # RSS Settings (Trash Guides recommendations)
+    # RSS Settings
     RSS\AutoDownloader\DownloadRepacks=true
     RSS\AutoDownloader\SmartEpisodeFilter=s(\\d+)e(\\d+), (\\d+)x(\\d+), "(\\d{4}[.\\-]\\d{1,2}[.\\-]\\d{1,2})", "(\\d{1,2}[.\\-]\\d{1,2}[.\\-]\\d{4})"
     RSS\Session\EnableProcessing=false
@@ -158,7 +163,7 @@ data:
     RSS\Session\ProcessingEnabled=false
     RSS\Session\RefreshInterval=30
 
-    # Scheduler (disabled by default)
+    # Scheduler 
     Scheduler\days=EveryDay
     Scheduler\end_time=@Variant(\\0\\0\\0\\xf\\x4J\\xa2\\0)
     Scheduler\start_time=@Variant(\\0\\0\\0\\xf\\x1\\xb7t\\0)
@@ -166,14 +171,14 @@ data:
     # Search Settings
     Search\SearchEnabled=true
 
-    # WebUI Settings (Trash Guides security recommendations)
+    # WebUI Settings
     WebUI\Address=*
     WebUI\AlternativeUIEnabled=false
     WebUI\AuthSubnetWhitelist=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
     WebUI\AuthSubnetWhitelistEnabled=true
     WebUI\BanDuration=3600
-    WebUI\CSRFProtection=true
-    WebUI\ClickjackingProtection=true
+    WebUI\CSRFProtection=false
+    WebUI\ClickjackingProtection=false
     WebUI\CustomHTTPHeaders=
     WebUI\CustomHTTPHeadersEnabled=false
     WebUI\HTTPS\CertificatePath=
@@ -192,7 +197,7 @@ data:
     WebUI\Password_PBKDF2="${QBITTORRENT_PASSWORD_HASH}"
     WebUI\TrustedReverseProxiesList=
 
-    # General Settings (Trash Guides recommendations)
+    # General Settings 
     General\AlternatingRowColors=true
     General\CloseToTray=false
     General\CloseToTrayNotified=false
@@ -210,7 +215,7 @@ data:
     General\UseCustomUITheme=false
     General\UseRandomPort=false
 
-    # Mail Notifications (disabled for headless operation)
+    # Mail Notifications
     MailNotification\email=
     MailNotification\enabled=false
     MailNotification\password=
@@ -220,176 +225,24 @@ data:
     MailNotification\smtp_server=smtp.changeme.com
     MailNotification\username=
 
-    # Dynamic DNS (disabled)
+    # Dynamic DNS
     DynDNS\DomainName=changeme.dyndns.org
     DynDNS\Enabled=false
     DynDNS\Password=
     DynDNS\Service=0
     DynDNS\Username=
 
-    # Speed Settings (Trash Guides recommendations)
-    # These are set to unlimited (0) to let the VPN be the bottleneck
+    # Speed Settings 
     Speed\GlobalDLLimit=0
     Speed\GlobalUPLimit=0
     Speed\GlobalDLLimitAlt=0
     Speed\GlobalUPLimitAlt=0
     Speed\bSchedulerEnabled=false
 
-    # Seeding Settings (Trash Guides recommendations for private trackers)
-    # Adjust these based on your tracker requirements
+    # Seeding Settings 
     Seeding\GlobalMaxSeedingMinutes=-1
     Seeding\SeedChokingAlgorithm=RoundRobin
     Seeding\upload_slots_behavior=0
     Seeding\upload_choking_algorithm=1
     Seeding\announce_to_all_trackers=true
     Seeding\announce_to_all_tiers=true
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: qbittorrent-data
-  namespace: tunnelled
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: longhorn
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: qbittorrent
-  namespace: tunnelled
-  labels:
-    app: qbittorrent
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: qbittorrent
-  template:
-    metadata:
-      labels:
-        app: qbittorrent
-    spec:
-      initContainers:
-        - name: wait-for-gluetun
-          image: busybox:latest
-          command: ["sh", "-c"]
-          args:
-            - |
-              echo "Waiting for gluetun SOCKS5 proxy to be ready..."
-              until nc -z gluetun 8388; do
-                echo "Gluetun SOCKS5 proxy not ready, waiting..."
-                sleep 5
-              done
-              echo "Gluetun SOCKS5 proxy is ready"
-        - name: setup-config
-          image: alpine:latest
-          command: ["sh", "-c"]
-          args:
-            - |
-              apk add --no-cache gettext
-              mkdir -p /config/qBittorrent
-              envsubst < /tmp/config/qBittorrent.conf > /config/qBittorrent/qBittorrent.conf
-              chmod 444 /config/qBittorrent/qBittorrent.conf
-              echo "Configuration file created with credentials from secret"
-          env:
-            - name: QBITTORRENT_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: qbittorrent-secrets
-                  key: USERNAME
-            - name: QBITTORRENT_PASSWORD_HASH
-              valueFrom:
-                secretKeyRef:
-                  name: qbittorrent-secrets
-                  key: PASSWORD_HASH
-          volumeMounts:
-            - name: config-data
-              mountPath: /config
-            - name: config-template
-              mountPath: /tmp/config
-      containers:
-        - name: qbittorrent
-          image: lscr.io/linuxserver/qbittorrent:5.1.2
-          ports:
-            - containerPort: 8080
-            - containerPort: 8443
-            - containerPort: 6881
-            - containerPort: 6881
-              protocol: UDP
-          env:
-            - name: PUID
-              value: "1000"
-            - name: PGID
-              value: "1000"
-            - name: TZ
-              value: "Europe/London"
-            - name: WEBUI_PORT
-              value: "8080"
-          volumeMounts:
-            - name: config-data
-              mountPath: /config
-            - name: config-template
-              mountPath: /config/qBittorrent/qBittorrent.conf
-              subPath: qBittorrent.conf
-            - name: downloads
-              mountPath: /downloads
-          resources:
-            requests:
-              memory: "512Mi"
-              cpu: "200m"
-            limits:
-              memory: "2Gi"
-              cpu: "1000m"
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 8080
-            initialDelaySeconds: 60
-            periodSeconds: 30
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 8080
-            initialDelaySeconds: 30
-            periodSeconds: 10
-      volumes:
-        - name: config-data
-          persistentVolumeClaim:
-            claimName: qbittorrent-data
-        - name: config-template
-          configMap:
-            name: qbittorrent-config
-        - name: downloads
-          persistentVolumeClaim:
-            claimName: downloads-data-host
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: qbittorrent
-  namespace: tunnelled
-  labels:
-    app: qbittorrent
-spec:
-  selector:
-    app: qbittorrent
-  ports:
-    - name: qbt-web-http
-      port: 8080
-      targetPort: 8080
-    - name: qbt-web-https
-      port: 8443
-      targetPort: 8443
-    - name: qbt-torrent-tcp
-      port: 6881
-      targetPort: 6881
-    - name: qbt-torrent-udp
-      port: 6881
-      targetPort: 6881
-      protocol: UDP
-  type: ClusterIP

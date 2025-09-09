@@ -1,0 +1,28 @@
+#
+# Kustomization for Tunnelled Applications
+# Three separate deployments with individual VPN sidecars for optimal performance
+#
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Individual deployment files for each application
+resources:
+  # VPN-secured application deployments
+  - qbittorrent.yaml     # BitTorrent client with P2P-optimized VPN
+  - prowlarr.yaml        # Indexer manager with low-latency VPN
+  - sabnzbd.yaml         # Usenet downloader with high-bandwidth VPN
+  
+  # Shared configuration resources
+  - vpn-config.yaml      # Common VPN provider settings
+  - qbittorrent-config.yaml  # qBittorrent configuration template
+  - sabnzbd-scripts.yaml     # SABnzbd post-processing scripts
+
+# Namespace for all resources
+namespace: media
+
+# Common labels applied to all resources
+labels:
+  - pairs:
+      app.kubernetes.io/name: tunnelled-apps
+      app.kubernetes.io/component: vpn-secured
+      app.kubernetes.io/part-of: media-stack

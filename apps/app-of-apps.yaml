@@ -124,26 +124,6 @@ spec:
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: tunnelled-apps
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/coredev-uk/homelab
-    targetRevision: HEAD
-    path: tunnelled
-  destination:
-    server: https://kubernetes.default.svc
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
   name: monitoring
   namespace: argocd
 spec:

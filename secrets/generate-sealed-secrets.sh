@@ -86,7 +86,7 @@ create_sealed_secret_multi "frigate-secrets" "security" "frigate-sealed-secret.y
   "RTSP_PASSWORD" "$FRIGATE_RTSP_PASSWORD"
 
 # Generate VPN SealedSecret
-create_sealed_secret "vpn-secrets" "tunnelled" "WIREGUARD_PRIVATE_KEY" "$WIREGUARD_PRIVATE_KEY" "vpn-sealed-secret.yaml"
+create_sealed_secret "vpn-secrets" "media" "WIREGUARD_PRIVATE_KEY" "$WIREGUARD_PRIVATE_KEY" "vpn-sealed-secret.yaml"
 
 # Generate Cloudflare SealedSecret
 create_sealed_secret "cloudflare-api-token-secret" "cert-manager" "api-token" "$CLOUDFLARE_API_TOKEN" "cloudflare-sealed-secret.yaml"
@@ -107,7 +107,7 @@ generate_qbittorrent_hash() {
 
 # Generate qBittorrent SealedSecret with PBKDF2 hash
 QBITTORRENT_PASSWORD_HASH=$(generate_qbittorrent_hash "$QBITTORRENT_PASSWORD")
-create_sealed_secret_multi "qbittorrent-secrets" "tunnelled" "qbittorrent-sealed-secret.yaml" \
+create_sealed_secret_multi "qbittorrent-secrets" "media" "qbittorrent-sealed-secret.yaml" \
   "USERNAME" "$QBITTORRENT_USERNAME" \
   "PASSWORD" "$QBITTORRENT_PASSWORD" \
   "PASSWORD_HASH" "$QBITTORRENT_PASSWORD_HASH"
@@ -132,9 +132,9 @@ echo ""
 echo "After applying, you can remove the old plain text secrets:"
 echo "kubectl delete secret pihole-secrets -n dns --ignore-not-found"
 echo "kubectl delete secret frigate-secrets -n security --ignore-not-found"
-echo "kubectl delete secret vpn-secrets -n tunnelled --ignore-not-found"
+echo "kubectl delete secret vpn-secrets -n media --ignore-not-found"
 echo "kubectl delete secret cloudflare-api-token-secret -n cert-manager --ignore-not-found"
 echo "kubectl delete secret notifiarr-secrets -n media --ignore-not-found"
-echo "kubectl delete secret qbittorrent-secrets -n tunnelled --ignore-not-found"
+echo "kubectl delete secret qbittorrent-secrets -n media --ignore-not-found"
 echo "kubectl delete secret glance-secrets -n media --ignore-not-found"
 

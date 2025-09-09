@@ -1,22 +1,37 @@
+#
+# VPN Configuration for Tunnelled Applications
+# Shared configuration for all gluetun sidecars
+#
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: vpn-config
-  namespace: tunnelled
+  namespace: media
+  labels:
+    app: tunnelled-apps
 data:
+  # VPN provider and connection settings
   FIREWALL_OUTBOUND_SUBNETS: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,10.147.20.0/24"
   VPN_SERVICE_PROVIDER: "protonvpn"
   VPN_TYPE: "wireguard"
   SERVER_COUNTRIES: "United Kingdom"
   UPDATER_PERIOD: "24h"
+
 ---
+#
+# Gluetun Authentication Configuration
+# Controls access to gluetun control servers for monitoring and management
+#
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gluetun-auth-config
-  namespace: tunnelled
+  namespace: media
+  labels:
+    app: tunnelled-apps
 data:
   config.toml: |
+     # Glance dashboard access - read-only monitoring
      [[roles]]
      name = "glance"
      routes = [
@@ -28,6 +43,7 @@ data:
      username = "admin"
      password = "admin"
 
+     # qBittorrent port forwarding access - no authentication needed for localhost
      [[roles]]
      name = "qbittorrent"
      routes = [

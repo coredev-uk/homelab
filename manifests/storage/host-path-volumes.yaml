@@ -12,36 +12,7 @@ spec:
     path: /opt/downloads-data
   storageClassName: ""
 ---
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: downloads-data-host
-  namespace: tunnelled
-spec:
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 100Gi
-  volumeName: downloads-data-host
-  storageClassName: ""
----
-# Second PV for the same downloads data (for media namespace access)
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: downloads-data-media
-spec:
-  capacity:
-    storage: 100Gi
-  accessModes:
-    - ReadWriteMany
-  persistentVolumeReclaimPolicy: Retain
-  hostPath:
-    path: /opt/downloads-data
-  storageClassName: ""
----
-# Downloads volume claim for media namespace (*arr apps)
+# Downloads volume claim for media namespace (tunnelled apps + *arr apps)
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -53,7 +24,7 @@ spec:
   resources:
     requests:
       storage: 100Gi
-  volumeName: downloads-data-media
+  volumeName: downloads-data-host
   storageClassName: ""
 ---
 # Frigate video footage storage PV

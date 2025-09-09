@@ -204,7 +204,7 @@ kubectl wait --for=condition=available --timeout=600s deployment/argocd-applicat
 kubectl get applications -n argocd
 
 # Verify namespaces are created
-kubectl get namespaces | grep -E "(dns|security|tunnelled|cert-manager|media)"
+kubectl get namespaces | grep -E "(dns|security|cert-manager|media)"
 ```
 
 ### 5. Apply Sealed Secrets (After Namespaces Exist)

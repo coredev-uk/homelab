@@ -65,7 +65,7 @@ pages:
           - type: custom-api
             title: Centralized VPN Status (All Tunnelled Apps)
             cache: 1m
-            url: http://admin:admin@gluetun.tunnelled:8000/v1/publicip/ip
+            url: http://admin:admin@qbittorrent.media:8000/v1/publicip/ip
             template: |
               {{ if eq .Response.StatusCode 200 }}
                 {{ $ip := (.JSON.String "public_ip") }}
@@ -105,10 +105,10 @@ pages:
           - type: custom-api
             title: QBittorrent Port Status
             cache: 30s
-            url: http://qbittorrent.tunnelled:8080/api/v2/app/preferences
+            url: http://qbittorrent.media:8080/api/v2/app/preferences
             subrequests:
               gluetun-port:
-                url: http://admin:admin@gluetun.tunnelled:8000/v1/openvpn/portforwarded
+                url: http://admin:admin@qbittorrent.media:8000/v1/openvpn/portforwarded
             template: |
               {{ $gluetunPort := .Subrequest "gluetun-port" }}
               {{ if eq .Response.StatusCode 200 }}
@@ -267,7 +267,7 @@ pages:
                 icon: si:sonarr
               - title: Prowlarr
                 url: https://prowlarr.home.coredev.uk
-                check-url: http://prowlarr.tunnelled:9696
+                check-url: http://prowlarr.media:9696
                 icon: sh:prowlarr-light
               - title: Notifiarr
                 url: https://notifiarr.home.coredev.uk
@@ -275,11 +275,11 @@ pages:
                 icon: mdi:bell-ring
               - title: qBittorrent
                 url: https://qbittorrent.home.coredev.uk
-                check-url: http://qbittorrent.tunnelled:8080
+                check-url: http://qbittorrent.media:8080
                 icon: si:qbittorrent
               - title: SABnzbd
                 url: https://sabnzbd.home.coredev.uk
-                check-url: http://sabnzbd.tunnelled:8080
+                check-url: http://sabnzbd.media:8080
                 icon: sh:sabnzbd-light
               - title: Cleanuparr
                 url: https://cleanuparr.home.coredev.uk

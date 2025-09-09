@@ -6,7 +6,6 @@ resources:
   - cert-manager/
   - cert-issuers/
   - storage/
-  - vpn/
   - pihole/
   - frigate/
   - intel-gpu/
