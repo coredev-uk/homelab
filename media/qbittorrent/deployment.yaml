@@ -43,6 +43,13 @@ spec:
       securityContext:
         runAsNonRoot: false
 
+      dnsConfig:
+        nameservers:
+          - "127.0.0.1" # gluetun internal DNS
+        options:
+          - name: ndots
+            value: "1" # Prevent search domain appending to external domains
+
       containers:
         # Gluetun VPN sidecar - optimized for P2P traffic
         - name: gluetun
