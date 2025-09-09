@@ -91,6 +91,9 @@ spec:
                 configMapKeyRef:
                   name: vpn-config
                   key: DNS_ADDRESS
+            # To resolve local containers (Arr-stack connection)
+            - name: DNS_KEEP_NAMESERVER
+              value: "on"
 
             # VPN Credentials
             - name: WIREGUARD_PRIVATE_KEY
@@ -229,4 +232,3 @@ spec:
       port: 8001
       targetPort: control-api
   type: ClusterIP
-
