@@ -87,9 +87,8 @@ spec:
                   name: vpn-config
                   key: LOG_LEVEL
 
-            # DNS Configuration - keep Kubernetes DNS for cluster domains
-            - name: DNS_KEEP_NAMESERVER
-              value: "on"
+            # DNS Configuration - use gluetun internal DNS
+            # DNS_KEEP_NAMESERVER causes connectivity issues
 
             # VPN Credentials
             - name: WIREGUARD_PRIVATE_KEY
