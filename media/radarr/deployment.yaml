@@ -77,4 +77,3 @@ spec:
     - port: 7878
       targetPort: 7878
   type: ClusterIP
-  clusterIP: 10.43.100.10  # Static IP for VPN containers

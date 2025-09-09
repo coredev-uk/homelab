@@ -42,7 +42,7 @@ spec:
       # VPN functionality with reduced privileges
       securityContext:
         runAsNonRoot: false
-      
+
       # Use default Kubernetes DNS policy
       # dnsPolicy: "ClusterFirst"
 
@@ -86,9 +86,6 @@ spec:
                 configMapKeyRef:
                   name: vpn-config
                   key: LOG_LEVEL
-
-            # DNS Configuration - use gluetun internal DNS
-            # DNS_KEEP_NAMESERVER causes connectivity issues
 
             # VPN Credentials
             - name: WIREGUARD_PRIVATE_KEY
