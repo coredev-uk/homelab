@@ -156,7 +156,7 @@ data:
       # Re-enable by changing enabled: true when network is restored
       
       front_driveway:
-        enabled: false
+        enabled: true
         ffmpeg:
           inputs:
             - path: rtsp://$${FRIGATE_RTSP_USER}:$${FRIGATE_RTSP_PASSWORD}@10.147.5.10:554/stream0?username=admin&password=AD3281E649B94649491A30500550423E
@@ -177,7 +177,7 @@ data:
             default: 14
 
       garage:
-        enabled: false
+        enabled: true
         ffmpeg:
           inputs:
             - path: rtsp://$${FRIGATE_RTSP_USER}:$${FRIGATE_RTSP_PASSWORD}@10.147.5.9:554/livestream/11?action=play&media=video_audio_data
@@ -194,7 +194,7 @@ data:
             mode: motion
 
       garden:
-        enabled: false
+        enabled: true
         ffmpeg:
           inputs:
             - path: rtsp://$${FRIGATE_RTSP_USER}:$${FRIGATE_RTSP_PASSWORD}@10.147.5.8:554/livestream/11?action=play&media=video_audio_data
