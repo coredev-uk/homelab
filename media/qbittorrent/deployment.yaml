@@ -100,6 +100,9 @@ spec:
             - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
               value: "/gluetun/auth/config.toml"
 
+            - name: DOT
+              value: "off"
+
             # Port forwarding for BitTorrent
             - name: VPN_PORT_FORWARDING
               value: "on"
