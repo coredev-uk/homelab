@@ -89,6 +89,11 @@ spec:
             # DNS configuration for both local and external resolution
             - name: DNS_KEEP_NAMESERVER
               value: "on"
+            - name: DNS_ADDRESS
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: DNS_ADDRESS
 
             # VPN Credentials
             - name: WIREGUARD_PRIVATE_KEY
