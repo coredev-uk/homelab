@@ -87,7 +87,7 @@ spec:
       containers:
         # Gluetun VPN sidecar - optimized for high-bandwidth downloads
         - name: gluetun
-          image: qmcgaw/gluetun:v3.40.0
+          image: qmcgaw/gluetun:pr-2878
           ports:
             - containerPort: 8001
               name: control-api

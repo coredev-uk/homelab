@@ -46,7 +46,7 @@ spec:
       containers:
         # Gluetun VPN sidecar - optimized for indexer API calls
         - name: gluetun
-          image: qmcgaw/gluetun:v3.40.0
+          image: qmcgaw/gluetun:pr-2878
           securityContext:
             capabilities:
               add:
