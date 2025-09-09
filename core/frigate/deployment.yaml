@@ -151,9 +151,7 @@ data:
         type: cpu
 
     cameras:
-      # Cameras temporarily disabled due to network connectivity issues
-      # Camera IPs (10.147.5.8, 10.147.5.9, 10.147.5.10) are not reachable
-      # Re-enable by changing enabled: true when network is restored
+      # All cameras re-enabled with recording
       
       front_driveway:
         enabled: true
@@ -167,14 +165,14 @@ data:
           width: 1920
           height: 1080
         record:
-          enabled: false
+          enabled: true
           retain:
-            days: 7
+            days: 1
             mode: motion
         snapshots:
           enabled: true
           retain:
-            default: 14
+            default: 1
 
       garage:
         enabled: true
@@ -188,9 +186,9 @@ data:
           width: 1920
           height: 1080
         record:
-          enabled: false
+          enabled: true
           retain:
-            days: 7
+            days: 1
             mode: motion
 
       garden:
@@ -205,23 +203,23 @@ data:
           width: 1920
           height: 1080
         record:
-          enabled: false
+          enabled: true
           retain:
-            days: 7
+            days: 1
             mode: motion
 
     record:
       enabled: true
       expire_interval: 60
       retain:
-        days: 7
+        days: 1
         mode: motion
       events:
         retain:
-          default: 14
+          default: 1
           mode: motion
 
     snapshots:
       enabled: true
       retain:
-        default: 14
+        default: 1
