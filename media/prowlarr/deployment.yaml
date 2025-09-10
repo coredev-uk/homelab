@@ -81,7 +81,7 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: vpn-config
-                  key: OUTBOUND_SUBNETS
+                  key: OUTBOUND_SUBNETS_CLUSTER
             - name: UPDATER_PERIOD
               valueFrom:
                 configMapKeyRef:
