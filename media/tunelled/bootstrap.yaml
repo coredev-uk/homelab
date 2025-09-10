@@ -1,0 +1,29 @@
+#
+# SABnzbd Bootstrap Configuration
+# Handles host whitelist configuration for SABnzbd
+#
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sabnzbd-bootstrap
+  namespace: media
+  labels:
+    app: sabnzbd
+    component: config
+data:
+  bootstrap: |
+    #!/usr/bin/with-contenv bash
+    
+    CONFIGFILE=/config/sabnzbd.ini
+    
+    echo "[cfg-bootstrap] Waiting for SABnzbd config file to be created..."
+    while [ ! -f "$CONFIGFILE" ]; do
+        echo "[cfg-bootstrap] Config file not found, waiting 5 seconds..."
+        sleep 5
+    done
+    
+    echo "[cfg-bootstrap] Modifying config ($CONFIGFILE)"
+    
+    # Add ingress host to whitelist
+    sed -i 's/host_whitelist =[\s\S]*$/&sabnzbd.home.coredev.uk/g' "$CONFIGFILE"
+    echo "[cfg-bootstrap] Added sabnzbd.home.coredev.uk to host whitelist"

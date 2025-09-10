@@ -1,0 +1,63 @@
+#
+# Services for Tunnelled Media Stack
+# Exposes qBittorrent, SABnzbd, and Prowlarr web interfaces
+#
+---
+# Service to expose qBittorrent web UI
+apiVersion: v1
+kind: Service
+metadata:
+  name: qbittorrent
+  namespace: media
+  labels:
+    app: qbittorrent
+spec:
+  selector:
+    app: tunnelled-media
+  ports:
+    - name: web-ui
+      port: 8080
+      targetPort: web-ui
+    - name: gluetun-control
+      port: 8000
+      targetPort: control-api
+  type: ClusterIP
+
+---
+# Service to expose SABnzbd web UI
+apiVersion: v1
+kind: Service
+metadata:
+  name: sabnzbd
+  namespace: media
+  labels:
+    app: sabnzbd
+spec:
+  selector:
+    app: tunnelled-media
+  ports:
+    - name: web-ui
+      port: 8080
+      targetPort: sabnzbd-ui
+  type: ClusterIP
+
+---
+# Service to expose Prowlarr and FlareSolverr
+apiVersion: v1
+kind: Service
+metadata:
+  name: prowlarr
+  namespace: media
+  labels:
+    app: prowlarr
+spec:
+  selector:
+    app: tunnelled-media
+  ports:
+    - name: web-ui
+      port: 9696
+      targetPort: prowlarr-ui
+    - name: flaresolverr
+      port: 8191
+      targetPort: flare-api
+  type: ClusterIP

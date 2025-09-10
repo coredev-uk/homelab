@@ -1,0 +1,57 @@
+#
+# Persistent Volume Claims for Tunnelled Media Stack
+# Storage for qBittorrent, SABnzbd, and Prowlarr configurations
+#
+---
+# Persistent storage for qBittorrent configuration
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: qbittorrent-data
+  namespace: media
+  labels:
+    app: qbittorrent
+    component: config
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: longhorn
+
+---
+# Persistent storage for SABnzbd configuration
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sabnzbd-config
+  namespace: media
+  labels:
+    app: sabnzbd
+    component: config
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: longhorn
+
+---
+# Persistent storage for Prowlarr configuration
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: prowlarr-config
+  namespace: media
+  labels:
+    app: prowlarr
+    component: config
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: longhorn
