@@ -15,6 +15,8 @@ spec:
       labels:
         app: frigate
     spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
       containers:
         - name: frigate
           image: ghcr.io/blakeblackshear/frigate:stable
@@ -133,8 +135,7 @@ spec:
     - name: webrtc
       port: 8555
       targetPort: 8555
-  type: LoadBalancer
-  loadBalancerIP: 10.147.20.25
+  type: ClusterIP
 ---
 apiVersion: v1
 kind: ConfigMap
