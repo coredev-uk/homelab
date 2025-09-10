@@ -1,0 +1,435 @@
+#
+# Tunnelled Media Stack - qBittorrent, SABnzbd, and Prowlarr with shared Gluetun VPN
+# Optimized for P2P BitTorrent, high-bandwidth Usenet downloads, and indexer searches
+#
+---
+# SABnzbd configuration bootstrap script
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sabnzbd-bootstrap
+  namespace: media
+  labels:
+    app: sabnzbd
+    component: config
+data:
+  bootstrap: |
+    #!/usr/bin/with-contenv bash
+
+    CONFIGFILE=/config/sabnzbd.ini
+
+    echo "[cfg-bootstrap] Waiting for SABnzbd config file to be created..."
+    while [ ! -f "$CONFIGFILE" ]; do
+        echo "[cfg-bootstrap] Config file not found, waiting 5 seconds..."
+        sleep 5
+    done
+
+    echo "[cfg-bootstrap] Modifying config ($CONFIGFILE)"
+
+    # Add ingress host to whitelist
+    sed -i 's/host_whitelist =[\s\S]*$/&sabnzbd.home.coredev.uk/g' "$CONFIGFILE"
+    echo "[cfg-bootstrap] Added sabnzbd.home.coredev.uk to host whitelist"
+---
+# Persistent storage for qBittorrent configuration
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: qbittorrent-data
+  namespace: media
+  labels:
+    app: qbittorrent
+    component: config
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: longhorn
+
+---
+# Persistent storage for SABnzbd configuration
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sabnzbd-config
+  namespace: media
+  labels:
+    app: sabnzbd
+    component: config
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: longhorn
+
+---
+# Persistent storage for Prowlarr configuration
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: prowlarr-config
+  namespace: media
+  labels:
+    app: prowlarr
+    component: config
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: longhorn
+
+---
+# Tunnelled media stack deployment with shared VPN
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tunnelled-media
+  namespace: media
+  labels:
+    app: tunnelled-media
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tunnelled-media
+  template:
+    metadata:
+      labels:
+        app: tunnelled-media
+    spec:
+      # VPN functionality with reduced privileges
+      securityContext:
+        runAsNonRoot: false
+
+      dnsConfig:
+        nameservers:
+          - "127.0.0.1" # gluetun internal DNS
+        options:
+          - name: ndots
+            value: "1" # Prevent search domain appending to external domains
+
+      containers:
+        # Gluetun VPN sidecar - shared for all tunnelled applications
+        - name: gluetun
+          image: qmcgaw/gluetun:pr-2878
+          ports:
+            - containerPort: 8000
+              name: control-api
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+          env:
+            # VPN Provider Configuration
+            - name: VPN_SERVICE_PROVIDER
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: VPN_SERVICE_PROVIDER
+            - name: VPN_TYPE
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: VPN_TYPE
+            - name: SERVER_COUNTRIES
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: SERVER_COUNTRIES
+            - name: UPDATER_PERIOD
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: UPDATER_PERIOD
+
+            # VPN Credentials - NATPMP-enabled key for port forwarding
+            - name: WIREGUARD_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: vpn-secrets
+                  key: WIREGUARD_PRIVATE_KEY_NATPMP
+
+            # Control server authentication
+            - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
+              value: "/gluetun/auth/config.toml"
+
+            # Port forwarding for BitTorrent
+            - name: VPN_PORT_FORWARDING
+              value: "on"
+            - name: PORT_FORWARD_ONLY
+              value: "on"
+
+            - name: VPN_PORT_FORWARDING_UP_COMMAND
+              value: /bin/sh -c 'wget -O- --retry-connrefused --post-data "json={\"listen_port\":{{PORTS}}}" http://[::1]:8080/api/v2/app/setPreferences 2>&1'
+
+            # Fix DNS resolution issues
+            - name: DNS_ADDRESS
+              value: "1.1.1.1"
+
+            # Disable malicious to prevent blocking Usenet
+            - name: BLOCK_MALICIOUS
+              value: "off"
+
+          volumeMounts:
+            - name: gluetun-auth-config
+              mountPath: /gluetun/auth
+            - name: tun-device
+              mountPath: /dev/net/tun
+
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+        # qBittorrent - BitTorrent client
+        - name: qbittorrent
+          image: lscr.io/linuxserver/qbittorrent:5.1.2
+          ports:
+            - containerPort: 8080
+              name: web-ui
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/London"
+            - name: WEBUI_PORT
+              value: "8080"
+          volumeMounts:
+            - name: qbittorrent-config-data
+              mountPath: /config
+            - name: downloads
+              mountPath: /downloads
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "200m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+        # SABnzbd - Usenet downloader
+        - name: sabnzbd
+          image: lscr.io/linuxserver/sabnzbd:4.5.3
+          ports:
+            - containerPort: 8081
+              name: sabnzbd-ui
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/London"
+          volumeMounts:
+            - name: sabnzbd-config
+              mountPath: /config
+            - name: downloads
+              mountPath: /downloads
+            - name: sabnzbd-scripts
+              mountPath: /scripts
+            - name: sabnzbd-bootstrap
+              mountPath: /etc/cont-init.d/99-sabnzbd-bootstrap
+              subPath: bootstrap
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8081
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8081
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+        # Prowlarr - Indexer manager
+        - name: prowlarr
+          image: lscr.io/linuxserver/prowlarr:2.0.5
+          ports:
+            - containerPort: 9696
+              name: prowlarr-ui
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/London"
+          volumeMounts:
+            - name: prowlarr-config
+              mountPath: /config
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 9696
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 9696
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+        # FlareSolverr - CloudFlare bypass for protected indexers
+        - name: flaresolverr
+          image: flaresolverr/flaresolverr:v3.4.0
+          ports:
+            - containerPort: 8191
+              name: flare-api
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/London"
+            - name: LOG_LEVEL
+              value: "info"
+            - name: LOG_HTML
+              value: "false"
+            - name: CAPTCHA_SOLVER
+              value: "none"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8191
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8191
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+      volumes:
+        - name: qbittorrent-config-data
+          persistentVolumeClaim:
+            claimName: qbittorrent-data
+        - name: sabnzbd-config
+          persistentVolumeClaim:
+            claimName: sabnzbd-config
+        - name: prowlarr-config
+          persistentVolumeClaim:
+            claimName: prowlarr-config
+        - name: downloads
+          persistentVolumeClaim:
+            claimName: downloads-data-host
+        - name: scripts-volume
+          emptyDir: {}
+        - name: sabnzbd-bootstrap
+          configMap:
+            name: sabnzbd-bootstrap
+            defaultMode: 0755
+        - name: gluetun-auth-config
+          configMap:
+            name: gluetun-auth-config
+        - name: tun-device
+          hostPath:
+            path: /dev/net/tun
+            type: CharDevice
+
+---
+# Service to expose tunnelled media stack applications
+apiVersion: v1
+kind: Service
+metadata:
+  name: qbittorrent
+  namespace: media
+  labels:
+    app: qbittorrent
+spec:
+  selector:
+    app: tunnelled-media
+  ports:
+    - name: web-ui
+      port: 8080
+      targetPort: web-ui
+    - name: gluetun-control
+      port: 8000
+      targetPort: control-api
+  type: ClusterIP
+
+---
+# Service to expose SABnzbd
+apiVersion: v1
+kind: Service
+metadata:
+  name: sabnzbd
+  namespace: media
+  labels:
+    app: sabnzbd
+spec:
+  selector:
+    app: tunnelled-media
+  ports:
+    - name: web-ui
+      port: 8080
+      targetPort: sabnzbd-ui
+  type: ClusterIP
+
+---
+# Service to expose Prowlarr and FlareSolverr
+apiVersion: v1
+kind: Service
+metadata:
+  name: prowlarr
+  namespace: media
+  labels:
+    app: prowlarr
+spec:
+  selector:
+    app: tunnelled-media
+  ports:
+    - name: web-ui
+      port: 9696
+      targetPort: prowlarr-ui
+    - name: flaresolverr
+      port: 8191
+      targetPort: flare-api
+  type: ClusterIP
