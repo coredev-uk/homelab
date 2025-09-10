@@ -16,11 +16,11 @@ spec:
     app: tunnelled-media
   ports:
     - name: web-ui
-      port: 8081
-      targetPort: web-ui
+      port: 8080
+      targetPort: 8081
     - name: gluetun-control
       port: 8000
-      targetPort: control-api
+      targetPort: 8000
   type: ClusterIP
 
 ---
