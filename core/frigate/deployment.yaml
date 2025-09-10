@@ -157,7 +157,7 @@ data:
         enabled: true
         ffmpeg:
           inputs:
-            - path: rtsp://$${FRIGATE_RTSP_USER}:$${FRIGATE_RTSP_PASSWORD}@10.147.5.10:554/stream0?username=admin&password=AD3281E649B94649491A30500550423E
+            - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@10.147.5.10:554/stream0?username=admin&password=AD3281E649B94649491A30500550423E
               roles:
                 - detect
                 - record
@@ -178,7 +178,7 @@ data:
         enabled: true
         ffmpeg:
           inputs:
-            - path: rtsp://$${FRIGATE_RTSP_USER}:$${FRIGATE_RTSP_PASSWORD}@10.147.5.9:554/livestream/11?action=play&media=video_audio_data
+            - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@10.147.5.9:554/livestream/11?action=play&media=video_audio_data
               roles:
                 - detect
                 - record
@@ -195,7 +195,7 @@ data:
         enabled: true
         ffmpeg:
           inputs:
-            - path: rtsp://$${FRIGATE_RTSP_USER}:$${FRIGATE_RTSP_PASSWORD}@10.147.5.8:554/livestream/11?action=play&media=video_audio_data
+            - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@10.147.5.8:554/livestream/11?action=play&media=video_audio_data
               roles:
                 - detect
                 - record
