@@ -43,6 +43,15 @@ spec:
       securityContext:
         runAsNonRoot: false
 
+      # Custom DNS configuration to prevent search domain issues
+      dnsPolicy: "None"
+      dnsConfig:
+        nameservers:
+          - "127.0.0.1" # gluetun internal DNS
+        options:
+          - name: ndots
+            value: "1" # Prevent search domain appending to external domains
+
       # Initialize SABnzbd scripts and configuration
       initContainers:
         # Setup post-processing scripts
@@ -131,9 +140,11 @@ spec:
             - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
               value: "/gluetun/auth/config.toml"
 
-            # Disable block malicious so it can connect to Usenet servers
             - name: BLOCK_MALICIOUS
               value: "off"
+
+            - name: UNBLOCK
+              value: "news.eweka.nl"
 
           volumeMounts:
             - name: gluetun-auth-config
