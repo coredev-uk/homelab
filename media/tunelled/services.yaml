@@ -16,7 +16,7 @@ spec:
     app: tunnelled-media
   ports:
     - name: web-ui
-      port: 8080
+      port: 8081
       targetPort: web-ui
     - name: gluetun-control
       port: 8000
@@ -61,3 +61,4 @@ spec:
       port: 8191
       targetPort: flare-api
   type: ClusterIP
+
