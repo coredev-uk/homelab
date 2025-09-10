@@ -43,6 +43,14 @@ spec:
       securityContext:
         runAsNonRoot: false
 
+      dnsConfig:
+        nameservers:
+          - "127.0.0.1" # gluetun internal DNS
+        searches: [] # Remove all search domains
+        options:
+          - name: ndots
+            value: "1" # Prevent search domain appending to external domains
+
       # Initialize SABnzbd scripts and configuration
       initContainers:
         # Setup post-processing scripts
@@ -130,6 +138,10 @@ spec:
               value: ":8001"
             - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
               value: "/gluetun/auth/config.toml"
+
+            # Fix DNS resolution issues
+            - name: DNS_ADDRESS
+              value: "1.1.1.1"
 
             # Disable malicious to prevent blocking UseNet
             - name: BLOCK_MALICIOUS
