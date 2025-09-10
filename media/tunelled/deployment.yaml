@@ -59,6 +59,11 @@ spec:
                 configMapKeyRef:
                   name: vpn-config
                   key: SERVER_COUNTRIES
+            - name: FIREWALL_OUTBOUND_SUBNETS
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: OUTBOUND_SUBNETS_CLUSTER
             - name: UPDATER_PERIOD
               valueFrom:
                 configMapKeyRef:
