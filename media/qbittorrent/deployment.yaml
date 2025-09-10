@@ -87,7 +87,7 @@ spec:
               valueFrom:
                 configMapKeyRef:
                   name: vpn-config
-                  key: OUTBOUND_SUBNETS_PORTFOWARDED
+                  key: OUTBOUND_SUBNETS_PORTFORWARDED
 
             # VPN Credentials - NATPMP-enabled key for port forwarding
             - name: WIREGUARD_PRIVATE_KEY
