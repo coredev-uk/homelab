@@ -117,11 +117,7 @@ spec:
                 configMapKeyRef:
                   name: vpn-config
                   key: UPDATER_PERIOD
-            - name: FIREWALL_OUTBOUND_SUBNETS
-              valueFrom:
-                configMapKeyRef:
-                  name: vpn-config
-                  key: OUTBOUND_SUBNETS
+
             # VPN Credentials
             - name: WIREGUARD_PRIVATE_KEY
               valueFrom:
