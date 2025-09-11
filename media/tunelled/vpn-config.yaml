@@ -11,14 +11,10 @@ metadata:
     app: vpn
     component: config
 data:
-  # VPN provider and connection settings
-  OUTBOUND_SUBNETS: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
-  OUTBOUND_SUBNETS_PORTFORWARDED: "172.16.0.0/12,192.168.0.0/16"
-  # Kubernetes-specific subnets for services that need cluster access only
-  OUTBOUND_SUBNETS_CLUSTER: "10.42.0.0/16,10.43.0.0/16"
+  OUTBOUND_SUBNETS_CLUSTER: "10.42.0.0/16,10.43.0.0/16" # Kubernetes-specific subnets for services that need cluster access only
   VPN_SERVICE_PROVIDER: "protonvpn"
   VPN_TYPE: "wireguard"
-  SERVER_COUNTRIES: "United Kingdom,Switzerland,Netherlands"
+  SERVER_COUNTRIES: "United Kingdom" #,Switzerland,Netherlands"
   UPDATER_PERIOD: "24h"
 
   # Logging for troubleshooting

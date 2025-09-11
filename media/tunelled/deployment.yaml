@@ -69,13 +69,11 @@ spec:
                 configMapKeyRef:
                   name: vpn-config
                   key: UPDATER_PERIOD
-
-            # VPN Credentials - NATPMP-enabled key for port forwarding
             - name: WIREGUARD_PRIVATE_KEY
               valueFrom:
                 secretKeyRef:
                   name: vpn-secrets
-                  key: WIREGUARD_PRIVATE_KEY_NATPMP
+                  key: WIREGUARD_PRIVATE_KEY
 
             # Control server authentication
             - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
@@ -87,6 +85,7 @@ spec:
             - name: PORT_FORWARD_ONLY
               value: "on"
 
+            # Update listening port on qBittorrent
             - name: VPN_PORT_FORWARDING_UP_COMMAND
               value: /bin/sh -c 'wget -O- --retry-connrefused --post-data "json={\"listen_port\":{{PORTS}}}" http://[::1]:8081/api/v2/app/setPreferences 2>&1'
 
@@ -298,4 +297,3 @@ spec:
           hostPath:
             path: /dev/net/tun
             type: CharDevice
-
