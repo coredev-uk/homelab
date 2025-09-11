@@ -30,7 +30,8 @@ metadata:
   labels:
     app: qbittorrent
 spec:
-  replicas: 1
+  # Temporarily disabled - set to 1 to re-enable
+  replicas: 0
   selector:
     matchLabels:
       app: qbittorrent
