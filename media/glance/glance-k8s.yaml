@@ -5,6 +5,8 @@ metadata:
   namespace: media
   labels:
     app: glance-k8s
+  annotations:
+    glance/hide: "true"
 spec:
   replicas: 1
   selector:
