@@ -10,3 +10,4 @@ resources:
   - monitoring-ingress.yaml
   - pihole-middleware.yaml
   - ip-forwarding-middleware.yaml
+  - https-redirect-middleware.yaml

@@ -5,7 +5,6 @@ metadata:
   namespace: argocd
 spec:
   entryPoints:
-  - web
   - websecure
   routes:
   - match: Host(`argocd.home.coredev.uk`)
@@ -15,3 +14,20 @@ spec:
       port: 80
   tls:
     secretName: argocd-tls
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: argocd-redirect
+  namespace: argocd
+spec:
+  entryPoints:
+  - web
+  routes:
+  - match: Host(`argocd.home.coredev.uk`)
+    kind: Rule
+    middlewares:
+    - name: https-redirect
+    services:
+    - name: argocd-server
+      port: 80
