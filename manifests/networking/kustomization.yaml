@@ -6,7 +6,7 @@ resources:
   - media-tunnelled-ingress.yaml
   - dns-ingress.yaml
   - security-ingress.yaml
-  - argocd-ingress.yaml
+  - argocd-ingressroute.yaml
   - monitoring-ingress.yaml
   - pihole-middleware.yaml
   - ip-forwarding-middleware.yaml
