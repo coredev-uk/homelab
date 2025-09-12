@@ -63,36 +63,7 @@ pages:
                 name: Ethereum
 
           - type: custom-api
-            title: SABnzbd VPN Status
-            cache: 1m
-            url: http://admin:admin@sabnzbd.media:8001/v1/publicip/ip
-            template: |
-              {{ if eq .Response.StatusCode 200 }}
-                {{ $ip := (.JSON.String "public_ip") }}
-                {{ $city := (.JSON.String "city") }}
-                {{ $country := (.JSON.String "country") }}
-                {{ if eq $ip "" }}
-                  <div>
-                    <div class="color-highlight size-h4">
-                      SABnzbd VPN: <span class="color-negative">Disconnected ●</span> 
-                    </div>
-                  </div>
-                {{ else }}
-                  <div>
-                    <div class="color-highlight size-h4">
-                      SABnzbd VPN: <span class="color-positive">Connected ●</span> 
-                    </div>
-                    <div class="size-h6">{{ $ip }} - {{ $city }}, {{ $country }}</div>
-                  </div>
-                {{ end }}
-              {{ else }}
-                <div class="color-negative size-h4">
-                  SABnzbd VPN: Error {{ .Response.StatusCode }}
-                </div>
-              {{ end }}
-
-          - type: custom-api
-            title: qBittorrent VPN Status
+            title: VPN Status
             cache: 1m
             url: http://admin:admin@qbittorrent.media:8000/v1/publicip/ip
             subrequests:
@@ -107,13 +78,13 @@ pages:
                 {{ if eq $ip "" }}
                   <div>
                     <div class="color-highlight size-h4">
-                      qBittorrent VPN: <span class="color-negative">Disconnected ●</span> 
+                      VPN: <span class="color-negative">Disconnected ●</span> 
                     </div>
                   </div>
                 {{ else }}
                   <div>
                     <div class="color-highlight size-h4">
-                      qBittorrent VPN: <span class="color-positive">Connected ●</span> 
+                      VPN: <span class="color-positive">Connected ●</span> 
                     </div>
                     <div class="size-h6">{{ $ip }} - {{ $city }}, {{ $country }}</div>
                     {{ if eq $portRequest.Response.StatusCode 200 }}
@@ -130,7 +101,7 @@ pages:
                 {{ end }}
               {{ else }}
                 <div class="color-negative size-h4">
-                  qBittorrent VPN: Error {{ .Response.StatusCode }}
+                  VPN: Error {{ .Response.StatusCode }}
                 </div>
               {{ end }}
 
