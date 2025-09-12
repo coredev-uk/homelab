@@ -92,8 +92,6 @@ spec:
     repoURL: https://github.com/coredev-uk/homelab
     targetRevision: HEAD
     path: media
-    kustomize:
-      buildOptions: "--enable-helm"
   destination:
     server: https://kubernetes.default.svc
   syncPolicy:
