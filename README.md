@@ -25,3 +25,7 @@ See [SETUP.md](SETUP.md) for detailed setup instructions.
 ```
 
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
+
+## Feedback & Suggestions
+
+If you have any recommendations or suggestions for improving this homelab configuration, please feel free to contact me at [core@coredev.uk](mailto:core@coredev.uk).
