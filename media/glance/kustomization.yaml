@@ -5,6 +5,7 @@ namespace: media
 
 resources:
   - deployment.yaml
+  - glance-k8s.yaml
 
 configMapGenerator:
   - name: glance-config

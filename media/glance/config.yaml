@@ -31,11 +31,30 @@ pages:
             username: admin
             password: ${PIHOLE_PASSWORD}
 
-          - type: server-stats
-            title: Server Performance
-            servers:
-              - type: local
-                name: Homelab Server
+           - type: server-stats
+             title: Server Performance
+             servers:
+               - type: local
+                 name: Homelab Server
+
+           - type: extension
+             title: Kubernetes Nodes
+             url: http://glance-k8s.media:8080/extension/nodes
+             allow-potentially-dangerous-html: true
+             cache: 30s
+
+           - type: extension
+             title: Kubernetes Applications
+             url: http://glance-k8s.media:8080/extension/apps
+             allow-potentially-dangerous-html: true
+             cache: 30s
+             parameters:
+               show-if: |
+                 namespace != "kube-system" and
+                 namespace != "kube-public" and
+                 namespace != "kube-node-lease" and
+                 namespace != "longhorn-system" and
+                 ("glance/hide" not in annotations || annotations["glance/hide"] != "true")
 
           - type: bookmarks
             title: Monitoring
