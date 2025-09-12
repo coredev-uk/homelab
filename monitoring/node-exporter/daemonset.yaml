@@ -5,6 +5,8 @@ metadata:
   namespace: monitoring
   labels:
     app: node-exporter
+  annotations:
+    glance/hide: "true"
 spec:
   selector:
     matchLabels:
@@ -58,3 +60,4 @@ spec:
             path: /
       tolerations:
         - operator: Exists
+
