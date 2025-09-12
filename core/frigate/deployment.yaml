@@ -6,7 +6,7 @@ metadata:
   labels:
     app: frigate
 spec:
-  replicas: 1
+  replicas: 0 # disabled for now
   selector:
     matchLabels:
       app: frigate
