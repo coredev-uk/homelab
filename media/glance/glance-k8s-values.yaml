@@ -1,0 +1,69 @@
+# Glance-K8s Extension Helm Chart Values
+# Based on https://github.com/lukasdietrich/glance-k8s/tree/master/charts/glance-k8s
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/lukasdietrich/glance-k8s/glance-k8s
+  pullPolicy: IfNotPresent
+  tag: "v0.3.5"  # Match your current version
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: "glance-k8s"
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  fsGroup: 2000
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 65534
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: false
+
+resources:
+  requests:
+    memory: "64Mi"
+    cpu: "25m"
+  limits:
+    memory: "256Mi"
+    cpu: "100m"
+
+# Environment variables for glance-k8s
+env:
+  - name: LISTEN_ADDR
+    value: ":8080"
+  - name: LOG_LEVEL
+    value: "info"
+
+# RBAC configuration for accessing Kubernetes resources
+rbac:
+  create: true
+  rules:
+    - apiGroups: [""]
+      resources: ["nodes", "namespaces", "services", "endpoints", "pods"]
+      verbs: ["get", "list", "watch"]
+    - apiGroups: ["apps"]
+      resources: ["deployments", "statefulsets", "daemonsets", "replicasets"]
+      verbs: ["get", "list", "watch"]
+    - apiGroups: ["networking.k8s.io"]
+      resources: ["ingresses"]
+      verbs: ["get", "list", "watch"]
+    - apiGroups: ["extensions"]
+      resources: ["ingresses"]
+      verbs: ["get", "list", "watch"]
