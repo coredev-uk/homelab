@@ -32,34 +32,7 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: longhorn-system
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: traefik
-  namespace: argocd
-spec:
-  syncPolicy:
-    syncOptions:
-      - CreateNamespace=true
-      - Replace=true
-    automated:
-      prune: true
-      selfHeal: true
-  project: default
-  sources:
-    - chart: traefik
-      repoURL: https://traefik.github.io/charts
-      targetRevision: v37.0.0
-      helm:
-        valueFiles:
-          - $values/core/traefik/values.yaml
-    - repoURL: https://github.com/coredev-uk/homelab
-      targetRevision: HEAD
-      ref: values
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: traefik
+
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Application
