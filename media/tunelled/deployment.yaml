@@ -86,8 +86,8 @@ spec:
               value: "on"
 
             # Update listening port on qBittorrent
-            - name: VPN_PORT_FORWARDING_UP_COMMAND
-              value: /bin/sh -c 'wget -O- --retry-connrefused --post-data "json={\"listen_port\":{{PORTS}}}" http://[::1]:8081/api/v2/app/setPreferences 2>&1'
+            # - name: VPN_PORT_FORWARDING_UP_COMMAND
+            #   value: /bin/sh -c 'wget -O- --retry-connrefused --post-data "json={\"listen_port\":{{PORTS}}}" http://[::1]:8081/api/v2/app/setPreferences 2>&1'
 
             # Fix DNS resolution issues
             - name: DNS_ADDRESS
