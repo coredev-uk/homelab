@@ -31,30 +31,30 @@ pages:
             username: admin
             password: ${PIHOLE_PASSWORD}
 
-           - type: server-stats
-             title: Server Performance
-             servers:
-               - type: local
-                 name: Homelab Server
+          - type: server-stats
+            title: Server Performance
+            servers:
+              - type: local
+                name: Homelab Server
 
-           - type: extension
-             title: Kubernetes Nodes
-             url: http://glance-k8s.media:8080/extension/nodes
-             allow-potentially-dangerous-html: true
-             cache: 30s
+          - type: extension
+            title: Kubernetes Nodes
+            url: http://glance-k8s.media:8080/extension/nodes
+            allow-potentially-dangerous-html: true
+            cache: 30s
 
-           - type: extension
-             title: Kubernetes Applications
-             url: http://glance-k8s.media:8080/extension/apps
-             allow-potentially-dangerous-html: true
-             cache: 30s
-             parameters:
-               show-if: |
-                 namespace != "kube-system" and
-                 namespace != "kube-public" and
-                 namespace != "kube-node-lease" and
-                 namespace != "longhorn-system" and
-                 ("glance/hide" not in annotations || annotations["glance/hide"] != "true")
+          - type: extension
+            title: Kubernetes Applications
+            url: http://glance-k8s.media:8080/extension/apps
+            allow-potentially-dangerous-html: true
+            cache: 30s
+            parameters:
+              show-if: |
+                namespace != "kube-system" and
+                namespace != "kube-public" and
+                namespace != "kube-node-lease" and
+                namespace != "longhorn-system" and
+                ("glance/hide" not in annotations || annotations["glance/hide"] != "true")
 
           - type: bookmarks
             title: Monitoring
@@ -95,7 +95,7 @@ pages:
             url: http://admin:admin@qbittorrent.media:8000/v1/publicip/ip
             subrequests:
               port-status:
-                url: http://admin:admin@qbittorrent.media:8000/v1/openvpn/portforwarded
+              url: http://admin:admin@qbittorrent.media:8000/v1/openvpn/portforwarded
             template: |
               {{ if eq .Response.StatusCode 200 }}
                 {{ $ip := (.JSON.String "public_ip") }}
@@ -103,33 +103,33 @@ pages:
                 {{ $country := (.JSON.String "country") }}
                 {{ $portRequest := .Subrequest "port-status" }}
                 {{ if eq $ip "" }}
-                  <div>
-                    <div class="color-highlight size-h4">
-                      <span class="color-negative">Disconnected ●</span> 
-                    </div>
-                  </div>
+                 <div>
+                   <div class="color-highlight size-h4">
+                     <span class="color-negative">Disconnected ●</span> 
+                   </div>
+                 </div>
                 {{ else }}
-                  <div>
-                    <div class="color-highlight size-h4">
-                      <span class="color-positive">Connected ●</span> 
-                    </div>
-                    <div class="size-h6">{{ $ip }} - {{ $city }}, {{ $country }}</div>
-                    {{ if eq $portRequest.Response.StatusCode 200 }}
-                      {{ $forwardedPort := $portRequest.JSON.Int "port" }}
-                      {{ if eq $forwardedPort 0 }}
-                        <div class="size-h6 color-warning">Port: Waiting for assignment...</div>
-                      {{ else }}
-                        <div class="size-h6 color-positive">Port: {{ $forwardedPort }}</div>
-                      {{ end }}
-                    {{ else }}
-                      <div class="size-h6 color-negative">Port: Check failed</div>
-                    {{ end }}
-                  </div>
+                 <div>
+                   <div class="color-highlight size-h4">
+                     <span class="color-positive">Connected ●</span> 
+                   </div>
+                   <div class="size-h6">{{ $ip }} - {{ $city }}, {{ $country }}</div>
+                 {{ if eq $portRequest.Response.StatusCode 200 }}
+                     {{ $forwardedPort := $portRequest.JSON.Int "port" }}
+                     {{ if eq $forwardedPort 0 }}
+                       <div class="size-h6 color-warning">Port: Waiting for assignment...</div>
+                     {{ else }}
+                       <div class="size-h6 color-positive">Port: {{ $forwardedPort }}</div>
+                     {{ end }}
+                   {{ else }}
+                     <div class="size-h6 color-negative">Port: Check failed</div>
+                   {{ end }}
+                 </div>
                 {{ end }}
               {{ else }}
-                <div class="color-negative size-h4">
-                  VPN: Error {{ .Response.StatusCode }}
-                </div>
+               <div class="color-negative size-h4">
+                 VPN: Error {{ .Response.StatusCode }}
+               </div>
               {{ end }}
 
       - size: full
