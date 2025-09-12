@@ -95,7 +95,7 @@ pages:
             url: http://admin:admin@qbittorrent.media:8000/v1/publicip/ip
             subrequests:
               port-status:
-              url: http://admin:admin@qbittorrent.media:8000/v1/openvpn/portforwarded
+                url: http://admin:admin@qbittorrent.media:8000/v1/openvpn/portforwarded
             template: |
               {{ if eq .Response.StatusCode 200 }}
                 {{ $ip := (.JSON.String "public_ip") }}
