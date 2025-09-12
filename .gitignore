@@ -22,4 +22,3 @@ kubeconfig
 # Secret YAML files in manifests
 **/secrets.yaml
 **/secret.yaml
-media/glance/charts/

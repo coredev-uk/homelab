@@ -1,0 +1,444 @@
+server:
+  port: 8080
+
+theme:
+  background-color: 210 20 96
+  primary-color: 200 90 50
+  contrast-multiplier: 1.2
+
+  presets:
+    catppuccin-mocha:
+      background-color: 240 21 15
+      contrast-multiplier: 1.2
+      primary-color: 217 92 83
+      positive-color: 115 54 76
+      negative-color: 347 70 65
+
+pages:
+  - name: Homelab
+    columns:
+      - size: small
+        widgets:
+          - type: calendar
+
+          - type: weather
+            location: ${GLANCE_WEATHER_LOCATION}
+            show-area-name: true
+
+          - type: dns-stats
+            service: pihole-v6
+            url: http://pihole-web.dns
+            username: admin
+            password: ${PIHOLE_PASSWORD}
+
+           - type: server-stats
+             title: Server Performance
+             servers:
+               - type: local
+                 name: Homelab Server
+
+           - type: extension
+             title: Kubernetes Nodes
+             url: http://glance-k8s.media:8080/extension/nodes
+             allow-potentially-dangerous-html: true
+             cache: 30s
+
+           - type: extension
+             title: Kubernetes Applications
+             url: http://glance-k8s.media:8080/extension/apps
+             allow-potentially-dangerous-html: true
+             cache: 30s
+             parameters:
+               show-if: |
+                 namespace != "kube-system" and
+                 namespace != "kube-public" and
+                 namespace != "kube-node-lease" and
+                 namespace != "longhorn-system" and
+                 ("glance/hide" not in annotations || annotations["glance/hide"] != "true")
+
+          - type: bookmarks
+            title: Monitoring
+            groups:
+              - title: Dashboards
+                links:
+                  - title: Grafana
+                    url: https://grafana.home.coredev.uk
+                    icon: si:grafana
+                  - title: Prometheus
+                    url: https://prometheus.home.coredev.uk
+                    icon: si:prometheus
+                  - title: Node Exporter
+                    url: https://prometheus.home.coredev.uk/targets
+                    icon: mdi:server-network
+
+          - type: markets
+            title: Portfolio
+            markets:
+              - symbol: VUSA.L
+                name: S&P 500 ACC
+              - symbol: NVDA
+                name: Nvidia
+              - symbol: MAB.L
+                name: Mitchells & Butlers
+
+          - type: markets
+            title: Crypto
+            markets:
+              - symbol: BTC-USD
+                name: Bitcoin
+              - symbol: ETH-USD
+                name: Ethereum
+
+          - type: custom-api
+            title: VPN Status
+            cache: 1m
+            url: http://admin:admin@qbittorrent.media:8000/v1/publicip/ip
+            subrequests:
+              port-status:
+                url: http://admin:admin@qbittorrent.media:8000/v1/openvpn/portforwarded
+            template: |
+              {{ if eq .Response.StatusCode 200 }}
+                {{ $ip := (.JSON.String "public_ip") }}
+                {{ $city := (.JSON.String "city") }}
+                {{ $country := (.JSON.String "country") }}
+                {{ $portRequest := .Subrequest "port-status" }}
+                {{ if eq $ip "" }}
+                  <div>
+                    <div class="color-highlight size-h4">
+                      <span class="color-negative">Disconnected ●</span> 
+                    </div>
+                  </div>
+                {{ else }}
+                  <div>
+                    <div class="color-highlight size-h4">
+                      <span class="color-positive">Connected ●</span> 
+                    </div>
+                    <div class="size-h6">{{ $ip }} - {{ $city }}, {{ $country }}</div>
+                    {{ if eq $portRequest.Response.StatusCode 200 }}
+                      {{ $forwardedPort := $portRequest.JSON.Int "port" }}
+                      {{ if eq $forwardedPort 0 }}
+                        <div class="size-h6 color-warning">Port: Waiting for assignment...</div>
+                      {{ else }}
+                        <div class="size-h6 color-positive">Port: {{ $forwardedPort }}</div>
+                      {{ end }}
+                    {{ else }}
+                      <div class="size-h6 color-negative">Port: Check failed</div>
+                    {{ end }}
+                  </div>
+                {{ end }}
+              {{ else }}
+                <div class="color-negative size-h4">
+                  VPN: Error {{ .Response.StatusCode }}
+                </div>
+              {{ end }}
+
+      - size: full
+        widgets:
+          - type: bookmarks
+            title: Media Services
+            groups:
+              - title: Management
+                links:
+                  - title: ArgoCD
+                    url: https://argocd.home.coredev.uk
+                    icon: si:argo
+                  - title: Pihole
+                    url: https://pihole.home.coredev.uk/admin
+                    icon: si:pihole
+                  - title: Longhorn
+                    url: https://longhorn.home.coredev.uk
+                    icon: si:rancher
+
+              - title: Media Stack
+                links:
+                  - title: Jellyfin
+                    url: https://jellyfin.home.coredev.uk
+                    icon: si:jellyfin
+                  - title: Jellyseerr
+                    url: https://jellyseerr.home.coredev.uk
+                    icon: sh:jellyseerr-light
+                  - title: Radarr
+                    url: https://radarr.home.coredev.uk
+                    icon: si:radarr
+                  - title: Sonarr
+                    url: https://sonarr.home.coredev.uk
+                    icon: si:sonarr
+                  - title: Bazarr
+                    url: https://bazarr.home.coredev.uk
+                    icon: sh:bazarr-light
+                  - title: Prowlarr
+                    url: https://prowlarr.home.coredev.uk
+                    icon: sh:prowlarr-light
+
+              - title: Helper Apps
+                links:
+                  - title: Notifiarr
+                    url: https://notifiarr.home.coredev.uk
+                    icon: mdi:bell-ring
+                  - title: Cleanuparr
+                    url: https://cleanuparr.home.coredev.uk
+                    icon: mdi:broom
+                  - title: Huntarr
+                    url: https://huntarr.home.coredev.uk
+                    icon: mdi:magnify
+
+              - title: Downloads
+                links:
+                  - title: qBittorrent
+                    url: https://qbittorrent.home.coredev.uk
+                    icon: si:qbittorrent
+                  - title: SABnzbd
+                    url: https://sabnzbd.home.coredev.uk
+                    icon: sh:sabnzbd-light
+
+              - title: Security
+                links:
+                  - title: Frigate
+                    url: https://frigate.home.coredev.uk
+                    icon: si:frigate
+
+          - type: rss
+            title: Tech News
+            feeds:
+              - url: https://news.itsfoss.com/latest/rss
+                title: "It's FOSS"
+              - url: https://feeds.arstechnica.com/arstechnica/index
+                title: "Ars Technica"
+              - url: https://www.techradar.com/uk/feeds.xml
+                title: "TechRadar"
+              - url: https://9to5mac.com/feed/
+                title: "9to5Mac"
+            limit: 8
+
+          - type: monitor
+            title: Infrastructure Status
+            sites:
+              - title: Prometheus
+                url: https://prometheus.home.coredev.uk
+                check-url: http://prometheus.monitoring:9090
+                icon: si:prometheus
+              - title: Grafana
+                url: https://grafana.home.coredev.uk
+                check-url: http://grafana.monitoring:3000
+                icon: si:grafana
+              - title: Longhorn
+                url: https://longhorn.home.coredev.uk
+                check-url: http://longhorn-frontend.longhorn-system:80
+                icon: si:rancher
+
+          - type: monitor
+            title: Media Services
+            sites:
+              - title: Jellyfin
+                url: https://jellyfin.home.coredev.uk
+                check-url: http://jellyfin.media:8096
+                icon: si:jellyfin
+              - title: Jellyseerr
+                url: https://jellyseerr.home.coredev.uk
+                check-url: http://jellyseerr.media:5055
+                icon: sh:jellyseerr-light
+              - title: Radarr
+                url: https://radarr.home.coredev.uk
+                check-url: http://radarr.media:7878
+                icon: si:radarr
+              - title: Sonarr
+                url: https://sonarr.home.coredev.uk
+                check-url: http://sonarr.media:8989
+                icon: si:sonarr
+              - title: Prowlarr
+                url: https://prowlarr.home.coredev.uk
+                check-url: http://prowlarr.media:9696
+                icon: sh:prowlarr-light
+              - title: Notifiarr
+                url: https://notifiarr.home.coredev.uk
+                check-url: http://notifiarr.media:5454
+                icon: mdi:bell-ring
+              - title: qBittorrent
+                url: https://qbittorrent.home.coredev.uk
+                check-url: http://qbittorrent.media:8080
+                icon: si:qbittorrent
+              - title: SABnzbd
+                url: https://sabnzbd.home.coredev.uk
+                check-url: http://sabnzbd.media:8080
+                icon: sh:sabnzbd-light
+              - title: Cleanuparr
+                url: https://cleanuparr.home.coredev.uk
+                check-url: http://cleanuparr.media:11011
+                icon: mdi:broom
+              - title: Huntarr
+                url: https://huntarr.home.coredev.uk
+                check-url: http://huntarr.media:9705
+                icon: mdi:magnify
+
+          - type: releases
+            title: Infrastructure & Core Updates
+            repositories:
+              - glanceapp/glance # Dashboard
+              - argoproj/argo-cd # GitOps
+              - qmcgaw/gluetun # VPN Gateway
+              - longhorn/longhorn # Storage
+              - bitnami/sealed-secrets-controller # Secret Management
+              - prometheus/prometheus # Monitoring
+              - grafana/grafana # Visualization
+              - prometheus/node_exporter # System Metrics
+              - blakeblackshear/frigate # CCTV/AI
+            limit: 8
+            collapse-after: 5
+
+          - type: releases
+            title: Media Stack Updates
+            repositories:
+              - jellyfin/jellyfin # Media Server
+              - fallenbagel/jellyseerr # Request Management
+              - linuxserver/radarr # Movies
+              - linuxserver/sonarr # TV Shows
+              - linuxserver/bazarr # Subtitles
+              - linuxserver/prowlarr # Indexers
+              - linuxserver/qbittorrent # Torrents
+              - linuxserver/sabnzbd # Usenet
+              - golift/notifiarr # Notifications
+              - flaresolverr/flaresolverr # Cloudflare Bypass
+              - cleanuparr/cleanuparr # Media Cleanup
+              - huntarr/huntarr # Duplicate Hunter
+            limit: 10
+            collapse-after: 6
+
+          - type: videos
+            title: Video Feed
+            channels:
+              - UCeeFfhMcJa1kjtfZAGskOCA # Tech Linked
+              - UCHnyfMqiRRG1u-2MsSQLbXA # Veritasium
+              - UCsBjURrPoezykLs9EqgamOA # Fireship
+              - UCUyeluBRhGPCW4rPe_UvBZQ # ThePrimeagen
+            limit: 8
+            collapse-after: 4
+            style: horizontal-cards
+
+  - name: Formula 1
+    columns:
+      - size: small
+        widgets:
+          - type: custom-api
+            title: Next Race
+            cache: 1h
+            url: https://f1api.dev/api/current/next?timezone=Europe/London
+            template: |
+              <div class="flex flex-column gap-10">
+                {{ $session := index (.JSON.Array "race") 0 }}
+                <p class="size-h5">
+                  Round {{ .JSON.String "round" }}
+                </p>
+
+                <div class="margin-block-4">
+                  <p class="color-highlight">{{ $session.String "raceName" }}</p>
+
+                  <div class="margin-block-10"></div>
+
+                  <!-- Race -->
+                  <p class="color-primary">
+                    <span>Race</span>
+                    {{ $raceDate := $session.String "schedule.race.date" }}
+                    {{ $raceTime := $session.String "schedule.race.time" }}
+                    {{ $raceDateTime := concat $raceDate "T" $raceTime }}
+                    {{ $parsedRaceTime := parseLocalTime "2006-01-02T15:04:05" $raceDateTime }}
+                    {{ $now := now }}
+                    {{ if $parsedRaceTime.Before $now }}
+                      <span class="color-highlight">Completed</span>
+                    {{ else }}
+                      <span class="color-highlight" {{ $parsedRaceTime | toRelativeTime }}></span>
+                    {{ end }}
+                  </p>
+                  <p class="size-h5">{{ $raceDate }} at {{ $raceTime }}</p>
+
+                  <!-- Qualifying -->
+                  <p class="color-primary">
+                    <span>Qualifying</span>
+                    {{ $qualyDate := $session.String "schedule.qualy.date" }}
+                    {{ $qualyTime := $session.String "schedule.qualy.time" }}
+                    {{ $qualyDateTime := concat $qualyDate "T" $qualyTime }}
+                    {{ $parsedQualyTime := parseLocalTime "2006-01-02T15:04:05" $qualyDateTime }}
+                    {{ $now := now }}
+                    {{ if $parsedQualyTime.Before $now }}
+                      <span class="color-highlight">Completed</span>
+                    {{ else }}
+                      <span class="color-highlight" {{ $parsedQualyTime | toRelativeTime }}></span>
+                    {{ end }}
+                  </p>
+                  <p class="size-h5">{{ $qualyDate }} at {{ $qualyTime }}</p>
+
+                  <!-- Sprint Race - only if date is not null -->
+                  {{ if and (ne ($session.String "schedule.sprintRace.date") "null") (ne ($session.String "schedule.sprintRace.date") "") }}
+                  <p class="color-primary">
+                    <span>Sprint Race</span>
+                    {{ $sprintRaceDate := $session.String "schedule.sprintRace.date" }}
+                    {{ $sprintRaceTime := $session.String "schedule.sprintRace.time" }}
+                    {{ $sprintRaceDateTime := concat $sprintRaceDate "T" $sprintRaceTime }}
+                    {{ $parsedSprintRaceTime := parseLocalTime "2006-01-02T15:04:05" $sprintRaceDateTime }}
+                    {{ $now := now }}
+                    {{ if $parsedSprintRaceTime.Before $now }}
+                      <span class="color-highlight">Completed</span>
+                    {{ else }}
+                      <span class="color-highlight" {{ $parsedSprintRaceTime | toRelativeTime }}></span>
+                    {{ end }}
+                  </p>
+                  <p class="size-h5">{{ $sprintRaceDate }} at {{ $sprintRaceTime }}</p>
+                  {{ end }}
+                </div>
+
+                <ul class="size-h5 attachments">
+                  <li>{{ $session.String "circuit.country" }}</li>
+                  <li>{{ $session.String "circuit.city" }}</li>
+                  <li>{{ $session.String "laps" }} Laps</li>
+                  <li>{{ $session.String "circuit.circuitName" }}</li>
+                </ul>
+              </div>
+
+      - size: full
+        widgets:
+          - type: custom-api
+            title: Last Race Results
+            cache: 1d
+            url: https://f1api.dev/api/current/last/race
+            template: |
+              <div class="flex flex-column gap-10">
+                <p class="size-h5">{{ .JSON.String "races.raceName" }}</p>
+                <ul class="list collapsible-container" data-collapse-after="5">
+                  {{ range $i, $v := .JSON.Array "races.results" }}
+                  <li class="flex items-center {{ if eq $i 0 }}color-primary{{ else if eq $i 1 }}color-highlight{{ end }}">
+                    <span class="grow min-width-0">{{ .String "position" }}. {{ .String "driver.shortName" }}</span>
+                    <span class="shrink-0 text-right">{{ .String "time" }}</span>
+                  </li>
+                  {{ end }}
+                </ul>
+              </div>
+
+          - type: custom-api
+            title: Drivers Championship
+            cache: 1d
+            url: https://f1api.dev/api/current/drivers-championship
+            template: |
+              <ul class="list collapsible-container" data-collapse-after="5">
+                {{ range $i, $v := .JSON.Array "drivers_championship" }}
+                <li class="flex items-center {{ if eq $i 0 }}color-primary{{ else if eq $i 1 }}color-highlight{{ end }}">
+                  <div class="grow min-width-0">
+                    <span>{{ .String "position" }}. {{ .String "driver.shortName" }}</span>
+                    <span class="size-h6">({{ .String "team.teamName" }})</span>
+                  </div>
+                  <span class="shrink-0 text-right">{{ .String "points" }}</span>
+                </li>
+                {{ end }}
+              </ul>
+
+          - type: custom-api
+            title: Constructors Championship
+            cache: 1d
+            url: https://f1api.dev/api/current/constructors-championship
+            template: |
+              <ul class="list collapsible-container" data-collapse-after="5">
+                {{ range $i, $v := .JSON.Array "constructors_championship" }}
+                <li class="flex items-center {{ if eq $i 0 }}color-primary{{ else if eq $i 1 }}color-highlight{{ end }}">
+                  <span class="grow min-width-0">{{ .String "position" }}. {{ .String "team.teamName" }}</span>
+                  <span class="shrink-0 text-right">{{ .String "points" }}</span>
+                </li>
+                {{ end }}
+              </ul>

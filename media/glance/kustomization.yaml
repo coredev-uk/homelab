@@ -3,16 +3,11 @@ kind: Kustomization
 
 namespace: media
 
-# Use Helm charts directly - ArgoCD will use --enable-helm flag
-helmCharts:
-  - name: glance
-    repo: oci://ghcr.io/lukasdietrich/glance-k8s/chart
-    version: v0.8.4
-    valuesFile: glance-values.yaml
-    
-  - name: glance-k8s  
-    repo: oci://ghcr.io/lukasdietrich/glance-k8s/chart
-    version: v0.3.5
-    valuesFile: glance-k8s-values.yaml
+resources:
+  - deployment.yaml
+  - glance-k8s.yaml
 
-resources: []
+configMapGenerator:
+  - name: glance-config
+    files:
+      - glance.yml=config.yaml
