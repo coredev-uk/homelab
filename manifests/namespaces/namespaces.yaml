@@ -25,10 +25,3 @@ metadata:
   name: core
   labels:
     name: core
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: traefik
-  labels:
-    name: traefik
