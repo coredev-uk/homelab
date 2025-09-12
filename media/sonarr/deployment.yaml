@@ -5,6 +5,11 @@ metadata:
   namespace: media
   labels:
     app: sonarr
+  annotations:
+    glance/name: "Sonarr"
+    glance/icon: "si:sonarr"
+    glance/url: "https://sonarr.home.coredev.uk"
+    glance/description: "TV Show Management"
 spec:
   replicas: 1
   selector:

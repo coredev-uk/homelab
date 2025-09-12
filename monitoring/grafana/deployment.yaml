@@ -5,6 +5,11 @@ metadata:
   namespace: monitoring
   labels:
     app: grafana
+  annotations:
+    glance/name: "Grafana"
+    glance/icon: "si:grafana"
+    glance/url: "https://grafana.home.coredev.uk"
+    glance/description: "Metrics Visualization"
 spec:
   replicas: 1
   selector:

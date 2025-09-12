@@ -5,6 +5,11 @@ metadata:
   namespace: media
   labels:
     app: cleanuparr
+  annotations:
+    glance/name: "Cleanuparr"
+    glance/icon: "mdi:broom"
+    glance/url: "https://cleanuparr.home.coredev.uk"
+    glance/description: "Media Cleanup"
 spec:
   replicas: 1
   selector:

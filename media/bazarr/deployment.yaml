@@ -5,6 +5,11 @@ metadata:
   namespace: media
   labels:
     app: bazarr
+  annotations:
+    glance/name: "Bazarr"
+    glance/icon: "sh:bazarr-light"
+    glance/url: "https://bazarr.home.coredev.uk"
+    glance/description: "Subtitle Management"
 spec:
   replicas: 1
   selector:

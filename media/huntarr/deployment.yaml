@@ -5,6 +5,11 @@ metadata:
   namespace: media
   labels:
     app: huntarr
+  annotations:
+    glance/name: "Huntarr"
+    glance/icon: "mdi:magnify"
+    glance/url: "https://huntarr.home.coredev.uk"
+    glance/description: "Duplicate Hunter"
 spec:
   replicas: 1
   selector:

@@ -5,6 +5,11 @@ metadata:
   namespace: media
   labels:
     app: jellyfin
+  annotations:
+    glance/name: "Jellyfin"
+    glance/icon: "si:jellyfin"
+    glance/url: "https://jellyfin.home.coredev.uk"
+    glance/description: "Media Server"
 spec:
   replicas: 1
   selector:

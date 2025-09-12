@@ -5,6 +5,11 @@ metadata:
   namespace: security
   labels:
     app: frigate
+  annotations:
+    glance/name: "Frigate"
+    glance/icon: "si:frigate"
+    glance/url: "https://frigate.home.coredev.uk"
+    glance/description: "CCTV & AI Detection"
 spec:
   replicas: 0 # disabled for now
   selector:

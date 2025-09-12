@@ -5,6 +5,11 @@ metadata:
   namespace: media
   labels:
     app: radarr
+  annotations:
+    glance/name: "Radarr"
+    glance/icon: "si:radarr"
+    glance/url: "https://radarr.home.coredev.uk"
+    glance/description: "Movie Management"
 spec:
   replicas: 1
   selector:

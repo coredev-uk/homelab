@@ -22,6 +22,11 @@ metadata:
   namespace: dns
   labels:
     app: pihole
+  annotations:
+    glance/name: "Pihole"
+    glance/icon: "si:pihole"
+    glance/url: "https://pihole.home.coredev.uk/admin"
+    glance/description: "DNS & Ad Blocking"
 spec:
   replicas: 1
   selector:
@@ -145,6 +150,10 @@ kind: Service
 metadata:
   name: pihole-web
   namespace: dns
+  annotations:
+    glance/name: "Pihole Web UI"
+    glance/icon: "si:pihole"
+    glance/url: "https://pihole.home.coredev.uk/admin"
 spec:
   selector:
     app: pihole

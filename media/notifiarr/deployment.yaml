@@ -5,6 +5,11 @@ metadata:
   namespace: media
   labels:
     app: notifiarr
+  annotations:
+    glance/name: "Notifiarr"
+    glance/icon: "mdi:bell-ring"
+    glance/url: "https://notifiarr.home.coredev.uk"
+    glance/description: "Notifications"
 spec:
   replicas: 1
   selector:

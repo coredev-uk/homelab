@@ -5,6 +5,11 @@ metadata:
   namespace: monitoring
   labels:
     app: prometheus
+  annotations:
+    glance/name: "Prometheus"
+    glance/icon: "si:prometheus"
+    glance/url: "https://prometheus.home.coredev.uk"
+    glance/description: "Metrics Collection"
 spec:
   replicas: 1
   selector:
