@@ -9,10 +9,6 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   ingressClassName: traefik
-  tls:
-    - hosts:
-        - pihole.home.coredev.uk
-      secretName: dns-tls
   rules:
     - host: pihole.home.coredev.uk
       http:
@@ -24,3 +20,7 @@ spec:
                 name: pihole-web
                 port:
                   number: 80
+  tls:
+    - hosts:
+        - pihole.home.coredev.uk
+      secretName: dns-tls
