@@ -161,6 +161,9 @@ spec:
     - name: web
       port: 80
       targetPort: 80
+    - name: web-ssl
+      port: 443
+      targetPort: 443
   type: ClusterIP
 ---
 apiVersion: v1
