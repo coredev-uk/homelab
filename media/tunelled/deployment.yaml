@@ -98,6 +98,12 @@ spec:
             - name: BLOCK_MALICIOUS
               value: "off"
 
+            # DNS Configuration - use regular DNS instead of DoT to avoid timeouts
+            - name: DOT
+              value: "off"
+            - name: DNS_SERVERS
+              value: "1.1.1.1,1.0.0.1"
+
           volumeMounts:
             - name: gluetun-auth-config
               mountPath: /gluetun/auth
