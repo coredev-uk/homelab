@@ -91,8 +91,8 @@ spec:
               value: "on"
 
             # Update listening port on qBittorrent
-            # - name: VPN_PORT_FORWARDING_UP_COMMAND
-            #   value: /bin/sh -c 'wget -O- --retry-connrefused --post-data "json={\"listen_port\":{{PORTS}}}" http://[::1]:8081/api/v2/app/setPreferences 2>&1'
+            - name: VPN_PORT_FORWARDING_UP_COMMAND
+              value: /bin/sh -c 'wget -O- --retry-connrefused --post-data "json={\"listen_port\":{{PORTS}}}" http://[::1]:8081/api/v2/app/setPreferences 2>&1'
 
             # Disable malicious to prevent blocking Usenet
             - name: BLOCK_MALICIOUS
@@ -119,87 +119,87 @@ spec:
               cpu: "500m"
 
         # qBittorrent - BitTorrent client
-        # - name: qbittorrent
-        #   image: lscr.io/linuxserver/qbittorrent:5.1.2
-        #   ports:
-        #     - containerPort: 8081
-        #       name: web-ui
-        #   env:
-        #     - name: PUID
-        #       value: "1000"
-        #     - name: PGID
-        #       value: "1000"
-        #     - name: TZ
-        #       value: "Europe/London"
-        #     - name: WEBUI_PORT
-        #       value: "8081"
-        #   volumeMounts:
-        #     - name: qbittorrent-config-data
-        #       mountPath: /config
-        #     - name: downloads
-        #       mountPath: /downloads
-        #   resources:
-        #     requests:
-        #       memory: "512Mi"
-        #       cpu: "200m"
-        #     limits:
-        #       memory: "2Gi"
-        #       cpu: "1000m"
-        #   livenessProbe:
-        #     httpGet:
-        #       path: /
-        #       port: 8081
-        #     initialDelaySeconds: 60
-        #     periodSeconds: 30
-        #   readinessProbe:
-        #     httpGet:
-        #       path: /
-        #       port: 8081
-        #     initialDelaySeconds: 30
-        #     periodSeconds: 10
+        - name: qbittorrent
+          image: lscr.io/linuxserver/qbittorrent:5.1.2
+          ports:
+            - containerPort: 8081
+              name: web-ui
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/London"
+            - name: WEBUI_PORT
+              value: "8081"
+          volumeMounts:
+            - name: qbittorrent-config-data
+              mountPath: /config
+            - name: downloads
+              mountPath: /downloads
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "200m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8081
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8081
+            initialDelaySeconds: 30
+            periodSeconds: 10
 
         # SABnzbd - Usenet downloader
-        # - name: sabnzbd
-        #   image: lscr.io/linuxserver/sabnzbd:4.5.3
-        #   ports:
-        #     - containerPort: 8080
-        #       name: sabnzbd-ui
-        #   env:
-        #     - name: PUID
-        #       value: "1000"
-        #     - name: PGID
-        #       value: "1000"
-        #     - name: TZ
-        #       value: "Europe/London"
-        #   volumeMounts:
-        #     - name: sabnzbd-config
-        #       mountPath: /config
-        #     - name: downloads
-        #       mountPath: /downloads
-        #     - name: sabnzbd-scripts
-        #       mountPath: /scripts
-        #     - name: sabnzbd-bootstrap
-        #       mountPath: /etc/cont-init.d/99-sabnzbd-bootstrap
-        #       subPath: bootstrap
-        #   resources:
-        #     requests:
-        #       memory: "256Mi"
-        #       cpu: "100m"
-        #     limits:
-        #       memory: "1Gi"
-        #       cpu: "500m"
-        #   livenessProbe:
-        #     httpGet:
-        #       path: /
-        #       port: 8080
-        #     initialDelaySeconds: 60
-        #     periodSeconds: 30
-        #   readinessProbe:
-        #     httpGet:
-        #       path: /
-        #       port: 8080
-        #     initialDelaySeconds: 30
-        #     periodSeconds: 10
+        - name: sabnzbd
+          image: lscr.io/linuxserver/sabnzbd:4.5.3
+          ports:
+            - containerPort: 8080
+              name: sabnzbd-ui
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/London"
+          volumeMounts:
+            - name: sabnzbd-config
+              mountPath: /config
+            - name: downloads
+              mountPath: /downloads
+            - name: sabnzbd-scripts
+              mountPath: /scripts
+            - name: sabnzbd-bootstrap
+              mountPath: /etc/cont-init.d/99-sabnzbd-bootstrap
+              subPath: bootstrap
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
 
         # Prowlarr - Indexer manager
         - name: prowlarr
