@@ -62,6 +62,21 @@ spec:
     services:
     - name: huntarr
       port: 9705
+  - match: Host(`prowlarr.home.coredev.uk`)
+    kind: Rule
+    services:
+    - name: prowlarr
+      port: 9696
+  - match: Host(`qbittorrent.home.coredev.uk`)
+    kind: Rule
+    services:
+    - name: qbittorrent
+      port: 8081
+  - match: Host(`sabnzbd.home.coredev.uk`)
+    kind: Rule
+    services:
+    - name: sabnzbd
+      port: 8080
   tls:
     secretName: media-tls
 ---
@@ -137,3 +152,24 @@ spec:
     services:
     - name: huntarr
       port: 9705
+  - match: Host(`prowlarr.home.coredev.uk`)
+    kind: Rule
+    middlewares:
+    - name: https-redirect
+    services:
+    - name: prowlarr
+      port: 9696
+  - match: Host(`qbittorrent.home.coredev.uk`)
+    kind: Rule
+    middlewares:
+    - name: https-redirect
+    services:
+    - name: qbittorrent
+      port: 8081
+  - match: Host(`sabnzbd.home.coredev.uk`)
+    kind: Rule
+    middlewares:
+    - name: https-redirect
+    services:
+    - name: sabnzbd
+      port: 8080
