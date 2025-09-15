@@ -7,7 +7,7 @@ metadata:
     app: notifiarr
   annotations:
     glance/name: "Notifiarr"
-    glance/icon: "mdi:bell-ring"
+    glance/icon: "di:notifiarr"
     glance/url: "https://notifiarr.home.coredev.uk"
     glance/description: "Notifications"
 spec:

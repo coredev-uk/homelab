@@ -7,7 +7,7 @@ metadata:
     app: jellyseerr
   annotations:
     glance/name: "Jellyseerr"
-    glance/icon: "sh:jellyseerr-light"
+    glance/icon: "si:jellyseerr"
     glance/url: "https://jellyseerr.home.coredev.uk"
     glance/description: "Media Requests"
 spec:

@@ -7,7 +7,7 @@ metadata:
     app: cleanuparr
   annotations:
     glance/name: "Cleanuparr"
-    glance/icon: "mdi:broom"
+    glance/icon: "di:cleanuparr"
     glance/url: "https://cleanuparr.home.coredev.uk"
     glance/description: "Media Cleanup"
 spec:
