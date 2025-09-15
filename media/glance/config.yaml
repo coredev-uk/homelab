@@ -198,7 +198,10 @@ pages:
             cache: 1s
             parameters:
               show-if: |
-                namespace != "kube-system" and
+                (namespace == "media" or
+                namespace == "core" or
+                namespace == "monitoring" or
+                namespace == "security") and
                 ("glance/hide" not in annotations || annotations["glance/hide"] != "true")
 
           - type: releases
