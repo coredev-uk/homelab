@@ -6,6 +6,7 @@ resources:
   - media-certificate.yaml
   - dns-ingress.yaml
   - security-ingress.yaml
+  - security-certificate.yaml
   - argocd-ingressroute.yaml
   - monitoring-ingress.yaml
   - pihole-middleware.yaml
