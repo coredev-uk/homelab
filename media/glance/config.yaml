@@ -195,12 +195,11 @@ pages:
             title: Services Status
             url: http://glance-k8s.media:8080/extension/apps
             allow-potentially-dangerous-html: true
-            cache: 30s
+            cache: 1s
             parameters:
               show-if: |
-                namespace == "media" or namespace == "monitoring" or namespace == "security" or
-                (namespace == "dns" and name == "pihole-web") or
-                (namespace == "longhorn-system" and name == "longhorn-frontend")
+                namespace != "kube-system" and
+                ("glance/hide" not in annotations || annotations["glance/hide"] != "true")
 
           - type: releases
             title: Infrastructure & Core Updates
