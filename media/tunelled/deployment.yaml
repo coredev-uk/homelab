@@ -13,8 +13,7 @@ metadata:
   annotations:
     glance/name: "Tunnelled Services"
     glance/icon: "di:gluetun"
-    glance/url: "https://prowlarr.home.coredev.uk"
-    glance/description: "VPN Tunnelled (Torrent, Usenet, Prowlarr)"
+    glance/description: "qBittorrent, SABnzbd, Prowlarr"
 spec:
   # replicas: 0
   selector:
