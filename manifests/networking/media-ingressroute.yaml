@@ -77,6 +77,12 @@ spec:
     services:
     - name: sabnzbd
       port: 8080
+  - match: Host(`frigate.home.coredev.uk`)
+    kind: Rule
+    services:
+    - name: frigate
+      namespace: security
+      port: 5000
   tls:
     secretName: media-tls
 ---
@@ -173,3 +179,11 @@ spec:
     services:
     - name: sabnzbd
       port: 8080
+  - match: Host(`frigate.home.coredev.uk`)
+    kind: Rule
+    middlewares:
+    - name: https-redirect
+    services:
+    - name: frigate
+      namespace: security
+      port: 5000
