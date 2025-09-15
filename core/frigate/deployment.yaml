@@ -48,10 +48,10 @@ spec:
                   optional: true
             - name: FRIGATE_RTSP_PASSWORD
               valueFrom:
-                secretKeyRef:
-                  name: frigate-secrets
-                  key: RTSP_PASSWORD
-                  optional: true
+                 secretKeyRef:
+                   name: frigate-secrets
+                   key: RTSP_PASSWORD
+                   optional: true
           volumeMounts:
             - name: data
               mountPath: /config
@@ -59,8 +59,6 @@ spec:
               mountPath: /media/frigate
             - name: cache
               mountPath: /tmp/cache
-            - name: dev-dri
-              mountPath: /dev/dri
             - name: shm
               mountPath: /dev/shm
             - name: tls-certs
@@ -70,16 +68,11 @@ spec:
             requests:
               memory: "1Gi"
               cpu: "500m"
-              gpu.intel.com/i915: 1
             limits:
               memory: "4Gi"
               cpu: "2000m"
-              gpu.intel.com/i915: 1
           securityContext:
             privileged: false
-            capabilities:
-              add:
-                - SYS_ADMIN
       volumes:
         - name: data
           persistentVolumeClaim:
@@ -90,9 +83,6 @@ spec:
         - name: cache
           emptyDir:
             sizeLimit: 20Gi
-        - name: dev-dri
-          hostPath:
-            path: /dev/dri
         - name: shm
           emptyDir:
             medium: Memory
