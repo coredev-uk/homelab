@@ -7,7 +7,7 @@ metadata:
     app: grafana
   annotations:
     glance/name: "Grafana"
-    glance/icon: "si:grafana"
+    glance/icon: "di:grafana"
     glance/url: "https://grafana.home.coredev.uk"
     glance/description: "Metrics Visualization"
 spec:
@@ -23,7 +23,12 @@ spec:
       initContainers:
         - name: fix-permissions
           image: busybox:1.35
-          command: ['sh', '-c', 'mkdir -p /var/lib/grafana && chown -R 472:472 /var/lib/grafana']
+          command:
+            [
+              "sh",
+              "-c",
+              "mkdir -p /var/lib/grafana && chown -R 472:472 /var/lib/grafana",
+            ]
           volumeMounts:
             - name: storage
               mountPath: /var/lib/grafana
@@ -64,3 +69,4 @@ spec:
         - name: storage
           persistentVolumeClaim:
             claimName: grafana-storage
+

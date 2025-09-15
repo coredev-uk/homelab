@@ -7,7 +7,7 @@ metadata:
     app: bazarr
   annotations:
     glance/name: "Bazarr"
-    glance/icon: "si:bazarr"
+    glance/icon: "di:bazarr"
     glance/url: "https://bazarr.home.coredev.uk"
     glance/description: "Subtitle Management"
 spec:

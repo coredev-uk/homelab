@@ -7,7 +7,7 @@ metadata:
     app: jellyfin
   annotations:
     glance/name: "Jellyfin"
-    glance/icon: "si:jellyfin"
+    glance/icon: "di:jellyfin"
     glance/url: "https://jellyfin.home.coredev.uk"
     glance/description: "Media Server"
 spec:

@@ -7,7 +7,7 @@ metadata:
     app: radarr
   annotations:
     glance/name: "Radarr"
-    glance/icon: "si:radarr"
+    glance/icon: "di:radarr"
     glance/url: "https://radarr.home.coredev.uk"
     glance/description: "Movie Management"
 spec:
@@ -82,4 +82,4 @@ spec:
     - port: 7878
       targetPort: 7878
   type: ClusterIP
-  clusterIP: 10.43.100.10  # Static IP for VPN containers
+  clusterIP: 10.43.100.10 # Static IP for VPN containers

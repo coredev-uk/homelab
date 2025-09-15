@@ -7,7 +7,7 @@ metadata:
     app: frigate
   annotations:
     glance/name: "Frigate"
-    glance/icon: "si:frigate"
+    glance/icon: "di:frigate-light"
     glance/url: "https://frigate.home.coredev.uk"
     glance/description: "CCTV & AI Detection"
 spec:

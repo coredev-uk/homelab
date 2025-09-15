@@ -7,7 +7,6 @@ metadata:
     app: huntarr
   annotations:
     glance/name: "Huntarr"
-    glance/icon: "di:huntarr"
     glance/url: "https://huntarr.home.coredev.uk"
     glance/description: "Duplicate Hunter"
 spec:

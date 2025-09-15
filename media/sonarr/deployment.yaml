@@ -7,7 +7,7 @@ metadata:
     app: sonarr
   annotations:
     glance/name: "Sonarr"
-    glance/icon: "si:sonarr"
+    glance/icon: "di:sonarr"
     glance/url: "https://sonarr.home.coredev.uk"
     glance/description: "TV Show Management"
 spec:
@@ -82,4 +82,4 @@ spec:
     - port: 8989
       targetPort: 8989
   type: ClusterIP
-  clusterIP: 10.43.100.11  # Static IP for VPN containers
+  clusterIP: 10.43.100.11 # Static IP for VPN containers
