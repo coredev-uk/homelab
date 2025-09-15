@@ -24,9 +24,13 @@ spec:
           image: ghcr.io/blakeblackshear/frigate:stable
           ports:
             - containerPort: 5000
+              protocol: TCP
             - containerPort: 5443
+              protocol: TCP
             - containerPort: 8554
+              protocol: TCP
             - containerPort: 8555
+              protocol: TCP
           env:
             - name: TZ
               value: "Europe/London"
