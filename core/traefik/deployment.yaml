@@ -33,7 +33,7 @@ spec:
           - --api.dashboard=true
           - --api.insecure=true
            - --providers.kubernetesIngress=true
-           - --providers.kubernetesIngress.publishedService=traefik/traefik
+           - --providers.kubernetesIngress.ingressEndpoint.publishedService=traefik/traefik
            - --providers.kubernetesCRD=true
           - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
           - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
