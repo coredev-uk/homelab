@@ -32,9 +32,9 @@ spec:
           - --entryPoints.websecure.forwardedHeaders.insecure=false
           - --api.dashboard=true
           - --api.insecure=true
-           - --providers.kubernetesIngress=true
-           - --providers.kubernetesIngress.ingressEndpoint.publishedService=traefik/traefik
-           - --providers.kubernetesCRD=true
+          - --providers.kubernetesIngress=true
+          - --providers.kubernetesIngress.ingressEndpoint.publishedService=traefik/traefik
+          - --providers.kubernetesCRD=true
           - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
           - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
           - --certificatesresolvers.letsencrypt.acme.email=admin@coredev.uk
