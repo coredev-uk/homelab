@@ -70,15 +70,17 @@ spec:
             requests:
               memory: "1Gi"
               cpu: "500m"
+              gpu.intel.com/i915: 1
             limits:
               memory: "4Gi"
               cpu: "2000m"
+              gpu.intel.com/i915: 1
           securityContext:
-            privileged: true
+            privileged: false
+            capabilities:
+              add:
+                - SYS_ADMIN
       volumes:
-        - name: config-template
-          configMap:
-            name: frigate-config
         - name: data
           persistentVolumeClaim:
             claimName: frigate-config
@@ -87,7 +89,7 @@ spec:
             claimName: frigate-media-host
         - name: cache
           emptyDir:
-            sizeLimit: 10Gi
+            sizeLimit: 20Gi
         - name: dev-dri
           hostPath:
             path: /dev/dri
@@ -142,91 +144,3 @@ spec:
       port: 8555
       targetPort: 8555
   type: ClusterIP
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: frigate-config
-  namespace: security
-data:
-  config.yml: |
-    mqtt:
-      enabled: false
-
-    detectors:
-      cpu1:
-        type: cpu
-
-    cameras:
-      # All cameras re-enabled with recording
-      
-      front_driveway:
-        enabled: true
-        ffmpeg:
-          inputs:
-            - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@10.147.5.10:554/stream0?username=admin&password=AD3281E649B94649491A30500550423E
-              roles:
-                - detect
-                - record
-        detect:
-          width: 1920
-          height: 1080
-        record:
-          enabled: true
-          retain:
-            days: 1
-            mode: motion
-        snapshots:
-          enabled: true
-          retain:
-            default: 1
-
-      garage:
-        enabled: true
-        ffmpeg:
-          inputs:
-            - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@10.147.5.9:554/livestream/11?action=play&media=video_audio_data
-              roles:
-                - detect
-                - record
-        detect:
-          width: 1920
-          height: 1080
-        record:
-          enabled: true
-          retain:
-            days: 1
-            mode: motion
-
-      garden:
-        enabled: true
-        ffmpeg:
-          inputs:
-            - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@10.147.5.8:554/livestream/11?action=play&media=video_audio_data
-              roles:
-                - detect
-                - record
-        detect:
-          width: 1920
-          height: 1080
-        record:
-          enabled: true
-          retain:
-            days: 1
-            mode: motion
-
-    record:
-      enabled: true
-      expire_interval: 60
-      retain:
-        days: 1
-        mode: motion
-      events:
-        retain:
-          default: 1
-          mode: motion
-
-    snapshots:
-      enabled: true
-      retain:
-        default: 1
