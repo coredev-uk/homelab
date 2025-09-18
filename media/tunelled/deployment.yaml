@@ -238,7 +238,7 @@ spec:
 
         # FlareSolverr - CloudFlare bypass for protected indexers
         - name: flaresolverr
-          image: flaresolverr/flaresolverr:v3.4.0
+          image: flaresolverr/flaresolverr:v3.4.1
           ports:
             - containerPort: 8191
               name: flare-api
