@@ -68,27 +68,27 @@ spec:
               value: "all"
             - name: FTLCONF_dns_hosts
               value: |
-                10.147.10.27 pihole.home.coredev.uk
-                10.147.10.27 frigate.home.coredev.uk
-                10.147.10.27 argocd.home.coredev.uk
-                10.147.10.27 longhorn.home.coredev.uk
+                10.147.10.35 pihole.home.coredev.uk
+                10.147.10.35 frigate.home.coredev.uk
+                10.147.10.35 argocd.home.coredev.uk
+                10.147.10.35 longhorn.home.coredev.uk
 
-                10.147.10.27 bazarr.home.coredev.uk
-                10.147.10.27 cleanuparr.home.coredev.uk
-                10.147.10.27 glance.home.coredev.uk
-                10.147.10.27 huntarr.home.coredev.uk
-                10.147.10.27 jellyfin.home.coredev.uk
-                10.147.10.27 jellyseerr.home.coredev.uk
-                10.147.10.27 notifiarr.home.coredev.uk
-                10.147.10.27 radarr.home.coredev.uk
-                10.147.10.27 sonarr.home.coredev.uk
+                10.147.10.35 bazarr.home.coredev.uk
+                10.147.10.35 cleanuparr.home.coredev.uk
+                10.147.10.35 glance.home.coredev.uk
+                10.147.10.35 huntarr.home.coredev.uk
+                10.147.10.35 jellyfin.home.coredev.uk
+                10.147.10.35 jellyseerr.home.coredev.uk
+                10.147.10.35 notifiarr.home.coredev.uk
+                10.147.10.35 radarr.home.coredev.uk
+                10.147.10.35 sonarr.home.coredev.uk
 
-                10.147.10.27 prowlarr.home.coredev.uk
-                10.147.10.27 sabnzbd.home.coredev.uk
-                10.147.10.27 qbittorrent.home.coredev.uk
+                10.147.10.35 prowlarr.home.coredev.uk
+                10.147.10.35 sabnzbd.home.coredev.uk
+                10.147.10.35 qbittorrent.home.coredev.uk
 
-                10.147.10.27 grafana.home.coredev.uk
-                10.147.10.27 prometheus.home.coredev.uk
+                10.147.10.35 grafana.home.coredev.uk
+                10.147.10.35 prometheus.home.coredev.uk
           volumeMounts:
             - name: config
               mountPath: /etc/pihole
@@ -171,7 +171,7 @@ spec:
   selector:
     app: pihole
   type: LoadBalancer
-  loadBalancerIP: 10.147.10.26
+  loadBalancerIP: 10.147.10.36
   externalTrafficPolicy: Local
   ports:
     - name: dns-tcp

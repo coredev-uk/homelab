@@ -51,7 +51,7 @@ certificatesResolvers:
 service:
   type: LoadBalancer
   spec:
-     loadBalancerIP: 10.147.10.27
+     loadBalancerIP: 10.147.10.35
     externalTrafficPolicy: Local
 
 # Configure persistence for ACME certificates
