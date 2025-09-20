@@ -165,11 +165,8 @@ pages:
 
               - title: Downloads
                 links:
-                  - title: Gluetun
-                    url: http://gluetun-media.media.svc.cluster.local:8000
-                    icon: mdi:shield-check
-                  - title: qFlood
-                    url: https://qflood.home.coredev.uk
+                  - title: qBittorrent (Flood)
+                    url: https://qbittorrent.home.coredev.uk
                     icon: mdi:download
                   - title: SABnzbd
                     url: https://sabnzbd.home.coredev.uk
