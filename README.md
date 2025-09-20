@@ -55,21 +55,32 @@ nano secrets.env
 - **NOTIFIARR_API_KEY**: Notifiarr API key for notifications
 - **GLANCE_WEATHER_LOCATION**: Weather location for Glance dashboard
 
-#### 4. VPN Configuration (Proton VPN)
+#### 4. VPN Configuration
 
 This homelab uses a ConfigMap for VPN settings, making it easy to switch providers by updating `/manifests/vpn-config.yaml`.
 
 ##### a. Generate WireGuard Configs
 
-1. **Login to Proton VPN Dashboard**: https://account.protonvpn.com/
-2. **Navigate to Downloads** → **WireGuard configuration**
-3. **Create TWO separate configs**:
-   - **For QFlood**: Select a server that supports port forwarding (if available)
-   - **For SABnzbd**: Any server for optimal performance
+1. **Generate TWO separate WireGuard configurations from your VPN provider**:
+   - **For QFlood**: Use a server that supports port forwarding (if available)
+   - **For SABnzbd**: Any server location for optimal performance
 
-4. **Download configs and place in secrets/ directory as**:
+2. **Place configs in secrets/ directory as**:
    - `qflood-wg0.conf`
    - `sabnzbd-wg0.conf`
+
+3. **Required WireGuard config format**:
+```ini
+[Interface]
+PrivateKey = your_private_key_here
+Address = 10.x.x.x/32
+DNS = 10.2.0.1
+
+[Peer]
+PublicKey = server_public_key_here
+AllowedIPs = 0.0.0.0/0
+Endpoint = server.example.com:51820
+```
 
 ##### b. (Optional) Customize VPN Settings
 
