@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sabnzbd-bootstrap
+  namespace: media
+data:
+  bootstrap.sh: |
+    #!/bin/bash
+    set -e
+
+    CONFIG_FILE="/config/sabnzbd.ini"
+    HOST_WHITELIST="sabnzbd.home.coredev.uk"
+
+    echo "Waiting for SABnzbd to create initial config..."
+    timeout=30
+    while [ $timeout -gt 0 ] && [ ! -f "$CONFIG_FILE" ]; do
+      echo "Waiting for $CONFIG_FILE to be created... ($timeout seconds remaining)"
+      sleep 1
+      timeout=$((timeout - 1))
+    done
+
+    if [ ! -f "$CONFIG_FILE" ]; then
+      echo "ERROR: $CONFIG_FILE was not created within 30 seconds"
+      exit 1
+    fi
+
+    echo "SABnzbd config found, updating host_whitelist..."
+
+    # Check if host_whitelist already exists and update it, otherwise add it
+    if grep -q "^host_whitelist" "$CONFIG_FILE"; then
+      sed -i "s/^host_whitelist.*/host_whitelist = $HOST_WHITELIST/" "$CONFIG_FILE"
+      echo "Updated existing host_whitelist to: $HOST_WHITELIST"
+    else
+      # Add host_whitelist after the [misc] section
+      sed -i '/^\[misc\]/a host_whitelist = '"$HOST_WHITELIST" "$CONFIG_FILE"
+      echo "Added host_whitelist: $HOST_WHITELIST"
+    fi
+
+    echo "Bootstrap configuration complete!"
+

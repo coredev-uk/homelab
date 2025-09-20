@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gluetun-media
+  namespace: media
+  labels:
+    app: gluetun-media
+spec:
+  selector:
+    app: gluetun-media
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: sabnzbd
+    - port: 3000
+      targetPort: 3000
+      name: qflood
+    - port: 8888
+      targetPort: 8888
+      name: shadowsocks
+    - port: 8388
+      targetPort: 8388
+      protocol: UDP
+      name: shadowsocks-udp
+
+---
+# Separate service for qBittorrent/qFlood for Glance integration
+apiVersion: v1
+kind: Service
+metadata:
+  name: qbittorrent
+  namespace: media
+  labels:
+    app: qbittorrent
+  annotations:
+    glance/name: "qBittorrent"
+    glance/icon: "mdi:download"
+    glance/description: "BitTorrent client via VPN"
+    glance/url: "https://qbittorrent.home.coredev.uk"
+spec:
+  selector:
+    app: gluetun-media
+  ports:
+    - name: web-ui
+      port: 3000
+      targetPort: 3000
+  type: ClusterIP
+
+---
+# Separate service for SABnzbd for Glance integration
+apiVersion: v1
+kind: Service
+metadata:
+  name: sabnzbd
+  namespace: media
+  labels:
+    app: sabnzbd
+  annotations:
+    glance/name: "SABnzbd"
+    glance/icon: "sh:sabnzbd-light"
+    glance/description: "Usenet downloader via VPN"
+    glance/url: "https://sabnzbd.home.coredev.uk"
+spec:
+  selector:
+    app: gluetun-media
+  ports:
+    - name: web-ui
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+

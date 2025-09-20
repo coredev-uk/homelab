@@ -24,249 +24,187 @@ spec:
           - name: net.ipv6.conf.all.disable_ipv6
             value: "1"
       containers:
-      # Gluetun VPN container
-      - name: gluetun
-        image: qmcgaw/gluetun:latest
-        securityContext:
-          capabilities:
-            add: ["NET_ADMIN"]
-        env:
-        - name: VPN_SERVICE_PROVIDER
-          value: "protonvpn"
-        - name: VPN_TYPE
-          value: "wireguard"
-        - name: WIREGUARD_PRIVATE_KEY
-          valueFrom:
-            secretKeyRef:
-              name: vpn-secrets
-              key: WIREGUARD_PRIVATE_KEY
-        - name: SERVER_COUNTRIES
-          value: "Netherlands"
-        - name: SHADOWSOCKS
-          value: "on"
-        - name: SHADOWSOCKS_PASSWORD
-          value: "gluetun123"
-        - name: TZ
-          value: "Europe/London"
-        - name: LOG_LEVEL
-          value: "info"
-        - name: HEALTH_SERVER_ADDRESS
-          value: ":8000"
-        # DNS Configuration - use regular DNS instead of DoT to avoid timeouts
-        - name: DOT
-          value: "off"
-        - name: DNS_SERVERS
-          value: "1.1.1.1,1.0.0.1"
-        # Disable malicious to prevent blocking downloads
-        - name: BLOCK_MALICIOUS
-          value: "off"
-        ports:
-        - containerPort: 8888
-          name: shadowsocks
-        - containerPort: 8388
-          name: shadowsocks-udp
-          protocol: UDP
-        - containerPort: 8000
-          name: control-api
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "100m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
+        # Gluetun VPN sidecar - shared for all tunnelled applications
+        - name: gluetun
+          image: qmcgaw/gluetun:latest
+          ports:
+            - containerPort: 8000
+              name: control-api
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+          env:
+            # VPN Provider Configuration
+            - name: VPN_SERVICE_PROVIDER
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: VPN_SERVICE_PROVIDER
+            - name: VPN_TYPE
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: VPN_TYPE
+            - name: SERVER_COUNTRIES
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: SERVER_COUNTRIES
+            - name: FIREWALL_OUTBOUND_SUBNETS
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: OUTBOUND_SUBNETS_CLUSTER
+            - name: UPDATER_PERIOD
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: UPDATER_PERIOD
+            - name: WIREGUARD_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: vpn-secrets
+                  key: WIREGUARD_PRIVATE_KEY
 
-      # SABnzbd container using Gluetun network
-      - name: sabnzbd
-        image: ghcr.io/engels74/sabnzbd:release-4.5.3
-        env:
-        - name: PUID
-          value: "1000"
-        - name: PGID
-          value: "1000"
-        - name: TZ
-          value: "Europe/London"
-        ports:
-        - containerPort: 8080
-          name: sabnzbd-web
-        volumeMounts:
-        - name: sabnzbd-config
-          mountPath: /config
-        - name: downloads
-          mountPath: /downloads
-        - name: incomplete-downloads
-          mountPath: /incomplete-downloads
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "100m"
-          limits:
-            memory: "1Gi"
-            cpu: "500m"
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 8080
-          initialDelaySeconds: 60
-          periodSeconds: 30
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 8080
-          initialDelaySeconds: 30
-          periodSeconds: 10
+            # Control server authentication
+            - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
+              value: "/gluetun/auth/config.toml"
 
-      # qFlood container using Gluetun network
-      - name: qflood
-        image: ghcr.io/engels74/qflood:release-5.1.2--4.9.5
-        env:
-        - name: PUID
-          value: "1000"
-        - name: PGID
-          value: "1000"
-        - name: TZ
-          value: "Europe/London"
-        - name: FLOOD_AUTH
-          value: "false"
-        ports:
-        - containerPort: 3000
-          name: qflood-web
-        - containerPort: 8118
-          name: qflood-proxy
-        volumeMounts:
-        - name: qflood-config
-          mountPath: /config
-        - name: downloads
-          mountPath: /downloads
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "100m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 3000
-          initialDelaySeconds: 60
-          periodSeconds: 30
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 3000
-          initialDelaySeconds: 30
-          periodSeconds: 10
+            # Port forwarding for BitTorrent
+            - name: VPN_PORT_FORWARDING
+              value: "on"
+            - name: PORT_FORWARD_ONLY
+              value: "on"
+
+            # Update listening port on qBittorrent
+            - name: VPN_PORT_FORWARDING_UP_COMMAND
+              value: /bin/sh -c 'wget -O- --retry-connrefused --post-data "json={\"listen_port\":{{PORTS}}}" http://[::1]:8081/api/v2/app/setPreferences 2>&1'
+
+            # Disable malicious to prevent blocking Usenet
+            - name: BLOCK_MALICIOUS
+              value: "off"
+
+            # DNS Configuration - use regular DNS instead of DoT to avoid timeouts
+            - name: DOT
+              value: "off"
+            - name: DNS_SERVERS
+              value: "1.1.1.1,1.0.0.1"
+
+          volumeMounts:
+            - name: gluetun-auth-config
+              mountPath: /gluetun/auth
+            - name: tun-device
+              mountPath: /dev/net/tun
+
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+        # SABnzbd container using Gluetun network
+        - name: sabnzbd
+          image: ghcr.io/engels74/sabnzbd:release-4.5.3
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/London"
+          ports:
+            - containerPort: 8080
+              name: sabnzbd-web
+          volumeMounts:
+            - name: sabnzbd-config
+              mountPath: /config
+            - name: downloads
+              mountPath: /downloads
+            - name: incomplete-downloads
+              mountPath: /incomplete-downloads
+            - name: sabnzbd-scripts
+              mountPath: /scripts
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+        # qFlood container using Gluetun network
+        - name: qflood
+          image: ghcr.io/engels74/qflood:release-5.1.2--4.9.5
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/London"
+            - name: FLOOD_AUTH
+              value: "false"
+          ports:
+            - containerPort: 3000
+              name: qflood-web
+            - containerPort: 8118
+              name: qflood-proxy
+          volumeMounts:
+            - name: qflood-config
+              mountPath: /config
+            - name: downloads
+              mountPath: /downloads
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
 
       volumes:
-      - name: sabnzbd-config
-        persistentVolumeClaim:
-          claimName: sabnzbd-config
-      - name: qflood-config
-        persistentVolumeClaim:
-          claimName: qflood-config
-      - name: downloads
-        persistentVolumeClaim:
-          claimName: downloads-data-host
-      - name: incomplete-downloads
-        hostPath:
-          path: /opt/downloads-data/incomplete
-          type: DirectoryOrCreate
+        - name: sabnzbd-config
+          persistentVolumeClaim:
+            claimName: sabnzbd-config
+        - name: qflood-config
+          persistentVolumeClaim:
+            claimName: qflood-config
+        - name: downloads
+          persistentVolumeClaim:
+            claimName: downloads-data-host
+        - name: incomplete-downloads
+          hostPath:
+            path: /opt/downloads-data/incomplete
+            type: DirectoryOrCreate
+        - name: sabnzbd-scripts
+          configMap:
+            name: sabnzbd-scripts
+            defaultMode: 0755
 
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: gluetun-media
-  namespace: media
-spec:
-  selector:
-    app: gluetun-media
-  ports:
-  - port: 8080
-    targetPort: 8080
-    name: sabnzbd
-  - port: 3000
-    targetPort: 3000
-    name: qflood
-  - port: 8888
-    targetPort: 8888
-    name: shadowsocks
-  - port: 8388
-    targetPort: 8388
-    protocol: UDP
-    name: shadowsocks-udp
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: sabnzbd-config
-  namespace: media
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: longhorn
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: qflood-config
-  namespace: media
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 2Gi
-  storageClassName: longhorn
-
----
-# Separate service for qBittorrent/qFlood for Glance integration
-apiVersion: v1
-kind: Service
-metadata:
-  name: qbittorrent
-  namespace: media
-  labels:
-    app: qbittorrent
-  annotations:
-    glance/name: "qBittorrent"
-    glance/icon: "mdi:download"
-    glance/description: "BitTorrent client via VPN"
-    glance/url: "https://qbittorrent.home.coredev.uk"
-spec:
-  selector:
-    app: gluetun-media
-  ports:
-    - name: web-ui
-      port: 3000
-      targetPort: 3000
-  type: ClusterIP
-
----
-# Separate service for SABnzbd for Glance integration  
-apiVersion: v1
-kind: Service
-metadata:
-  name: sabnzbd
-  namespace: media
-  labels:
-    app: sabnzbd
-  annotations:
-    glance/name: "SABnzbd"
-    glance/icon: "sh:sabnzbd-light"
-    glance/description: "Usenet downloader via VPN"
-    glance/url: "https://sabnzbd.home.coredev.uk"
-spec:
-  selector:
-    app: gluetun-media
-  ports:
-    - name: web-ui
-      port: 8080
-      targetPort: 8080
-  type: ClusterIP
