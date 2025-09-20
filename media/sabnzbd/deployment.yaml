@@ -26,12 +26,8 @@ spec:
       # VPN functionality requires elevated privileges
       securityContext:
         runAsNonRoot: false
-      # DNS configuration to use container's internal DNS when VPN is active
-      dnsConfig:
-        nameservers:
-          - "127.0.0.1" # Internal DNS when VPN is active
-        options:
-          - name: ndots
+        sysctls:
+          - name: net.ipv4.conf.all.src_valid_mark
             value: "1"
 
       # Init container to construct WireGuard config from ConfigMap + sealed secret
@@ -84,7 +80,6 @@ spec:
 
           # VPN requires NET_ADMIN capability
           securityContext:
-            privileged: true
             capabilities:
               add:
                 - NET_ADMIN
