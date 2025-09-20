@@ -167,7 +167,7 @@ pages:
                 links:
                   - title: qBittorrent (Flood)
                     url: https://qbittorrent.home.coredev.uk
-                    icon: mdi:download
+                    icon: si:qbittorrent
                   - title: SABnzbd
                     url: https://sabnzbd.home.coredev.uk
                     icon: sh:sabnzbd-light
