@@ -29,10 +29,13 @@ spec:
         env:
         - name: VPN_SERVICE_PROVIDER
           value: "protonvpn"
-        - name: OPENVPN_USER
-          value: "dummy"
-        - name: OPENVPN_PASSWORD
-          value: "dummy"
+        - name: VPN_TYPE
+          value: "wireguard"
+        - name: WIREGUARD_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: vpn-secrets
+              key: WIREGUARD_PRIVATE_KEY
         - name: SERVER_COUNTRIES
           value: "Netherlands"
         - name: SHADOWSOCKS
