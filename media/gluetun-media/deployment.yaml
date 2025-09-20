@@ -44,30 +44,33 @@ spec:
           value: "gluetun123"
         - name: TZ
           value: "Europe/London"
-        - name: HEALTH_VPN_DURATION_INITIAL
-          value: "30s"
-        - name: HEALTH_VPN_DURATION_ADDITION
-          value: "5s"
         - name: LOG_LEVEL
           value: "info"
+        - name: HEALTH_SERVER_ADDRESS
+          value: ":8000"
+        # DNS Configuration - use regular DNS instead of DoT to avoid timeouts
+        - name: DOT
+          value: "off"
+        - name: DNS_SERVERS
+          value: "1.1.1.1,1.0.0.1"
+        # Disable malicious to prevent blocking downloads
+        - name: BLOCK_MALICIOUS
+          value: "off"
         ports:
         - containerPort: 8888
           name: shadowsocks
         - containerPort: 8388
           name: shadowsocks-udp
           protocol: UDP
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 8000
-          initialDelaySeconds: 30
-          periodSeconds: 30
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 8000
-          initialDelaySeconds: 10
-          periodSeconds: 10
+        - containerPort: 8000
+          name: control-api
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
 
       # SABnzbd container using Gluetun network
       - name: sabnzbd
@@ -96,6 +99,18 @@ spec:
           limits:
             memory: "1Gi"
             cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
 
       # qFlood container using Gluetun network
       - name: qflood
@@ -126,6 +141,18 @@ spec:
           limits:
             memory: "512Mi"
             cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
 
       volumes:
       - name: sabnzbd-config
