@@ -23,6 +23,7 @@ data:
   # Proxy
   SHADOWSOCKS: "on"
   SHADOWSOCKS_PASSWORD: "gluetun123"
+  HTTPPROXY: "on"
 
 ---
 #
