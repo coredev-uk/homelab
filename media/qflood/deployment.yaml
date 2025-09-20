@@ -151,6 +151,8 @@ spec:
               value: "--sysctl=net.ipv4.conf.all.rp_filter=2"
             - name: STRICT_PORT_FORWARD
               value: "false"
+            - name: VPN_FWMARK
+              value: "51821"
 
           volumeMounts:
             - name: qflood-config
