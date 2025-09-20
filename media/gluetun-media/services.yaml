@@ -15,9 +15,6 @@ spec:
     - port: 3000
       targetPort: 3000
       name: qflood
-    - port: 8081
-      targetPort: 8081
-      name: qbittorrent-native
     - port: 8000
       targetPort: 8000
       name: gluetun-control
