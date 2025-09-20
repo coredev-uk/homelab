@@ -36,6 +36,7 @@ data:
     # PrivateKey will be injected from sealed secret
     Address = 10.2.0.2/32
     DNS = 10.2.0.1
+    FwMark = 51821
 
     [Peer]
     PublicKey = ic5vxFWQEX5lRVwgx2vfE1xYKXQuwQi1TGDSkR0fsEY=
@@ -48,6 +49,7 @@ data:
     # PrivateKey will be injected from sealed secret
     Address = 10.2.0.3/32
     DNS = 10.2.0.1
+    FwMark = 51822
 
     [Peer]
     PublicKey = lnSLhBJ3zosn36teAK1JJjn7ALiaPLq5k6YO07GnQi4=
