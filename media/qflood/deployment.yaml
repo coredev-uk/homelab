@@ -90,6 +90,7 @@ spec:
 
           # VPN requires NET_ADMIN capability
           securityContext:
+            privileged: true
             capabilities:
               add:
                 - NET_ADMIN
