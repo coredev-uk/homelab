@@ -70,8 +70,8 @@ spec:
   - match: Host(`qbittorrent.home.coredev.uk`)
     kind: Rule
     services:
-    - name: qbittorrent
-      port: 8081
+    - name: qflood-flood
+      port: 3000
   - match: Host(`sabnzbd.home.coredev.uk`)
     kind: Rule
     services:
@@ -165,8 +165,8 @@ spec:
     middlewares:
     - name: https-redirect
     services:
-    - name: qbittorrent
-      port: 8081
+    - name: qflood-flood
+      port: 3000
   - match: Host(`sabnzbd.home.coredev.uk`)
     kind: Rule
     middlewares:

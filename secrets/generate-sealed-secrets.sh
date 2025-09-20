@@ -85,9 +85,6 @@ create_sealed_secret_multi "frigate-secrets" "security" "frigate-sealed-secret.y
   "RTSP_USER" "$FRIGATE_RTSP_USER" \
   "RTSP_PASSWORD" "$FRIGATE_RTSP_PASSWORD"
 
-# Generate VPN SealedSecret
-create_sealed_secret "vpn-secrets" "media" "WIREGUARD_PRIVATE_KEY" "$WIREGUARD_PRIVATE_KEY" "vpn-sealed-secret.yaml"
-
 # Generate Cloudflare SealedSecret
 create_sealed_secret "cloudflare-api-token-secret" "cert-manager" "api-token" "$CLOUDFLARE_API_TOKEN" "cloudflare-sealed-secret.yaml"
 
@@ -99,21 +96,29 @@ create_sealed_secret_multi "glance-secrets" "media" "glance-sealed-secret.yaml" 
   "PIHOLE_WEBPASSWORD" "$PIHOLE_WEBPASSWORD" \
   "GLANCE_WEATHER_LOCATION" "$GLANCE_WEATHER_LOCATION"
 
+# Generate QFlood WireGuard Private Key SealedSecret
+create_sealed_secret "qflood-wireguard-key" "media" "private_key" "$QFLOOD_WIREGUARD_PRIVATE_KEY" "qflood-wireguard-key-sealed-secret.yaml"
+
+# Generate SABnzbd WireGuard Private Key SealedSecret
+create_sealed_secret "sabnzbd-wireguard-key" "media" "private_key" "$SABNZBD_WIREGUARD_PRIVATE_KEY" "sabnzbd-wireguard-key-sealed-secret.yaml"
+
 echo ""
 echo "All SealedSecrets generated successfully!"
 echo ""
 echo "Apply them with:"
 echo "kubectl apply -f sealed-secrets/pihole-sealed-secret.yaml"
 echo "kubectl apply -f sealed-secrets/frigate-sealed-secret.yaml"
-echo "kubectl apply -f sealed-secrets/vpn-sealed-secret.yaml"
 echo "kubectl apply -f sealed-secrets/cloudflare-sealed-secret.yaml"
 echo "kubectl apply -f sealed-secrets/notifiarr-sealed-secret.yaml"
 echo "kubectl apply -f sealed-secrets/glance-sealed-secret.yaml"
+echo "kubectl apply -f sealed-secrets/qflood-wireguard-key-sealed-secret.yaml"
+echo "kubectl apply -f sealed-secrets/sabnzbd-wireguard-key-sealed-secret.yaml"
 echo ""
 echo "After applying, you can remove the old plain text secrets:"
 echo "kubectl delete secret pihole-secrets -n dns --ignore-not-found"
 echo "kubectl delete secret frigate-secrets -n security --ignore-not-found"
-echo "kubectl delete secret vpn-secrets -n media --ignore-not-found"
 echo "kubectl delete secret cloudflare-api-token-secret -n cert-manager --ignore-not-found"
 echo "kubectl delete secret notifiarr-secrets -n media --ignore-not-found"
 echo "kubectl delete secret glance-secrets -n media --ignore-not-found"
+echo "kubectl delete secret qflood-wireguard-key -n media --ignore-not-found"
+echo "kubectl delete secret sabnzbd-wireguard-key -n media --ignore-not-found"

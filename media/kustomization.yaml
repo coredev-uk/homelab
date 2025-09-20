@@ -11,4 +11,6 @@ resources:
   - notifiarr/
   - cleanuparr/
   - huntarr/
-  - tunelled/
+  - prowlarr/
+  - qflood/
+  - sabnzbd/

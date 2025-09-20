@@ -57,37 +57,27 @@ nano secrets.env
 
 #### 4. VPN Configuration
 
-This homelab uses a ConfigMap for VPN settings, making it easy to switch providers by updating `/manifests/vpn-config.yaml`.
+This homelab uses a ConfigMap approach for VPN settings, making it easy to switch providers by updating `/manifests/vpn-config.yaml`.
 
-##### a. Generate WireGuard Configs
+##### a. Configure VPN Settings
 
-1. **Generate TWO separate WireGuard configurations from your VPN provider**:
-   - **For QFlood**: Use a server that supports port forwarding (if available)
-   - **For SABnzbd**: Any server location for optimal performance
+1. **Update the ConfigMap** (`manifests/vpn-config.yaml`) with your VPN provider's details:
+   - Replace `YOUR_VPN_SERVER_PUBLIC_KEY_HERE` with your VPN server's public key
+   - Replace `YOUR_VPN_ENDPOINT_HERE:51820` with your VPN server's endpoint
+   - Update IP addresses if needed (Address fields in the WireGuard configs)
 
-2. **Place configs in secrets/ directory as**:
-   - `qflood-wg0.conf`
-   - `sabnzbd-wg0.conf`
-
-3. **Required WireGuard config format**:
-```ini
-[Interface]
-PrivateKey = your_private_key_here
-Address = 10.x.x.x/32
-DNS = 10.2.0.1
-
-[Peer]
-PublicKey = server_public_key_here
-AllowedIPs = 0.0.0.0/0
-Endpoint = server.example.com:51820
-```
+2. **Add private keys to secrets.env**:
+   ```bash
+   QFLOOD_WIREGUARD_PRIVATE_KEY="your_qflood_private_key_here"
+   SABNZBD_WIREGUARD_PRIVATE_KEY="your_sabnzbd_private_key_here"
+   ```
 
 ##### b. (Optional) Customize VPN Settings
 
 Edit `manifests/vpn-config.yaml` to change VPN provider or settings:
 ```yaml
-# Change VPN_PROVIDER to switch providers (wireguard, proton, nordvpn, etc.)
-VPN_PROVIDER: "proton"
+# Change VPN_PROVIDER to switch providers (wireguard, custom, etc.)
+VPN_PROVIDER: "custom"
 ```
 
 ##### c. Generate All Sealed Secrets
@@ -179,11 +169,11 @@ kubectl get pods -A --watch
 - **Prowlarr**: Indexer management for search providers
 
 ### Download Clients (VPN-Protected)
-- **QFlood**: Modern qBittorrent + Flood UI with Proton VPN
+- **QFlood**: Modern qBittorrent + Flood UI with VPN protection
   - Auto port forwarding for optimal seeding
   - Privoxy proxy for secure indexer access
   - Modern web interface replacing old qBittorrent UI
-- **SABnzbd**: Usenet downloader with dedicated Proton VPN connection
+- **SABnzbd**: Usenet downloader with dedicated VPN connection
 
 ### Monitoring & Dashboards
 - **Glance**: All-in-one dashboard with stocks, crypto, RSS feeds, and service monitoring

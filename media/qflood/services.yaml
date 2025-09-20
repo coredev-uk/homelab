@@ -1,0 +1,63 @@
+#
+# QFlood Services
+# Separate services for qBittorrent API and Flood UI
+#
+---
+# Service for qBittorrent API (used by *arr applications)
+apiVersion: v1
+kind: Service
+metadata:
+  name: qflood-qbittorrent
+  namespace: media
+  labels:
+    app: qflood
+    component: qbittorrent-api
+spec:
+  type: ClusterIP
+  selector:
+    app: qflood
+  ports:
+    - port: 8080
+      targetPort: qbittorrent
+      protocol: TCP
+      name: qbittorrent-api
+
+---
+# Service for Flood UI (web interface)
+apiVersion: v1
+kind: Service
+metadata:
+  name: qflood-flood
+  namespace: media
+  labels:
+    app: qflood
+    component: flood-ui
+spec:
+  type: ClusterIP
+  selector:
+    app: qflood
+  ports:
+    - port: 3000
+      targetPort: flood-ui
+      protocol: TCP
+      name: flood-ui
+
+---
+# Service for Privoxy (HTTP proxy for Prowlarr)
+apiVersion: v1
+kind: Service
+metadata:
+  name: qflood-privoxy
+  namespace: media
+  labels:
+    app: qflood
+    component: privoxy
+spec:
+  type: ClusterIP
+  selector:
+    app: qflood
+  ports:
+    - port: 8118
+      targetPort: privoxy
+      protocol: TCP
+      name: privoxy

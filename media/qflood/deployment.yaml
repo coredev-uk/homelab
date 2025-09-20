@@ -1,0 +1,223 @@
+#
+# QFlood Deployment - qBittorrent + Flood UI with Built-in VPN
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qflood
+  namespace: media
+  labels:
+    app: qflood
+  annotations:
+    glance/name: "QFlood"
+    glance/icon: "mdi:flood"
+    glance/description: "qBittorrent with Flood UI"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qflood
+  template:
+    metadata:
+      labels:
+        app: qflood
+    spec:
+      # VPN functionality requires elevated privileges
+      securityContext:
+        runAsNonRoot: false
+
+      # DNS configuration to use container's internal DNS when VPN is active
+      dnsConfig:
+        nameservers:
+          - "127.0.0.1" # Internal DNS when VPN is active
+        options:
+          - name: ndots
+            value: "1"
+
+      # Init container to construct WireGuard config from ConfigMap + sealed secret
+      initContainers:
+        - name: setup-wireguard-config
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /config/wireguard
+              
+              # Copy WireGuard config template from ConfigMap
+              if [ -f /configmap/qflood-wg0.conf ]; then
+                cp /configmap/qflood-wg0.conf /config/wireguard/wg0.conf
+                
+                # Inject the private key from environment variable
+                if [ -n "$WIREGUARD_PRIVATE_KEY" ]; then
+                  # Add PrivateKey line after [Interface] section
+                  sed -i '/\[Interface\]/a PrivateKey = '"$WIREGUARD_PRIVATE_KEY" /config/wireguard/wg0.conf
+                  chmod 600 /config/wireguard/wg0.conf
+                  echo "WireGuard config constructed successfully with private key"
+                else
+                  echo "Error: WIREGUARD_PRIVATE_KEY environment variable not set"
+                  exit 1
+                fi
+              else
+                echo "Error: WireGuard config template not found at /configmap/qflood-wg0.conf"
+                exit 1
+              fi
+          env:
+            - name: WIREGUARD_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: qflood-wireguard-key
+                  key: private_key
+          volumeMounts:
+            - name: qflood-config
+              mountPath: /config
+            - name: vpn-config
+              mountPath: /configmap
+
+      containers:
+        - name: qflood
+          image: cr.hotio.dev/hotio/qflood:latest
+          ports:
+            - containerPort: 8080
+              name: qbittorrent
+              protocol: TCP
+            - containerPort: 3000
+              name: flood-ui
+              protocol: TCP
+            - containerPort: 8118
+              name: privoxy
+              protocol: TCP
+
+          # VPN requires NET_ADMIN capability
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+
+          env:
+            # Basic container configuration
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: TZ
+            - name: UMASK
+              value: "002"
+
+            # Flood UI configuration
+            - name: FLOOD_AUTH
+              value: "true"
+
+            # VPN Configuration - Using ConfigMap for provider settings
+            - name: VPN_ENABLED
+              value: "true"
+            - name: VPN_CONF
+              value: "wg0"
+            - name: VPN_PROVIDER
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: VPN_PROVIDER
+            - name: VPN_LAN_NETWORK
+              value: "10.42.0.0/16,10.43.0.0/16,192.168.1.0/24"
+            - name: VPN_LAN_LEAK_ENABLED
+              value: "false"
+            - name: VPN_AUTO_PORT_FORWARD
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: VPN_AUTO_PORT_FORWARD_ENABLED
+            - name: VPN_FIREWALL_TYPE
+              value: "auto"
+            - name: VPN_HEALTHCHECK_ENABLED
+              value: "false"
+
+            # Privoxy configuration for Prowlarr integration
+            - name: PRIVOXY_ENABLED
+              value: "true"
+            - name: VPN_EXPOSE_PORTS_ON_LAN
+              value: "8118/tcp"
+
+            # DNS configuration (from ConfigMap)
+            - name: VPN_NAMESERVERS
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: DNS
+
+          volumeMounts:
+            - name: qflood-config
+              mountPath: /config
+            - name: downloads
+              mountPath: /downloads
+            - name: tun-device
+              mountPath: /dev/net/tun
+
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "200m"
+            limits:
+              memory: "4Gi"
+              cpu: "2000m"
+
+          # Health checks for both qBittorrent and Flood
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            timeoutSeconds: 5
+
+      volumes:
+        # QFlood configuration storage
+        - name: qflood-config
+          persistentVolumeClaim:
+            claimName: qflood-config
+
+        # Downloads directory (shared with other media apps)
+        - name: downloads
+          persistentVolumeClaim:
+            claimName: downloads-data-host
+
+        # VPN ConfigMap with WireGuard templates
+        - name: vpn-config
+          configMap:
+            name: vpn-config
+
+        # TUN device for VPN
+        - name: tun-device
+          hostPath:
+            path: /dev/net/tun
+            type: CharDevice
+
+---
+# Persistent Volume Claim for QFlood configuration
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: qflood-config
+  namespace: media
+  labels:
+    app: qflood
+    component: config
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: longhorn
+

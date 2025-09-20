@@ -1,0 +1,152 @@
+#
+# Prowlarr - Indexer Manager
+# Standalone deployment without VPN tunnelling for better indexer compatibility
+# IMPORTANT: Configure HTTP proxy in Prowlarr UI: Settings -> General -> Proxy
+# Proxy Host: qflood-privoxy.media.svc.cluster.local:8118
+# This ensures indexer tests use the same IP as qBittorrent for TRaSH compliance
+#
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: prowlarr-config
+  namespace: media
+  labels:
+    app: prowlarr
+    component: config
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: longhorn
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prowlarr
+  namespace: media
+  labels:
+    app: prowlarr
+spec:
+  selector:
+    app: prowlarr
+  ports:
+    - name: web-ui
+      port: 9696
+      targetPort: web-ui
+    - name: flaresolverr
+      port: 8191
+      targetPort: flare-api
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prowlarr
+  namespace: media
+  labels:
+    app: prowlarr
+  annotations:
+    glance/name: "Prowlarr"
+    glance/icon: "si:prowlarr"
+    glance/description: "Indexer Manager"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prowlarr
+  template:
+    metadata:
+      labels:
+        app: prowlarr
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+
+      containers:
+        # Prowlarr - Indexer manager
+        - name: prowlarr
+          image: lscr.io/linuxserver/prowlarr:2.0.5
+          ports:
+            - containerPort: 9696
+              name: web-ui
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/London"
+          volumeMounts:
+            - name: prowlarr-config
+              mountPath: /config
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 9696
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 9696
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+        # FlareSolverr - CloudFlare bypass for protected indexers
+        - name: flaresolverr
+          image: flaresolverr/flaresolverr:v3.4.1
+          ports:
+            - containerPort: 8191
+              name: flare-api
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/London"
+            - name: LOG_LEVEL
+              value: "info"
+            - name: LOG_HTML
+              value: "false"
+            - name: CAPTCHA_SOLVER
+              value: "none"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8191
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8191
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+      volumes:
+        - name: prowlarr-config
+          persistentVolumeClaim:
+            claimName: prowlarr-config
