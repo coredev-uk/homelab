@@ -1,0 +1,192 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gluetun-media
+  namespace: media
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gluetun-media
+  template:
+    metadata:
+      labels:
+        app: gluetun-media
+    spec:
+      securityContext:
+        sysctls:
+          - name: net.ipv4.conf.all.src_valid_mark
+            value: "1"
+          - name: net.ipv6.conf.all.disable_ipv6
+            value: "1"
+      containers:
+      # Gluetun VPN container
+      - name: gluetun
+        image: qmcgaw/gluetun:latest
+        securityContext:
+          capabilities:
+            add: ["NET_ADMIN"]
+        env:
+        - name: VPN_SERVICE_PROVIDER
+          value: "protonvpn"
+        - name: OPENVPN_USER
+          value: "dummy"
+        - name: OPENVPN_PASSWORD
+          value: "dummy"
+        - name: SERVER_COUNTRIES
+          value: "Netherlands"
+        - name: SHADOWSOCKS
+          value: "on"
+        - name: SHADOWSOCKS_PASSWORD
+          value: "gluetun123"
+        - name: TZ
+          value: "Europe/London"
+        - name: HEALTH_VPN_DURATION_INITIAL
+          value: "30s"
+        - name: HEALTH_VPN_DURATION_ADDITION
+          value: "5s"
+        - name: LOG_LEVEL
+          value: "info"
+        ports:
+        - containerPort: 8888
+          name: shadowsocks
+        - containerPort: 8388
+          name: shadowsocks-udp
+          protocol: UDP
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+
+      # SABnzbd container using Gluetun network
+      - name: sabnzbd
+        image: ghcr.io/engels74/sabnzbd:release-4.5.3
+        env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        - name: TZ
+          value: "Europe/London"
+        ports:
+        - containerPort: 8080
+          name: sabnzbd-web
+        volumeMounts:
+        - name: sabnzbd-config
+          mountPath: /config
+        - name: downloads
+          mountPath: /downloads
+        - name: incomplete-downloads
+          mountPath: /incomplete-downloads
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+
+      # qFlood container using Gluetun network
+      - name: qflood
+        image: ghcr.io/engels74/qflood:release-5.1.2--4.9.5
+        env:
+        - name: PUID
+          value: "1000"
+        - name: PGID
+          value: "1000"
+        - name: TZ
+          value: "Europe/London"
+        - name: FLOOD_AUTH
+          value: "false"
+        ports:
+        - containerPort: 3000
+          name: qflood-web
+        - containerPort: 8118
+          name: qflood-proxy
+        volumeMounts:
+        - name: qflood-config
+          mountPath: /config
+        - name: downloads
+          mountPath: /downloads
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+
+      volumes:
+      - name: sabnzbd-config
+        persistentVolumeClaim:
+          claimName: sabnzbd-config
+      - name: qflood-config
+        persistentVolumeClaim:
+          claimName: qflood-config
+      - name: downloads
+        persistentVolumeClaim:
+          claimName: downloads-data-host
+      - name: incomplete-downloads
+        hostPath:
+          path: /opt/downloads-data/incomplete
+          type: DirectoryOrCreate
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gluetun-media
+  namespace: media
+spec:
+  selector:
+    app: gluetun-media
+  ports:
+  - port: 8080
+    targetPort: 8080
+    name: sabnzbd
+  - port: 3000
+    targetPort: 3000
+    name: qflood
+  - port: 8888
+    targetPort: 8888
+    name: shadowsocks
+  - port: 8388
+    targetPort: 8388
+    protocol: UDP
+    name: shadowsocks-udp
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sabnzbd-config
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: longhorn
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: qflood-config
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: longhorn

@@ -122,9 +122,12 @@ pages:
 
               - title: Downloads
                 links:
-                  - title: qBittorrent
-                    url: https://qbittorrent.home.coredev.uk
-                    icon: si:qbittorrent
+                  - title: Gluetun
+                    url: http://gluetun-media.media.svc.cluster.local:8000
+                    icon: mdi:shield-check
+                  - title: qFlood
+                    url: https://qflood.home.coredev.uk
+                    icon: mdi:download
                   - title: SABnzbd
                     url: https://sabnzbd.home.coredev.uk
                     icon: sh:sabnzbd-light

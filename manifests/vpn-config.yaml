@@ -5,53 +5,25 @@ metadata:
   namespace: media
 data:
   # VPN Provider Configuration
-  # Change these values to switch to different VPN providers
   VPN_PROVIDER: "proton"
-
-  # Network Configuration
-  VPN_AUTO_PORT_FORWARD_ENABLED: "true" # Enable for torrenting
-  VPN_AUTO_PORT_FORWARD_DISABLED: "false" # Disable for other services
-
-  # DNS Configuration (leave empty to use VPN provider's DNS)
+  
+  # Network Configuration  
+  VPN_AUTO_PORT_FORWARD_ENABLED: "true"
+  VPN_AUTO_PORT_FORWARD_DISABLED: "false"
+  
+  # DNS Configuration
   DNS: ""
-
+  
   # Health Check Configuration
   HEALTH_VPN_DURATION_INITIAL: "30s"
   HEALTH_VPN_DURATION_ADDITION: "5s"
-
+  
   # Firewall Configuration
   FIREWALL_VPN_INPUT_PORTS: ""
   FIREWALL_INPUT_PORTS: ""
-
+  
   # Log Level
   LOG_LEVEL: "info"
-
+  
   # Timezone
   TZ: "Europe/London"
-
-  # WireGuard Configuration Templates
-  # QFlood WireGuard Config (private key comes from sealed secret)
-  qflood-wg0.conf: |
-    [Interface]
-    # PrivateKey will be injected from sealed secret
-    Address = 10.2.0.2/32
-    DNS = 10.2.0.1
-    FwMark = 51821
-
-    [Peer]
-    PublicKey = ic5vxFWQEX5lRVwgx2vfE1xYKXQuwQi1TGDSkR0fsEY=
-    AllowedIPs = 0.0.0.0/0
-    Endpoint = 146.70.96.66:51820
-
-  # SABnzbd WireGuard Config (private key comes from sealed secret)
-  sabnzbd-wg0.conf: |
-    [Interface]
-    # PrivateKey will be injected from sealed secret
-    Address = 10.2.0.3/32
-    DNS = 10.2.0.1
-    FwMark = 51822
-
-    [Peer]
-    PublicKey = lnSLhBJ3zosn36teAK1JJjn7ALiaPLq5k6YO07GnQi4=
-    AllowedIPs = 0.0.0.0/0
-    Endpoint = 146.70.83.66:51820
