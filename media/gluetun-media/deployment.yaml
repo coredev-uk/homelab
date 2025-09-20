@@ -207,4 +207,10 @@ spec:
           configMap:
             name: sabnzbd-scripts
             defaultMode: 0755
+        - name: gluetun-auth-config
+          configMap:
+            name: gluetun-auth-config
+        - name: tun-device
+          hostPath:
+            path: /dev/net/tun
 
