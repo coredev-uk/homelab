@@ -73,10 +73,10 @@ pages:
           - type: custom-api
             title: VPN Status
             cache: 1m
-            url: http://qbittorrent.media:8000/v1/publicip/ip
+            url: http://gluetun-media.media:8000/v1/publicip/ip
             subrequests:
               port-status:
-                url: http://qbittorrent.media:8000/v1/openvpn/portforwarded
+                url: http://gluetun-media.media:8000/v1/openvpn/portforwarded
             template: |
               {{ if eq .Response.StatusCode 200 }}
                 {{ $ip := (.JSON.String "public_ip") }}
