@@ -70,6 +70,49 @@ pages:
               - symbol: ETH-USD
                 name: Ethereum
 
+          - type: custom-api
+            title: VPN Status
+            cache: 1m
+            url: http://qbittorrent.media:8000/v1/publicip/ip
+            subrequests:
+              port-status:
+                url: http://qbittorrent.media:8000/v1/openvpn/portforwarded
+            template: |
+              {{ if eq .Response.StatusCode 200 }}
+                {{ $ip := (.JSON.String "public_ip") }}
+                {{ $city := (.JSON.String "city") }}
+                {{ $country := (.JSON.String "country") }}
+                {{ $portRequest := .Subrequest "port-status" }}
+                {{ if eq $ip "" }}
+                 <div>
+                   <div class="color-highlight size-h4">
+                     <span class="color-negative">Disconnected ●</span> 
+                   </div>
+                 </div>
+                {{ else }}
+                 <div>
+                   <div class="color-highlight size-h4">
+                     <span class="color-positive">Connected ●</span> 
+                   </div>
+                   <div class="size-h6">{{ $ip }} - {{ $city }}, {{ $country }}</div>
+                 {{ if eq $portRequest.Response.StatusCode 200 }}
+                     {{ $forwardedPort := $portRequest.JSON.Int "port" }}
+                     {{ if eq $forwardedPort 0 }}
+                       <div class="size-h6 color-warning">Port: Waiting for assignment...</div>
+                     {{ else }}
+                       <div class="size-h6 color-positive">Port: {{ $forwardedPort }}</div>
+                     {{ end }}
+                   {{ else }}
+                     <div class="size-h6 color-negative">Port: Check failed</div>
+                   {{ end }}
+                 </div>
+                {{ end }}
+              {{ else }}
+               <div class="color-negative size-h4">
+                 VPN: Error {{ .Response.StatusCode }}
+               </div>
+              {{ end }}
+
       - size: full
         widgets:
           - type: bookmarks
