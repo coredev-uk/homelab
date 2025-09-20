@@ -43,7 +43,7 @@ spec:
             - -c
             - |
               mkdir -p /config/wireguard
-              
+
               # Copy WireGuard config template from ConfigMap
               if [ -f /configmap/sabnzbd-wg0.conf ]; then
                 cp /configmap/sabnzbd-wg0.conf /config/wireguard/wg0.conf
@@ -76,7 +76,7 @@ spec:
 
       containers:
         - name: sabnzbd
-          image: cr.hotio.dev/hotio/sabnzbd:latest
+          image: ghcr.io/engels74/sabnzbd:release-4.5.3
           ports:
             - containerPort: 8080
               name: sabnzbd-ui
@@ -253,4 +253,3 @@ spec:
       targetPort: sabnzbd-ui
       protocol: TCP
       name: sabnzbd-ui
-

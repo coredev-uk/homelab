@@ -43,7 +43,7 @@ spec:
             - -c
             - |
               mkdir -p /config/wireguard
-              
+
               # Copy WireGuard config template from ConfigMap
               if [ -f /configmap/qflood-wg0.conf ]; then
                 cp /configmap/qflood-wg0.conf /config/wireguard/wg0.conf
@@ -76,7 +76,7 @@ spec:
 
       containers:
         - name: qflood
-          image: cr.hotio.dev/hotio/qflood:latest
+          image: ghcr.io/engels74/qflood:release-5.1.2--4.9.5
           ports:
             - containerPort: 8080
               name: qbittorrent
@@ -220,4 +220,3 @@ spec:
     requests:
       storage: 2Gi
   storageClassName: longhorn
-
