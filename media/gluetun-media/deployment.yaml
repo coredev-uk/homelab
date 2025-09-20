@@ -67,6 +67,18 @@ spec:
                   name: vpn-secrets
                   key: WIREGUARD_PRIVATE_KEY
 
+            # Shadowsocks proxy configuration
+            - name: SHADOWSOCKS
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: SHADOWSOCKS
+            - name: SHADOWSOCKS_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config
+                  key: SHADOWSOCKS_PASSWORD
+
             # Control server authentication
             - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
               value: "/gluetun/auth/config.toml"
