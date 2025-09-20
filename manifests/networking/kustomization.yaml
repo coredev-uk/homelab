@@ -8,6 +8,7 @@ resources:
   - security-ingress.yaml
   - security-certificate.yaml
   - argocd-ingressroute.yaml
+  - argocd-certificate.yaml
   - monitoring-ingress.yaml
   - pihole-middleware.yaml
   - ip-forwarding-middleware.yaml
