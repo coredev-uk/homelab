@@ -3,6 +3,10 @@ kind: Deployment
 metadata:
   name: gluetun-media
   namespace: media
+  annotations:
+    glance/name: "Media Downloads"
+    glance/icon: "di:gluetun"
+    glance/description: "qBittorrent, SABnzbd via VPN"
 spec:
   replicas: 1
   selector:
@@ -220,3 +224,49 @@ spec:
     requests:
       storage: 2Gi
   storageClassName: longhorn
+
+---
+# Separate service for qBittorrent/qFlood for Glance integration
+apiVersion: v1
+kind: Service
+metadata:
+  name: qbittorrent
+  namespace: media
+  labels:
+    app: qbittorrent
+  annotations:
+    glance/name: "qBittorrent"
+    glance/icon: "mdi:download"
+    glance/description: "BitTorrent client via VPN"
+    glance/url: "https://qbittorrent.home.coredev.uk"
+spec:
+  selector:
+    app: gluetun-media
+  ports:
+    - name: web-ui
+      port: 3000
+      targetPort: 3000
+  type: ClusterIP
+
+---
+# Separate service for SABnzbd for Glance integration  
+apiVersion: v1
+kind: Service
+metadata:
+  name: sabnzbd
+  namespace: media
+  labels:
+    app: sabnzbd
+  annotations:
+    glance/name: "SABnzbd"
+    glance/icon: "sh:sabnzbd-light"
+    glance/description: "Usenet downloader via VPN"
+    glance/url: "https://sabnzbd.home.coredev.uk"
+spec:
+  selector:
+    app: gluetun-media
+  ports:
+    - name: web-ui
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
