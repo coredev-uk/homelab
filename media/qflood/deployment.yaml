@@ -148,6 +148,12 @@ spec:
                 configMapKeyRef:
                   name: vpn-config
                   key: DNS
+            
+            # Try to work around sysctl restrictions
+            - name: VPN_OPTIONS
+              value: "--sysctl=net.ipv4.conf.all.rp_filter=2"
+            - name: STRICT_PORT_FORWARD
+              value: "false"
 
           volumeMounts:
             - name: qflood-config
