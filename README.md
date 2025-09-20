@@ -209,3 +209,7 @@ kubectl get pods -A --watch
 ## Feedback & Suggestions
 
 If you have any recommendations or suggestions for improving this homelab configuration, please feel free to contact me at [core@coredev.uk](mailto:core@coredev.uk).
+
+---
+
+*This project was developed with assistance from AI to help with configuration management, documentation, and infrastructure optimization.*
