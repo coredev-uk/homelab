@@ -159,9 +159,13 @@ spec:
               value: "Europe/London"
             - name: FLOOD_AUTH
               value: "false"
+            - name: WEBUI_PORTS
+              value: "8081/tcp,8081/udp,3000/tcp,3000/udp"
           ports:
             - containerPort: 3000
               name: qflood-web
+            - containerPort: 8081
+              name: qbittorrent
             - containerPort: 8118
               name: qflood-proxy
           volumeMounts:
@@ -213,4 +217,3 @@ spec:
         - name: tun-device
           hostPath:
             path: /dev/net/tun
-
