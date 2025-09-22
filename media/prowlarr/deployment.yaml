@@ -158,7 +158,7 @@ spec:
 
         # Byparr - Advanced CloudFlare bypass with camoufox browser (replaces FlareSolverr)
         - name: byparr
-          image: ghcr.io/thephaseless/byparr:v2.0.1
+          image: ghcr.io/thephaseless/byparr:2.0.1
           ports:
             - containerPort: 8191
               name: byparr-api
@@ -193,3 +193,4 @@ spec:
         - name: prowlarr-config
           persistentVolumeClaim:
             claimName: prowlarr-config
+
