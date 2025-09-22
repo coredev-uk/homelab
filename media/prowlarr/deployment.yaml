@@ -39,11 +39,8 @@ spec:
       port: 9696
       targetPort: web-ui
     - name: flaresolverr
-      port: 8192
-      targetPort: flare-api
-    - name: byparr
       port: 8191
-      targetPort: byparr-api
+      targetPort: flare-api
   type: ClusterIP
 
 ---
@@ -115,7 +112,7 @@ spec:
         - name: flaresolverr
           image: flaresolverr/flaresolverr:v3.4.1
           ports:
-            - containerPort: 8192
+            - containerPort: 8191
               name: flare-api
           env:
             - name: PUID
@@ -133,9 +130,13 @@ spec:
             - name: HOST
               value: "0.0.0.0"
             - name: PORT
-              value: "8192"
+              value: "8191"
             - name: PROXY_URL
               value: "socks5://gluetun-media.media.svc.cluster.local:8888"
+            # - name: PROMETHEUS_ENABLED
+            #   value: true
+            # - name: PROMETHEUS_PORT
+            #   value: 8192
           resources:
             requests:
               memory: "256Mi"
@@ -146,55 +147,17 @@ spec:
           livenessProbe:
             httpGet:
               path: /
-              port: 8192
+              port: 8191
             initialDelaySeconds: 60
             periodSeconds: 30
           readinessProbe:
             httpGet:
               path: /
-              port: 8192
+              port: 8191
             initialDelaySeconds: 30
             periodSeconds: 10
-
-        # Byparr - Advanced CloudFlare bypass with camoufox browser (replaces FlareSolverr)
-        - name: byparr
-          image: ghcr.io/thephaseless/byparr:2.0.1
-          ports:
-            - containerPort: 8191
-              name: byparr-api
-          env:
-            - name: HOST
-              value: "0.0.0.0"
-            - name: PROXY_SERVER
-              value: "socks5://gluetun-media.media.svc.cluster.local:8888"
-          securityContext:
-            runAsUser: 0
-            runAsGroup: 0
-            runAsNonRoot: false
-          resources:
-            requests:
-              memory: "512Mi"
-              cpu: "200m"
-            limits:
-              memory: "2Gi"
-              cpu: "1000m"
-          livenessProbe:
-            httpGet:
-              path: /docs
-              port: 8191
-            initialDelaySeconds: 90
-            periodSeconds: 30
-            timeoutSeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /docs
-              port: 8191
-            initialDelaySeconds: 60
-            periodSeconds: 15
-            timeoutSeconds: 5
 
       volumes:
         - name: prowlarr-config
           persistentVolumeClaim:
             claimName: prowlarr-config
-
