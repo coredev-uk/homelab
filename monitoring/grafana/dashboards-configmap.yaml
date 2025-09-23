@@ -667,7 +667,7 @@ data:
           "type": "stat",
           "targets": [
             {
-              "expr": "up{job=\"frigate\"}",
+              "expr": "kube_deployment_status_replicas{deployment=\"frigate\", namespace=\"core\"}",
               "legendFormat": "Frigate"
             }
           ],
@@ -694,7 +694,7 @@ data:
           "type": "stat",
           "targets": [
             {
-              "expr": "up{job=\"cert-manager\"}",
+              "expr": "max(certmanager_certificate_ready_status{condition=\"True\"})",
               "legendFormat": "Cert-Manager"
             }
           ],
@@ -721,7 +721,7 @@ data:
           "type": "stat",
           "targets": [
             {
-              "expr": "count(kube_certificate_expiry_timestamp)",
+              "expr": "count(certmanager_certificate_ready_status)",
               "legendFormat": "Total Certs"
             }
           ],
@@ -738,7 +738,7 @@ data:
           "type": "table",
           "targets": [
             {
-              "expr": "(kube_certificate_expiry_timestamp - time()) / 86400",
+              "expr": "(certmanager_certificate_expiration_timestamp_seconds - time()) / 86400",
               "legendFormat": "{{name}}",
               "format": "table",
               "instant": true
@@ -781,8 +781,8 @@ data:
           "type": "timeseries",
           "targets": [
             {
-              "expr": "increase(traefik_service_requests_total{code=~\"4[0-9][0-9]\"}[5m])",
-              "legendFormat": "{{service}} - {{code}}"
+              "expr": "increase(kube_pod_container_status_restarts_total{namespace=~\"traefik.*|ingress.*\"}[5m]) > 0",
+              "legendFormat": "{{namespace}} Authentication Issues"
             }
           ],
           "fieldConfig": {
@@ -798,8 +798,8 @@ data:
           "type": "timeseries",
           "targets": [
             {
-              "expr": "intel_gpu_busy_percent",
-              "legendFormat": "GPU Busy %"
+              "expr": "kube_pod_container_resource_requests{resource=\"cpu\", namespace=\"core\", pod=~\"frigate.*\"} * 100",
+              "legendFormat": "CPU Usage %"
             }
           ],
           "fieldConfig": {
