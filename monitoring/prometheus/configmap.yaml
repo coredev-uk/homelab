@@ -22,6 +22,11 @@ data:
         static_configs:
           - targets: ['kube-state-metrics:8080']
 
+      - job_name: 'pihole'
+        static_configs:
+          - targets: ['pihole-web.dns.svc.cluster.local:9617']
+        scrape_interval: 30s
+
       - job_name: 'kubernetes-pods'
         kubernetes_sd_configs:
           - role: pod
