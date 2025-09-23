@@ -99,17 +99,18 @@ data:
         },
         {
           "id": 4,
-          "title": "Pods Running",
+          "title": "Node Info",
           "type": "stat",
           "targets": [
             {
-              "expr": "count(kube_pod_info{pod_ready=\"true\"})",
-              "legendFormat": "Ready pods"
+              "expr": "node_uname_info",
+              "legendFormat": "{{nodename}} ({{release}})"
             }
           ],
           "fieldConfig": {
             "defaults": {
-              "color": {"mode": "palette-classic"}
+              "color": {"mode": "palette-classic"},
+              "displayName": "Host"
             }
           },
           "gridPos": {"h": 8, "w": 6, "x": 18, "y": 0}
