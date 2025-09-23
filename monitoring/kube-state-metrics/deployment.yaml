@@ -15,6 +15,10 @@ spec:
     metadata:
       labels:
         app: kube-state-metrics
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port: '8080'
+        prometheus.io/path: '/metrics'
     spec:
       serviceAccountName: kube-state-metrics
       containers:
