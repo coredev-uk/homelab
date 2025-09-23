@@ -217,8 +217,11 @@ pages:
               - grafana/grafana # Visualization
               - prometheus/node_exporter # System Metrics
               - blakeblackshear/frigate # CCTV/AI
-            limit: 8
-            collapse-after: 5
+              - pihole/pihole # DNS Ad Blocker
+              - intel/intel-gpu-plugin # Intel GPU Device Plugin
+              - traefik/traefik # Reverse Proxy
+            limit: 12
+            collapse-after: 8
 
           - type: releases
             title: Media Stack Updates
@@ -230,13 +233,15 @@ pages:
               - linuxserver/bazarr # Subtitles
               - linuxserver/prowlarr # Indexers
               - linuxserver/qbittorrent # Torrents
+              - jesec/flood # Flood UI for qBittorrent
               - linuxserver/sabnzbd # Usenet
               - golift/notifiarr # Notifications
               - flaresolverr/flaresolverr # Cloudflare Bypass
               - cleanuparr/cleanuparr # Media Cleanup
               - huntarr/huntarr # Duplicate Hunter
-            limit: 10
-            collapse-after: 6
+              - thephaseless/byparr # Prowlarr Bypass
+            limit: 14
+            collapse-after: 10
 
           - type: videos
             title: Video Feed
