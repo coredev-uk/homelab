@@ -39,6 +39,9 @@ spec:
           - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
           - --certificatesresolvers.letsencrypt.acme.email=admin@coredev.uk
           - --certificatesresolvers.letsencrypt.acme.storage=/data/acme.json
+          - --metrics.prometheus=true
+          - --metrics.prometheus.addEntryPointsLabels=true
+          - --metrics.prometheus.addServicesLabels=true
         ports:
         - name: web
           containerPort: 80

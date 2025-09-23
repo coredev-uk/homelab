@@ -479,7 +479,7 @@ data:
           "type": "stat",
           "targets": [
             {
-              "expr": "pihole_status",
+              "expr": "pihole_status{hostname=\"localhost\"}",
               "legendFormat": "Pi-hole"
             }
           ],
