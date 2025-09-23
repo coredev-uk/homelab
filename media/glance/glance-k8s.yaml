@@ -76,7 +76,10 @@ metadata:
     app: glance-k8s
 rules:
   - apiGroups: [""]
-    resources: ["nodes", "namespaces", "services", "endpoints"]
+    resources: ["nodes", "namespaces", "services"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["discovery.k8s.io"]
+    resources: ["endpointslices"]
     verbs: ["get", "list", "watch"]
   - apiGroups: [""]
     resources: ["pods"]
