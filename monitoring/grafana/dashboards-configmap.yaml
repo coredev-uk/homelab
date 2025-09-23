@@ -6,155 +6,153 @@ metadata:
 data:
   homelab-overview.json: |
     {
-      "dashboard": {
-        "id": null,
-        "title": "Homelab Overview",
-        "tags": ["homelab"],
-        "style": "dark",
-        "timezone": "browser",
-        "refresh": "30s",
-        "time": {
-          "from": "now-1h",
-          "to": "now"
-        },
-        "panels": [
-          {
-            "id": 1,
-            "title": "System Load",
-            "type": "stat",
-            "targets": [
-              {
-                "expr": "avg(node_load1)",
-                "legendFormat": "1m load avg"
-              }
-            ],
-            "fieldConfig": {
-              "defaults": {
-                "color": {
-                  "mode": "thresholds"
-                },
-                "thresholds": {
-                  "steps": [
-                    {"color": "green", "value": null},
-                    {"color": "yellow", "value": 0.8},
-                    {"color": "red", "value": 1.2}
-                  ]
-                }
-              }
-            },
-            "gridPos": {"h": 8, "w": 6, "x": 0, "y": 0}
-          },
-          {
-            "id": 2,
-            "title": "Memory Usage",
-            "type": "stat",
-            "targets": [
-              {
-                "expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100",
-                "legendFormat": "Memory %"
-              }
-            ],
-            "fieldConfig": {
-              "defaults": {
-                "unit": "percent",
-                "color": {
-                  "mode": "thresholds"
-                },
-                "thresholds": {
-                  "steps": [
-                    {"color": "green", "value": null},
-                    {"color": "yellow", "value": 70},
-                    {"color": "red", "value": 90}
-                  ]
-                }
-              }
-            },
-            "gridPos": {"h": 8, "w": 6, "x": 6, "y": 0}
-          },
-          {
-            "id": 3,
-            "title": "Disk Usage",
-            "type": "stat",
-            "targets": [
-              {
-                "expr": "(1 - node_filesystem_avail_bytes{mountpoint=\"/\"} / node_filesystem_size_bytes{mountpoint=\"/\"}) * 100",
-                "legendFormat": "Root disk %"
-              }
-            ],
-            "fieldConfig": {
-              "defaults": {
-                "unit": "percent",
-                "color": {
-                  "mode": "thresholds"
-                },
-                "thresholds": {
-                  "steps": [
-                    {"color": "green", "value": null},
-                    {"color": "yellow", "value": 70},
-                    {"color": "red", "value": 90}
-                  ]
-                }
-              }
-            },
-            "gridPos": {"h": 8, "w": 6, "x": 12, "y": 0}
-          },
-          {
-            "id": 4,
-            "title": "Pods Running",
-            "type": "stat",
-            "targets": [
-              {
-                "expr": "count(kube_pod_info{pod_ready=\"true\"})",
-                "legendFormat": "Ready pods"
-              }
-            ],
-            "fieldConfig": {
-              "defaults": {
-                "color": {"mode": "palette-classic"}
-              }
-            },
-            "gridPos": {"h": 8, "w": 6, "x": 18, "y": 0}
-          },
-          {
-            "id": 5,
-            "title": "CPU Usage Over Time",
-            "type": "timeseries",
-            "targets": [
-              {
-                "expr": "100 - (avg(irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
-                "legendFormat": "CPU %"
-              }
-            ],
-            "fieldConfig": {
-              "defaults": {
-                "unit": "percent",
-                "min": 0,
-                "max": 100
-              }
-            },
-            "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
-          },
-          {
-            "id": 6,
-            "title": "Network Traffic",
-            "type": "timeseries",
-            "targets": [
-              {
-                "expr": "irate(node_network_receive_bytes_total{device!=\"lo\"}[5m])",
-                "legendFormat": "{{device}} received"
+      "id": null,
+      "title": "Homelab Overview",
+      "tags": ["homelab"],
+      "style": "dark",
+      "timezone": "browser",
+      "refresh": "30s",
+      "time": {
+        "from": "now-1h",
+        "to": "now"
+      },
+      "panels": [
+        {
+          "id": 1,
+          "title": "System Load",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "avg(node_load1)",
+              "legendFormat": "1m load avg"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
               },
-              {
-                "expr": "irate(node_network_transmit_bytes_total{device!=\"lo\"}[5m])",
-                "legendFormat": "{{device}} transmitted"
+              "thresholds": {
+                "steps": [
+                  {"color": "green", "value": null},
+                  {"color": "yellow", "value": 0.8},
+                  {"color": "red", "value": 1.2}
+                ]
               }
-            ],
-            "fieldConfig": {
-              "defaults": {
-                "unit": "binBps"
+            }
+          },
+          "gridPos": {"h": 8, "w": 6, "x": 0, "y": 0}
+        },
+        {
+          "id": 2,
+          "title": "Memory Usage",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100",
+              "legendFormat": "Memory %"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "steps": [
+                  {"color": "green", "value": null},
+                  {"color": "yellow", "value": 70},
+                  {"color": "red", "value": 90}
+                ]
               }
+            }
+          },
+          "gridPos": {"h": 8, "w": 6, "x": 6, "y": 0}
+        },
+        {
+          "id": 3,
+          "title": "Disk Usage",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "(1 - node_filesystem_avail_bytes{mountpoint=\"/\"} / node_filesystem_size_bytes{mountpoint=\"/\"}) * 100",
+              "legendFormat": "Root disk %"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "color": {
+                "mode": "thresholds"
+              },
+              "thresholds": {
+                "steps": [
+                  {"color": "green", "value": null},
+                  {"color": "yellow", "value": 70},
+                  {"color": "red", "value": 90}
+                ]
+              }
+            }
+          },
+          "gridPos": {"h": 8, "w": 6, "x": 12, "y": 0}
+        },
+        {
+          "id": 4,
+          "title": "Pods Running",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "count(kube_pod_info{pod_ready=\"true\"})",
+              "legendFormat": "Ready pods"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "palette-classic"}
+            }
+          },
+          "gridPos": {"h": 8, "w": 6, "x": 18, "y": 0}
+        },
+        {
+          "id": 5,
+          "title": "CPU Usage Over Time",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "100 - (avg(irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+              "legendFormat": "CPU %"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100
+            }
+          },
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
+        },
+        {
+          "id": 6,
+          "title": "Network Traffic",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "irate(node_network_receive_bytes_total{device!=\"lo\"}[5m])",
+              "legendFormat": "{{device}} received"
             },
-            "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
-          }
-        ]
-      }
+            {
+              "expr": "irate(node_network_transmit_bytes_total{device!=\"lo\"}[5m])",
+              "legendFormat": "{{device}} transmitted"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "binBps"
+            }
+          },
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
+        }
+      ]
     }
