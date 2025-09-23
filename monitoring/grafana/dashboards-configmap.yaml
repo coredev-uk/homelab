@@ -320,3 +320,1250 @@ data:
         }
       ]
     }
+  media-stack.json: |
+    {
+      "id": null,
+      "title": "Media Stack",
+      "tags": ["homelab", "media"],
+      "style": "dark",
+      "timezone": "browser",
+      "refresh": "30s",
+      "time": {
+        "from": "now-6h",
+        "to": "now"
+      },
+      "panels": [
+        {
+          "id": 1,
+          "title": "Container Status",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "kube_pod_container_status_running{namespace=\"media\"}",
+              "legendFormat": "{{pod}} - {{container}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "thresholds"},
+              "thresholds": {
+                "steps": [
+                  {"color": "red", "value": null},
+                  {"color": "green", "value": 1}
+                ]
+              }
+            }
+          },
+          "gridPos": {"h": 8, "w": 24, "x": 0, "y": 0}
+        },
+        {
+          "id": 2,
+          "title": "Storage Usage - Media",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "(1 - node_filesystem_avail_bytes{mountpoint=~\"/media.*\"} / node_filesystem_size_bytes{mountpoint=~\"/media.*\"}) * 100",
+              "legendFormat": "{{mountpoint}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "color": {"mode": "thresholds"},
+              "thresholds": {
+                "steps": [
+                  {"color": "green", "value": null},
+                  {"color": "yellow", "value": 70},
+                  {"color": "orange", "value": 85},
+                  {"color": "red", "value": 95}
+                ]
+              }
+            }
+          },
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
+        },
+        {
+          "id": 3,
+          "title": "Network Usage - VPN Containers",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "rate(container_network_receive_bytes_total{pod=~\".*gluetun.*|.*qflood.*|.*sabnzbd.*\"}[5m]) * 8",
+              "legendFormat": "{{pod}} RX"
+            },
+            {
+              "expr": "rate(container_network_transmit_bytes_total{pod=~\".*gluetun.*|.*qflood.*|.*sabnzbd.*\"}[5m]) * 8",
+              "legendFormat": "{{pod}} TX"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bps"
+            }
+          },
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
+        },
+        {
+          "id": 4,
+          "title": "CPU Usage - Media Services",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "rate(container_cpu_usage_seconds_total{namespace=\"media\"}[5m]) * 100",
+              "legendFormat": "{{pod}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent"
+            }
+          },
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16}
+        },
+        {
+          "id": 5,
+          "title": "Memory Usage - Media Services",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "container_memory_usage_bytes{namespace=\"media\"} / 1024 / 1024",
+              "legendFormat": "{{pod}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "MiB"
+            }
+          },
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16}
+        },
+        {
+          "id": 6,
+          "title": "Disk I/O - Media Storage",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "rate(node_disk_read_bytes_total{device=~\"sd.*\"}[5m])",
+              "legendFormat": "{{device}} Read"
+            },
+            {
+              "expr": "rate(node_disk_written_bytes_total{device=~\"sd.*\"}[5m])",
+              "legendFormat": "{{device}} Write"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "binBps"
+            }
+          },
+          "gridPos": {"h": 8, "w": 24, "x": 0, "y": 24}
+        }
+      ]
+    }
+  network-dns.json: |
+    {
+      "id": null,
+      "title": "Network & DNS",
+      "tags": ["homelab", "network", "dns"],
+      "style": "dark",
+      "timezone": "browser", 
+      "refresh": "30s",
+      "time": {
+        "from": "now-1h",
+        "to": "now"
+      },
+      "panels": [
+        {
+          "id": 1,
+          "title": "Pi-hole Status",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "up{job=\"pihole\"}",
+              "legendFormat": "Pi-hole"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "thresholds"},
+              "thresholds": {
+                "steps": [
+                  {"color": "red", "value": null},
+                  {"color": "green", "value": 1}
+                ]
+              },
+              "mappings": [
+                {"options": {"0": {"text": "Down"}}, "type": "value"},
+                {"options": {"1": {"text": "Up"}}, "type": "value"}
+              ]
+            }
+          },
+          "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0}
+        },
+        {
+          "id": 2,
+          "title": "Traefik Status",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "up{job=\"traefik\"}",
+              "legendFormat": "Traefik"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "thresholds"},
+              "thresholds": {
+                "steps": [
+                  {"color": "red", "value": null},
+                  {"color": "green", "value": 1}
+                ]
+              },
+              "mappings": [
+                {"options": {"0": {"text": "Down"}}, "type": "value"},
+                {"options": {"1": {"text": "Up"}}, "type": "value"}
+              ]
+            }
+          },
+          "gridPos": {"h": 4, "w": 6, "x": 6, "y": 0}
+        },
+        {
+          "id": 3,
+          "title": "VPN Connections",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "kube_pod_container_status_running{namespace=\"media\",pod=~\".*gluetun.*\"}",
+              "legendFormat": "VPN Pods"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "thresholds"},
+              "thresholds": {
+                "steps": [
+                  {"color": "red", "value": null},
+                  {"color": "green", "value": 1}
+                ]
+              }
+            }
+          },
+          "gridPos": {"h": 4, "w": 6, "x": 12, "y": 0}
+        },
+        {
+          "id": 4,
+          "title": "Network Interfaces",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "node_network_up{device!=\"lo\"}",
+              "legendFormat": "{{device}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "thresholds"},
+              "thresholds": {
+                "steps": [
+                  {"color": "red", "value": null},
+                  {"color": "green", "value": 1}
+                ]
+              }
+            }
+          },
+          "gridPos": {"h": 4, "w": 6, "x": 18, "y": 0}
+        },
+        {
+          "id": 5,
+          "title": "DNS Queries Rate",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "rate(pihole_dns_queries_today[5m])",
+              "legendFormat": "Queries/sec"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "qps"
+            }
+          },
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4}
+        },
+        {
+          "id": 6,
+          "title": "DNS Blocked Rate",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "rate(pihole_ads_blocked_today[5m])",
+              "legendFormat": "Blocked/sec"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "qps",
+              "color": {"mode": "palette-classic"}
+            }
+          },
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4}
+        },
+        {
+          "id": 7,
+          "title": "HTTP Requests - Traefik",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "rate(traefik_service_requests_total[5m])",
+              "legendFormat": "{{service}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "reqps"
+            }
+          },
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12}
+        },
+        {
+          "id": 8,
+          "title": "HTTP Response Times",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "histogram_quantile(0.95, rate(traefik_service_request_duration_seconds_bucket[5m]))",
+              "legendFormat": "95th percentile"
+            },
+            {
+              "expr": "histogram_quantile(0.50, rate(traefik_service_request_duration_seconds_bucket[5m]))",
+              "legendFormat": "50th percentile"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s"
+            }
+          },
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12}
+        }
+      ]
+    }
+  security.json: |
+    {
+      "id": null,
+      "title": "Security Dashboard",
+      "tags": ["homelab", "security"],
+      "style": "dark",
+      "timezone": "browser",
+      "refresh": "30s",
+      "time": {
+        "from": "now-24h",
+        "to": "now"
+      },
+      "panels": [
+        {
+          "id": 1,
+          "title": "Frigate Status",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "up{job=\"frigate\"}",
+              "legendFormat": "Frigate"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "thresholds"},
+              "thresholds": {
+                "steps": [
+                  {"color": "red", "value": null},
+                  {"color": "green", "value": 1}
+                ]
+              },
+              "mappings": [
+                {"options": {"0": {"text": "Down"}}, "type": "value"},
+                {"options": {"1": {"text": "Up"}}, "type": "value"}
+              ]
+            }
+          },
+          "gridPos": {"h": 4, "w": 8, "x": 0, "y": 0}
+        },
+        {
+          "id": 2,
+          "title": "Cert-Manager Status",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "up{job=\"cert-manager\"}",
+              "legendFormat": "Cert-Manager"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "thresholds"},
+              "thresholds": {
+                "steps": [
+                  {"color": "red", "value": null},
+                  {"color": "green", "value": 1}
+                ]
+              },
+              "mappings": [
+                {"options": {"0": {"text": "Down"}}, "type": "value"},
+                {"options": {"1": {"text": "Up"}}, "type": "value"}
+              ]
+            }
+          },
+          "gridPos": {"h": 4, "w": 8, "x": 8, "y": 0}
+        },
+        {
+          "id": 3,
+          "title": "TLS Certificates",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "count(kube_certificate_expiry_timestamp)",
+              "legendFormat": "Total Certs"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "palette-classic"}
+            }
+          },
+          "gridPos": {"h": 4, "w": 8, "x": 16, "y": 0}
+        },
+        {
+          "id": 4,
+          "title": "Certificate Expiry",
+          "type": "table",
+          "targets": [
+            {
+              "expr": "(kube_certificate_expiry_timestamp - time()) / 86400",
+              "legendFormat": "{{name}}",
+              "format": "table",
+              "instant": true
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "d",
+              "thresholds": {
+                "steps": [
+                  {"color": "red", "value": null},
+                  {"color": "yellow", "value": 7},
+                  {"color": "green", "value": 30}
+                ]
+              }
+            }
+          },
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "__name__": true,
+                  "instance": true,
+                  "job": true
+                },
+                "renameByName": {
+                  "name": "Certificate",
+                  "Value": "Days Until Expiry"
+                }
+              }
+            }
+          ],
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4}
+        },
+        {
+          "id": 5,
+          "title": "Failed Authentication Attempts",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "increase(traefik_service_requests_total{code=~\"4[0-9][0-9]\"}[5m])",
+              "legendFormat": "{{service}} - {{code}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "palette-classic"}
+            }
+          },
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4}
+        },
+        {
+          "id": 6,
+          "title": "Intel GPU Utilization (Frigate)",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "intel_gpu_busy_percent",
+              "legendFormat": "GPU Busy %"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100
+            }
+          },
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12}
+        },
+        {
+          "id": 7,
+          "title": "Pod Restart Count",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "increase(kube_pod_container_status_restarts_total{namespace=~\"dns|security|cert-manager\"}[1h])",
+              "legendFormat": "{{namespace}}/{{pod}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "palette-classic"}
+            }
+          },
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12}
+        }
+      ]
+    }
+  kubernetes.json: |
+    {
+      "id": null,
+      "title": "Kubernetes Dashboard",
+      "tags": ["homelab", "kubernetes"],
+      "style": "dark",
+      "timezone": "browser",
+      "refresh": "30s",
+      "time": {
+        "from": "now-1h",
+        "to": "now"
+      },
+      "panels": [
+        {
+          "id": 1,
+          "title": "Cluster Status",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "kube_node_info",
+              "legendFormat": "{{node}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "thresholds"},
+              "thresholds": {
+                "steps": [
+                  {"color": "red", "value": null},
+                  {"color": "green", "value": 1}
+                ]
+              },
+              "mappings": [
+                {"options": {"1": {"text": "Ready"}}, "type": "value"}
+              ]
+            }
+          },
+          "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0}
+        },
+        {
+          "id": 2,
+          "title": "ArgoCD Status",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "argocd_app_health_status{health_status=\"Healthy\"}",
+              "legendFormat": "Healthy Apps"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "thresholds"},
+              "thresholds": {
+                "steps": [
+                  {"color": "red", "value": null},
+                  {"color": "green", "value": 1}
+                ]
+              }
+            }
+          },
+          "gridPos": {"h": 4, "w": 6, "x": 6, "y": 0}
+        },
+        {
+          "id": 3,
+          "title": "Running Pods",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "count(kube_pod_status_phase{phase=\"Running\"})",
+              "legendFormat": "Running"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "palette-classic"}
+            }
+          },
+          "gridPos": {"h": 4, "w": 6, "x": 12, "y": 0}
+        },
+        {
+          "id": 4,
+          "title": "Failed Pods",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "count(kube_pod_status_phase{phase=\"Failed\"})",
+              "legendFormat": "Failed"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "thresholds"},
+              "thresholds": {
+                "steps": [
+                  {"color": "green", "value": null},
+                  {"color": "red", "value": 1}
+                ]
+              }
+            }
+          },
+          "gridPos": {"h": 4, "w": 6, "x": 18, "y": 0}
+        },
+        {
+          "id": 5,
+          "title": "Pod Status by Namespace",
+          "type": "table",
+          "targets": [
+            {
+              "expr": "kube_pod_status_phase",
+              "legendFormat": "{{namespace}}/{{pod}}",
+              "format": "table",
+              "instant": true
+            }
+          ],
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "__name__": true,
+                  "instance": true,
+                  "job": true,
+                  "uid": true
+                },
+                "renameByName": {
+                  "namespace": "Namespace",
+                  "pod": "Pod",
+                  "phase": "Status"
+                }
+              }
+            }
+          ],
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4}
+        },
+        {
+          "id": 6,
+          "title": "Resource Usage by Namespace",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "sum(rate(container_cpu_usage_seconds_total[5m])) by (namespace) * 100",
+              "legendFormat": "{{namespace}} CPU"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent"
+            }
+          },
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4}
+        },
+        {
+          "id": 7,
+          "title": "Memory Usage by Namespace",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "sum(container_memory_usage_bytes) by (namespace) / 1024 / 1024",
+              "legendFormat": "{{namespace}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "MiB"
+            }
+          },
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12}
+        },
+        {
+          "id": 8,
+          "title": "Longhorn Volume Status",
+          "type": "table",
+          "targets": [
+            {
+              "expr": "longhorn_volume_actual_size_bytes",
+              "legendFormat": "{{volume}}",
+              "format": "table",
+              "instant": true
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "binBps",
+              "color": {"mode": "thresholds"},
+              "thresholds": {
+                "steps": [
+                  {"color": "green", "value": null},
+                  {"color": "yellow", "value": 1000000000},
+                  {"color": "red", "value": 10000000000}
+                ]
+              }
+            }
+          },
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "__name__": true,
+                  "instance": true,
+                  "job": true
+                },
+                "renameByName": {
+                  "volume": "Volume",
+                  "Value": "Size"
+                }
+              }
+            }
+          ],
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12}
+        }
+      ]
+    }
+  app-performance.json: |
+    {
+      "id": null,
+      "title": "Application Performance",
+      "tags": ["homelab", "performance"],
+      "style": "dark",
+      "timezone": "browser",
+      "refresh": "30s",
+      "time": {
+        "from": "now-1h",
+        "to": "now"
+      },
+      "panels": [
+        {
+          "id": 1,
+          "title": "Service Health Status",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "up",
+              "legendFormat": "{{job}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "thresholds"},
+              "thresholds": {
+                "steps": [
+                  {"color": "red", "value": null},
+                  {"color": "green", "value": 1}
+                ]
+              },
+              "mappings": [
+                {"options": {"0": {"text": "Down"}}, "type": "value"},
+                {"options": {"1": {"text": "Up"}}, "type": "value"}
+              ]
+            }
+          },
+          "gridPos": {"h": 8, "w": 24, "x": 0, "y": 0}
+        },
+        {
+          "id": 2,
+          "title": "HTTP Response Times",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))",
+              "legendFormat": "{{service}} - 95th percentile"
+            },
+            {
+              "expr": "histogram_quantile(0.50, rate(http_request_duration_seconds_bucket[5m]))",
+              "legendFormat": "{{service}} - 50th percentile"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s"
+            }
+          },
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
+        },
+        {
+          "id": 3,
+          "title": "HTTP Error Rates",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "rate(http_requests_total{code=~\"5[0-9][0-9]\"}[5m])",
+              "legendFormat": "{{service}} - 5xx errors"
+            },
+            {
+              "expr": "rate(http_requests_total{code=~\"4[0-9][0-9]\"}[5m])",
+              "legendFormat": "{{service}} - 4xx errors"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "reqps"
+            }
+          },
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
+        },
+        {
+          "id": 4,
+          "title": "Request Rate",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "rate(http_requests_total[5m])",
+              "legendFormat": "{{service}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "reqps"
+            }
+          },
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16}
+        },
+        {
+          "id": 5,
+          "title": "Database Connection Pool",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "db_connections_active",
+              "legendFormat": "{{service}} - Active"
+            },
+            {
+              "expr": "db_connections_idle",
+              "legendFormat": "{{service}} - Idle"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "short"
+            }
+          },
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16}
+        },
+        {
+          "id": 6,
+          "title": "Memory Usage by Service",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "container_memory_usage_bytes{container!=\"POD\",container!=\"\"} / 1024 / 1024",
+              "legendFormat": "{{namespace}}/{{pod}}/{{container}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "MiB"
+            }
+          },
+          "gridPos": {"h": 8, "w": 24, "x": 0, "y": 24}
+        }
+      ]
+    }
+  capacity-planning.json: |
+    {
+      "id": null,
+      "title": "Capacity Planning",
+      "tags": ["homelab", "capacity"],
+      "style": "dark",
+      "timezone": "browser",
+      "refresh": "5m",
+      "time": {
+        "from": "now-7d",
+        "to": "now"
+      },
+      "panels": [
+        {
+          "id": 1,
+          "title": "Storage Growth Rate",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "node_filesystem_size_bytes{mountpoint=~\"/media.*\"} - node_filesystem_avail_bytes{mountpoint=~\"/media.*\"}",
+              "legendFormat": "{{mountpoint}} - Used Space"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "binBps"
+            }
+          },
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+        },
+        {
+          "id": 2,
+          "title": "Network Bandwidth Trends",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "rate(node_network_receive_bytes_total{device!=\"lo\"}[1h]) * 8",
+              "legendFormat": "{{device}} RX"
+            },
+            {
+              "expr": "rate(node_network_transmit_bytes_total{device!=\"lo\"}[1h]) * 8",
+              "legendFormat": "{{device}} TX"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "bps"
+            }
+          },
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+        },
+        {
+          "id": 3,
+          "title": "CPU Utilization Trends",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[1h])) * 100)",
+              "legendFormat": "CPU Usage %"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100
+            }
+          },
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
+        },
+        {
+          "id": 4,
+          "title": "Memory Usage Trends",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100",
+              "legendFormat": "Memory Usage %"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "min": 0,
+              "max": 100
+            }
+          },
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
+        },
+        {
+          "id": 5,
+          "title": "Disk Space Forecast",
+          "type": "table",
+          "targets": [
+            {
+              "expr": "predict_linear(node_filesystem_avail_bytes{mountpoint=~\"/.*\"}[7d], 30*24*3600) / 1024 / 1024 / 1024",
+              "legendFormat": "{{mountpoint}}",
+              "format": "table",
+              "instant": true
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "GiB",
+              "thresholds": {
+                "steps": [
+                  {"color": "red", "value": null},
+                  {"color": "yellow", "value": 10},
+                  {"color": "green", "value": 50}
+                ]
+              }
+            }
+          },
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "__name__": true,
+                  "device": true,
+                  "fstype": true,
+                  "instance": true,
+                  "job": true
+                },
+                "renameByName": {
+                  "mountpoint": "Mount Point",
+                  "Value": "Available in 30 days (GiB)"
+                }
+              }
+            }
+          ],
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16}
+        },
+        {
+          "id": 6,
+          "title": "Resource Usage by Container",
+          "type": "table",
+          "targets": [
+            {
+              "expr": "avg_over_time(rate(container_cpu_usage_seconds_total[1h])[7d:1h]) * 100",
+              "legendFormat": "{{namespace}}/{{pod}}/{{container}}",
+              "format": "table",
+              "instant": true
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "percent",
+              "thresholds": {
+                "steps": [
+                  {"color": "green", "value": null},
+                  {"color": "yellow", "value": 50},
+                  {"color": "red", "value": 80}
+                ]
+              }
+            }
+          },
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "__name__": true,
+                  "instance": true,
+                  "job": true,
+                  "id": true
+                },
+                "renameByName": {
+                  "namespace": "Namespace",
+                  "pod": "Pod",
+                  "container": "Container",
+                  "Value": "Avg CPU % (7d)"
+                }
+              }
+            }
+          ],
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16}
+        }
+      ]
+    }
+  backup-maintenance.json: |
+    {
+      "id": null,
+      "title": "Backup & Maintenance",
+      "tags": ["homelab", "maintenance"],
+      "style": "dark",
+      "timezone": "browser",
+      "refresh": "1m",
+      "time": {
+        "from": "now-24h",
+        "to": "now"
+      },
+      "panels": [
+        {
+          "id": 1,
+          "title": "Backup Job Status",
+          "type": "table",
+          "targets": [
+            {
+              "expr": "kube_job_status_succeeded",
+              "legendFormat": "{{job_name}}",
+              "format": "table",
+              "instant": true
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "thresholds"},
+              "thresholds": {
+                "steps": [
+                  {"color": "red", "value": null},
+                  {"color": "green", "value": 1}
+                ]
+              },
+              "mappings": [
+                {"options": {"0": {"text": "Failed"}}, "type": "value"},
+                {"options": {"1": {"text": "Success"}}, "type": "value"}
+              ]
+            }
+          },
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "__name__": true,
+                  "instance": true,
+                  "job": true
+                },
+                "renameByName": {
+                  "job_name": "Backup Job",
+                  "Value": "Status"
+                }
+              }
+            }
+          ],
+          "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+        },
+        {
+          "id": 2,
+          "title": "Pod Restart Events",
+          "type": "timeseries",
+          "targets": [
+            {
+              "expr": "increase(kube_pod_container_status_restarts_total[1h])",
+              "legendFormat": "{{namespace}}/{{pod}}"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "palette-classic"}
+            }
+          },
+          "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+        },
+        {
+          "id": 3,
+          "title": "System Uptime",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "(time() - node_boot_time_seconds) / 86400",
+              "legendFormat": "Days"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "d",
+              "decimals": 1,
+              "color": {"mode": "palette-classic"}
+            }
+          },
+          "gridPos": {"h": 4, "w": 6, "x": 0, "y": 8}
+        },
+        {
+          "id": 4,
+          "title": "Last Reboot",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "node_boot_time_seconds * 1000",
+              "legendFormat": "Boot Time"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "unit": "dateTimeAsIso",
+              "color": {"mode": "palette-classic"}
+            }
+          },
+          "gridPos": {"h": 4, "w": 6, "x": 6, "y": 8}
+        },
+        {
+          "id": 5,
+          "title": "Volume Snapshots",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "count(longhorn_volume_snapshot)",
+              "legendFormat": "Snapshots"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "palette-classic"}
+            }
+          },
+          "gridPos": {"h": 4, "w": 6, "x": 12, "y": 8}
+        },
+        {
+          "id": 6,
+          "title": "Failed Pods",
+          "type": "stat",
+          "targets": [
+            {
+              "expr": "count(kube_pod_status_phase{phase=\"Failed\"})",
+              "legendFormat": "Failed"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "thresholds"},
+              "thresholds": {
+                "steps": [
+                  {"color": "green", "value": null},
+                  {"color": "red", "value": 1}
+                ]
+              }
+            }
+          },
+          "gridPos": {"h": 4, "w": 6, "x": 18, "y": 8}
+        },
+        {
+          "id": 7,
+          "title": "Disk Health",
+          "type": "table",
+          "targets": [
+            {
+              "expr": "node_filesystem_device_error{device=~\"/dev/sd.*\"}",
+              "legendFormat": "{{device}}",
+              "format": "table",
+              "instant": true
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": {"mode": "thresholds"},
+              "thresholds": {
+                "steps": [
+                  {"color": "green", "value": null},
+                  {"color": "red", "value": 1}
+                ]
+              },
+              "mappings": [
+                {"options": {"0": {"text": "OK"}}, "type": "value"},
+                {"options": {"1": {"text": "Error"}}, "type": "value"}
+              ]
+            }
+          },
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "__name__": true,
+                  "instance": true,
+                  "job": true
+                },
+                "renameByName": {
+                  "device": "Device",
+                  "Value": "Status"
+                }
+              }
+            }
+          ],
+          "gridPos": {"h": 8, "w": 24, "x": 0, "y": 12}
+        }
+      ]
+    }
