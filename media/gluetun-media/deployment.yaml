@@ -26,7 +26,7 @@ spec:
       containers:
         # Gluetun VPN sidecar - shared for all tunnelled applications
         - name: gluetun
-          image: qmcgaw/gluetun:latest
+          image: qmcgaw/gluetun:v3.40.0
           ports:
             - containerPort: 8000
               name: control-api
@@ -124,7 +124,7 @@ spec:
 
         # SABnzbd container using Gluetun network
         - name: sabnzbd
-          image: ghcr.io/engels74/sabnzbd:release-4.5.3
+          image: lscr.io/linuxserver/sabnzbd:4.5.3-ls230
           env:
             - name: PUID
               value: "1000"
