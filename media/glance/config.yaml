@@ -221,7 +221,7 @@ pages:
               - intel/intel-gpu-plugin # Intel GPU Device Plugin
               - traefik/traefik # Reverse Proxy
             limit: 12
-            collapse-after: 8
+            collapse-after: 5
 
           - type: releases
             title: Media Stack Updates
@@ -241,7 +241,7 @@ pages:
               - huntarr/huntarr # Duplicate Hunter
               - thephaseless/byparr # Prowlarr Bypass
             limit: 14
-            collapse-after: 10
+            collapse-after: 5
 
           - type: videos
             title: Video Feed
