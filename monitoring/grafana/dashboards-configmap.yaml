@@ -667,7 +667,7 @@ data:
           "type": "stat",
           "targets": [
             {
-              "expr": "kube_deployment_status_replicas{deployment=\"frigate\", namespace=\"core\"}",
+              "expr": "kube_deployment_status_replicas{deployment=\"frigate\", namespace=\"security\"}",
               "legendFormat": "Frigate"
             }
           ],
@@ -694,7 +694,7 @@ data:
           "type": "stat",
           "targets": [
             {
-              "expr": "max(certmanager_certificate_ready_status{condition=\"True\"})",
+              "expr": "count(certmanager_certificate_ready_status) > 0",
               "legendFormat": "Cert-Manager"
             }
           ],
@@ -798,7 +798,7 @@ data:
           "type": "timeseries",
           "targets": [
             {
-              "expr": "kube_pod_container_resource_requests{resource=\"cpu\", namespace=\"core\", pod=~\"frigate.*\"} * 100",
+              "expr": "kube_pod_container_resource_requests{resource=\"cpu\", namespace=\"security\", pod=~\"frigate.*\"} * 100",
               "legendFormat": "CPU Usage %"
             }
           ],
