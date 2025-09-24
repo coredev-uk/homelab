@@ -7,7 +7,6 @@ resources:
   - cert-issuers/
   - storage/
   - pihole/
-  - frigate/
   - intel-gpu/
   - metallb/
   - traefik/
