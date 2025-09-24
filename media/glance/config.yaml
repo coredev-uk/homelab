@@ -460,6 +460,7 @@ custom-widgets:
             <li>No items found.</li>
           {{ end }}
         </ul>
+        {{ end }}
       {{ end }}
 
 pages:
