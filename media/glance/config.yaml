@@ -414,9 +414,9 @@ custom-widgets:
                     <div class="text-truncate text-very-compact" title="{{ $subtitle }}">{{ $subtitle }}</div>
                     <div class="text-very-compact text-truncate">
                       {{ if eq $service "sonarr" }}
-                        <div>{{ $seString }} - {{ $datetype }} {{ ($date.In $timezone).Format "02/01 15:04" }}</div>
+                        <div>{{ $seString }} - {{ $datetype }} {{ ($date.In $timezone) | formatTime "02/01 15:04" }}</div>
                       {{ else }}
-                        <span>{{ $datetype }} {{ ($date.In $timezone).Format "02/01" }}</span>
+                        <span>{{ $datetype }} {{ ($date.In $timezone) | formatTime "02/01" }}</span>
                       {{ end }}
                     </div>
 
