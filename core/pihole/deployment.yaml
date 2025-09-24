@@ -68,27 +68,27 @@ spec:
               value: "all"
             - name: FTLCONF_dns_hosts
               value: |
-                 10.147.10.100 pihole.home.coredev.uk
-                 10.147.10.100 frigate.home.coredev.uk
-                 10.147.10.100 argocd.home.coredev.uk
-                 10.147.10.100 longhorn.home.coredev.uk
-                 
-                 10.147.10.100 bazarr.home.coredev.uk
-                 10.147.10.100 cleanuparr.home.coredev.uk
-                 10.147.10.100 glance.home.coredev.uk
-                 10.147.10.100 huntarr.home.coredev.uk
-                 10.147.10.100 jellyfin.home.coredev.uk
-                 10.147.10.100 jellyseerr.home.coredev.uk
-                 10.147.10.100 notifiarr.home.coredev.uk
-                 10.147.10.100 radarr.home.coredev.uk
-                 10.147.10.100 sonarr.home.coredev.uk
-                 
-                 10.147.10.100 prowlarr.home.coredev.uk
-                 10.147.10.100 sabnzbd.home.coredev.uk
-                 10.147.10.100 qbittorrent.home.coredev.uk
-                 
-                 10.147.10.100 grafana.home.coredev.uk
-                 10.147.10.100 prometheus.home.coredev.uk
+                10.147.10.100 pihole.home.coredev.uk
+                10.147.10.100 frigate.home.coredev.uk
+                10.147.10.100 argocd.home.coredev.uk
+                10.147.10.100 longhorn.home.coredev.uk
+
+                10.147.10.100 bazarr.home.coredev.uk
+                10.147.10.100 cleanuparr.home.coredev.uk
+                10.147.10.100 glance.home.coredev.uk
+                10.147.10.100 huntarr.home.coredev.uk
+                10.147.10.100 jellyfin.home.coredev.uk
+                10.147.10.100 jellyseerr.home.coredev.uk
+                10.147.10.100 notifiarr.home.coredev.uk
+                10.147.10.100 radarr.home.coredev.uk
+                10.147.10.100 sonarr.home.coredev.uk
+
+                10.147.10.100 prowlarr.home.coredev.uk
+                10.147.10.100 sabnzbd.home.coredev.uk
+                10.147.10.100 qbittorrent.home.coredev.uk
+
+                10.147.10.100 grafana.home.coredev.uk
+                10.147.10.100 prometheus.home.coredev.uk
           volumeMounts:
             - name: config
               mountPath: /etc/pihole
@@ -109,7 +109,7 @@ spec:
               add:
                 - NET_ADMIN
         - name: pihole-exporter
-          image: eko/pihole-exporter:v1.2.0
+          image: ekofr/pihole-exporter:v1.2.0
           ports:
             - containerPort: 9617
               name: metrics
