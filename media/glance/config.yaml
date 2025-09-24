@@ -258,7 +258,7 @@ custom-widgets:
                   {{ $subtitle = "" }}
                   {{ $summary = .String "movie.overview" }}
                   {{ $popoverTitle = .String "movie.title" }}
-                  {{ $popoverSubtitle = printf "%s %s" $datetype (($date.In $timezone) | formatTime "1/2/2006") }}
+                  {{ $popoverSubtitle = printf "%s %s" $datetype (($date.In $timezone) | formatTime "02/01/2006") }}
                   {{ $popoverSummary = .String "movie.overview" }}
                   {{ $link = printf "%s/movie/%s#" $url (.String "movie.titleSlug") }}
                   {{ $movie = .Get "movie" }}
@@ -277,7 +277,7 @@ custom-widgets:
                   {{ $summary = .String "overview" }}
                   {{ $link = printf "%s/movie/%s#" $url (.String "titleSlug") }}
                   {{ $popoverTitle = .String "title" }}
-                  {{ $popoverSubtitle = printf "%s %s" $datetype (($date.In $timezone) | formatTime "1/2/2006") }}
+                  {{ $popoverSubtitle = printf "%s %s" $datetype (($date.In $timezone) | formatTime "02/01/2006") }}
                   {{ $popoverSummary = .String "overview" }}
                   {{ $genres = .Get "genres" }}
                   {{ if eq $type "missing" }}
@@ -319,7 +319,7 @@ custom-widgets:
                   {{ $link = printf "%s/artist/%s#" $url ($artist.String "foreignArtistId") }}
                   {{ $summary = $album.String "overview" }}
                   {{ $popoverTitle = $album.String "title" }}
-                  {{ $popoverSubtitle = printf "%s %s" $datetype (($date.In $timezone) | formatTime "1/2/2006") }}
+                  {{ $popoverSubtitle = printf "%s %s" $datetype (($date.In $timezone) | formatTime "02/01/2006") }}
                   {{ $popoverSummary = $artist.String "overview" }}
 
                 {{ else }}
@@ -346,7 +346,7 @@ custom-widgets:
                   {{ $genres = $artist.Get "genres" }}
                   {{ $link = printf "%s/artist/%s#" $url ($artist.String "foreignArtistId") }}
                   {{ $popoverTitle = .String "title" }}
-                  {{ $popoverSubtitle = printf "%s %s" $datetype (($date.In $timezone) | formatTime "1/2/2006") }}
+                  {{ $popoverSubtitle = printf "%s %s" $datetype (($date.In $timezone) | formatTime "02/01/2006") }}
                   {{ $popoverSummary = .String "artist.overview" }}
                 {{ end }}
               {{ end }}
@@ -414,9 +414,9 @@ custom-widgets:
                     <div class="text-truncate text-very-compact" title="{{ $subtitle }}">{{ $subtitle }}</div>
                     <div class="text-very-compact text-truncate">
                       {{ if eq $service "sonarr" }}
-                        <div>{{ $seString }} - {{ $datetype }} {{ ($date.In $timezone).Format "1/2 03:04PM" }}</div>
+                        <div>{{ $seString }} - {{ $datetype }} {{ ($date.In $timezone).Format "02/01 15:04" }}</div>
                       {{ else }}
-                        <span>{{ $datetype }} {{ ($date.In $timezone).Format "1/2" }}</span>
+                        <span>{{ $datetype }} {{ ($date.In $timezone).Format "02/01" }}</span>
                       {{ end }}
                     </div>
 
@@ -686,6 +686,7 @@ pages:
               collapse-after: 3
               show-grabbed: false
               interval: 20
+              timezone: "Europe/London"
               api-base-url: "http://radarr.media:7878"
               key: ${RADARR_API_KEY}
               url: "https://radarr.home.coredev.uk"
@@ -705,6 +706,7 @@ pages:
               api-base-url: "http://sonarr.media:8989"
               key: ${SONARR_API_KEY}
               url: "https://sonarr.home.coredev.uk"
+              timezone: "Europe/London"
 
           - type: videos
             title: Video Feed
