@@ -1,6 +1,9 @@
 mqtt:
   enabled: false
 
+auth:
+  enabled: true
+
 objects:
   track:
     - person

@@ -29,6 +29,8 @@ spec:
           ports:
             - containerPort: 5000
               protocol: TCP
+            - containerPort: 8971
+              protocol: TCP
             - containerPort: 5443
               protocol: TCP
             - containerPort: 8554
@@ -154,6 +156,9 @@ spec:
     - name: web-http
       port: 5000
       targetPort: 5000
+    - name: web-auth
+      port: 8971
+      targetPort: 8971
     - name: web-https
       port: 5443
       targetPort: 5443
