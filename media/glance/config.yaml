@@ -686,7 +686,7 @@ pages:
               collapse-after: 3
               show-grabbed: false
               interval: 20
-              timezone: "Europe/London"
+              timezone: "+01"
               api-base-url: "http://radarr.media:7878"
               key: ${RADARR_API_KEY}
               url: "https://radarr.home.coredev.uk"
@@ -706,7 +706,7 @@ pages:
               api-base-url: "http://sonarr.media:8989"
               key: ${SONARR_API_KEY}
               url: "https://sonarr.home.coredev.uk"
-              timezone: "Europe/London"
+              timezone: "+01"
 
           - type: videos
             title: Video Feed
