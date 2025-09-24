@@ -123,7 +123,7 @@ spec:
             [
               "sh",
               "-c",
-              "mkdir -p /var/lib/grafana && chown -R 472:472 /var/lib/grafana && mkdir -p /var/lib/grafana/dashboards && chown -R 472:472 /var/lib/grafana/dashboards",
+              "mkdir -p /var/lib/grafana && chown -R 472:472 /var/lib/grafana && mkdir -p /var/lib/grafana/dashboards && rm -rf /var/lib/grafana/dashboards/lost+found && chown -R 472:472 /var/lib/grafana/dashboards",
             ]
           volumeMounts:
             - name: storage
