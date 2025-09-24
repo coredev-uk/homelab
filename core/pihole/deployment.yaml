@@ -109,7 +109,7 @@ spec:
               add:
                 - NET_ADMIN
         - name: pihole-exporter
-          image: eko/pihole-exporter:latest
+          image: eko/pihole-exporter:v1.2.0
           ports:
             - containerPort: 9617
               name: metrics
