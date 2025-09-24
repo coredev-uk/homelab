@@ -56,7 +56,7 @@ data:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: grafana-storage
+  name: grafana-config
   namespace: monitoring
 spec:
   accessModes:
@@ -64,19 +64,6 @@ spec:
   resources:
     requests:
       storage: 5Gi
-  storageClassName: longhorn
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: grafana-dashboards
-  namespace: monitoring
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
   storageClassName: longhorn
 ---
 apiVersion: v1
@@ -123,13 +110,11 @@ spec:
             [
               "sh",
               "-c",
-              "mkdir -p /var/lib/grafana && chown -R 472:472 /var/lib/grafana && mkdir -p /var/lib/grafana/dashboards && rm -rf /var/lib/grafana/dashboards/lost+found && chown -R 472:472 /var/lib/grafana/dashboards",
+              "mkdir -p /var/lib/grafana && chown -R 472:472 /var/lib/grafana",
             ]
           volumeMounts:
-            - name: storage
+            - name: config-storage
               mountPath: /var/lib/grafana
-            - name: dashboards
-              mountPath: /var/lib/grafana/dashboards
           securityContext:
             runAsUser: 0
       containers:
@@ -145,11 +130,7 @@ spec:
               mountPath: /etc/grafana
             - name: datasources
               mountPath: /etc/grafana/provisioning/datasources
-            - name: dashboards-config
-              mountPath: /etc/grafana/provisioning/dashboards
-            - name: dashboards
-              mountPath: /var/lib/grafana/dashboards
-            - name: storage
+            - name: config-storage
               mountPath: /var/lib/grafana
           resources:
             requests:
@@ -168,12 +149,6 @@ spec:
         - name: datasources
           configMap:
             name: grafana-datasources
-        - name: dashboards-config
-          configMap:
-            name: grafana-dashboards-config
-        - name: dashboards
+        - name: config-storage
           persistentVolumeClaim:
-            claimName: grafana-dashboards
-        - name: storage
-          persistentVolumeClaim:
-            claimName: grafana-storage
+            claimName: grafana-config
