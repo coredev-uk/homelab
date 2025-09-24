@@ -20,8 +20,9 @@ custom-widgets:
     template: |
       {{ $collapseAfter := .Options.IntOr "collapse-after" 5 }}
       {{ $showGrabbed := .Options.BoolOr "show-grabbed" false }}
-      {{ $tzInput := .Options.StringOr "timezone" "+00" }}
-      {{ $timezone := $tzInput }}
+      {{ $tzOffset := .Options.StringOr "timezone" "+00" }}
+      {{ $tzTime := (printf "2006-01-02T15:04:05%s:00" $tzOffset) | parseTime "rfc3339" }}
+      {{ $timezone := $tzTime.Location }}
       {{ $sortTime := .Options.StringOr "sort-time" "desc" }}
       {{ $coverProxy := .Options.StringOr "cover-proxy" "" }}
       {{ $size := .Options.StringOr "size" "medium" }}
@@ -30,9 +31,9 @@ custom-widgets:
       {{ $intervalH := .Options.IntOr "interval" 0 | mul 24 }}
 
       {{ $nowUTC := offsetNow "0h" }}
-      {{ $now := $nowUTC | formatTime "rfc3339" }}
-      {{ $posInterval := (offsetNow (printf "+%dh" $intervalH)) | formatTime "rfc3339" }}
-      {{ $negInterval := (offsetNow (printf "-%dh" $intervalH)) | formatTime "rfc3339" }}
+      {{ $now := ($nowUTC.In $timezone) | formatTime "rfc3339" }}
+      {{ $posInterval := ((offsetNow (printf "+%dh" $intervalH)).In $timezone) | formatTime "rfc3339" }}
+      {{ $negInterval := ((offsetNow (printf "-%dh" $intervalH)).In $timezone) | formatTime "rfc3339" }}
 
       {{ $apiBaseUrl := .Options.StringOr "api-base-url" "" }}
       {{ $key := .Options.StringOr "key" "" }}
@@ -91,6 +92,16 @@ custom-widgets:
           | withHeader "Accept" "application/json"
           | withHeader "X-Api-Key" $key
           | getResponse }}
+
+        {{ if ne $data.Response.StatusCode 200 }}
+          <div class="widget-error-header">
+            <div class="color-negative size-h3">API ERROR</div>
+            <svg class="widget-error-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"></path>
+            </svg>
+          </div>
+          <p>Failed to fetch data from {{ $service }}: HTTP {{ $data.Response.StatusCode }}</p>
+        {{ else }}
 
         <ul class="list list-gap-14 collapsible-container single-line-titles" data-collapse-after="{{ $collapseAfter }}">
           {{ $array := "" }}
@@ -257,7 +268,7 @@ custom-widgets:
                   {{ $subtitle = "" }}
                   {{ $summary = .String "movie.overview" }}
                   {{ $popoverTitle = .String "movie.title" }}
-                  {{ $popoverSubtitle = printf "%s %s" $datetype ($date | formatTime "02/01/2006") }}
+                  {{ $popoverSubtitle = printf "%s %s" $datetype (($date.In $timezone).Format "2/1/2006") }}
                   {{ $popoverSummary = .String "movie.overview" }}
                   {{ $link = printf "%s/movie/%s#" $url (.String "movie.titleSlug") }}
                   {{ $movie = .Get "movie" }}
@@ -276,7 +287,7 @@ custom-widgets:
                   {{ $summary = .String "overview" }}
                   {{ $link = printf "%s/movie/%s#" $url (.String "titleSlug") }}
                   {{ $popoverTitle = .String "title" }}
-                  {{ $popoverSubtitle = printf "%s %s" $datetype ($date | formatTime "02/01/2006") }}
+                  {{ $popoverSubtitle = printf "%s %s" $datetype (($date.In $timezone).Format "2/1/2006") }}
                   {{ $popoverSummary = .String "overview" }}
                   {{ $genres = .Get "genres" }}
                   {{ if eq $type "missing" }}
@@ -318,7 +329,7 @@ custom-widgets:
                   {{ $link = printf "%s/artist/%s#" $url ($artist.String "foreignArtistId") }}
                   {{ $summary = $album.String "overview" }}
                   {{ $popoverTitle = $album.String "title" }}
-                  {{ $popoverSubtitle = printf "%s %s" $datetype ($date | formatTime "02/01/2006") }}
+                  {{ $popoverSubtitle = printf "%s %s" $datetype (($date.In $timezone).Format "2/1/2006") }}
                   {{ $popoverSummary = $artist.String "overview" }}
 
                 {{ else }}
@@ -345,7 +356,7 @@ custom-widgets:
                   {{ $genres = $artist.Get "genres" }}
                   {{ $link = printf "%s/artist/%s#" $url ($artist.String "foreignArtistId") }}
                   {{ $popoverTitle = .String "title" }}
-                  {{ $popoverSubtitle = printf "%s %s" $datetype ($date | formatTime "02/01/2006") }}
+                  {{ $popoverSubtitle = printf "%s %s" $datetype (($date.In $timezone).Format "2/1/2006") }}
                   {{ $popoverSummary = .String "artist.overview" }}
                 {{ end }}
               {{ end }}
@@ -413,9 +424,9 @@ custom-widgets:
                     <div class="text-truncate text-very-compact" title="{{ $subtitle }}">{{ $subtitle }}</div>
                     <div class="text-very-compact text-truncate">
                       {{ if eq $service "sonarr" }}
-                        <div>{{ $seString }} - {{ $datetype }} {{ $date | formatTime "02/01 15:04" }}</div>
+                        <div>{{ $seString }} - {{ $datetype }} {{ ($date.In $timezone).Format "2/1 15:04" }}</div>
                       {{ else }}
-                        <span>{{ $datetype }} {{ $date | formatTime "02/01" }}</span>
+                        <span>{{ $datetype }} {{ ($date.In $timezone).Format "2/1" }}</span>
                       {{ end }}
                     </div>
 
@@ -685,7 +696,7 @@ pages:
               collapse-after: 3
               show-grabbed: false
               interval: 20
-              timezone: "Europe/London"
+              timezone: "+00"
               api-base-url: "http://radarr.media:7878"
               key: ${RADARR_API_KEY}
               url: "https://radarr.home.coredev.uk"
@@ -705,7 +716,7 @@ pages:
               api-base-url: "http://sonarr.media:8989"
               key: ${SONARR_API_KEY}
               url: "https://sonarr.home.coredev.uk"
-              timezone: "Europe/London"
+              timezone: "+00"
 
           - type: videos
             title: Video Feed
