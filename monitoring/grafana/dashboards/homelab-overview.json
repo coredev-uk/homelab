@@ -1,0 +1,315 @@
+{
+  "id": null,
+  "title": "Homelab Overview",
+  "tags": ["homelab"],
+  "style": "dark",
+  "timezone": "browser",
+  "refresh": "30s",
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "System Load",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "avg(node_load1)",
+          "legendFormat": "1m load"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 0.8},
+              {"color": "red", "value": 1.2}
+            ]
+          }
+        }
+      },
+      "gridPos": {"h": 8, "w": 6, "x": 0, "y": 0}
+    },
+    {
+      "id": 2,
+      "title": "Memory Usage",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100",
+          "legendFormat": "Memory %"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 70},
+              {"color": "red", "value": 90}
+            ]
+          }
+        }
+      },
+      "gridPos": {"h": 8, "w": 6, "x": 6, "y": 0}
+    },
+    {
+      "id": 3,
+      "title": "Root Disk Usage",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "(1 - node_filesystem_avail_bytes{mountpoint=\"/\"} / node_filesystem_size_bytes{mountpoint=\"/\"}) * 100",
+          "legendFormat": "Root %"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 70},
+              {"color": "red", "value": 90}
+            ]
+          }
+        }
+      },
+      "gridPos": {"h": 8, "w": 6, "x": 12, "y": 0}
+    },
+    {
+      "id": 4,
+      "title": "System Temperature",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "avg(node_hwmon_temp_celsius)",
+          "legendFormat": "°C"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "steps": [
+              {"color": "blue", "value": null},
+              {"color": "green", "value": 30},
+              {"color": "yellow", "value": 60},
+              {"color": "red", "value": 80}
+            ]
+          }
+        }
+      },
+      "gridPos": {"h": 8, "w": 6, "x": 18, "y": 0}
+    },
+    {
+      "id": 5,
+      "title": "CPU Usage Over Time",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "100 - (avg(irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+          "legendFormat": "CPU %"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
+    },
+    {
+      "id": 6,
+      "title": "Memory Usage Over Time",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100",
+          "legendFormat": "Memory %"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
+    },
+    {
+      "id": 7,
+      "title": "Network Traffic",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "irate(node_network_receive_bytes_total{device!=\"lo\"}[5m]) * 8",
+          "legendFormat": "{{device}} RX"
+        },
+        {
+          "expr": "irate(node_network_transmit_bytes_total{device!=\"lo\"}[5m]) * 8",
+          "legendFormat": "{{device}} TX"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bps"
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16}
+    },
+    {
+      "id": 8,
+      "title": "Disk I/O",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "irate(node_disk_read_bytes_total[5m])",
+          "legendFormat": "{{device}} Read"
+        },
+        {
+          "expr": "irate(node_disk_written_bytes_total[5m])",
+          "legendFormat": "{{device}} Write"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "binBps"
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16}
+    },
+    {
+      "id": 9,
+      "title": "Filesystem Usage",
+      "type": "table",
+      "targets": [
+        {
+          "expr": "100 - (node_filesystem_avail_bytes{fstype!=\"tmpfs\",fstype!=\"ramfs\"} / node_filesystem_size_bytes{fstype!=\"tmpfs\",fstype!=\"ramfs\"}) * 100",
+          "legendFormat": "{{mountpoint}}",
+          "format": "table",
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "thresholds": {
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 70},
+              {"color": "red", "value": 90}
+            ]
+          }
+        }
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "device": true,
+              "fstype": true,
+              "instance": true,
+              "job": true
+            },
+            "renameByName": {
+              "mountpoint": "Mount Point",
+              "Value": "Usage %"
+            }
+          }
+        }
+      ],
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 24}
+    },
+    {
+      "id": 10,
+      "title": "System Uptime",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "(time() - node_boot_time_seconds) / 86400",
+          "legendFormat": "Days"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "d",
+          "decimals": 1,
+          "color": {"mode": "palette-classic"}
+        }
+      },
+      "gridPos": {"h": 4, "w": 8, "x": 8, "y": 24}
+    },
+    {
+      "id": 11,
+      "title": "Load Average",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "node_load1",
+          "legendFormat": "1m"
+        },
+        {
+          "expr": "node_load5",
+          "legendFormat": "5m"
+        },
+        {
+          "expr": "node_load15",
+          "legendFormat": "15m"
+        }
+      ],
+      "gridPos": {"h": 4, "w": 8, "x": 16, "y": 24}
+    },
+    {
+      "id": 12,
+      "title": "Process Count",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "node_processes_pids",
+          "legendFormat": "PIDs"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"}
+        }
+      },
+      "gridPos": {"h": 4, "w": 8, "x": 8, "y": 28}
+    },
+    {
+      "id": 13,
+      "title": "Context Switches",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "irate(node_context_switches_total[5m])",
+          "legendFormat": "Context Switches/sec"
+        }
+      ],
+      "gridPos": {"h": 4, "w": 8, "x": 16, "y": 28}
+    }
+  ]
+}

@@ -1,0 +1,200 @@
+{
+  "id": null,
+  "title": "Backup & Maintenance",
+  "tags": ["homelab", "maintenance"],
+  "style": "dark",
+  "timezone": "browser",
+  "refresh": "1m",
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Backup Job Status",
+      "type": "table",
+      "targets": [
+        {
+          "expr": "kube_job_status_succeeded",
+          "legendFormat": "{{job_name}}",
+          "format": "table",
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "green", "value": 1}
+            ]
+          },
+          "mappings": [
+            {"options": {"0": {"text": "Failed"}}, "type": "value"},
+            {"options": {"1": {"text": "Success"}}, "type": "value"}
+          ]
+        }
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true
+            },
+            "renameByName": {
+              "job_name": "Backup Job",
+              "Value": "Status"
+            }
+          }
+        }
+      ],
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+    },
+    {
+      "id": 2,
+      "title": "Pod Restart Events",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "increase(kube_pod_container_status_restarts_total[1h])",
+          "legendFormat": "{{namespace}}/{{pod}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"}
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+    },
+    {
+      "id": 3,
+      "title": "System Uptime",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "(time() - node_boot_time_seconds) / 86400",
+          "legendFormat": "Days"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "d",
+          "decimals": 1,
+          "color": {"mode": "palette-classic"}
+        }
+      },
+      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 8}
+    },
+    {
+      "id": 4,
+      "title": "Last Reboot",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "node_boot_time_seconds * 1000",
+          "legendFormat": "Boot Time"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "dateTimeAsIso",
+          "color": {"mode": "palette-classic"}
+        }
+      },
+      "gridPos": {"h": 4, "w": 6, "x": 6, "y": 8}
+    },
+    {
+      "id": 5,
+      "title": "Volume Snapshots",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "count(longhorn_volume_snapshot)",
+          "legendFormat": "Snapshots"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"}
+        }
+      },
+      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 8}
+    },
+    {
+      "id": 6,
+      "title": "Failed Pods",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "count(kube_pod_status_phase{phase=\"Failed\"})",
+          "legendFormat": "Failed"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "red", "value": 1}
+            ]
+          }
+        }
+      },
+      "gridPos": {"h": 4, "w": 6, "x": 18, "y": 8}
+    },
+    {
+      "id": 7,
+      "title": "Disk Health",
+      "type": "table",
+      "targets": [
+        {
+          "expr": "node_filesystem_device_error{device=~\"/dev/sd.*\"}",
+          "legendFormat": "{{device}}",
+          "format": "table",
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "red", "value": 1}
+            ]
+          },
+          "mappings": [
+            {"options": {"0": {"text": "OK"}}, "type": "value"},
+            {"options": {"1": {"text": "Error"}}, "type": "value"}
+          ]
+        }
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true
+            },
+            "renameByName": {
+              "device": "Device",
+              "Value": "Status"
+            }
+          }
+        }
+      ],
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 12}
+    }
+  ]
+}

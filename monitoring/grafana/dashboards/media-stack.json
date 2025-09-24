@@ -1,0 +1,139 @@
+{
+  "id": null,
+  "title": "Media Stack",
+  "tags": ["homelab", "media"],
+  "style": "dark",
+  "timezone": "browser",
+  "refresh": "30s",
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Container Status",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "kube_pod_container_status_running{namespace=\"media\"}",
+          "legendFormat": "{{pod}} - {{container}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "green", "value": 1}
+            ]
+          }
+        }
+      },
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 0}
+    },
+    {
+      "id": 2,
+      "title": "Storage Usage - Media",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "(1 - node_filesystem_avail_bytes{mountpoint=~\"/media.*\"} / node_filesystem_size_bytes{mountpoint=~\"/media.*\"}) * 100",
+          "legendFormat": "{{mountpoint}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 70},
+              {"color": "orange", "value": 85},
+              {"color": "red", "value": 95}
+            ]
+          }
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
+    },
+    {
+      "id": 3,
+      "title": "Network Usage - VPN Containers",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(container_network_receive_bytes_total{pod=~\".*gluetun.*|.*qflood.*|.*sabnzbd.*\"}[5m]) * 8",
+          "legendFormat": "{{pod}} RX"
+        },
+        {
+          "expr": "rate(container_network_transmit_bytes_total{pod=~\".*gluetun.*|.*qflood.*|.*sabnzbd.*\"}[5m]) * 8",
+          "legendFormat": "{{pod}} TX"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bps"
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
+    },
+    {
+      "id": 4,
+      "title": "CPU Usage - Media Services",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(container_cpu_usage_seconds_total{namespace=\"media\"}[5m]) * 100",
+          "legendFormat": "{{pod}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent"
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16}
+    },
+    {
+      "id": 5,
+      "title": "Memory Usage - Media Services",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "container_memory_usage_bytes{namespace=\"media\"} / 1024 / 1024",
+          "legendFormat": "{{pod}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "MiB"
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16}
+    },
+    {
+      "id": 6,
+      "title": "Disk I/O - Media Storage",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(node_disk_read_bytes_total{device=~\"sd.*\"}[5m])",
+          "legendFormat": "{{device}} Read"
+        },
+        {
+          "expr": "rate(node_disk_written_bytes_total{device=~\"sd.*\"}[5m])",
+          "legendFormat": "{{device}} Write"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "binBps"
+        }
+      },
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 24}
+    }
+  ]
+}

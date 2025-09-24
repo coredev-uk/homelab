@@ -1,0 +1,181 @@
+{
+  "id": null,
+  "title": "Security Dashboard",
+  "tags": ["homelab", "security"],
+  "style": "dark",
+  "timezone": "browser",
+  "refresh": "30s",
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Frigate Status",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "kube_deployment_status_replicas{deployment=\"frigate\", namespace=\"security\"}",
+          "legendFormat": "Frigate"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "green", "value": 1}
+            ]
+          },
+          "mappings": [
+            {"options": {"0": {"text": "Down"}}, "type": "value"},
+            {"options": {"1": {"text": "Up"}}, "type": "value"}
+          ]
+        }
+      },
+      "gridPos": {"h": 4, "w": 8, "x": 0, "y": 0}
+    },
+    {
+      "id": 2,
+      "title": "Cert-Manager Status",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "count(certmanager_certificate_ready_status) > 0",
+          "legendFormat": "Cert-Manager"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "green", "value": 1}
+            ]
+          },
+          "mappings": [
+            {"options": {"0": {"text": "Down"}}, "type": "value"},
+            {"options": {"1": {"text": "Up"}}, "type": "value"}
+          ]
+        }
+      },
+      "gridPos": {"h": 4, "w": 8, "x": 8, "y": 0}
+    },
+    {
+      "id": 3,
+      "title": "TLS Certificates",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "count(certmanager_certificate_ready_status)",
+          "legendFormat": "Total Certs"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"}
+        }
+      },
+      "gridPos": {"h": 4, "w": 8, "x": 16, "y": 0}
+    },
+    {
+      "id": 4,
+      "title": "Certificate Expiry",
+      "type": "table",
+      "targets": [
+        {
+          "expr": "(certmanager_certificate_expiration_timestamp_seconds - time()) / 86400",
+          "legendFormat": "{{name}}",
+          "format": "table",
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "d",
+          "thresholds": {
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "yellow", "value": 7},
+              {"color": "green", "value": 30}
+            ]
+          }
+        }
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true
+            },
+            "renameByName": {
+              "name": "Certificate",
+              "Value": "Days Until Expiry"
+            }
+          }
+        }
+      ],
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4}
+    },
+    {
+      "id": 5,
+      "title": "Failed Authentication Attempts",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "increase(kube_pod_container_status_restarts_total{namespace=~\"traefik.*|ingress.*\"}[5m]) > 0",
+          "legendFormat": "{{namespace}} Authentication Issues"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"}
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4}
+    },
+    {
+      "id": 6,
+      "title": "Intel GPU Utilization (Frigate)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "kube_pod_container_resource_requests{resource=\"cpu\", namespace=\"security\", pod=~\"frigate.*\"} * 100",
+          "legendFormat": "CPU Usage %"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12}
+    },
+    {
+      "id": 7,
+      "title": "Pod Restart Count",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "increase(kube_pod_container_status_restarts_total{namespace=~\"dns|security|cert-manager\"}[1h])",
+          "legendFormat": "{{namespace}}/{{pod}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"}
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12}
+    }
+  ]
+}

@@ -1,0 +1,187 @@
+{
+  "id": null,
+  "title": "Network & DNS",
+  "tags": ["homelab", "network", "dns"],
+  "style": "dark",
+  "timezone": "browser", 
+  "refresh": "30s",
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Pi-hole Status",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "up{job=\"pihole\"} or on() (kube_deployment_status_replicas{deployment=\"pihole\", namespace=\"dns\"} > 0)",
+          "legendFormat": "Pi-hole"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "green", "value": 1}
+            ]
+          },
+          "mappings": [
+            {"options": {"0": {"text": "Down"}}, "type": "value"},
+            {"options": {"1": {"text": "Up"}}, "type": "value"}
+          ]
+        }
+      },
+      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0}
+    },
+    {
+      "id": 2,
+      "title": "Traefik Status",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "up{job=\"traefik\"}",
+          "legendFormat": "Traefik"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "green", "value": 1}
+            ]
+          },
+          "mappings": [
+            {"options": {"0": {"text": "Down"}}, "type": "value"},
+            {"options": {"1": {"text": "Up"}}, "type": "value"}
+          ]
+        }
+      },
+      "gridPos": {"h": 4, "w": 6, "x": 6, "y": 0}
+    },
+    {
+      "id": 3,
+      "title": "VPN Connections",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "count(kube_deployment_status_replicas{deployment=~\".*gluetun.*\", namespace=\"media\"})",
+          "legendFormat": "VPN Pods"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "green", "value": 1}
+            ]
+          }
+        }
+      },
+      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 0}
+    },
+    {
+      "id": 4,
+      "title": "Network Interfaces",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "node_network_up{device=~\"enp.*|eth.*|wlan.*\"}",
+          "legendFormat": "{{device}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "green", "value": 1}
+            ]
+          }
+        }
+      },
+      "gridPos": {"h": 4, "w": 6, "x": 18, "y": 0}
+    },
+    {
+      "id": 5,
+      "title": "DNS Queries Rate",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(pihole_dns_queries_today[5m])",
+          "legendFormat": "Queries/sec"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "qps"
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4}
+    },
+    {
+      "id": 6,
+      "title": "DNS Blocked Rate",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(pihole_ads_blocked_today[5m])",
+          "legendFormat": "Blocked/sec"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "qps",
+          "color": {"mode": "palette-classic"}
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4}
+    },
+    {
+      "id": 7,
+      "title": "HTTP Requests - Traefik",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(traefik_service_requests_total[5m])",
+          "legendFormat": "{{service}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12}
+    },
+    {
+      "id": 8,
+      "title": "HTTP Response Times",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, rate(traefik_service_request_duration_seconds_bucket[5m]))",
+          "legendFormat": "95th percentile"
+        },
+        {
+          "expr": "histogram_quantile(0.50, rate(traefik_service_request_duration_seconds_bucket[5m]))",
+          "legendFormat": "50th percentile"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12}
+    }
+  ]
+}
