@@ -32,15 +32,15 @@ objects:
 record:
   enabled: true
   retain:
-    days: 2           # was 7
+    days: 2 # was 7
     mode: motion
   alerts:
     retain:
-      days: 7         # was 30
+      days: 7 # was 30
       mode: active_objects
   detections:
     retain:
-      days: 7         # was 30
+      days: 7 # was 30
       mode: active_objects
 
 snapshots:
@@ -48,7 +48,7 @@ snapshots:
   timestamp: false
   bounding_box: true
   retain:
-    default: 10       # was 30
+    default: 10 # was 30
 
 motion:
   threshold: 30
@@ -89,12 +89,12 @@ cameras:
           threshold: 0.85
     zones:
       entrance:
-        coordinates: 200,100,1080,100,1080,400,200,400
+        coordinates: 0.874,0.403,0.958,0.401,0.854,0.886,0.635,0.909
         objects:
           - person
         loitering_time: 10
       driveway:
-        coordinates: 0,300,1280,300,1280,600,0,600
+        coordinates: 0.65,0.139,0.941,0.244,0.946,0.388,0.81,0.309,0.569,0.199
         objects:
           - car
           - person
@@ -134,11 +134,11 @@ cameras:
           threshold: 0.85
     zones:
       back_entrance:
-        coordinates: 150,80,1130,80,1130,300,150,300
+        coordinates: 0.297,0.538,0.344,0.549,0.44,0.584,0.433,0.654,0.411,0.698,0.373,0.761,0.325,0.82,0.242,0.826,0.189,0.814,0.184,0.74,0.194,0.655,0.203,0.621,0.216,0.535
         objects:
           - person
       back_driveway:
-        coordinates: 0,250,1280,250,1280,720,0,720
+        coordinates: 0.3,0.476,0.642,0.43,0.566,0.339,0.531,0.296,0.521,0.281,0.493,0.261,0.46,0.233,0.438,0.201,0.439,0.179,0.401,0.187,0.384,0.203,0.384,0.25,0.34,0.267,0.312,0.265,0.289,0.27,0.288,0.325
         objects:
           - car
           - person
@@ -180,7 +180,7 @@ cameras:
           threshold: 0.75
     zones:
       garden_main:
-        coordinates: 0,200,1280,200,1280,720,0,720
+        coordinates: 0.57,0.469,0.003,0.665,0.001,0.994,0.156,0.998,0.192,0.991,0.902,1,0.927,0.731,0.924,0.652,0.928,0.581,0.92,0.548,0.898,0.536,0.895,0.508,0.876,0.469,0.848,0.454,0.803,0.459,0.777,0.505,0.766,0.498
         objects:
           - person
           - dog
@@ -194,3 +194,4 @@ review:
     required_zones: []
   detections:
     required_zones: []
+
