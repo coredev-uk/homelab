@@ -8,35 +8,36 @@ spec:
     spec:
       restartPolicy: OnFailure
       containers:
-      - name: init-directories
-        image: busybox:latest
-        command: ['sh', '-c']
-        args:
-        - |
-          echo "Creating downloads directory structure..."
-          
-          # Create usenet structure
-          mkdir -p /downloads/usenet/complete/tv
-          mkdir -p /downloads/usenet/complete/movies
-          mkdir -p /downloads/usenet/incomplete/tv
-          mkdir -p /downloads/usenet/incomplete/movies
-          
-          # Create torrents structure
-          mkdir -p /downloads/torrents/complete/tv
-          mkdir -p /downloads/torrents/complete/movies
-          mkdir -p /downloads/torrents/incomplete/tv
-          mkdir -p /downloads/torrents/incomplete/movies
-          
-          # Set permissions and ownership (abc:users = 1000:1000 in linuxserver containers)
-          chmod -R 755 /downloads
-          chown -R 1000:1000 /downloads
-          
-          echo "Directory structure created successfully:"
-          find /downloads -type d | sort
-        volumeMounts:
-        - name: downloads
-          mountPath: /downloads
+        - name: init-directories
+          image: busybox:latest
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "Creating downloads directory structure..."
+
+              # Create usenet structure
+              mkdir -p /downloads/usenet/complete/tv
+              mkdir -p /downloads/usenet/complete/movies
+              mkdir -p /downloads/usenet/incomplete/tv
+              mkdir -p /downloads/usenet/incomplete/movies
+
+              # Create torrents structure
+              mkdir -p /downloads/torrents/complete/tv
+              mkdir -p /downloads/torrents/complete/movies
+              mkdir -p /downloads/torrents/incomplete/tv
+              mkdir -p /downloads/torrents/incomplete/movies
+
+              # Set permissions and ownership (abc:users = 1000:1000 in linuxserver containers)
+              chmod -R 755 /downloads
+              chown -R 1000:1000 /downloads
+
+              echo "Directory structure created successfully:"
+              find /downloads -type d | sort
+          volumeMounts:
+            - name: downloads
+              mountPath: /downloads
       volumes:
-      - name: downloads
-        persistentVolumeClaim:
-          claimName: downloads-data-host
+        - name: downloads
+          persistentVolumeClaim:
+            claimName: downloads-data-host
+

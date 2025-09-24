@@ -108,3 +108,4 @@ subjects:
   - kind: ServiceAccount
     name: glance-k8s
     namespace: media
+

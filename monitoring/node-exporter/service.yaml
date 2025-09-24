@@ -12,3 +12,4 @@ spec:
       name: metrics
   selector:
     app: node-exporter
+

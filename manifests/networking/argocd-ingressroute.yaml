@@ -5,13 +5,13 @@ metadata:
   namespace: argocd
 spec:
   entryPoints:
-  - websecure
+    - websecure
   routes:
-  - match: Host(`argocd.home.coredev.uk`)
-    kind: Rule
-    services:
-    - name: argocd-server
-      port: 80
+    - match: Host(`argocd.home.coredev.uk`)
+      kind: Rule
+      services:
+        - name: argocd-server
+          port: 80
   tls:
     secretName: argocd-tls
 ---
@@ -22,12 +22,13 @@ metadata:
   namespace: argocd
 spec:
   entryPoints:
-  - web
+    - web
   routes:
-  - match: Host(`argocd.home.coredev.uk`)
-    kind: Rule
-    middlewares:
-    - name: https-redirect
-    services:
-    - name: argocd-server
-      port: 80
+    - match: Host(`argocd.home.coredev.uk`)
+      kind: Rule
+      middlewares:
+        - name: https-redirect
+      services:
+        - name: argocd-server
+          port: 80
+

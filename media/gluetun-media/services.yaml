@@ -38,11 +38,6 @@ metadata:
   namespace: media
   labels:
     app: qbittorrent
-  annotations:
-    glance/name: "qBittorrent"
-    glance/icon: "mdi:download"
-    glance/description: "BitTorrent client via VPN"
-    glance/url: "https://qbittorrent.home.coredev.uk"
 spec:
   selector:
     app: gluetun-media
@@ -61,11 +56,6 @@ metadata:
   namespace: media
   labels:
     app: sabnzbd
-  annotations:
-    glance/name: "SABnzbd"
-    glance/icon: "sh:sabnzbd-light"
-    glance/description: "Usenet downloader via VPN"
-    glance/url: "https://sabnzbd.home.coredev.uk"
 spec:
   selector:
     app: gluetun-media
@@ -74,4 +64,3 @@ spec:
       port: 8080
       targetPort: 8080
   type: ClusterIP
-

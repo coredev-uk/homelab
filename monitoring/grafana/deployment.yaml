@@ -7,15 +7,15 @@ data:
   grafana.ini: |
     [server]
     root_url = https://grafana.home.coredev.uk
-    
+
     [security]
     admin_user = admin
     admin_password = admin
-    
+
     [database]
     type = sqlite3
     path = /var/lib/grafana/grafana.db
-    
+
     [auth.anonymous]
     enabled = false
 ---
@@ -152,3 +152,4 @@ spec:
         - name: config-storage
           persistentVolumeClaim:
             claimName: grafana-config
+

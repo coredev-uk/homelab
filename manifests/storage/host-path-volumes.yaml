@@ -56,4 +56,3 @@ spec:
       storage: 30Gi
   volumeName: frigate-media-data
   storageClassName: ""
-
