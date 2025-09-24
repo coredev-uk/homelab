@@ -18,6 +18,10 @@ spec:
     metadata:
       labels:
         app: frigate
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9100"
+        prometheus.io/path: "/metrics"
     spec:
       containers:
         - name: frigate

@@ -727,6 +727,8 @@ data:
       "id": null,
       "links": [],
       "liveNow": false,
+      "tags": ["homelab", "security", "frigate", "cctv"],
+      "title": "Frigate Monitoring",
       "panels": [
         {
           "datasource": {
