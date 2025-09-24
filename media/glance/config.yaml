@@ -22,9 +22,9 @@ custom-widgets:
       {{ $showGrabbed := .Options.BoolOr "show-grabbed" false }}
       {{ $tzInput := .Options.StringOr "timezone" "+00" }}
       {{ if eq (slice $tzInput 0 1) "+" }}
-        {{ $timezone = printf "UTC%s:00" $tzInput }}
+        {{ $timezone = $tzInput }}
       {{ else }}
-        {{ $timezone = timezone $tzInput }}
+        {{ $timezone = $tzInput }}
       {{ end }}
       {{ $sortTime := .Options.StringOr "sort-time" "desc" }}
       {{ $coverProxy := .Options.StringOr "cover-proxy" "" }}
@@ -34,9 +34,9 @@ custom-widgets:
       {{ $intervalH := .Options.IntOr "interval" 0 | mul 24 }}
 
       {{ $nowUTC := offsetNow "0h" }}
-      {{ $now := ($nowUTC.In $timezone) | formatTime "rfc3339" }}
-      {{ $posInterval := ((offsetNow (printf "+%dh" $intervalH)).In $timezone) | formatTime "rfc3339" }}
-      {{ $negInterval := ((offsetNow (printf "-%dh" $intervalH)).In $timezone) | formatTime "rfc3339" }}
+      {{ $now := $nowUTC | formatTime "rfc3339" }}
+      {{ $posInterval := (offsetNow (printf "+%dh" $intervalH)) | formatTime "rfc3339" }}
+      {{ $negInterval := (offsetNow (printf "-%dh" $intervalH)) | formatTime "rfc3339" }}
 
       {{ $apiBaseUrl := .Options.StringOr "api-base-url" "" }}
       {{ $key := .Options.StringOr "key" "" }}
@@ -261,7 +261,7 @@ custom-widgets:
                   {{ $subtitle = "" }}
                   {{ $summary = .String "movie.overview" }}
                   {{ $popoverTitle = .String "movie.title" }}
-                  {{ $popoverSubtitle = printf "%s %s" $datetype (($date.In $timezone) | formatTime "02/01/2006") }}
+                  {{ $popoverSubtitle = printf "%s %s" $datetype ($date | formatTime "02/01/2006") }}
                   {{ $popoverSummary = .String "movie.overview" }}
                   {{ $link = printf "%s/movie/%s#" $url (.String "movie.titleSlug") }}
                   {{ $movie = .Get "movie" }}
@@ -280,7 +280,7 @@ custom-widgets:
                   {{ $summary = .String "overview" }}
                   {{ $link = printf "%s/movie/%s#" $url (.String "titleSlug") }}
                   {{ $popoverTitle = .String "title" }}
-                  {{ $popoverSubtitle = printf "%s %s" $datetype (($date.In $timezone) | formatTime "02/01/2006") }}
+                  {{ $popoverSubtitle = printf "%s %s" $datetype ($date | formatTime "02/01/2006") }}
                   {{ $popoverSummary = .String "overview" }}
                   {{ $genres = .Get "genres" }}
                   {{ if eq $type "missing" }}
@@ -322,7 +322,7 @@ custom-widgets:
                   {{ $link = printf "%s/artist/%s#" $url ($artist.String "foreignArtistId") }}
                   {{ $summary = $album.String "overview" }}
                   {{ $popoverTitle = $album.String "title" }}
-                  {{ $popoverSubtitle = printf "%s %s" $datetype (($date.In $timezone) | formatTime "02/01/2006") }}
+                  {{ $popoverSubtitle = printf "%s %s" $datetype ($date | formatTime "02/01/2006") }}
                   {{ $popoverSummary = $artist.String "overview" }}
 
                 {{ else }}
@@ -349,7 +349,7 @@ custom-widgets:
                   {{ $genres = $artist.Get "genres" }}
                   {{ $link = printf "%s/artist/%s#" $url ($artist.String "foreignArtistId") }}
                   {{ $popoverTitle = .String "title" }}
-                  {{ $popoverSubtitle = printf "%s %s" $datetype (($date.In $timezone) | formatTime "02/01/2006") }}
+                  {{ $popoverSubtitle = printf "%s %s" $datetype ($date | formatTime "02/01/2006") }}
                   {{ $popoverSummary = .String "artist.overview" }}
                 {{ end }}
               {{ end }}
@@ -417,9 +417,9 @@ custom-widgets:
                     <div class="text-truncate text-very-compact" title="{{ $subtitle }}">{{ $subtitle }}</div>
                     <div class="text-very-compact text-truncate">
                       {{ if eq $service "sonarr" }}
-                        <div>{{ $seString }} - {{ $datetype }} {{ ($date.In $timezone) | formatTime "02/01 15:04" }}</div>
+                        <div>{{ $seString }} - {{ $datetype }} {{ $date | formatTime "02/01 15:04" }}</div>
                       {{ else }}
-                        <span>{{ $datetype }} {{ ($date.In $timezone) | formatTime "02/01" }}</span>
+                        <span>{{ $datetype }} {{ $date | formatTime "02/01" }}</span>
                       {{ end }}
                     </div>
 
