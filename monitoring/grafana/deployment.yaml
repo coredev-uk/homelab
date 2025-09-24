@@ -67,6 +67,19 @@ spec:
   storageClassName: longhorn
 ---
 apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: grafana-dashboards
+  namespace: monitoring
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: longhorn
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: grafana
@@ -157,8 +170,8 @@ spec:
           configMap:
             name: grafana-dashboards-config
         - name: dashboards
-          configMap:
-            name: grafana-dashboards
+          persistentVolumeClaim:
+            claimName: grafana-dashboards
         - name: storage
           persistentVolumeClaim:
             claimName: grafana-storage
