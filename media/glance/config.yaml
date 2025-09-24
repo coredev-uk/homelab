@@ -686,7 +686,7 @@ pages:
               collapse-after: 3
               show-grabbed: false
               interval: 20
-              api-base-url: "http://radarr.media:7878"
+              api-base-url: "http://radarr.home.coredev.uk"
               key: ${RADARR_API_KEY}
               url: "https://radarr.home.coredev.uk"
 
@@ -702,7 +702,7 @@ pages:
               collapse-after: 3
               show-grabbed: false
               interval: 20
-              api-base-url: "http://sonarr.home.coredev.uk"
+              api-base-url: "http://sonarr.media:8989"
               key: ${SONARR_API_KEY}
               url: "https://sonarr.home.coredev.uk"
 
