@@ -733,7 +733,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "Prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -802,7 +802,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "Prometheus"
               },
               "editorMode": "builder",
               "exemplar": false,
@@ -820,7 +820,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "Prometheus"
           },
           "description": "",
           "fieldConfig": {
@@ -870,7 +870,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "Prometheus"
               },
               "editorMode": "code",
               "expr": "frigate_detector_inference_speed_seconds*1000",
@@ -885,7 +885,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "Prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -934,7 +934,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "Prometheus"
               },
               "editorMode": "builder",
               "expr": "sum(frigate_cpu_usage_percent)",
@@ -949,7 +949,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "Prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1000,7 +1000,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "Prometheus"
               },
               "editorMode": "builder",
               "expr": "sum(frigate_mem_usage_percent)",
@@ -1015,7 +1015,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "Prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1068,7 +1068,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "Prometheus"
               },
               "editorMode": "builder",
               "expr": "frigate_storage_used_bytes{storage=\"/media/frigate/recordings\"}",
@@ -1080,7 +1080,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "Prometheus"
               },
               "editorMode": "builder",
               "expr": "frigate_storage_free_bytes{storage=\"/media/frigate/recordings\"}",
@@ -1096,7 +1096,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "Prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1180,7 +1180,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "Prometheus"
               },
               "editorMode": "builder",
               "expr": "frigate_detector_inference_speed_seconds",
@@ -1195,7 +1195,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "Prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1273,7 +1273,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "Prometheus"
               },
               "editorMode": "builder",
               "expr": "frigate_storage_total_bytes",
@@ -1288,7 +1288,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "Prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1366,7 +1366,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "Prometheus"
               },
               "editorMode": "builder",
               "expr": "frigate_detection_fps",
@@ -1377,7 +1377,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "Prometheus"
               },
               "editorMode": "builder",
               "expr": "frigate_detection_total_fps",
@@ -1393,7 +1393,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "Prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1471,7 +1471,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "Prometheus"
               },
               "editorMode": "builder",
               "expr": "frigate_storage_used_bytes",
@@ -1486,7 +1486,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "Prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1564,7 +1564,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "Prometheus"
               },
               "editorMode": "builder",
               "expr": "sum_over_time(frigate_detection_fps[24h])",
@@ -1579,7 +1579,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "Prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1657,7 +1657,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "Prometheus"
               },
               "editorMode": "builder",
               "expr": "frigate_storage_free_bytes",
@@ -1672,7 +1672,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "Prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1751,7 +1751,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "Prometheus"
               },
               "editorMode": "builder",
               "expr": "frigate_camera_fps",
@@ -1766,7 +1766,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "Prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1844,7 +1844,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "Prometheus"
               },
               "editorMode": "builder",
               "expr": "frigate_gpu_usage_percent",
@@ -1859,7 +1859,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "Prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -1938,7 +1938,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "Prometheus"
               },
               "editorMode": "builder",
               "expr": "frigate_skipped_fps",
@@ -1953,7 +1953,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "Prometheus"
           },
           "description": "",
           "fieldConfig": {
@@ -2032,7 +2032,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "Prometheus"
               },
               "editorMode": "builder",
               "expr": "frigate_gpu_mem_usage_percent",
@@ -2047,7 +2047,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "Prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -2135,7 +2135,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "Prometheus"
               },
               "editorMode": "builder",
               "expr": "frigate_cpu_usage_percent{type=~\"Camera|Detector\"}",
@@ -2151,7 +2151,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "Prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -2228,7 +2228,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "Prometheus"
               },
               "editorMode": "builder",
               "expr": "scrape_duration_seconds{job=\"frigate\"}",
@@ -2243,7 +2243,7 @@ data:
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "prometheus"
+            "uid": "Prometheus"
           },
           "fieldConfig": {
             "defaults": {
@@ -2329,7 +2329,7 @@ data:
             {
               "datasource": {
                 "type": "prometheus",
-                "uid": "prometheus"
+                "uid": "Prometheus"
               },
               "editorMode": "builder",
               "expr": "frigate_mem_usage_percent{type=~\"Camera|Detector\"}",
