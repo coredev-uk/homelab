@@ -1,0 +1,200 @@
+mqtt:
+  enabled: false
+
+objects:
+  track:
+    - person
+    - car
+    - dog
+    - cat
+  filters:
+    person:
+      min_score: 0.5
+      threshold: 0.8
+      min_area: 5000
+      max_area: 100000
+    car:
+      min_score: 0.6
+      threshold: 0.85
+      min_area: 15000
+      max_area: 100000
+    dog:
+      min_score: 0.4
+      threshold: 0.75
+      min_area: 3000
+      max_area: 50000
+    cat:
+      min_score: 0.4
+      threshold: 0.75
+      min_area: 1500
+      max_area: 25000
+
+record:
+  enabled: true
+  retain:
+    days: 2           # was 7
+    mode: motion
+  alerts:
+    retain:
+      days: 7         # was 30
+      mode: active_objects
+  detections:
+    retain:
+      days: 7         # was 30
+      mode: active_objects
+
+snapshots:
+  enabled: true
+  timestamp: false
+  bounding_box: true
+  retain:
+    default: 10       # was 30
+
+motion:
+  threshold: 30
+  contour_area: 10
+  lightning_threshold: 0.8
+  improve_contrast: true
+
+cameras:
+  front_door:
+    enabled: true
+    ffmpeg:
+      inputs:
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_CAMERA_URL}/FRNT
+          roles:
+            - detect
+            - record
+    detect:
+      enabled: true
+      width: 1280
+      height: 720
+      fps: 5
+    record:
+      enabled: true
+    snapshots:
+      enabled: true
+    objects:
+      track:
+        - person
+        - car
+      filters:
+        person:
+          min_area: 5000
+          max_area: 100000
+          threshold: 0.8
+        car:
+          min_area: 15000
+          max_area: 100000
+          threshold: 0.85
+    zones:
+      entrance:
+        coordinates: 200,100,1080,100,1080,400,200,400
+        objects:
+          - person
+        loitering_time: 10
+      driveway:
+        coordinates: 0,300,1280,300,1280,600,0,600
+        objects:
+          - car
+          - person
+    motion:
+      mask:
+        - 0,0,200,0,200,50,0,50
+
+  back_door:
+    enabled: true
+    ffmpeg:
+      inputs:
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_CAMERA_URL}/DRV
+          roles:
+            - detect
+            - record
+    detect:
+      enabled: true
+      width: 1280
+      height: 720
+      fps: 5
+    record:
+      enabled: true
+    snapshots:
+      enabled: true
+    objects:
+      track:
+        - person
+        - car
+      filters:
+        person:
+          min_area: 5000
+          max_area: 100000
+          threshold: 0.8
+        car:
+          min_area: 15000
+          max_area: 100000
+          threshold: 0.85
+    zones:
+      back_entrance:
+        coordinates: 150,80,1130,80,1130,300,150,300
+        objects:
+          - person
+      back_driveway:
+        coordinates: 0,250,1280,250,1280,720,0,720
+        objects:
+          - car
+          - person
+
+  back_garden:
+    enabled: true
+    ffmpeg:
+      inputs:
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_CAMERA_URL}/GDN
+          roles:
+            - detect
+            - record
+    detect:
+      enabled: true
+      width: 1280
+      height: 720
+      fps: 5
+    record:
+      enabled: true
+    snapshots:
+      enabled: true
+    objects:
+      track:
+        - person
+        - dog
+        - cat
+      filters:
+        person:
+          min_area: 5000
+          max_area: 100000
+          threshold: 0.8
+        dog:
+          min_area: 3000
+          max_area: 50000
+          threshold: 0.75
+        cat:
+          min_area: 1500
+          max_area: 25000
+          threshold: 0.75
+    zones:
+      garden_main:
+        coordinates: 0,200,1280,200,1280,720,0,720
+        objects:
+          - person
+          - dog
+          - cat
+    motion:
+      mask:
+        - 0,0,0,0,0,0,0,0
+
+review:
+  alerts:
+    required_zones: []
+    retain:
+      days: 7         # was 30
+  detections:
+    required_zones: []
+    retain:
+      days: 7         # was 30

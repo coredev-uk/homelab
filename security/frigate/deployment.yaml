@@ -56,7 +56,17 @@ spec:
                   name: frigate-secrets
                   key: RTSP_PASSWORD
                   optional: true
+            - name: FRIGATE_CAMERA_URL
+              valueFrom:
+                secretKeyRef:
+                  name: frigate-secrets
+                  key: CAMERA_URL
+                  optional: true
           volumeMounts:
+            - name: config
+              mountPath: /config/config.yaml
+              subPath: config.yaml
+              readOnly: true
             - name: data
               mountPath: /config
             - name: media
@@ -94,6 +104,9 @@ spec:
               memory: "128Mi"
               cpu: "100m"
       volumes:
+        - name: config
+          configMap:
+            name: frigate-config
         - name: data
           persistentVolumeClaim:
             claimName: frigate-config

@@ -3,3 +3,8 @@ kind: Kustomization
 
 resources:
   - deployment.yaml
+
+configMapGenerator:
+  - name: frigate-config
+    files:
+      - config.yaml
