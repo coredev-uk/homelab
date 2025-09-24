@@ -20,9 +20,15 @@ custom-widgets:
     template: |
       {{ $collapseAfter := .Options.IntOr "collapse-after" 5 }}
       {{ $showGrabbed := .Options.BoolOr "show-grabbed" false }}
-      {{ $tzOffset := .Options.StringOr "timezone" "+00" }} 
-      {{ $tzTime := (printf "2006-01-02T15:04:05%s:00" $tzOffset) | parseTime "rfc3339" }}
-      {{ $timezone := $tzTime.Location }}
+      {{ $tzInput := .Options.StringOr "timezone" "+00" }}
+      {{ $timezone := "" }}
+      
+      {{ if and (hasPrefix $tzInput "+") (or (hasSuffix $tzInput "00") (hasSuffix $tzInput "01") (hasSuffix $tzInput "02")) }}
+        {{ $tzTime := (printf "2006-01-02T15:04:05%s:00" $tzInput) | parseTime "rfc3339" }}
+        {{ $timezone = $tzTime.Location }}
+      {{ else }}
+        {{ $timezone = timezone $tzInput }}
+      {{ end }}
       {{ $sortTime := .Options.StringOr "sort-time" "desc" }}
       {{ $coverProxy := .Options.StringOr "cover-proxy" "" }}
       {{ $size := .Options.StringOr "size" "medium" }}
@@ -686,7 +692,7 @@ pages:
               collapse-after: 3
               show-grabbed: false
               interval: 20
-              timezone: "+01"
+              timezone: "Europe/London"
               api-base-url: "http://radarr.media:7878"
               key: ${RADARR_API_KEY}
               url: "https://radarr.home.coredev.uk"
@@ -706,7 +712,7 @@ pages:
               api-base-url: "http://sonarr.media:8989"
               key: ${SONARR_API_KEY}
               url: "https://sonarr.home.coredev.uk"
-              timezone: "+01"
+              timezone: "Europe/London"
 
           - type: videos
             title: Video Feed
