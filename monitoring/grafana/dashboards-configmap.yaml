@@ -937,7 +937,7 @@ data:
                 "uid": "Prometheus"
               },
               "editorMode": "builder",
-              "expr": "sum(frigate_cpu_usage_percent)",
+              "expr": "frigate_cpu_usage_percent{name=\"frigate\"}",
               "legendFormat": "__auto",
               "range": true,
               "refId": "A"
@@ -1003,7 +1003,7 @@ data:
                 "uid": "Prometheus"
               },
               "editorMode": "builder",
-              "expr": "sum(frigate_mem_usage_percent)",
+              "expr": "frigate_mem_usage_percent{name=\"frigate\"}",
               "legendFormat": "__auto",
               "range": true,
               "refId": "A"
