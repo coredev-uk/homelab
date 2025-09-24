@@ -21,11 +21,8 @@ custom-widgets:
       {{ $collapseAfter := .Options.IntOr "collapse-after" 5 }}
       {{ $showGrabbed := .Options.BoolOr "show-grabbed" false }}
       {{ $tzInput := .Options.StringOr "timezone" "+00" }}
-      {{ $timezone := "" }}
-      
-      {{ if and (hasPrefix $tzInput "+") (or (hasSuffix $tzInput "00") (hasSuffix $tzInput "01") (hasSuffix $tzInput "02")) }}
-        {{ $tzTime := (printf "2006-01-02T15:04:05%s:00" $tzInput) | parseTime "rfc3339" }}
-        {{ $timezone = $tzTime.Location }}
+      {{ if eq (slice $tzInput 0 1) "+" }}
+        {{ $timezone = printf "UTC%s:00" $tzInput }}
       {{ else }}
         {{ $timezone = timezone $tzInput }}
       {{ end }}
