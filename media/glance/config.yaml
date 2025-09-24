@@ -21,11 +21,7 @@ custom-widgets:
       {{ $collapseAfter := .Options.IntOr "collapse-after" 5 }}
       {{ $showGrabbed := .Options.BoolOr "show-grabbed" false }}
       {{ $tzInput := .Options.StringOr "timezone" "+00" }}
-      {{ if eq (slice $tzInput 0 1) "+" }}
-        {{ $timezone = $tzInput }}
-      {{ else }}
-        {{ $timezone = $tzInput }}
-      {{ end }}
+      {{ $timezone := $tzInput }}
       {{ $sortTime := .Options.StringOr "sort-time" "desc" }}
       {{ $coverProxy := .Options.StringOr "cover-proxy" "" }}
       {{ $size := .Options.StringOr "size" "medium" }}
