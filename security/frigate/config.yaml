@@ -101,6 +101,15 @@ cameras:
     motion:
       mask:
         - 0,0,200,0,200,50,0,50
+    review:
+      alerts:
+        required_zones:
+          - entrance
+          - driveway
+      detections:
+        required_zones:
+          - entrance
+          - driveway
 
   back_door:
     enabled: true
@@ -142,6 +151,15 @@ cameras:
         objects:
           - car
           - person
+    review:
+      alerts:
+        required_zones:
+          - back_entrance
+          - back_driveway
+      detections:
+        required_zones:
+          - back_entrance
+          - back_driveway
 
   back_garden:
     enabled: true
@@ -188,20 +206,11 @@ cameras:
     motion:
       mask:
         - 0,0,0,0,0,0,0,0
-
-review:
-  alerts:
-    required_zones:
-      - entrance
-      - back_entrance
-      - garden_main
-      - driveway
-      - back_driveway
-  detections:
-    required_zones:
-      - entrance
-      - back_entrance
-      - garden_main
-      - driveway
-      - back_driveway
+    review:
+      alerts:
+        required_zones:
+          - garden_main
+      detections:
+        required_zones:
+          - garden_main
 
