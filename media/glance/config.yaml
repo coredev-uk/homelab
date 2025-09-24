@@ -685,7 +685,6 @@ pages:
               size: medium
               collapse-after: 3
               show-grabbed: false
-              timezone: "00"
               interval: 20
               api-base-url: "http://radarr.media:7878"
               key: ${RADARR_API_KEY}
@@ -702,9 +701,8 @@ pages:
               size: medium
               collapse-after: 3
               show-grabbed: false
-              timezone: "00"
               interval: 20
-              api-base-url: "http://sonarr.media:8989"
+              api-base-url: "http://sonarr.home.coredev.uk"
               key: ${SONARR_API_KEY}
               url: "https://sonarr.home.coredev.uk"
 
