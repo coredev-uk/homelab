@@ -479,7 +479,7 @@ data:
           "type": "stat",
           "targets": [
             {
-              "expr": "pihole_status{hostname=\"localhost\"}",
+              "expr": "up{job=\"pihole\"} or on() (kube_deployment_status_replicas{deployment=\"pihole\", namespace=\"dns\"} > 0)",
               "legendFormat": "Pi-hole"
             }
           ],
