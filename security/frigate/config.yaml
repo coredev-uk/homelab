@@ -106,10 +106,6 @@ cameras:
         required_zones:
           - entrance
           - driveway
-      detections:
-        required_zones:
-          - entrance
-          - driveway
 
   back_door:
     enabled: true
@@ -213,4 +209,3 @@ cameras:
       detections:
         required_zones:
           - garden_main
-
