@@ -33,6 +33,12 @@ data:
         metrics_path: '/metrics'
         scrape_interval: 30s
 
+      - job_name: 'frigate'
+        static_configs:
+          - targets: ['frigate.security.svc.cluster.local:9100']
+        metrics_path: '/metrics'
+        scrape_interval: 30s
+
       - job_name: 'kubernetes-pods'
         kubernetes_sd_configs:
           - role: pod
