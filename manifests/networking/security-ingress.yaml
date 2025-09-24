@@ -6,6 +6,7 @@ metadata:
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/service.serversscheme: https
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   tls:
@@ -22,5 +23,5 @@ spec:
               service:
                 name: frigate
                 port:
-                  number: 5443
+                  number: 8971
 
