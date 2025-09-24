@@ -48,10 +48,10 @@ spec:
                   optional: true
             - name: FRIGATE_RTSP_PASSWORD
               valueFrom:
-                 secretKeyRef:
-                   name: frigate-secrets
-                   key: RTSP_PASSWORD
-                   optional: true
+                secretKeyRef:
+                  name: frigate-secrets
+                  key: RTSP_PASSWORD
+                  optional: true
           volumeMounts:
             - name: data
               mountPath: /config
@@ -74,7 +74,7 @@ spec:
           securityContext:
             privileged: false
         - name: frigate-exporter
-          image: bairhys/prometheus-frigate-exporter:0.1.1
+          image: brhysbailey/prometheus-frigate-exporter:0.1.1
           ports:
             - containerPort: 9100
               protocol: TCP
