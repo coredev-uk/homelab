@@ -83,7 +83,8 @@ create_sealed_secret "pihole-secrets" "dns" "WEBPASSWORD" "$PIHOLE_WEBPASSWORD" 
 create_sealed_secret_multi "frigate-secrets" "security" "frigate-sealed-secret.yaml" \
   "MQTT_PASSWORD" "$FRIGATE_MQTT_PASSWORD" \
   "RTSP_USER" "$FRIGATE_RTSP_USER" \
-  "RTSP_PASSWORD" "$FRIGATE_RTSP_PASSWORD"
+  "RTSP_PASSWORD" "$FRIGATE_RTSP_PASSWORD" \
+  "CAMERA_URL" "$FRIGATE_CAMERA_URL"
 
 # Generate Cloudflare SealedSecret
 create_sealed_secret "cloudflare-api-token-secret" "cert-manager" "api-token" "$CLOUDFLARE_API_TOKEN" "cloudflare-sealed-secret.yaml"
