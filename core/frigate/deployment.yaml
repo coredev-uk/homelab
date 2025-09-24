@@ -74,7 +74,7 @@ spec:
           securityContext:
             privileged: false
         - name: frigate-exporter
-          image: brhysbailey/prometheus-frigate-exporter:0.1.1
+          image: rhysbailey/prometheus-frigate-exporter:0.1.1
           ports:
             - containerPort: 9100
               protocol: TCP
