@@ -191,7 +191,17 @@ cameras:
 
 review:
   alerts:
-    required_zones: []
+    required_zones:
+      - entrance
+      - back_entrance
+      - garden_main
+      - driveway
+      - back_driveway
   detections:
-    required_zones: []
+    required_zones:
+      - entrance
+      - back_entrance
+      - garden_main
+      - driveway
+      - back_driveway
 
