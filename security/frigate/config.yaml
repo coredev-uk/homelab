@@ -3,7 +3,6 @@ mqtt:
 
 auth:
   enabled: true
-  reset_admin_password: true
 
 tls:
   enabled: false
