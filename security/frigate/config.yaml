@@ -192,9 +192,5 @@ cameras:
 review:
   alerts:
     required_zones: []
-    retain:
-      days: 7         # was 30
   detections:
     required_zones: []
-    retain:
-      days: 7         # was 30
