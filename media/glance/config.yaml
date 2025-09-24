@@ -677,7 +677,7 @@ pages:
 
           - <<: *media-widget
             title: Movie Releases
-            title-url: ${RADARR_URL}
+            title-url: "https://radarr.home.coredev.uk"
             cache: 30m
             options:
               service: radarr
@@ -689,12 +689,12 @@ pages:
               interval: 20
               api-base-url: "http://radarr.media:7878"
               key: ${RADARR_API_KEY}
-              url: ${RADARR_URL}
+              url: "https://radarr.home.coredev.uk"
 
           # Sonarr Media Release Widget
           - <<: *media-widget
             title: TV Releases
-            title-url: ${SONARR_URL}
+            title-url: "https://sonarr.home.coredev.uk"
             cache: 30m
             options:
               service: sonarr
@@ -706,7 +706,7 @@ pages:
               interval: 20
               api-base-url: "http://sonarr.media:8989"
               key: ${SONARR_API_KEY}
-              url: ${SONARR_URL}
+              url: "https://sonarr.home.coredev.uk"
 
           - type: videos
             title: Video Feed
