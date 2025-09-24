@@ -5,7 +5,7 @@ auth:
   enabled: true
 
 tls:
-  enabled: false
+  enabled: true
 
 objects:
   track:
