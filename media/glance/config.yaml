@@ -155,7 +155,7 @@ custom-widgets:
               {{ if eq $service "sonarr" }}
                 {{ $series := "" }}
                 {{ if eq $coverProxy "" }}
-                  {{ $coverBase = printf "%s/api/v3/mediacover" $apiBaseUrl }}
+                  {{ $coverBase = printf "%s/api/v3/mediacover" $url }}
                   {{ $coverUrl = printf "%s/%s/poster-500.jpg?apikey=%s" $coverBase (.String "seriesId") $key }}
                 {{ else }}
                   {{ $coverBase = $coverProxy }}
@@ -226,7 +226,7 @@ custom-widgets:
                 {{ $movie := "" }}
                 {{ $status = .String "status" }}
                 {{ if eq $coverProxy "" }}
-                  {{ $coverBase = printf "%s/api/v3/mediacover" $apiBaseUrl }}
+                  {{ $coverBase = printf "%s/api/v3/mediacover" $url }}
                 {{ else }}
                   {{ $coverBase = $coverProxy }}
                 {{ end }}
@@ -297,7 +297,7 @@ custom-widgets:
                 {{ $album := "" }}
                 {{ $albumId := "" }}
                 {{ if eq $coverProxy "" }}
-                  {{ $coverBase = printf "%s/api/v1/mediacover" $apiBaseUrl }}
+                  {{ $coverBase = printf "%s/api/v1/mediacover" $url }}
                 {{ else }}
                   {{ $coverBase = $coverProxy }}
                 {{ end }}
@@ -686,7 +686,7 @@ pages:
               collapse-after: 3
               show-grabbed: false
               interval: 20
-              api-base-url: "http://radarr.home.coredev.uk"
+              api-base-url: "http://radarr.media:7878"
               key: ${RADARR_API_KEY}
               url: "https://radarr.home.coredev.uk"
 
