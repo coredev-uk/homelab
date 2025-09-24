@@ -35,6 +35,20 @@ spec:
                 secretKeyRef:
                   name: glance-secrets
                   key: GLANCE_WEATHER_LOCATION
+            - name: SONARR_URL
+              value: "https://sonarr.home.coredev.uk"
+            - name: RADARR_URL
+              value: "https://radarr.home.coredev.uk"
+            - name: SONARR_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: glance-secrets
+                  key: SONARR_API_KEY
+            - name: RADARR_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: glance-secrets
+                  key: RADARR_API_KEY
           volumeMounts:
             - name: config
               mountPath: /app/config
@@ -63,3 +77,4 @@ spec:
     - port: 8080
       targetPort: 8080
   type: ClusterIP
+
