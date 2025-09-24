@@ -23,7 +23,7 @@ custom-widgets:
       {{ $tzOffset := .Options.StringOr "timezone" "+00" }}
       {{ $tzTime := (printf "2006-01-02T15:04:05%s:00" $tzOffset) | parseTime "rfc3339" }}
       {{ $timezone := $tzTime.Location }}
-      {{ $sortTime := .Options.StringOr "sort-time" "desc" }}
+      {{ $sortTime := .Options.StringOr "sort-time" "asc" }}
       {{ $coverProxy := .Options.StringOr "cover-proxy" "" }}
       {{ $size := .Options.StringOr "size" "medium" }}
       {{ $service := .Options.StringOr "service" "" }}
