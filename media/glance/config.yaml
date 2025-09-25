@@ -656,14 +656,11 @@ pages:
               - qmcgaw/gluetun # VPN Gateway
               - longhorn/longhorn # Storage
               - bitnami/sealed-secrets-controller # Secret Management
-              - prometheus/prometheus # Monitoring
-              - grafana/grafana # Visualization
-              - prometheus/node_exporter # System Metrics
               - blakeblackshear/frigate # CCTV/AI
               - pihole/pihole # DNS Ad Blocker
               - intel/intel-gpu-plugin # Intel GPU Device Plugin
               - traefik/traefik # Reverse Proxy
-            limit: 12
+            limit: 9
             collapse-after: 2
 
           - type: releases
@@ -676,14 +673,25 @@ pages:
               - linuxserver/sonarr # TV Shows
               - linuxserver/bazarr # Subtitles
               - linuxserver/prowlarr # Indexers
-              - linuxserver/qbittorrent # Torrents
-              - jesec/flood # Flood UI for qBittorrent
+              - engels74/qflood # Torrent Client UI
               - linuxserver/sabnzbd # Usenet
               - golift/notifiarr # Notifications
               - cleanuparr/cleanuparr # Media Cleanup
               - huntarr/huntarr # Duplicate Hunter
               - thephaseless/byparr # Prowlarr Bypass
-            limit: 14
+            limit: 12
+            collapse-after: 2
+
+          - type: releases
+            title: Monitoring & Exporters
+            repositories:
+              - prometheus/prometheus # Monitoring Core
+              - grafana/grafana # Visualization
+              - prometheus/node_exporter # System Metrics
+              - prometheus-community/kube-state-metrics # K8s Metrics
+              - ekofr/pihole-exporter # Pi-hole Metrics
+              - rhysbailey/prometheus-frigate-exporter # Frigate Metrics Exporter
+            limit: 6
             collapse-after: 2
 
           - <<: *media-widget
