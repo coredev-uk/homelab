@@ -701,6 +701,7 @@ pages:
 
           - type: releases
             title: Infrastructure & Core Updates
+            token: ${GITHUB_TOKEN}
             repositories:
               - glanceapp/glance # Dashboard
               - argoproj/argo-cd # GitOps
@@ -716,6 +717,7 @@ pages:
 
           - type: releases
             title: Media Stack Updates
+            token: ${GITHUB_TOKEN}
             repositories:
               - repository: jellyfin/jellyfin # Media Server
                 include-prereleases: true
@@ -735,6 +737,7 @@ pages:
 
           - type: releases
             title: Monitoring & Exporters
+            token: ${GITHUB_TOKEN}
             repositories:
               - prometheus/prometheus # Monitoring Core
               - grafana/grafana # Visualization

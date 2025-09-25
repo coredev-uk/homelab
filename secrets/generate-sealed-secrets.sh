@@ -97,7 +97,8 @@ create_sealed_secret_multi "glance-secrets" "media" "glance-sealed-secret.yaml" 
   "PIHOLE_WEBPASSWORD" "$PIHOLE_WEBPASSWORD" \
   "GLANCE_WEATHER_LOCATION" "$GLANCE_WEATHER_LOCATION" \
   "RADARR_API_KEY" "$RADARR_API_KEY" \
-  "SONARR_API_KEY" "$SONARR_API_KEY"
+  "SONARR_API_KEY" "$SONARR_API_KEY" \
+  "GITHUB_TOKEN" "$GITHUB_TOKEN"
 
 # Generate VPN SealedSecret for Gluetun
 create_sealed_secret "vpn-secrets" "media" "WIREGUARD_PRIVATE_KEY" "$WIREGUARD_PRIVATE_KEY" "vpn-sealed-secret.yaml"

@@ -49,6 +49,11 @@ spec:
                 secretKeyRef:
                   name: glance-secrets
                   key: RADARR_API_KEY
+            - name: GITHUB_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: glance-secrets
+                  key: GITHUB_TOKEN
           volumeMounts:
             - name: config
               mountPath: /app/config
