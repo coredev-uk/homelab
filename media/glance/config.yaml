@@ -669,7 +669,8 @@ pages:
           - type: releases
             title: Media Stack Updates
             repositories:
-              - jellyfin/jellyfin # Media Server
+              - repository: jellyfin/jellyfin # Media Server
+                include-prerelease: true
               - fallenbagel/jellyseerr # Request Management
               - linuxserver/radarr # Movies
               - linuxserver/sonarr # TV Shows
@@ -679,7 +680,6 @@ pages:
               - jesec/flood # Flood UI for qBittorrent
               - linuxserver/sabnzbd # Usenet
               - golift/notifiarr # Notifications
-              - flaresolverr/flaresolverr # Cloudflare Bypass
               - cleanuparr/cleanuparr # Media Cleanup
               - huntarr/huntarr # Duplicate Hunter
               - thephaseless/byparr # Prowlarr Bypass
