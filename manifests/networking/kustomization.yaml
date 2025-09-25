@@ -5,7 +5,7 @@ resources:
   - media-ingressroute.yaml
   - media-certificate.yaml
   - dns-ingress.yaml
-  - security-ingress.yaml
+  - frigate-ingressroute.yaml
   - security-certificate.yaml
   - argocd-ingressroute.yaml
   - argocd-certificate.yaml
