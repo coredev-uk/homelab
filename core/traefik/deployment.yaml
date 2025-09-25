@@ -18,51 +18,51 @@ spec:
       serviceAccountName: traefik
       automountServiceAccountToken: true
       containers:
-      - name: traefik
-        image: traefik:v3.5
-        args:
-          - --global.checknewversion=false
-          - --global.sendanonymoususage=false
-          - --entrypoints.web.address=:80
-          - --entrypoints.websecure.address=:443
-          - --entrypoints.traefik.address=:8080
-          - --entryPoints.web.forwardedHeaders.trustedIPs=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
-          - --entryPoints.websecure.forwardedHeaders.trustedIPs=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
-          - --entryPoints.web.forwardedHeaders.insecure=false
-          - --entryPoints.websecure.forwardedHeaders.insecure=false
-          - --api.dashboard=true
-          - --api.insecure=true
-          - --providers.kubernetesIngress=true
-          - --providers.kubernetesIngress.ingressEndpoint.publishedService=traefik/traefik
-          - --providers.kubernetesCRD=true
-          - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
-          - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
-          - --certificatesresolvers.letsencrypt.acme.email=admin@coredev.uk
-          - --certificatesresolvers.letsencrypt.acme.storage=/data/acme.json
-          - --metrics.prometheus=true
-          - --metrics.prometheus.addEntryPointsLabels=true
-          - --metrics.prometheus.addServicesLabels=true
-        ports:
-        - name: web
-          containerPort: 80
-        - name: websecure
-          containerPort: 443
         - name: traefik
-          containerPort: 8080
-        resources:
-          requests:
-            memory: "128Mi"
-            cpu: "100m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-        volumeMounts:
-        - name: data
-          mountPath: /data
+          image: traefik:v3.5
+          args:
+            - --global.checknewversion=false
+            - --global.sendanonymoususage=false
+            - --entrypoints.web.address=:80
+            - --entrypoints.websecure.address=:443
+            - --entrypoints.traefik.address=:8080
+            - --entryPoints.web.forwardedHeaders.trustedIPs=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+            - --entryPoints.websecure.forwardedHeaders.trustedIPs=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+            - --entryPoints.web.forwardedHeaders.insecure=false
+            - --entryPoints.websecure.forwardedHeaders.insecure=false
+            - --api.dashboard=true
+            - --api.insecure=true
+            - --providers.kubernetesIngress=true
+            - --providers.kubernetesIngress.ingressEndpoint.publishedService=traefik/traefik
+            - --providers.kubernetesCRD=true
+            - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
+            - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
+            - --certificatesresolvers.letsencrypt.acme.email=admin@coredev.uk
+            - --certificatesresolvers.letsencrypt.acme.storage=/data/acme.json
+            - --metrics.prometheus=true
+            - --metrics.prometheus.addEntryPointsLabels=true
+            - --metrics.prometheus.addServicesLabels=true
+          ports:
+            - name: web
+              containerPort: 80
+            - name: websecure
+              containerPort: 443
+            - name: traefik
+              containerPort: 8080
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          volumeMounts:
+            - name: data
+              mountPath: /data
       volumes:
-      - name: data
-        persistentVolumeClaim:
-          claimName: traefik-data
+        - name: data
+          persistentVolumeClaim:
+            claimName: traefik-data
 ---
 apiVersion: v1
 kind: Namespace
@@ -89,60 +89,60 @@ kind: ClusterRole
 metadata:
   name: traefik
 rules:
-- apiGroups:
-  - ""
-  resources:
-  - services
-  - endpoints
-  - secrets
-  - configmaps
-  - nodes
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - discovery.k8s.io
-  resources:
-  - endpointslices
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - extensions
-  - networking.k8s.io
-  resources:
-  - ingresses
-  - ingressclasses
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - extensions
-  - networking.k8s.io
-  resources:
-  - ingresses/status
-  verbs:
-  - update
-- apiGroups:
-  - traefik.io
-  resources:
-  - middlewares
-  - middlewaretcps
-  - ingressroutes
-  - traefikservices
-  - ingressroutetcps
-  - ingressrouteudps
-  - tlsoptions
-  - tlsstores
-  - serverstransports
-  - serverstransporttcps
-  verbs:
-  - get
-  - list
-  - watch
+  - apiGroups:
+      - ""
+    resources:
+      - services
+      - endpoints
+      - secrets
+      - configmaps
+      - nodes
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - discovery.k8s.io
+    resources:
+      - endpointslices
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - extensions
+      - networking.k8s.io
+    resources:
+      - ingresses
+      - ingressclasses
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - extensions
+      - networking.k8s.io
+    resources:
+      - ingresses/status
+    verbs:
+      - update
+  - apiGroups:
+      - traefik.io
+    resources:
+      - middlewares
+      - middlewaretcps
+      - ingressroutes
+      - traefikservices
+      - ingressroutetcps
+      - ingressrouteudps
+      - tlsoptions
+      - tlsstores
+      - serverstransports
+      - serverstransporttcps
+    verbs:
+      - get
+      - list
+      - watch
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -153,9 +153,9 @@ roleRef:
   kind: ClusterRole
   name: traefik
 subjects:
-- kind: ServiceAccount
-  name: traefik
-  namespace: traefik
+  - kind: ServiceAccount
+    name: traefik
+    namespace: traefik
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -164,7 +164,7 @@ metadata:
   namespace: traefik
 spec:
   accessModes:
-  - ReadWriteOnce
+    - ReadWriteOnce
   storageClassName: longhorn
   resources:
     requests:

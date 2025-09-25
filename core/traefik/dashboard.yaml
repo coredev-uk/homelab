@@ -5,10 +5,11 @@ metadata:
   namespace: traefik
 spec:
   entryPoints:
-  - web
+    - web
   routes:
-  - match: Host(`traefik.home.coredev.uk`)
-    kind: Rule
-    services:
-    - name: api@internal
-      kind: TraefikService
+    - match: Host(`traefik.home.coredev.uk`)
+      kind: Rule
+      services:
+        - name: api@internal
+          kind: TraefikService
+
