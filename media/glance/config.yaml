@@ -464,7 +464,7 @@ custom-widgets:
       {{ end }}
 
 pages:
-  - name: Homelab
+  - name: Home
     columns:
       - size: small
         widgets:
@@ -473,18 +473,6 @@ pages:
           - type: weather
             location: ${GLANCE_WEATHER_LOCATION}
             show-area-name: true
-
-          - type: dns-stats
-            service: pihole-v6
-            url: http://pihole-web.dns
-            username: admin
-            password: ${PIHOLE_PASSWORD}
-
-          - type: server-stats
-            title: Server Performance
-            servers:
-              - type: local
-                name: Homelab Server
 
           - type: markets
             title: Portfolio
@@ -503,49 +491,6 @@ pages:
                 name: Bitcoin
               - symbol: ETH-USD
                 name: Ethereum
-
-          - type: custom-api
-            title: VPN Status
-            cache: 1m
-            url: http://gluetun-media.media:8000/v1/publicip/ip
-            subrequests:
-              port-status:
-                url: http://gluetun-media.media:8000/v1/openvpn/portforwarded
-            template: |
-              {{ if eq .Response.StatusCode 200 }}
-                {{ $ip := (.JSON.String "public_ip") }}
-                {{ $city := (.JSON.String "city") }}
-                {{ $country := (.JSON.String "country") }}
-                {{ $portRequest := .Subrequest "port-status" }}
-                {{ if eq $ip "" }}
-                 <div>
-                   <div class="color-highlight size-h4">
-                     <span class="color-negative">Disconnected ●</span> 
-                   </div>
-                 </div>
-                {{ else }}
-                 <div>
-                   <div class="color-highlight size-h4">
-                     <span class="color-positive">Connected ●</span> 
-                   </div>
-                   <div class="size-h6">{{ $ip }} - {{ $city }}, {{ $country }}</div>
-                 {{ if eq $portRequest.Response.StatusCode 200 }}
-                     {{ $forwardedPort := $portRequest.JSON.Int "port" }}
-                     {{ if eq $forwardedPort 0 }}
-                       <div class="size-h6 color-warning">Port: Waiting for assignment...</div>
-                     {{ else }}
-                       <div class="size-h6 color-positive">Port: {{ $forwardedPort }}</div>
-                     {{ end }}
-                   {{ else }}
-                     <div class="size-h6 color-negative">Port: Check failed</div>
-                   {{ end }}
-                 </div>
-                {{ end }}
-              {{ else }}
-               <div class="color-negative size-h4">
-                 VPN: Error {{ .Response.StatusCode }}
-               </div>
-              {{ end }}
 
       - size: full
         widgets:
@@ -634,6 +579,112 @@ pages:
                 title: "9to5Mac"
             limit: 8
 
+          - type: to-do
+
+          - type: videos
+            title: Video Feed
+            channels:
+              - UCeeFfhMcJa1kjtfZAGskOCA # Tech Linked
+              - UCHnyfMqiRRG1u-2MsSQLbXA # Veritasium
+              - UCsBjURrPoezykLs9EqgamOA # Fireship
+              - UCUyeluBRhGPCW4rPe_UvBZQ # ThePrimeagen
+            limit: 8
+            collapse-after: 4
+            style: horizontal-cards
+
+      - size: small
+        widgets:
+          - <<: *media-widget
+            title: Movie Releases
+            title-url: "https://radarr.home.coredev.uk"
+            cache: 30m
+            options:
+              service: radarr
+              type: upcoming
+              size: small
+              collapse-after: 2
+              show-grabbed: false
+              interval: 20
+              timezone: "+00"
+              api-base-url: "http://radarr.media:7878"
+              key: ${RADARR_API_KEY}
+              url: "https://radarr.home.coredev.uk"
+
+          - <<: *media-widget
+            title: TV Releases
+            title-url: "https://sonarr.home.coredev.uk"
+            cache: 30m
+            options:
+              service: sonarr
+              type: upcoming
+              size: small
+              collapse-after: 2
+              show-grabbed: false
+              interval: 20
+              api-base-url: "http://sonarr.media:8989"
+              key: ${SONARR_API_KEY}
+              url: "https://sonarr.home.coredev.uk"
+              timezone: "+00"
+
+          - type: dns-stats
+            service: pihole-v6
+            url: http://pihole-web.dns
+            username: admin
+            password: ${PIHOLE_PASSWORD}
+
+          - type: server-stats
+            title: Server Performance
+            servers:
+              - type: local
+                name: Homelab Server
+
+          - type: custom-api
+            title: VPN Status
+            cache: 1m
+            url: http://gluetun-media.media:8000/v1/publicip/ip
+            subrequests:
+              port-status:
+                url: http://gluetun-media.media:8000/v1/openvpn/portforwarded
+            template: |
+              {{ if eq .Response.StatusCode 200 }}
+                {{ $ip := (.JSON.String "public_ip") }}
+                {{ $city := (.JSON.String "city") }}
+                {{ $country := (.JSON.String "country") }}
+                {{ $portRequest := .Subrequest "port-status" }}
+                {{ if eq $ip "" }}
+                 <div>
+                   <div class="color-highlight size-h4">
+                     <span class="color-negative">Disconnected ●</span> 
+                   </div>
+                 </div>
+                {{ else }}
+                 <div>
+                   <div class="color-highlight size-h4">
+                     <span class="color-positive">Connected ●</span> 
+                   </div>
+                   <div class="size-h6">{{ $ip }} - {{ $city }}, {{ $country }}</div>
+                 {{ if eq $portRequest.Response.StatusCode 200 }}
+                     {{ $forwardedPort := $portRequest.JSON.Int "port" }}
+                     {{ if eq $forwardedPort 0 }}
+                       <div class="size-h6 color-warning">Port: Waiting for assignment...</div>
+                     {{ else }}
+                       <div class="size-h6 color-positive">Port: {{ $forwardedPort }}</div>
+                     {{ end }}
+                   {{ else }}
+                     <div class="size-h6 color-negative">Port: Check failed</div>
+                   {{ end }}
+                 </div>
+                {{ end }}
+              {{ else }}
+               <div class="color-negative size-h4">
+                 VPN: Error {{ .Response.StatusCode }}
+               </div>
+              {{ end }}
+
+  - name: Monitoring
+    columns:
+      - size: full
+        widgets:
           - type: extension
             title: Services Status
             url: http://glance-k8s.media:8080/extension/apps
@@ -667,7 +718,7 @@ pages:
             title: Media Stack Updates
             repositories:
               - repository: jellyfin/jellyfin # Media Server
-                include-prerelease: true
+                include-prereleases: true
               - fallenbagel/jellyseerr # Request Management
               - linuxserver/radarr # Movies
               - linuxserver/sonarr # TV Shows
@@ -693,50 +744,6 @@ pages:
               - rhysbailey/prometheus-frigate-exporter # Frigate Metrics Exporter
             limit: 6
             collapse-after: 2
-
-          - <<: *media-widget
-            title: Movie Releases
-            title-url: "https://radarr.home.coredev.uk"
-            cache: 30m
-            options:
-              service: radarr
-              type: upcoming
-              size: medium
-              collapse-after: 3
-              show-grabbed: false
-              interval: 20
-              timezone: "+00"
-              api-base-url: "http://radarr.media:7878"
-              key: ${RADARR_API_KEY}
-              url: "https://radarr.home.coredev.uk"
-
-          # Sonarr Media Release Widget
-          - <<: *media-widget
-            title: TV Releases
-            title-url: "https://sonarr.home.coredev.uk"
-            cache: 30m
-            options:
-              service: sonarr
-              type: upcoming
-              size: medium
-              collapse-after: 3
-              show-grabbed: false
-              interval: 20
-              api-base-url: "http://sonarr.media:8989"
-              key: ${SONARR_API_KEY}
-              url: "https://sonarr.home.coredev.uk"
-              timezone: "+00"
-
-          - type: videos
-            title: Video Feed
-            channels:
-              - UCeeFfhMcJa1kjtfZAGskOCA # Tech Linked
-              - UCHnyfMqiRRG1u-2MsSQLbXA # Veritasium
-              - UCsBjURrPoezykLs9EqgamOA # Fireship
-              - UCUyeluBRhGPCW4rPe_UvBZQ # ThePrimeagen
-            limit: 8
-            collapse-after: 4
-            style: horizontal-cards
 
   - name: Formula 1
     columns:

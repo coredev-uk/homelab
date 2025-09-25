@@ -16,7 +16,7 @@
       "type": "stat",
       "targets": [
         {
-          "expr": "kube_deployment_status_replicas{deployment=\"frigate\", namespace=\"security\"}",
+          "expr": "up{job=\"frigate\"}",
           "legendFormat": "Frigate"
         }
       ],
@@ -32,10 +32,11 @@
           "mappings": [
             {"options": {"0": {"text": "Down"}}, "type": "value"},
             {"options": {"1": {"text": "Up"}}, "type": "value"}
-          ]
+          ],
+          "noValue": "Down"
         }
       },
-      "gridPos": {"h": 4, "w": 8, "x": 0, "y": 0}
+      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0}
     },
     {
       "id": 2,
@@ -62,7 +63,7 @@
           ]
         }
       },
-      "gridPos": {"h": 4, "w": 8, "x": 8, "y": 0}
+      "gridPos": {"h": 4, "w": 6, "x": 6, "y": 0}
     },
     {
       "id": 3,
@@ -79,10 +80,78 @@
           "color": {"mode": "palette-classic"}
         }
       },
-      "gridPos": {"h": 4, "w": 8, "x": 16, "y": 0}
+      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 0}
     },
     {
       "id": 4,
+      "title": "Detection Events (24h)",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "sum(increase(frigate_camera_events[24h]))",
+          "legendFormat": "Total Events"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "green", "value": 0},
+              {"color": "yellow", "value": 50},
+              {"color": "red", "value": 200}
+            ]
+          }
+        }
+      },
+      "gridPos": {"h": 4, "w": 6, "x": 18, "y": 0}
+    },
+    {
+      "id": 5,
+      "title": "Detection Events by Object Type",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "increase(frigate_camera_events[5m])",
+          "legendFormat": "{{label}} ({{camera}})"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "short"
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4}
+    },
+    {
+      "id": 6,
+      "title": "Camera Performance (FPS)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "frigate_camera_fps",
+          "legendFormat": "{{camera_name}} Camera FPS"
+        },
+        {
+          "expr": "frigate_detection_fps",
+          "legendFormat": "{{camera_name}} Detection FPS"
+        },
+        {
+          "expr": "frigate_process_fps",
+          "legendFormat": "{{camera_name}} Process FPS"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "short"
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4}
+    },
+    {
+      "id": 7,
       "title": "Certificate Expiry",
       "type": "table",
       "targets": [
@@ -122,46 +191,77 @@
           }
         }
       ],
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4}
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 12}
     },
     {
-      "id": 5,
-      "title": "Failed Authentication Attempts",
+      "id": 8,
+      "title": "Frigate CPU Utilization",
       "type": "timeseries",
       "targets": [
         {
-          "expr": "increase(kube_pod_container_status_restarts_total{namespace=~\"traefik.*|ingress.*\"}[5m]) > 0",
-          "legendFormat": "{{namespace}} Authentication Issues"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "color": {"mode": "palette-classic"}
-        }
-      },
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4}
-    },
-    {
-      "id": 6,
-      "title": "Intel GPU Utilization (Frigate)",
-      "type": "timeseries",
-      "targets": [
+          "expr": "frigate_cpu_usage_percent{type=\"Camera\"}",
+          "legendFormat": "{{name}} CPU"
+        },
         {
-          "expr": "kube_pod_container_resource_requests{resource=\"cpu\", namespace=\"security\", pod=~\"frigate.*\"} * 100",
-          "legendFormat": "CPU Usage %"
+          "expr": "frigate_cpu_usage_percent{type=\"Detector\"}",
+          "legendFormat": "{{name}} Detector CPU"
         }
       ],
       "fieldConfig": {
         "defaults": {
           "unit": "percent",
           "min": 0,
-          "max": 100
+          "color": {"mode": "palette-classic"}
         }
       },
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12}
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 12}
     },
     {
-      "id": 7,
+      "id": 10,
+      "title": "Storage Utilization",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "(frigate_storage_used_bytes / frigate_storage_total_bytes) * 100",
+          "legendFormat": "{{storage}} Usage %"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "steps": [
+              {"color": "green", "value": 0},
+              {"color": "yellow", "value": 70},
+              {"color": "red", "value": 90}
+            ]
+          }
+        }
+      },
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 12}
+    },
+    {
+      "id": 11,
+      "title": "Detection Performance",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "frigate_detector_inference_speed_seconds",
+          "legendFormat": "{{name}} Inference Time"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "color": {"mode": "palette-classic"}
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 20}
+    },
+    {
+      "id": 12,
       "title": "Pod Restart Count",
       "type": "timeseries",
       "targets": [
@@ -175,7 +275,7 @@
           "color": {"mode": "palette-classic"}
         }
       },
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12}
+      "gridPos": {"h": 6, "w": 24, "x": 0, "y": 28}
     }
   ]
 }
