@@ -110,7 +110,7 @@ spec:
 
             # Reduce frequency for complexity
             - name: WIREGUARD_MTU
-              value: 1380
+              value: "1380"
 
           volumeMounts:
             - name: gluetun-auth-config
