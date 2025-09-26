@@ -108,6 +108,10 @@ spec:
             - name: DNS_SERVERS
               value: "1.1.1.1,1.0.0.1"
 
+            # Reduce frequency for complexity
+            - name: WIREGUARD_MTU
+              value: 1380
+
           volumeMounts:
             - name: gluetun-auth-config
               mountPath: /gluetun/auth
