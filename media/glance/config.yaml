@@ -705,12 +705,12 @@ pages:
             repositories:
               - glanceapp/glance # Dashboard
               - argoproj/argo-cd # GitOps
-              - qmcgaw/gluetun # VPN Gateway
+              - qdm12/gluetun # VPN Gateway
               - longhorn/longhorn # Storage
-              - bitnami/sealed-secrets-controller # Secret Management
+              - bitnami-labs/sealed-secrets # Secret Management
               - blakeblackshear/frigate # CCTV/AI
-              - pihole/pihole # DNS Ad Blocker
-              - intel/intel-gpu-plugin # Intel GPU Device Plugin
+              - pi-hole/pi-hole # DNS Ad Blocker
+              - intel/intel-device-plugins-for-kubernetes # Intel GPU Device Plugin
               - traefik/traefik # Reverse Proxy
             limit: 9
             collapse-after: 2
@@ -722,8 +722,8 @@ pages:
               - repository: jellyfin/jellyfin # Media Server
                 include-prereleases: true
               - fallenbagel/jellyseerr # Request Management
-              - linuxserver/radarr # Movies
-              - linuxserver/sonarr # TV Shows
+              - linuxserver/docker-radarr # Movies
+              - linuxserver/docker-sonarr # TV Shows
               - linuxserver/bazarr # Subtitles
               - linuxserver/prowlarr # Indexers
               - engels74/qflood # Torrent Client UI
@@ -742,7 +742,7 @@ pages:
               - prometheus/prometheus # Monitoring Core
               - grafana/grafana # Visualization
               - prometheus/node_exporter # System Metrics
-              - prometheus-community/kube-state-metrics # K8s Metrics
+              - kubernetes/kube-state-metrics # K8s Metrics
               - ekofr/pihole-exporter # Pi-hole Metrics
               - rhysbailey/prometheus-frigate-exporter # Frigate Metrics Exporter
             limit: 6
