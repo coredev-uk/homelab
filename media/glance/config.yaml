@@ -727,8 +727,7 @@ pages:
               - linuxserver/docker-bazarr # Subtitles
               - linuxserver/docker-prowlarr # Indexers
               - linuxserver/docker-sabnzbd # Usenet
-              - jesec/flood # Torrent Client UI
-              - qbittorrent/qBittorrent # Torrent Client Backend
+              - dockerhub:engels74/qflood # Torrent Client UI
               - Notifiarr/notifiarr # Notifications
               - cleanuparr/cleanuparr # Media Cleanup
               - plexguide/Huntarr.io # Duplicate Hunter
@@ -745,7 +744,7 @@ pages:
               - prometheus/node_exporter # System Metrics
               - kubernetes/kube-state-metrics # K8s Metrics
               - eko/pihole-exporter # Pi-hole Metrics
-              - bairhys/prometheus-frigate-exporter # Frigate Metrics Exporter
+              - dockerhub:rhysbailey/prometheus-frigate-exporter # Frigate Metrics Exporter
             limit: 6
             collapse-after: 2
 
