@@ -724,13 +724,14 @@ pages:
               - fallenbagel/jellyseerr # Request Management
               - linuxserver/docker-radarr # Movies
               - linuxserver/docker-sonarr # TV Shows
-              - linuxserver/bazarr # Subtitles
-              - linuxserver/prowlarr # Indexers
-              - engels74/qflood # Torrent Client UI
-              - linuxserver/sabnzbd # Usenet
-              - golift/notifiarr # Notifications
+              - linuxserver/docker-bazarr # Subtitles
+              - linuxserver/docker-prowlarr # Indexers
+              - linuxserver/docker-sabnzbd # Usenet
+              - jesec/flood # Torrent Client UI
+              - qbittorrent/qBittorrent # Torrent Client Backend
+              - Notifiarr/notifiarr # Notifications
               - cleanuparr/cleanuparr # Media Cleanup
-              - huntarr/huntarr # Duplicate Hunter
+              - plexguide/Huntarr.io # Duplicate Hunter
               - thephaseless/byparr # Prowlarr Bypass
             limit: 12
             collapse-after: 2
@@ -743,8 +744,8 @@ pages:
               - grafana/grafana # Visualization
               - prometheus/node_exporter # System Metrics
               - kubernetes/kube-state-metrics # K8s Metrics
-              - ekofr/pihole-exporter # Pi-hole Metrics
-              - rhysbailey/prometheus-frigate-exporter # Frigate Metrics Exporter
+              - eko/pihole-exporter # Pi-hole Metrics
+              - bairhys/prometheus-frigate-exporter # Frigate Metrics Exporter
             limit: 6
             collapse-after: 2
 
