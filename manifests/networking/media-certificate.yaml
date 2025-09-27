@@ -15,9 +15,9 @@ spec:
     - jellyfin.home.coredev.uk
     - jellyseerr.home.coredev.uk
     - glance.home.coredev.uk
-
     - cleanuparr.home.coredev.uk
     - huntarr.home.coredev.uk
     - prowlarr.home.coredev.uk
     - qbittorrent.home.coredev.uk
     - sabnzbd.home.coredev.uk
+    - notifiarr.home.coredev.uk
