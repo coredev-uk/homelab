@@ -30,8 +30,7 @@ spec:
             - --entryPoints.websecure.forwardedHeaders.trustedIPs=10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
             - --entryPoints.web.forwardedHeaders.insecure=false
             - --entryPoints.websecure.forwardedHeaders.insecure=false
-            - --api.dashboard=true
-            - --api.insecure=true
+            - --api.dashboard=false
             - --providers.kubernetesIngress=true
             - --providers.kubernetesIngress.ingressEndpoint.publishedService=traefik/traefik
             - --providers.kubernetesCRD=true
@@ -190,8 +189,4 @@ spec:
     - name: websecure
       port: 443
       targetPort: 443
-      protocol: TCP
-    - name: traefik
-      port: 8080
-      targetPort: 8080
       protocol: TCP

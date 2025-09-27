@@ -12,12 +12,20 @@
   "panels": [
     {
       "id": 1,
-      "title": "Frigate Status",
+      "title": "Security Services Status",
       "type": "stat",
       "targets": [
         {
           "expr": "up{job=\"frigate\"}",
           "legendFormat": "Frigate"
+        },
+        {
+          "expr": "up{job=\"sealed-secrets\"}",
+          "legendFormat": "Sealed Secrets"
+        },
+        {
+          "expr": "up{job=\"traefik\"}",
+          "legendFormat": "Traefik"
         }
       ],
       "fieldConfig": {
@@ -36,16 +44,48 @@
           "noValue": "Down"
         }
       },
-      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0}
+      "gridPos": {"h": 6, "w": 8, "x": 0, "y": 0}
     },
     {
       "id": 2,
-      "title": "Cert-Manager Status",
+      "title": "Pod Security Violations",
       "type": "stat",
       "targets": [
         {
-          "expr": "count(certmanager_certificate_ready_status) > 0",
-          "legendFormat": "Cert-Manager"
+          "expr": "increase(kube_pod_container_status_terminated_reason{reason=\"Error\"}[1h])",
+          "legendFormat": "Pod Failures"
+        },
+        {
+          "expr": "increase(kube_pod_status_phase{phase=\"Failed\"}[1h])",
+          "legendFormat": "Failed Pods"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "green", "value": 0},
+              {"color": "yellow", "value": 1},
+              {"color": "red", "value": 5}
+            ]
+          }
+        }
+      },
+      "gridPos": {"h": 6, "w": 8, "x": 8, "y": 0}
+    },
+    {
+      "id": 3,
+      "title": "TLS Certificates Status",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "count(certmanager_certificate_ready_status == 1)",
+          "legendFormat": "Ready Certs"
+        },
+        {
+          "expr": "count(certmanager_certificate_ready_status == 0)",
+          "legendFormat": "Failed Certs"
         }
       ],
       "fieldConfig": {
@@ -56,34 +96,77 @@
               {"color": "red", "value": null},
               {"color": "green", "value": 1}
             ]
-          },
-          "mappings": [
-            {"options": {"0": {"text": "Down"}}, "type": "value"},
-            {"options": {"1": {"text": "Up"}}, "type": "value"}
-          ]
+          }
         }
       },
-      "gridPos": {"h": 4, "w": 6, "x": 6, "y": 0}
+      "gridPos": {"h": 6, "w": 8, "x": 16, "y": 0}
     },
     {
-      "id": 3,
-      "title": "TLS Certificates",
-      "type": "stat",
+      "id": 4,
+      "title": "Network Policy Blocked Connections",
+      "type": "timeseries",
       "targets": [
         {
-          "expr": "count(certmanager_certificate_ready_status)",
-          "legendFormat": "Total Certs"
+          "expr": "increase(node_netstat_IcmpMsg_InType3[5m])",
+          "legendFormat": "ICMP Unreachable Messages"
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "color": {"mode": "palette-classic"}
+          "color": {"mode": "palette-classic"},
+          "unit": "short"
         }
       },
-      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 0}
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 6}
     },
     {
-      "id": 4,
+      "id": 5,
+      "title": "Container Privilege Escalation Attempts",
+      "type": "table",
+      "targets": [
+        {
+          "expr": "kube_pod_container_info{container!=\"POD\"}",
+          "legendFormat": "{{namespace}}/{{pod}}/{{container}}",
+          "format": "table",
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "red", "value": 1}
+            ]
+          }
+        }
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true,
+              "uid": true,
+              "created_by_kind": true,
+              "created_by_name": true
+            },
+            "renameByName": {
+              "namespace": "Namespace",
+              "pod": "Pod",
+              "container": "Container"
+            }
+          }
+        }
+      ],
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 6}
+    },
+    {
+      "id": 6,
       "title": "Detection Events (24h)",
       "type": "stat",
       "targets": [
@@ -104,54 +187,59 @@
           }
         }
       },
-      "gridPos": {"h": 4, "w": 6, "x": 18, "y": 0}
-    },
-    {
-      "id": 5,
-      "title": "Detection Events by Object Type",
-      "type": "timeseries",
-      "targets": [
-        {
-          "expr": "increase(frigate_camera_events[5m])",
-          "legendFormat": "{{label}} ({{camera}})"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "color": {"mode": "palette-classic"},
-          "unit": "short"
-        }
-      },
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4}
-    },
-    {
-      "id": 6,
-      "title": "Camera Performance (FPS)",
-      "type": "timeseries",
-      "targets": [
-        {
-          "expr": "frigate_camera_fps",
-          "legendFormat": "{{camera_name}} Camera FPS"
-        },
-        {
-          "expr": "frigate_detection_fps",
-          "legendFormat": "{{camera_name}} Detection FPS"
-        },
-        {
-          "expr": "frigate_process_fps",
-          "legendFormat": "{{camera_name}} Process FPS"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "color": {"mode": "palette-classic"},
-          "unit": "short"
-        }
-      },
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4}
+      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 14}
     },
     {
       "id": 7,
+      "title": "VPN Connection Status",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "up{job=\"gluetun\"}",
+          "legendFormat": "Gluetun VPN"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "green", "value": 1}
+            ]
+          },
+          "mappings": [
+            {"options": {"0": {"text": "Disconnected"}}, "type": "value"},
+            {"options": {"1": {"text": "Connected"}}, "type": "value"}
+          ]
+        }
+      },
+      "gridPos": {"h": 4, "w": 6, "x": 6, "y": 14}
+    },
+    {
+      "id": 8,
+      "title": "Failed Login Attempts",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "increase(traefik_service_request_duration_seconds_count{code=~\"4..\"}[5m])",
+          "legendFormat": "HTTP 4xx Errors"
+        },
+        {
+          "expr": "increase(traefik_service_request_duration_seconds_count{code=\"401\"}[5m])",
+          "legendFormat": "Unauthorized (401)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "short"
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 14}
+    },
+    {
+      "id": 9,
       "title": "Certificate Expiry",
       "type": "table",
       "targets": [
@@ -191,91 +279,122 @@
           }
         }
       ],
-      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 12}
-    },
-    {
-      "id": 8,
-      "title": "Frigate CPU Utilization",
-      "type": "timeseries",
-      "targets": [
-        {
-          "expr": "frigate_cpu_usage_percent{type=\"Camera\"}",
-          "legendFormat": "{{name}} CPU"
-        },
-        {
-          "expr": "frigate_cpu_usage_percent{type=\"Detector\"}",
-          "legendFormat": "{{name}} Detector CPU"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "min": 0,
-          "color": {"mode": "palette-classic"}
-        }
-      },
-      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 12}
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 18}
     },
     {
       "id": 10,
-      "title": "Storage Utilization",
+      "title": "Container Resource Usage Violations",
       "type": "timeseries",
       "targets": [
         {
-          "expr": "(frigate_storage_used_bytes / frigate_storage_total_bytes) * 100",
-          "legendFormat": "{{storage}} Usage %"
+          "expr": "(container_memory_working_set_bytes / container_spec_memory_limit_bytes) * 100",
+          "legendFormat": "{{namespace}}/{{pod}} Memory %"
+        },
+        {
+          "expr": "(rate(container_cpu_usage_seconds_total[5m]) / container_spec_cpu_quota * container_spec_cpu_period) * 100",
+          "legendFormat": "{{namespace}}/{{pod}} CPU %"
         }
       ],
       "fieldConfig": {
         "defaults": {
           "unit": "percent",
           "min": 0,
-          "max": 100,
           "thresholds": {
             "steps": [
               {"color": "green", "value": 0},
-              {"color": "yellow", "value": 70},
-              {"color": "red", "value": 90}
+              {"color": "yellow", "value": 80},
+              {"color": "red", "value": 95}
             ]
           }
         }
       },
-      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 12}
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 18}
     },
     {
       "id": 11,
-      "title": "Detection Performance",
+      "title": "Pod Restarts (Security Namespaces)",
       "type": "timeseries",
       "targets": [
         {
-          "expr": "frigate_detector_inference_speed_seconds",
-          "legendFormat": "{{name}} Inference Time"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "s",
-          "color": {"mode": "palette-classic"}
-        }
-      },
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 20}
-    },
-    {
-      "id": 12,
-      "title": "Pod Restart Count",
-      "type": "timeseries",
-      "targets": [
-        {
-          "expr": "increase(kube_pod_container_status_restarts_total{namespace=~\"dns|security|cert-manager\"}[1h])",
+          "expr": "increase(kube_pod_container_status_restarts_total{namespace=~\"dns|security|cert-manager|traefik|sealed-secrets\"}[1h])",
           "legendFormat": "{{namespace}}/{{pod}}"
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "color": {"mode": "palette-classic"}
+          "color": {"mode": "palette-classic"},
+          "thresholds": {
+            "steps": [
+              {"color": "green", "value": 0},
+              {"color": "yellow", "value": 1},
+              {"color": "red", "value": 3}
+            ]
+          }
         }
       },
-      "gridPos": {"h": 6, "w": 24, "x": 0, "y": 28}
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 18}
+    },
+    {
+      "id": 12,
+      "title": "Sealed Secrets Controller Health",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "sealed_secrets_controller_unseal_errors_total",
+          "legendFormat": "Unseal Errors"
+        },
+        {
+          "expr": "sealed_secrets_controller_unseal_requests_total",
+          "legendFormat": "Unseal Requests"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "palette-classic"},
+          "unit": "short"
+        }
+      },
+      "gridPos": {"h": 6, "w": 12, "x": 0, "y": 26}
+    },
+    {
+      "id": 13,
+      "title": "Network Connections by Service",
+      "type": "table",
+      "targets": [
+        {
+          "expr": "sum by (service) (traefik_service_open_connections)",
+          "legendFormat": "{{service}}",
+          "format": "table",
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "green", "value": 0},
+              {"color": "yellow", "value": 100},
+              {"color": "red", "value": 500}
+            ]
+          }
+        }
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "renameByName": {
+              "service": "Service",
+              "Value": "Open Connections"
+            }
+          }
+        }
+      ],
+      "gridPos": {"h": 6, "w": 12, "x": 12, "y": 26}
     }
   ]
 }

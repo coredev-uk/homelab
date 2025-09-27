@@ -13,3 +13,6 @@ resources:
   - pihole-middleware.yaml
   - ip-forwarding-middleware.yaml
   - https-redirect-middleware.yaml
+  - network-policies-media.yaml
+  - network-policies-monitoring.yaml
+  - network-policies-security.yaml

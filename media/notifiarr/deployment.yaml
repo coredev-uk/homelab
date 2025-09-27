@@ -29,7 +29,13 @@ spec:
         - name: notifiarr
           image: golift/notifiarr:0.8.3
           securityContext:
-            privileged: true # Required for smartctl drive monitoring
+            capabilities:
+              add:
+                - SYS_RAWIO  # For smartctl drive monitoring
+                - DAC_OVERRIDE  # For accessing system files
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false  # App needs to write to /tmp
+            runAsNonRoot: false  # Needs root for system monitoring
           ports:
             - containerPort: 5454
           env:
