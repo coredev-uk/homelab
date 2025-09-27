@@ -5,7 +5,6 @@ namespace: monitoring
 
 resources:
   - namespace.yaml
-  - node-exporter/
   - kube-state-metrics/
   - prometheus/
   - grafana/
