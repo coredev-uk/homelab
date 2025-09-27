@@ -2,13 +2,13 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: notifiarr
-  namespace: media
+  namespace: system-monitoring
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: notifiarr
-  namespace: media
+  namespace: system-monitoring
   labels:
     app: notifiarr
   annotations:
@@ -43,6 +43,9 @@ spec:
             capabilities:
               drop:
                 - ALL
+              add:
+                - SYS_RAWIO
+                - DAC_OVERRIDE
           ports:
             - containerPort: 5454
           env:
@@ -60,6 +63,15 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /config
+            - name: proc
+              mountPath: /proc
+              readOnly: true
+            - name: sys
+              mountPath: /sys
+              readOnly: true
+            - name: utmp
+              mountPath: /var/run/utmp
+              readOnly: true
           resources:
             requests:
               memory: "128Mi"
@@ -71,12 +83,24 @@ spec:
         - name: config
           persistentVolumeClaim:
             claimName: notifiarr-config
+        - name: proc
+          hostPath:
+            path: /proc
+            type: Directory
+        - name: sys
+          hostPath:
+            path: /sys
+            type: Directory
+        - name: utmp
+          hostPath:
+            path: /var/run/utmp
+            type: File
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: notifiarr-config
-  namespace: media
+  namespace: system-monitoring
 spec:
   accessModes:
     - ReadWriteOnce
@@ -89,7 +113,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: notifiarr
-  namespace: media
+  namespace: system-monitoring
 spec:
   selector:
     app: notifiarr

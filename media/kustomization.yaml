@@ -8,7 +8,6 @@ resources:
   - jellyfin/
   - jellyseerr/
   - glance/
-  - notifiarr/
   - cleanuparr/
   - huntarr/
   - prowlarr/
