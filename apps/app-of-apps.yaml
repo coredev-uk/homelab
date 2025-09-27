@@ -133,23 +133,3 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: system-monitoring
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/coredev-uk/homelab
-    targetRevision: HEAD
-    path: system-monitoring
-  destination:
-    server: https://kubernetes.default.svc
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true

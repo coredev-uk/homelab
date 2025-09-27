@@ -12,3 +12,5 @@ resources:
   - huntarr/
   - prowlarr/
   - gluetun-media/
+  - notifiarr/
+  - node-exporter/

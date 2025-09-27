@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: node-exporter
-  namespace: system-monitoring
+  namespace: media
   labels:
     app: node-exporter
   annotations:
