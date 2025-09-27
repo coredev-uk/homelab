@@ -47,11 +47,7 @@ spec:
       services:
         - name: glance
           port: 8080
-    - match: Host(`notifiarr.home.coredev.uk`)
-      kind: Rule
-      services:
-        - name: notifiarr
-          port: 5454
+
     - match: Host(`cleanuparr.home.coredev.uk`)
       kind: Rule
       services:
@@ -132,13 +128,7 @@ spec:
       services:
         - name: glance
           port: 8080
-    - match: Host(`notifiarr.home.coredev.uk`)
-      kind: Rule
-      middlewares:
-        - name: https-redirect
-      services:
-        - name: notifiarr
-          port: 5454
+
     - match: Host(`cleanuparr.home.coredev.uk`)
       kind: Rule
       middlewares:

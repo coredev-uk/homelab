@@ -4,6 +4,8 @@ kind: Kustomization
 resources:
   - media-ingressroute.yaml
   - media-certificate.yaml
+  - system-monitoring-ingressroute.yaml
+  - system-monitoring-certificate.yaml
   - dns-ingress.yaml
   - frigate-ingressroute.yaml
   - security-certificate.yaml
