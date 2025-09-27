@@ -1,3 +1,9 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: notifiarr
+  namespace: media
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,7 +25,11 @@ spec:
     metadata:
       labels:
         app: notifiarr
+      annotations:
+        # Pod-level exemption for system monitoring capabilities
+        pod-security.kubernetes.io/enforce-policy: "privileged"
     spec:
+      serviceAccountName: notifiarr
       hostname: hyperion-cluster-1
       securityContext:
         runAsUser: 1000
