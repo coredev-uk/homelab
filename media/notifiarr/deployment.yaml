@@ -25,27 +25,24 @@ spec:
     metadata:
       labels:
         app: notifiarr
-      annotations:
-        # Pod-level exemption for system monitoring capabilities
-        pod-security.kubernetes.io/enforce-policy: "privileged"
     spec:
       serviceAccountName: notifiarr
-      hostname: hyperion-cluster-1
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000
+        runAsNonRoot: true
       containers:
         - name: notifiarr
           image: golift/notifiarr:0.8.3
           securityContext:
-            capabilities:
-              add:
-                - SYS_RAWIO  # For smartctl drive monitoring
-                - DAC_OVERRIDE  # For accessing system files
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false  # App needs to write to /tmp
-            runAsNonRoot: false  # Needs root for system monitoring
+            readOnlyRootFilesystem: false
+            runAsNonRoot: true
+            runAsUser: 1000
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 5454
           env:
@@ -63,15 +60,6 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /config
-            - name: utmp
-              mountPath: /var/run/utmp
-              readOnly: true
-            - name: proc
-              mountPath: /host/proc
-              readOnly: true
-            - name: sys
-              mountPath: /host/sys
-              readOnly: true
           resources:
             requests:
               memory: "128Mi"
@@ -83,15 +71,6 @@ spec:
         - name: config
           persistentVolumeClaim:
             claimName: notifiarr-config
-        - name: utmp
-          hostPath:
-            path: /var/run/utmp
-        - name: proc
-          hostPath:
-            path: /proc
-        - name: sys
-          hostPath:
-            path: /sys
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
