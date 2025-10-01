@@ -105,9 +105,7 @@ spec:
               memory: "1Gi"
               cpu: "500m"
           securityContext:
-            capabilities:
-              add:
-                - NET_ADMIN
+            runAsNonRoot: false
         - name: pihole-exporter
           image: ekofr/pihole-exporter:v1.2.0
           ports:
