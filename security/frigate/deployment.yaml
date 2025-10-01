@@ -11,6 +11,7 @@ metadata:
     glance/url: "https://frigate.home.coredev.uk"
     glance/description: "CCTV & AI Detection"
 spec:
+  replicas: 0
   selector:
     matchLabels:
       app: frigate
