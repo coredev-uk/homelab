@@ -9,6 +9,8 @@ metadata:
     glance/description: "qBittorrent, SABnzbd via VPN"
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: gluetun-media
