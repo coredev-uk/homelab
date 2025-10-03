@@ -135,16 +135,13 @@ spec:
         # Gluetun Exporter for Prometheus metrics
         - name: gluetun-exporter
           image: ghcr.io/thecfu/gluetun-exporter:0.1.1-standalone
-          ports:
-            - containerPort: 8001
-              name: metrics
           env:
             - name: GLUETUN_URL
               value: "http://localhost:8000"
             - name: EXPORTER_PORT
-              value: "8001"
+              value: "8002"
             - name: EXPORTER_BIND
-              value: "0.0.0.0"
+              value: "127.0.0.1"
             - name: EXPORTER_INTERVAL
               value: "30"
             - name: EXPORTER_DEBUG
@@ -156,17 +153,34 @@ spec:
             limits:
               memory: "64Mi"
               cpu: "50m"
+
+        # Nginx proxy to expose gluetun-exporter metrics externally
+        - name: metrics-proxy
+          image: nginx:alpine
+          ports:
+            - containerPort: 8001
+              name: metrics
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d
+          resources:
+            requests:
+              memory: "16Mi"
+              cpu: "5m"
+            limits:
+              memory: "32Mi"
+              cpu: "25m"
           livenessProbe:
             httpGet:
               path: /metrics
               port: 8001
-            initialDelaySeconds: 30
+            initialDelaySeconds: 10
             periodSeconds: 30
           readinessProbe:
             httpGet:
               path: /metrics
               port: 8001
-            initialDelaySeconds: 10
+            initialDelaySeconds: 5
             periodSeconds: 10
 
         # SABnzbd container using Gluetun network
@@ -281,3 +295,6 @@ spec:
         - name: tun-device
           hostPath:
             path: /dev/net/tun
+        - name: nginx-config
+          configMap:
+            name: nginx-metrics-proxy

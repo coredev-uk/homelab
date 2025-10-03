@@ -8,3 +8,4 @@ resources:
   - pvcs.yaml
   - deployment.yaml
   - services.yaml
+  - nginx-config.yaml
