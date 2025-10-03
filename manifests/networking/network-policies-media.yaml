@@ -44,9 +44,11 @@ spec:
     - podSelector:
         matchLabels:
           app: prometheus
-    ports:
-    - protocol: TCP
-      port: 9100
+     ports:
+     - protocol: TCP
+       port: 9100
+     - protocol: TCP
+       port: 8001
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
