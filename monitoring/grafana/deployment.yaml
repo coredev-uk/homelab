@@ -152,13 +152,3 @@ spec:
         - name: config-storage
           persistentVolumeClaim:
             claimName: grafana-config
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: grafana-dashboards-config
-  namespace: monitoring
-data:
-  dashboards.yaml: |
-    apiVersion: 1
-    providers:
