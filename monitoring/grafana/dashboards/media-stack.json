@@ -34,6 +34,69 @@
       "gridPos": {"h": 8, "w": 24, "x": 0, "y": 0}
     },
     {
+      "id": 7,
+      "title": "VPN Status",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "gluetun_vpn_status",
+          "legendFormat": "Connection Status"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "green", "value": 1}
+            ]
+          },
+          "mappings": [
+            {"options": {"0": {"text": "Disconnected"}}, "type": "value"},
+            {"options": {"1": {"text": "Connected"}}, "type": "value"}
+          ]
+        }
+      },
+      "gridPos": {"h": 4, "w": 8, "x": 0, "y": 8}
+    },
+    {
+      "id": 8,
+      "title": "VPN Location",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "gluetun_vpn_infos",
+          "legendFormat": "{{city}}, {{country}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "fixed", "fixedColor": "blue"},
+          "noValue": "No Data"
+        }
+      },
+      "gridPos": {"h": 4, "w": 8, "x": 8, "y": 8}
+    },
+    {
+      "id": 9,
+      "title": "VPN Public IP",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "gluetun_vpn_infos",
+          "legendFormat": "{{ip}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "fixed", "fixedColor": "purple"},
+          "noValue": "No Data"
+        }
+      },
+      "gridPos": {"h": 4, "w": 8, "x": 16, "y": 8}
+    },
+    {
       "id": 2,
       "title": "Storage Usage - Media",
       "type": "stat",
@@ -57,7 +120,7 @@
           }
         }
       },
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12}
     },
     {
       "id": 3,
@@ -78,7 +141,7 @@
           "unit": "bps"
         }
       },
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12}
     },
     {
       "id": 4,
@@ -95,7 +158,7 @@
           "unit": "percent"
         }
       },
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16}
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 20}
     },
     {
       "id": 5,
@@ -112,7 +175,7 @@
           "unit": "MiB"
         }
       },
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16}
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 20}
     },
     {
       "id": 6,
@@ -133,7 +196,7 @@
           "unit": "binBps"
         }
       },
-      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 24}
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 28}
     }
   ]
 }
