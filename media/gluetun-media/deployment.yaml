@@ -143,6 +143,8 @@ spec:
               value: "http://localhost:8000"
             - name: EXPORTER_PORT
               value: "8001"
+            - name: EXPORTER_BIND
+              value: "0.0.0.0"
             - name: EXPORTER_INTERVAL
               value: "30"
             - name: EXPORTER_DEBUG
