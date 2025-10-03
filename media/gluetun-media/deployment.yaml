@@ -146,9 +146,7 @@ spec:
             - name: EXPORTER_INTERVAL
               value: "30"
             - name: EXPORTER_DEBUG
-              value: "false"
-            - name: EXPORTER_ROLE
-              value: "glance"
+              value: "true"
           resources:
             requests:
               memory: "32Mi"
