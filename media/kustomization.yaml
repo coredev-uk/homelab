@@ -13,4 +13,3 @@ resources:
   - prowlarr/
   - gluetun-media/
   - notifiarr/
-  - node-exporter/
