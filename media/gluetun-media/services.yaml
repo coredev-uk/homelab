@@ -28,6 +28,9 @@ spec:
       targetPort: 8388
       protocol: UDP
       name: shadowsocks-udp
+    - port: 8001
+      targetPort: 8001
+      name: gluetun-metrics
 
 ---
 # Separate service for qBittorrent/qFlood for Glance integration

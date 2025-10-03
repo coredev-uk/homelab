@@ -195,7 +195,7 @@
       "type": "stat",
       "targets": [
         {
-          "expr": "up{job=\"gluetun\"}",
+          "expr": "gluetun_vpn_status",
           "legendFormat": "Gluetun VPN"
         }
       ],
@@ -215,6 +215,49 @@
         }
       },
       "gridPos": {"h": 4, "w": 6, "x": 6, "y": 14}
+    },
+    {
+      "id": 14,
+      "title": "VPN Public IP Info",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "gluetun_publicip_info",
+          "legendFormat": "{{country}} - {{city}}",
+          "format": "table",
+          "instant": true
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "green", "value": null}
+            ]
+          },
+          "noValue": "No VPN Data"
+        }
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true
+            },
+            "renameByName": {
+              "ip": "Public IP",
+              "country": "Country",
+              "city": "City"
+            }
+          }
+        }
+      ],
+      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 14}
     },
     {
       "id": 8,

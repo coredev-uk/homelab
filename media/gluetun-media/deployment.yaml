@@ -114,6 +114,10 @@ spec:
             - name: WIREGUARD_MTU
               value: "1380"
 
+            # Firewall Ports
+            - name: FIREWALL_INPUT_PORTS
+              value: "8080,8081,3000,8001"
+
           volumeMounts:
             - name: gluetun-auth-config
               mountPath: /gluetun/auth
@@ -127,6 +131,43 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "500m"
+
+        # Gluetun Exporter for Prometheus metrics
+        - name: gluetun-exporter
+          image: ghcr.io/thecfu/gluetun-exporter:latest
+          ports:
+            - containerPort: 8001
+              name: metrics
+          env:
+            - name: GLUETUN_URL
+              value: "http://localhost:8000"
+            - name: EXPORTER_PORT
+              value: "8001"
+            - name: EXPORTER_INTERVAL
+              value: "30"
+            - name: EXPORTER_DEBUG
+              value: "false"
+            - name: EXPORTER_ROLE
+              value: "glance"
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "10m"
+            limits:
+              memory: "64Mi"
+              cpu: "50m"
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 8001
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: 8001
+            initialDelaySeconds: 10
+            periodSeconds: 10
 
         # SABnzbd container using Gluetun network
         - name: sabnzbd

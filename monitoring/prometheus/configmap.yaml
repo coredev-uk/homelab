@@ -39,6 +39,12 @@ data:
         metrics_path: '/metrics'
         scrape_interval: 30s
 
+      - job_name: 'gluetun'
+        static_configs:
+          - targets: ['gluetun-media.media.svc.cluster.local:8001']
+        metrics_path: '/metrics'
+        scrape_interval: 30s
+
       - job_name: 'kubernetes-pods'
         kubernetes_sd_configs:
           - role: pod

@@ -40,11 +40,12 @@ metadata:
     component: auth
 data:
   config.toml: |
-    # Glance dashboard access - read-only monitoring
+    # Glance dashboard access and metrics exporter - read-only monitoring
     [[roles]]
     name = "glance"
     routes = [
       "GET /v1/publicip/ip",
-      "GET /v1/openvpn/portforwarded"
+      "GET /v1/openvpn/portforwarded",
+      "GET /v1/vpn/status"
     ]
     auth = "none"
