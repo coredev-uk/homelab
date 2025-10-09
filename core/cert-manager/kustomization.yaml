@@ -8,3 +8,4 @@ resources:
 
 patchesStrategicMerge:
   - cainjector-patch.yaml
+  - rbac-patch.yaml
