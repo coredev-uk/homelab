@@ -36,10 +36,13 @@ spec:
               "chown -R 1000:1000 /config /cache && chmod -R 755 /config /cache",
             ]
           volumeMounts:
-            - name: config
+            - name: storage
               mountPath: /config
-            - name: cache
+              subPath: config
+            - name: storage
               mountPath: /cache
+              subPath: cache
+              subPath: cache
           securityContext:
             runAsUser: 0
       containers:
@@ -73,10 +76,12 @@ spec:
             initialDelaySeconds: 30
             periodSeconds: 10
           volumeMounts:
-            - name: config
+            - name: storage
               mountPath: /config
-            - name: cache
+              subPath: config
+            - name: storage
               mountPath: /cache
+              subPath: cache
             - name: data
               mountPath: /media
             - name: render-device
@@ -91,12 +96,9 @@ spec:
               cpu: "4000m"
               gpu.intel.com/i915: 1
       volumes:
-        - name: config
+        - name: storage
           persistentVolumeClaim:
-            claimName: jellyfin-config
-        - name: cache
-          persistentVolumeClaim:
-            claimName: jellyfin-cache-host
+            claimName: jellyfin-storage-host
         - name: data
           persistentVolumeClaim:
             claimName: media-data-host
@@ -107,28 +109,15 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: jellyfin-config
+  name: jellyfin-storage-host
   namespace: media
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 5Gi
-  storageClassName: longhorn
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: jellyfin-cache-host
-  namespace: media
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 50Gi
-  volumeName: jellyfin-cache
+      storage: 55Gi
+  volumeName: jellyfin-storage
   storageClassName: ""
 ---
 apiVersion: v1

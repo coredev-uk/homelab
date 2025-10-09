@@ -9,7 +9,7 @@ spec:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   hostPath:
-    path: /opt/downloads-data
+    path: /opt/downloads
   storageClassName: ""
 ---
 # Downloads volume claim for media namespace (tunnelled apps + *arr apps)
@@ -39,7 +39,7 @@ spec:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   hostPath:
-    path: /opt/frigate-media
+    path: /opt/frigate
   storageClassName: ""
 ---
 # Frigate video footage storage PVC

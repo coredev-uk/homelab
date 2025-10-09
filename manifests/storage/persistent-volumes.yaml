@@ -11,23 +11,23 @@ spec:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   hostPath:
-    path: /opt/media-data
+    path: /opt/media
   storageClassName: ""
 ---
-# Jellyfin cache storage PV
-# This PV uses local host storage for cache and transcoding to handle high I/O
+# Jellyfin storage PV (essential data - config and cache combined)
+# This PV uses local host storage for essential config and cache data to prevent data loss
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: jellyfin-cache
+  name: jellyfin-storage
 spec:
   capacity:
-    storage: 50Gi
+    storage: 55Gi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   hostPath:
-    path: /opt/jellyfin-cache
+    path: /opt/jellyfin-storage
   storageClassName: ""
 ---
 # Shared media storage PVC using host-path
