@@ -178,7 +178,7 @@ metadata:
     app: traefik
 spec:
   type: LoadBalancer
-  loadBalancerIP: 10.147.10.100
+  loadBalancerIP: 192.168.20.100
   selector:
     app: traefik
   ports:

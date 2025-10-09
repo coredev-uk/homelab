@@ -51,7 +51,7 @@ certificatesResolvers:
 service:
   type: LoadBalancer
   spec:
-     loadBalancerIP: 10.147.10.100
+    loadBalancerIP: 192.168.20.30
     externalTrafficPolicy: Local
 
 # Configure persistence for ACME certificates
@@ -80,4 +80,3 @@ globalArguments:
 
 # Install in traefik namespace
 namespaceOverride: traefik
-

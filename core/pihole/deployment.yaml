@@ -68,27 +68,27 @@ spec:
               value: "all"
             - name: FTLCONF_dns_hosts
               value: |
-                10.147.10.100 pihole.home.coredev.uk
-                10.147.10.100 frigate.home.coredev.uk
-                10.147.10.100 argocd.home.coredev.uk
-                10.147.10.100 longhorn.home.coredev.uk
+                192.168.20.30 pihole.home.coredev.uk
+                192.168.20.30 frigate.home.coredev.uk
+                192.168.20.30 argocd.home.coredev.uk
+                192.168.20.30 longhorn.home.coredev.uk
 
-                10.147.10.100 bazarr.home.coredev.uk
-                10.147.10.100 cleanuparr.home.coredev.uk
-                10.147.10.100 glance.home.coredev.uk
-                10.147.10.100 huntarr.home.coredev.uk
-                10.147.10.100 jellyfin.home.coredev.uk
-                10.147.10.100 jellyseerr.home.coredev.uk
-                10.147.10.100 notifiarr.home.coredev.uk
-                10.147.10.100 radarr.home.coredev.uk
-                10.147.10.100 sonarr.home.coredev.uk
+                192.168.20.30 bazarr.home.coredev.uk
+                192.168.20.30 cleanuparr.home.coredev.uk
+                192.168.20.30 glance.home.coredev.uk
+                192.168.20.30 huntarr.home.coredev.uk
+                192.168.20.30 jellyfin.home.coredev.uk
+                192.168.20.30 jellyseerr.home.coredev.uk
+                192.168.20.30 notifiarr.home.coredev.uk
+                192.168.20.30 radarr.home.coredev.uk
+                192.168.20.30 sonarr.home.coredev.uk
 
-                10.147.10.100 prowlarr.home.coredev.uk
-                10.147.10.100 sabnzbd.home.coredev.uk
-                10.147.10.100 qbittorrent.home.coredev.uk
+                192.168.20.30 prowlarr.home.coredev.uk
+                192.168.20.30 sabnzbd.home.coredev.uk
+                192.168.20.30 qbittorrent.home.coredev.uk
 
-                10.147.10.100 grafana.home.coredev.uk
-                10.147.10.100 prometheus.home.coredev.uk
+                192.168.20.30 grafana.home.coredev.uk
+                192.168.20.30 prometheus.home.coredev.uk
           volumeMounts:
             - name: config
               mountPath: /etc/pihole
@@ -189,7 +189,7 @@ spec:
   selector:
     app: pihole
   type: LoadBalancer
-  loadBalancerIP: 10.147.10.101
+  loadBalancerIP: 192.168.20.20
   externalTrafficPolicy: Local
   ports:
     - name: dns-tcp
