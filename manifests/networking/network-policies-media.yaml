@@ -21,11 +21,7 @@ spec:
   - from:
     - namespaceSelector:
         matchLabels:
-          name: traefik
-  - from:
-    - podSelector:
-        matchLabels:
-          app: traefik
+          kubernetes.io/metadata.name: traefik
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -61,6 +57,4 @@ spec:
   - Ingress
   ingress:
   - from:
-    - namespaceSelector:
-        matchLabels:
-          name: media
+    - podSelector: {}
