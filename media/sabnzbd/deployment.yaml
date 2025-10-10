@@ -147,7 +147,7 @@ spec:
 
         # SABnzbd container using Gluetun network
         - name: sabnzbd
-          image: lscr.io/linuxserver/sabnzbd:4.5.3-ls230
+          image: lscr.io/linuxserver/sabnzbd:latest
           env:
             - name: PUID
               value: "1000"
