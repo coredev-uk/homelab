@@ -11,5 +11,7 @@ resources:
   - cleanuparr/
   - huntarr/
   - prowlarr/
-  - gluetun-media/
+  - vpn-config.yaml
+  - sabnzbd/
+  - qflood/
   - notifiarr/

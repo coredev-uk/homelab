@@ -1,0 +1,235 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: qflood-config
+  namespace: media
+  labels:
+    app: qflood
+    component: config
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: longhorn
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flood
+  namespace: media
+  annotations:
+    glance/name: "Flood"
+    glance/icon: "di:flood"
+    glance/description: "qBittorrent + Flood UI via VPN"
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: flood
+  template:
+    metadata:
+      labels:
+        app: flood
+    spec:
+      securityContext:
+        sysctls:
+          - name: net.ipv4.conf.all.src_valid_mark
+            value: "1"
+          - name: net.ipv6.conf.all.disable_ipv6
+            value: "1"
+      containers:
+        # Gluetun VPN sidecar for Flood
+        - name: gluetun
+          image: qmcgaw/gluetun:v3.40.0
+          ports:
+            - containerPort: 8000
+              name: control-api
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+          env:
+            # VPN Provider Configuration
+            - name: VPN_SERVICE_PROVIDER
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config-shared
+                  key: VPN_SERVICE_PROVIDER
+            - name: VPN_TYPE
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config-shared
+                  key: VPN_TYPE
+            - name: SERVER_COUNTRIES
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config-shared
+                  key: SERVER_COUNTRIES
+            - name: FIREWALL_OUTBOUND_SUBNETS
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config-shared
+                  key: OUTBOUND_SUBNETS_CLUSTER
+            - name: UPDATER_PERIOD
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config-shared
+                  key: UPDATER_PERIOD
+            - name: WIREGUARD_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: vpn-secrets
+                  key: QBIT_VPN_PRIVATE_KEY
+
+            # Disable proxy for Flood/qBittorrent
+            - name: SHADOWSOCKS
+              value: "off"
+            - name: HTTPPROXY
+              value: "off"
+
+            # Control server authentication
+            - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
+              value: "/gluetun/auth/config.toml"
+            - name: HTTP_CONTROL_SERVER_LOG
+              value: "on"
+
+            # Port forwarding for BitTorrent
+            - name: VPN_PORT_FORWARDING
+              value: "on"
+            - name: PORT_FORWARD_ONLY
+              value: "on"
+
+            # Update listening port on qBittorrent
+            - name: VPN_PORT_FORWARDING_UP_COMMAND
+              value: /bin/sh -c 'wget -O- --retry-connrefused --post-data "json={\"listen_port\":{{PORTS}}}" http://127.0.0.1:8081/api/v2/app/setPreferences 2>&1'
+
+            # DNS Configuration - use regular DNS instead of DoT to avoid timeouts
+            - name: DOT
+              value: "off"
+            - name: DNS_SERVERS
+              value: "1.1.1.1,1.0.0.1"
+
+          volumeMounts:
+            - name: gluetun-auth-config
+              mountPath: /gluetun/auth
+            - name: tun-device
+              mountPath: /dev/net/tun
+
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+        # qFlood container using Gluetun network
+        - name: qflood
+          image: ghcr.io/engels74/qflood:release-5.1.2--4.9.5
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/London"
+            - name: FLOOD_AUTH
+              value: "false"
+            - name: WEBUI_PORTS
+              value: "8081/tcp,8081/udp,3000/tcp,3000/udp"
+          ports:
+            - containerPort: 3000
+              name: qflood-web
+            - containerPort: 8081
+              name: qbittorrent
+            - containerPort: 8118
+              name: qflood-proxy
+          volumeMounts:
+            - name: qflood-config
+              mountPath: /config
+            - name: downloads
+              mountPath: /downloads
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 90
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+      volumes:
+        - name: qflood-config
+          persistentVolumeClaim:
+            claimName: qflood-config
+        - name: downloads
+          persistentVolumeClaim:
+            claimName: downloads-data-host
+        - name: gluetun-auth-config
+          configMap:
+            name: gluetun-auth-config-shared
+        - name: tun-device
+          hostPath:
+            path: /dev/net/tun
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qbittorrent
+  namespace: media
+  labels:
+    app: flood
+spec:
+  selector:
+    app: flood
+  ports:
+    - port: 3000
+      targetPort: 3000
+      name: flood-web
+    - port: 8081
+      targetPort: 8081
+      name: qbittorrent-api
+    - port: 8000
+      targetPort: 8000
+      name: gluetun-control
+  type: ClusterIP
+
+---
+# Service specifically for Flood UI
+apiVersion: v1
+kind: Service
+metadata:
+  name: flood
+  namespace: media
+  labels:
+    app: flood
+spec:
+  selector:
+    app: flood
+  ports:
+    - port: 3000
+      targetPort: 3000
+      name: flood-web
+  type: ClusterIP
+

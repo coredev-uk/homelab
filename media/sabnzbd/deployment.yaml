@@ -1,0 +1,262 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sabnzbd-config
+  namespace: media
+  labels:
+    app: sabnzbd
+    component: config
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: longhorn
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sabnzbd
+  namespace: media
+  labels:
+    app: sabnzbd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sabnzbd
+  template:
+    metadata:
+      labels:
+        app: sabnzbd
+    spec:
+      initContainers:
+        # Bootstrap container for initial setup
+        - name: sabnzbd-bootstrap
+          image: busybox:stable
+          command: ["/bin/sh", "/scripts/bootstrap.sh"]
+          volumeMounts:
+            - name: sabnzbd-config
+              mountPath: /config
+            - name: sabnzbd-bootstrap
+              mountPath: /scripts
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "10m"
+            limits:
+              memory: "64Mi"
+              cpu: "50m"
+
+      containers:
+        # Gluetun VPN container
+        - name: gluetun
+          image: qmcgaw/gluetun:v3.38.0
+          ports:
+            - containerPort: 8000
+              name: control-api
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+          env:
+            # VPN Provider Configuration
+            - name: VPN_SERVICE_PROVIDER
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config-shared
+                  key: VPN_SERVICE_PROVIDER
+            - name: VPN_TYPE
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config-shared
+                  key: VPN_TYPE
+            - name: SERVER_COUNTRIES
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config-shared
+                  key: SERVER_COUNTRIES
+            - name: FIREWALL_OUTBOUND_SUBNETS
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config-shared
+                  key: OUTBOUND_SUBNETS_CLUSTER
+            - name: UPDATER_PERIOD
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config-shared
+                  key: UPDATER_PERIOD
+            - name: WIREGUARD_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: vpn-secrets
+                  key: SAB_VPN_PRIVATE_KEY
+
+            # Shadowsocks proxy configuration
+            - name: SHADOWSOCKS
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config-shared
+                  key: SHADOWSOCKS
+            - name: SHADOWSOCKS_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config-shared
+                  key: SHADOWSOCKS_PASSWORD
+            - name: HTTPPROXY
+              valueFrom:
+                configMapKeyRef:
+                  name: vpn-config-shared
+                  key: HTTPPROXY
+
+            # Control server authentication
+            - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
+              value: "/gluetun/auth/config.toml"
+            - name: HTTP_CONTROL_SERVER_LOG
+              value: "on"
+
+            # Disable malicious to prevent blocking Usenet
+            - name: BLOCK_MALICIOUS
+              value: "off"
+
+            # DNS Configuration - use regular DNS instead of DoT to avoid timeouts
+            - name: DOT
+              value: "off"
+            - name: DNS_SERVERS
+              value: "1.1.1.1,1.0.0.1"
+
+            # Firewall Ports - only SABnzbd
+            - name: FIREWALL_INPUT_PORTS
+              value: "8080"
+
+          volumeMounts:
+            - name: gluetun-auth-config
+              mountPath: /gluetun/auth
+            - name: tun-device
+              mountPath: /dev/net/tun
+
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+        # SABnzbd container using Gluetun network
+        - name: sabnzbd
+          image: lscr.io/linuxserver/sabnzbd:4.5.3-ls230
+          network: "container:gluetun"
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "America/New_York"
+          volumeMounts:
+            - name: sabnzbd-config
+              mountPath: /config
+            - name: downloads
+              mountPath: /downloads
+            - name: sabnzbd-scripts
+              mountPath: /scripts
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "200m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+      volumes:
+        - name: sabnzbd-config
+          persistentVolumeClaim:
+            claimName: sabnzbd-config
+        - name: downloads
+          persistentVolumeClaim:
+            claimName: downloads-data-host
+        - name: sabnzbd-scripts
+          configMap:
+            name: sabnzbd-scripts
+            defaultMode: 0755
+        - name: sabnzbd-bootstrap
+          configMap:
+            name: sabnzbd-bootstrap
+            defaultMode: 0755
+        - name: gluetun-auth-config
+          configMap:
+            name: gluetun-auth-config-shared
+        - name: tun-device
+          hostPath:
+            path: /dev/net/tun
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sabnzbd
+  namespace: media
+  labels:
+    app: sabnzbd
+spec:
+  selector:
+    app: sabnzbd
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: sabnzbd-web
+    - port: 8000
+      targetPort: 8000
+      name: gluetun-control
+    - port: 8888
+      targetPort: 8888
+      name: shadowsocks
+    - port: 8388
+      targetPort: 8388
+      protocol: UDP
+      name: shadowsocks-udp
+    - port: 8118
+      targetPort: 8118
+      name: http-proxy
+  type: ClusterIP
+
+---
+# Separate SABnzbd proxy service for other services to use
+apiVersion: v1
+kind: Service
+metadata:
+  name: sabnzbd-proxy
+  namespace: media
+  labels:
+    app: sabnzbd
+    component: proxy
+spec:
+  selector:
+    app: sabnzbd
+  ports:
+    - port: 8888
+      targetPort: 8888
+      name: shadowsocks
+    - port: 8118
+      targetPort: 8118
+      name: http-proxy
+  type: ClusterIP

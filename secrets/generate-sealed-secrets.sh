@@ -100,7 +100,10 @@ create_sealed_secret_multi "glance-secrets" "media" "glance-sealed-secret.yaml" 
   "GITHUB_TOKEN" "$GITHUB_TOKEN"
 
 # Generate VPN SealedSecret for Gluetun
-create_sealed_secret "vpn-secrets" "media" "WIREGUARD_PRIVATE_KEY" "$WIREGUARD_PRIVATE_KEY" "vpn-sealed-secret.yaml"
+create_sealed_secret "vpn-secrets" "media" \
+  "SAB_VPN_PRIVATE_KEY" "$SAB_VPN_PRIVATE_KEY" \
+  "QBIT_VPN_PRIVATE_KEY" "$QBIT_VPN_PRIVATE_KEY" \
+  "vpn-sealed-secret.yaml"
 
 echo ""
 echo "All SealedSecrets generated successfully!"

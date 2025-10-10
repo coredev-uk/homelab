@@ -9,4 +9,5 @@ resources:
   - prometheus/
   - grafana/
   - node-exporter/
+  - gluetun-exporter/
 

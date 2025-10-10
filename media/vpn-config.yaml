@@ -1,11 +1,11 @@
 #
-# VPN Configuration for Tunnelled Applications
-# Shared configuration for all gluetun sidecars
+# Shared VPN Configuration for Tunnelled Applications
+# Used by all individual gluetun sidecars
 #
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: vpn-config
+  name: vpn-config-shared
   namespace: media
   labels:
     app: vpn
@@ -20,7 +20,7 @@ data:
   # Logging for troubleshooting
   LOG_LEVEL: "info"
 
-  # Proxy
+  # Proxy (Enabled for SABnzbd to be used with Prowlarr)
   SHADOWSOCKS: "on"
   SHADOWSOCKS_PASSWORD: "gluetun123"
   HTTPPROXY: "on"
@@ -33,7 +33,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: gluetun-auth-config
+  name: gluetun-auth-config-shared
   namespace: media
   labels:
     app: vpn
@@ -49,3 +49,4 @@ data:
       "GET /v1/vpn/status"
     ]
     auth = "none"
+
