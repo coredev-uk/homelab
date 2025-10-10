@@ -2,7 +2,7 @@ mqtt:
   enabled: false
 
 auth:
-  enabled: true
+  enabled: false
 
 tls:
   enabled: false
