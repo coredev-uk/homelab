@@ -65,6 +65,7 @@ motion:
 cameras:
   front_door:
     enabled: true
+    webui_url: "http://192.168.20.5:8080"
     ffmpeg:
       inputs:
         - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream0
@@ -117,6 +118,7 @@ cameras:
 
   back_door:
     enabled: true
+    webui_url: "http://192.168.20.6"
     ffmpeg:
       inputs:
         - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/11
@@ -178,6 +180,7 @@ cameras:
 
   back_garden:
     enabled: false
+    webui_url: "http://192.168.20.7"
     ffmpeg:
       inputs:
         - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/11
