@@ -694,7 +694,6 @@ pages:
                 {{ $ip := (.JSON.String "public_ip") }}
                 {{ $city := (.JSON.String "city") }}
                 {{ $country := (.JSON.String "country") }}
-                {{ $portRequest := .Subrequest "port-status" }}
                 {{ if eq $ip "" }}
                  <div>
                    <div class="color-highlight size-h4">
