@@ -106,9 +106,6 @@ cameras:
         Sub Stream: front_door_sub # Lower quality stream (stream1)
     detect:
       enabled: true
-      width: 720
-      height: 480
-      fps: 10
     record:
       enabled: true
     snapshots:
@@ -170,9 +167,6 @@ cameras:
         enabled: false
     detect:
       enabled: true
-      width: 1920
-      height: 1080
-      fps: 10
     record:
       enabled: true
     snapshots:
