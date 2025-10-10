@@ -16,16 +16,11 @@ spec:
               echo "Creating downloads directory structure..."
 
               # Create usenet structure
-              mkdir -p /downloads/usenet/complete/tv
-              mkdir -p /downloads/usenet/complete/movies
-              mkdir -p /downloads/usenet/incomplete/tv
-              mkdir -p /downloads/usenet/incomplete/movies
+              mkdir -p /downloads/usenet/{complete,incomplete}
+              mkdir -p /downloads/usenet/complete/{movies,tv}
 
               # Create torrents structure
-              mkdir -p /downloads/torrents/complete/tv
-              mkdir -p /downloads/torrents/complete/movies
-              mkdir -p /downloads/torrents/incomplete/tv
-              mkdir -p /downloads/torrents/incomplete/movies
+              mkdir -p /downloads/torrents/{movies,tv}
 
               # Set permissions and ownership (abc:users = 1000:1000 in linuxserver containers)
               chmod -R 755 /downloads
@@ -40,4 +35,3 @@ spec:
         - name: downloads
           persistentVolumeClaim:
             claimName: downloads-data-host
-
