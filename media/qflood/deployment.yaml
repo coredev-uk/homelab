@@ -18,10 +18,10 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: flood
+  name: qflood
   namespace: media
   annotations:
-    glance/name: "Flood"
+    glance/name: "qFlood"
     glance/icon: "di:flood"
     glance/description: "qBittorrent + Flood UI via VPN"
 spec:
@@ -30,11 +30,11 @@ spec:
     type: Recreate
   selector:
     matchLabels:
-      app: flood
+      app: qflood
   template:
     metadata:
       labels:
-        app: flood
+        app: qflood
     spec:
       securityContext:
         sysctls:
@@ -199,14 +199,14 @@ metadata:
   name: qbittorrent
   namespace: media
   labels:
-    app: flood
+    app: qflood
 spec:
   selector:
-    app: flood
+    app: qflood
   ports:
     - port: 3000
       targetPort: 3000
-      name: flood-web
+      name: qflood-web
     - port: 8081
       targetPort: 8081
       name: qbittorrent-api
@@ -220,16 +220,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: flood
+  name: qflood
   namespace: media
   labels:
-    app: flood
+    app: qflood
 spec:
   selector:
-    app: flood
+    app: qflood
   ports:
     - port: 3000
       targetPort: 3000
-      name: flood-web
+      name: qflood-web
   type: ClusterIP
-

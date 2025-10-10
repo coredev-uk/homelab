@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   name: gluetun-exporter
   namespace: monitoring
+  annotations:
+    glance/hide: "true"
   labels:
     app: gluetun-exporter
 spec:
@@ -100,3 +102,4 @@ spec:
       name: qflood-metrics
   selector:
     app: gluetun-exporter
+

@@ -10,4 +10,3 @@ resources:
   - grafana/
   - node-exporter/
   - gluetun-exporter/
-

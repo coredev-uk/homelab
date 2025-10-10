@@ -49,4 +49,3 @@ data:
       "GET /v1/vpn/status"
     ]
     auth = "none"
-
