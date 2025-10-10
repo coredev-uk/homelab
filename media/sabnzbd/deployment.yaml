@@ -32,24 +32,6 @@ spec:
       labels:
         app: sabnzbd
     spec:
-      initContainers:
-        # Bootstrap container for initial setup
-        - name: sabnzbd-bootstrap
-          image: busybox:stable
-          command: ["/bin/sh", "/scripts/bootstrap.sh"]
-          volumeMounts:
-            - name: sabnzbd-config
-              mountPath: /config
-            - name: sabnzbd-bootstrap
-              mountPath: /scripts
-          resources:
-            requests:
-              memory: "32Mi"
-              cpu: "10m"
-            limits:
-              memory: "64Mi"
-              cpu: "50m"
-
       containers:
         # Gluetun VPN container
         - name: gluetun
@@ -146,6 +128,8 @@ spec:
               cpu: "500m"
 
         # SABnzbd container using Gluetun network
+        # NOTE: For port forwarding access, add your domain to host_whitelist in SABnzbd config:
+        # Settings -> General -> Special -> host_whitelist (add: sabnzbd.home.coredev.uk)
         - name: sabnzbd
           image: lscr.io/linuxserver/sabnzbd:latest
           env:
@@ -197,16 +181,12 @@ spec:
           configMap:
             name: sabnzbd-scripts
             defaultMode: 0755
-        - name: sabnzbd-bootstrap
-          configMap:
-            name: sabnzbd-bootstrap
-            defaultMode: 0755
-        - name: gluetun-auth-config
-          configMap:
-            name: gluetun-auth-config-shared
-        - name: tun-device
-          hostPath:
-            path: /dev/net/tun
+         - name: gluetun-auth-config
+           configMap:
+             name: gluetun-auth-config-shared
+         - name: tun-device
+           hostPath:
+             path: /dev/net/tun
 
 ---
 apiVersion: v1
