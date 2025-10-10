@@ -127,6 +127,11 @@ cameras:
         # - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/12
         #   roles:
         #     - detect
+    onvif:
+      host: 192.168.20.6
+      port: 80
+      user: "{FRIGATE_RTSP_USER}"
+      password: "{FRIGATE_RTSP_PASSWORD}"
     detect:
       enabled: true
       width: 1920
