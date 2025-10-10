@@ -67,15 +67,17 @@ cameras:
     enabled: true
     ffmpeg:
       inputs:
-        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_CAMERA_URL}/FRNT
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream0
+          roles:
+            - record
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream1
           roles:
             - detect
-            - record
     detect:
       enabled: true
-      width: 1280
-      height: 720
-      fps: 5
+      width: 720
+      height: 480
+      fps: 10
     record:
       enabled: true
     snapshots:
@@ -117,15 +119,19 @@ cameras:
     enabled: true
     ffmpeg:
       inputs:
-        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_CAMERA_URL}/DRV
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/11
           roles:
-            - detect
             - record
+            - detect
+        # Stream disabled due to shit resolution
+        # - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/12
+        #   roles:
+        #     - detect
     detect:
       enabled: true
-      width: 1280
-      height: 720
-      fps: 5
+      width: 1920
+      height: 1080
+      fps: 10
     record:
       enabled: true
     snapshots:
@@ -164,18 +170,22 @@ cameras:
           - back_driveway
 
   back_garden:
-    enabled: true
+    enabled: false
     ffmpeg:
       inputs:
-        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@{FRIGATE_CAMERA_URL}/GDN
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/11
           roles:
-            - detect
             - record
+            - detect
+        # Stream disabled due to shit resolution
+        # - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/12
+        #   roles:
+        #     - detect
     detect:
       enabled: true
-      width: 1280
-      height: 720
-      fps: 5
+      width: 1920
+      height: 1080
+      fps: 10
     record:
       enabled: true
     snapshots:
