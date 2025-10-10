@@ -133,9 +133,7 @@ cameras:
       user: "{FRIGATE_RTSP_USER}"
       password: "{FRIGATE_RTSP_PASSWORD}"
       autotracking:
-        enabled: true
-        calibrate_on_startup: true
-        timeout: 30
+        enabled: false
     detect:
       enabled: true
       width: 1920
