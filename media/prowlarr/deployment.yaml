@@ -1,8 +1,8 @@
 #
 # Prowlarr - Indexer Manager
-# Uses Gluetun SOCKS proxy for VPN tunnelling
-# IMPORTANT: Configure SOCKS proxy in Prowlarr UI: Settings -> General -> Proxy
-# Proxy Type: SOCKS5
+# Uses Gluetun HTTP proxy for VPN tunnelling
+# IMPORTANT: Configure HTTP proxy in Prowlarr UI: Settings -> General -> Proxy
+# Proxy Type: HTTP
 # Proxy Host: sabnzbd-proxy.media.svc.cluster.local:8888
 # This ensures indexer tests use the same IP as SABnzbd/qFlood for TRaSH compliance
 #
