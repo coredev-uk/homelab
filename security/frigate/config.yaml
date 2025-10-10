@@ -232,9 +232,6 @@ cameras:
           - garden_main
     detect:
       enabled: true
-      width: 1920
-      height: 1080
-      fps: 10
     record:
       enabled: true
     snapshots:
