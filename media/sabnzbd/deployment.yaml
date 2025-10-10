@@ -53,7 +53,7 @@ spec:
       containers:
         # Gluetun VPN container
         - name: gluetun
-          image: qmcgaw/gluetun:v3.38.0
+          image: qmcgaw/gluetun:v3.40.0
           ports:
             - containerPort: 8000
               name: control-api
