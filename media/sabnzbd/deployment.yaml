@@ -181,12 +181,12 @@ spec:
           configMap:
             name: sabnzbd-scripts
             defaultMode: 0755
-         - name: gluetun-auth-config
-           configMap:
-             name: gluetun-auth-config-shared
-         - name: tun-device
-           hostPath:
-             path: /dev/net/tun
+        - name: gluetun-auth-config
+          configMap:
+            name: gluetun-auth-config-shared
+        - name: tun-device
+          hostPath:
+            path: /dev/net/tun
 
 ---
 apiVersion: v1
