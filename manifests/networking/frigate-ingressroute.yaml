@@ -14,18 +14,8 @@ spec:
       services:
         - name: frigate
           port: 8971
-          scheme: https
-          serversTransport: frigate-transport
   tls:
     secretName: security-tls
----
-apiVersion: traefik.io/v1alpha1
-kind: ServersTransport
-metadata:
-  name: frigate-transport
-  namespace: security
-spec:
-  insecureSkipVerify: true
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
