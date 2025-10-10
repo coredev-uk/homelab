@@ -13,7 +13,7 @@ spec:
         - name: frigate-headers
       services:
         - name: frigate
-          port: 8971
+          port: 5000
   tls:
     secretName: security-tls
 ---
