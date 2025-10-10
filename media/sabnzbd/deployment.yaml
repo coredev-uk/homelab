@@ -25,6 +25,7 @@ metadata:
   annotations:
     glance/name: "SABnzbd"
     glance/icon: "di:sabnzbd"
+    glance/url: "https://sabnzbd.home.coredev.uk"
     glance/description: "Usenet download client"
 spec:
   replicas: 1

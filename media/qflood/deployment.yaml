@@ -23,6 +23,7 @@ metadata:
   annotations:
     glance/name: "qFlood"
     glance/icon: "di:flood"
+    glance/url: "https://qbittorrent.home.coredev.uk"
     glance/description: "qBittorrent + Flood UI via VPN"
 spec:
   replicas: 1

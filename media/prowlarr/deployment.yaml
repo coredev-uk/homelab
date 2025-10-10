@@ -54,6 +54,7 @@ metadata:
   annotations:
     glance/name: "Prowlarr"
     glance/icon: "di:prowlarr"
+    glance/url: "https://prowlarr.home.coredev.uk"
     glance/description: "Indexer Manager"
 spec:
   replicas: 1
