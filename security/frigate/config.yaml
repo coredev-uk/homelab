@@ -197,6 +197,8 @@ cameras:
         enabled: true
         calibrate_on_startup: true
         timeout: 30
+        required_zones:
+          - garden_main
     detect:
       enabled: true
       width: 1920
