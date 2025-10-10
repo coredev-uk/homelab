@@ -60,12 +60,6 @@ spec:
                   name: frigate-secrets
                   key: RTSP_PASSWORD
                   optional: true
-            - name: FRIGATE_CAMERA_URL
-              valueFrom:
-                secretKeyRef:
-                  name: frigate-secrets
-                  key: CAMERA_URL
-                  optional: true
           volumeMounts:
             - name: data
               mountPath: /config
