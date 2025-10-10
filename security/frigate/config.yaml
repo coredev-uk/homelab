@@ -1,6 +1,32 @@
 mqtt:
   enabled: false
 
+# Go2RTC configuration for stream management
+go2rtc:
+  streams:
+    front_door_main:
+      - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream0
+    front_door_sub:
+      - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream1
+    back_door_main:
+      - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/11
+    back_door_sub:
+      - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/12
+    back_garden_main:
+      - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/11
+    back_garden_sub:
+      - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/12
+
+# Camera groups for unified viewing
+camera_groups:
+  home:
+    cameras:
+      - front_door
+      - back_door
+      - back_garden
+    icon: LuHome
+    order: 0
+
 auth:
   enabled: false
 
@@ -74,6 +100,10 @@ cameras:
         - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream1
           roles:
             - detect
+    live:
+      streams:
+        Main Stream: front_door_main      # Higher quality stream (stream0)
+        Sub Stream: front_door_sub        # Lower quality stream (stream1)
     detect:
       enabled: true
       width: 720
@@ -124,11 +154,13 @@ cameras:
         - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/11
           roles:
             - record
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/12
+          roles:
             - detect
-        # Stream disabled due to shit resolution
-        # - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/12
-        #   roles:
-        #     - detect
+    live:
+      streams:
+        Main Stream: back_door_main       # Higher quality stream (11)
+        Sub Stream: back_door_sub         # Lower quality stream (12) - used for detection
     onvif:
       host: 192.168.20.6
       port: 8080
@@ -186,11 +218,13 @@ cameras:
         - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/11
           roles:
             - record
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/12
+          roles:
             - detect
-        # Stream disabled due to shit resolution
-        # - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/12
-        #   roles:
-        #     - detect
+    live:
+      streams:
+        Main Stream: back_garden_main     # Higher quality stream (11)
+        Sub Stream: back_garden_sub       # Lower quality stream (12) - used for detection
     onvif:
       host: 192.168.20.7
       port: 8080
