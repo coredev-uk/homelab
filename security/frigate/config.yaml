@@ -24,7 +24,7 @@ camera_groups:
       - front_door
       - back_door
       - back_garden
-    icon: LuHome
+    icon: LuWebcam
     order: 0
 
 auth:
@@ -102,8 +102,8 @@ cameras:
             - detect
     live:
       streams:
-        Main Stream: front_door_main      # Higher quality stream (stream0)
-        Sub Stream: front_door_sub        # Lower quality stream (stream1)
+        Main Stream: front_door_main # Higher quality stream (stream0)
+        Sub Stream: front_door_sub # Lower quality stream (stream1)
     detect:
       enabled: true
       width: 720
@@ -159,8 +159,8 @@ cameras:
             - detect
     live:
       streams:
-        Main Stream: back_door_main       # Higher quality stream (11)
-        Sub Stream: back_door_sub         # Lower quality stream (12) - used for detection
+        Main Stream: back_door_main # Higher quality stream (11)
+        Sub Stream: back_door_sub # Lower quality stream (12) - used for detection
     onvif:
       host: 192.168.20.6
       port: 8080
@@ -223,8 +223,8 @@ cameras:
             - detect
     live:
       streams:
-        Main Stream: back_garden_main     # Higher quality stream (11)
-        Sub Stream: back_garden_sub       # Lower quality stream (12) - used for detection
+        Main Stream: back_garden_main # Higher quality stream (11)
+        Sub Stream: back_garden_sub # Lower quality stream (12) - used for detection
     onvif:
       host: 192.168.20.7
       port: 8080
