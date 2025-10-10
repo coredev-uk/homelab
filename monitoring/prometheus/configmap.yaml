@@ -41,7 +41,7 @@ data:
 
       - job_name: 'gluetun'
         static_configs:
-          - targets: ['gluetun-media.media.svc.cluster.local:8001']
+          - targets: ['gluetun-exporter.monitoring.svc.cluster.local:8001', 'gluetun-exporter.monitoring.svc.cluster.local:8002']
         metrics_path: '/metrics'
         scrape_interval: 30s
 
