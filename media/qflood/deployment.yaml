@@ -87,12 +87,6 @@ spec:
                   name: vpn-secrets
                   key: QBIT_VPN_PRIVATE_KEY
 
-            # Disable proxy for Flood/qBittorrent
-            - name: SHADOWSOCKS
-              value: "off"
-            - name: HTTPPROXY
-              value: "off"
-
             # Control server authentication
             - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
               value: "/gluetun/auth/config.toml"
@@ -131,7 +125,7 @@ spec:
 
         # qFlood container using Gluetun network
         - name: qflood
-          image: ghcr.io/engels74/qflood:release-5.1.2--4.9.5
+          image: ghcr.io/engels74/qflood:latest
           env:
             - name: PUID
               value: "1000"
