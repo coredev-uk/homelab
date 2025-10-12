@@ -177,10 +177,23 @@ spec:
 
         # Flood UI sidecar container
         - name: flood
-          image: jesec/flood:4.1.0
+          image: jesec/flood:latest
           ports:
             - containerPort: 3000
               name: flood-web
+          env:
+            - name: FLOOD_OPTION_host
+              value: "0.0.0.0"
+            - name: FLOOD_OPTION_port
+              value: "3000"
+            - name: FLOOD_OPTION_auth
+              value: "none"
+            - name: FLOOD_OPTION_qburl
+              value: "http://127.0.0.1:8080"
+            - name: FLOOD_OPTION_qbuser
+              value: ""
+            - name: FLOOD_OPTION_qbpass
+              value: ""
           resources:
             requests:
               memory: "256Mi"
