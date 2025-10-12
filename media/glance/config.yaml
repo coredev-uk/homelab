@@ -497,6 +497,7 @@ pages:
         widgets:
           - type: search
             autofocus: true
+            new-tab: true
             search-engine: google
             bangs:
               - title: YouTube
@@ -581,8 +582,10 @@ pages:
                     url: https://prometheus.home.coredev.uk
                     icon: si:prometheus
 
+          - type: to-do
+
           - type: rss
-            style: horizontal-cards-2
+            style: horizontal-cards
             title: Tech News
             feeds:
               - url: https://news.itsfoss.com/latest/rss
@@ -595,9 +598,8 @@ pages:
                 title: "9to5Mac"
             limit: 8
 
-          - type: to-do
-
           - type: videos
+            style: horizontal-cards
             title: Video Feed
             channels:
               - UCeeFfhMcJa1kjtfZAGskOCA # Tech Linked
@@ -605,8 +607,6 @@ pages:
               - UCsBjURrPoezykLs9EqgamOA # Fireship
               - UCUyeluBRhGPCW4rPe_UvBZQ # ThePrimeagen
             limit: 8
-            collapse-after: 4
-            style: horizontal-cards
 
       - size: small
         widgets:
