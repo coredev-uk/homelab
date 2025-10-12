@@ -495,6 +495,17 @@ pages:
 
       - size: full
         widgets:
+          - type: search
+            autofocus: true
+            search-engine: google
+            bangs:
+              - title: YouTube
+                shortcut: "!y"
+                url: https://www.youtube.com/results?search_query={QUERY}
+              - title: Amazon
+                shortcut: "!a"
+                url: https://www.amazon.co.uk/s?k={QUERY}
+
           - type: bookmarks
             title: Media Services
             groups:
@@ -571,6 +582,7 @@ pages:
                     icon: si:prometheus
 
           - type: rss
+            style: horizontal-cards-2
             title: Tech News
             feeds:
               - url: https://news.itsfoss.com/latest/rss

@@ -177,7 +177,7 @@ spec:
 
         # Flood UI sidecar container
         - name: flood
-          image: jesec/flood:latest
+          image: jesec/flood:4.10.0
           ports:
             - containerPort: 3000
               name: flood-web
