@@ -22,9 +22,9 @@ metadata:
   namespace: media
   annotations:
     glance/name: "Flood"
-    glance/icon: "mdi:waves"
+    glance/icon: "di:flood"
     glance/url: "https://qbittorrent.home.coredev.uk"
-    glance/description: "Modern qBittorrent Web UI via VPN"
+    glance/description: "Torrent client with Flood UI and VPN"
 spec:
   replicas: 1
   strategy:
