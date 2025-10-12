@@ -1,6 +1,11 @@
 mqtt:
   enabled: false
 
+# telemetry enabled for prometheus
+telemetry:
+  stats:
+    network_bandwidth: True
+
 # Go2RTC configuration for stream management
 go2rtc:
   streams:
