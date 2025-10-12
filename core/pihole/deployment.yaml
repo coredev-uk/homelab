@@ -104,25 +104,8 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "500m"
-          securityContext:
-            runAsNonRoot: false
-        - name: pihole-exporter
-          image: ekofr/pihole-exporter:v1.2.0
-          ports:
-            - containerPort: 9617
-              name: metrics
-          env:
-            - name: PIHOLE_HOSTNAME
-              value: "localhost"
-            - name: PIHOLE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: pihole-secrets
-                  key: WEBPASSWORD
-            - name: INTERVAL
-              value: "30s"
-            - name: PORT
-              value: "9617"
+           securityContext:
+             runAsNonRoot: false
       volumes:
         - name: config
           persistentVolumeClaim:
@@ -175,9 +158,6 @@ spec:
     - name: web-ssl
       port: 443
       targetPort: 443
-    - name: metrics
-      port: 9617
-      targetPort: 9617
   type: ClusterIP
 ---
 apiVersion: v1

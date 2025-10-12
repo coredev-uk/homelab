@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frigate-exporter
+  namespace: monitoring
+  labels:
+    app: frigate-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frigate-exporter
+  template:
+    metadata:
+      labels:
+        app: frigate-exporter
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9100"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+        - name: frigate-exporter
+          image: rhysbailey/prometheus-frigate-exporter:0.1.1
+          ports:
+            - containerPort: 9100
+              protocol: TCP
+              name: metrics
+          env:
+            - name: FRIGATE_STATS_URL
+              value: "http://frigate.security.svc.cluster.local:5000/api/stats"
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 9100
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: 9100
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frigate-exporter
+  namespace: monitoring
+  labels:
+    app: frigate-exporter
+spec:
+  ports:
+    - port: 9100
+      targetPort: 9100
+      name: metrics
+  selector:
+    app: frigate-exporter

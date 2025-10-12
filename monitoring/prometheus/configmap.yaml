@@ -22,9 +22,52 @@ data:
         static_configs:
           - targets: ['kube-state-metrics:8080']
 
+      # Container metrics from kubelet cAdvisor
+      - job_name: 'cadvisor'
+        scheme: https
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        kubernetes_sd_configs:
+          - role: node
+        relabel_configs:
+          - action: labelmap
+            regex: __meta_kubernetes_node_label_(.+)
+          - target_label: __address__
+            replacement: kubernetes.default.svc:443
+          - source_labels: [__meta_kubernetes_node_name]
+            regex: (.+)
+            target_label: __metrics_path__
+            replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
+
+      # Kubelet metrics
+      - job_name: 'kubelet'
+        scheme: https
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        kubernetes_sd_configs:
+          - role: node
+        relabel_configs:
+          - action: labelmap
+            regex: __meta_kubernetes_node_label_(.+)
+          - target_label: __address__
+            replacement: kubernetes.default.svc:443
+          - source_labels: [__meta_kubernetes_node_name]
+            regex: (.+)
+            target_label: __metrics_path__
+            replacement: /api/v1/nodes/${1}/proxy/metrics
+
+      # Cert-manager metrics
+      - job_name: 'cert-manager'
+        static_configs:
+          - targets: ['cert-manager.cert-manager.svc.cluster.local:9402']
+        scrape_interval: 60s
+
+      # Pi-hole metrics
       - job_name: 'pihole'
         static_configs:
-          - targets: ['pihole-web.dns.svc.cluster.local:9617']
+          - targets: ['pihole-exporter.monitoring.svc.cluster.local:9617']
         scrape_interval: 30s
 
       - job_name: 'traefik'
@@ -33,15 +76,56 @@ data:
         metrics_path: '/metrics'
         scrape_interval: 30s
 
-      - job_name: 'frigate'
-        static_configs:
-          - targets: ['frigate.security.svc.cluster.local:9100']
-        metrics_path: '/metrics'
-        scrape_interval: 30s
-
+      # Gluetun VPN exporters
       - job_name: 'gluetun'
         static_configs:
           - targets: ['gluetun-exporter.monitoring.svc.cluster.local:8001', 'gluetun-exporter.monitoring.svc.cluster.local:8002']
+        metrics_path: '/metrics'
+        scrape_interval: 30s
+
+      # ArgoCD metrics endpoints
+      - job_name: 'argocd-metrics'
+        static_configs:
+          - targets: ['argocd-metrics.argocd.svc.cluster.local:8082']
+        metrics_path: '/metrics'
+        scrape_interval: 30s
+
+      - job_name: 'argocd-server-metrics'
+        static_configs:
+          - targets: ['argocd-server-metrics.argocd.svc.cluster.local:8083']
+        metrics_path: '/metrics'
+        scrape_interval: 30s
+
+      - job_name: 'argocd-repo-server-metrics'
+        static_configs:
+          - targets: ['argocd-repo-server.argocd.svc.cluster.local:8084']
+        metrics_path: '/metrics'
+        scrape_interval: 30s
+
+      - job_name: 'argocd-notifications-metrics'
+        static_configs:
+          - targets: ['argocd-notifications-controller-metrics.argocd.svc.cluster.local:9001']
+        metrics_path: '/metrics'
+        scrape_interval: 30s
+
+      # Longhorn storage metrics
+      - job_name: 'longhorn'
+        static_configs:
+          - targets: ['longhorn-backend.longhorn-system.svc.cluster.local:9500']
+        metrics_path: '/metrics'
+        scrape_interval: 60s
+
+      # Sealed Secrets metrics
+      - job_name: 'sealed-secrets'
+        static_configs:
+          - targets: ['sealed-secrets-controller-metrics.sealed-secrets.svc.cluster.local:8081']
+        metrics_path: '/metrics'
+        scrape_interval: 30s
+
+      # Frigate metrics
+      - job_name: 'frigate'
+        static_configs:
+          - targets: ['frigate-exporter.monitoring.svc.cluster.local:9100']
         metrics_path: '/metrics'
         scrape_interval: 30s
 

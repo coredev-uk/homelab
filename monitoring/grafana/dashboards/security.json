@@ -222,7 +222,7 @@
       "type": "stat",
       "targets": [
         {
-          "expr": "gluetun_publicip_info",
+          "expr": "gluetun_vpn_infos",
           "legendFormat": "{{country}} - {{city}}",
           "format": "table",
           "instant": true

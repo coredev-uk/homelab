@@ -10,3 +10,5 @@ resources:
   - grafana/
   - node-exporter/
   - gluetun-exporter/
+  - pihole-exporter/
+  - frigate-exporter/
