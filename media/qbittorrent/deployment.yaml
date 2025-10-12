@@ -170,13 +170,6 @@ spec:
         # Flood UI sidecar container
         - name: flood
           image: jesec/flood:latest
-          env:
-            - name: FLOOD_OPTION_qbittorrent_url
-              value: "http://127.0.0.1:8080"
-            - name: FLOOD_OPTION_host
-              value: "0.0.0.0"
-            - name: FLOOD_OPTION_port
-              value: "3000"
           ports:
             - containerPort: 3000
               name: flood-web
