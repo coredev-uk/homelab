@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: qflood-config
+  name: qbittorrent-config
   namespace: media
   labels:
-    app: qflood
+    app: qbittorrent
     component: config
 spec:
   accessModes:
@@ -18,24 +18,24 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: qflood
+  name: qbittorrent
   namespace: media
   annotations:
-    glance/name: "qFlood"
-    glance/icon: "di:flood"
+    glance/name: "Flood"
+    glance/icon: "mdi:waves"
     glance/url: "https://qbittorrent.home.coredev.uk"
-    glance/description: "qBittorrent + Flood UI via VPN"
+    glance/description: "Modern qBittorrent Web UI via VPN"
 spec:
   replicas: 1
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      app: qflood
+      app: qbittorrent
   template:
     metadata:
       labels:
-        app: qflood
+        app: qbittorrent
     spec:
       securityContext:
         sysctls:
@@ -44,7 +44,7 @@ spec:
           - name: net.ipv6.conf.all.disable_ipv6
             value: "1"
       containers:
-        # Gluetun VPN sidecar for Flood
+        # Gluetun VPN sidecar for qBittorrent
         - name: gluetun
           image: qmcgaw/gluetun:v3.40.0
           ports:
@@ -123,9 +123,9 @@ spec:
               memory: "512Mi"
               cpu: "500m"
 
-        # qFlood container using Gluetun network
-        - name: qflood
-          image: ghcr.io/engels74/qflood:latest
+        # qBittorrent container using Gluetun network
+        - name: qbittorrent
+          image: lscr.io/linuxserver/qbittorrent:latest
           env:
             - name: PUID
               value: "1000"
@@ -133,17 +133,13 @@ spec:
               value: "1000"
             - name: TZ
               value: "Europe/London"
-            - name: FLOOD_AUTH
-              value: "false"
+            - name: WEBUI_PORT
+              value: "8080"
           ports:
-            - containerPort: 3000
-              name: qflood-web
             - containerPort: 8080
-              name: qbittorrent
-            - containerPort: 8118
-              name: qflood-proxy
+              name: qbittorrent-web
           volumeMounts:
-            - name: qflood-config
+            - name: qbittorrent-config
               mountPath: /config
             - name: downloads
               mountPath: /downloads
@@ -157,7 +153,7 @@ spec:
           livenessProbe:
             httpGet:
               path: /
-              port: 3000
+              port: 8080
             initialDelaySeconds: 120
             periodSeconds: 30
             timeoutSeconds: 5
@@ -165,16 +161,53 @@ spec:
           readinessProbe:
             httpGet:
               path: /
-              port: 3000
+              port: 8080
             initialDelaySeconds: 90
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
 
+        # Flood UI sidecar container
+        - name: flood
+          image: jesec/flood:latest
+          env:
+            - name: FLOOD_OPTION_qbittorrent_url
+              value: "http://127.0.0.1:8080"
+            - name: FLOOD_OPTION_host
+              value: "0.0.0.0"
+            - name: FLOOD_OPTION_port
+              value: "3000"
+          ports:
+            - containerPort: 3000
+              name: flood-web
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "50m"
+            limits:
+              memory: "512Mi"
+              cpu: "200m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
       volumes:
-        - name: qflood-config
+        - name: qbittorrent-config
           persistentVolumeClaim:
-            claimName: qflood-config
+            claimName: qbittorrent-config
         - name: downloads
           persistentVolumeClaim:
             claimName: downloads-data-host
@@ -192,17 +225,17 @@ metadata:
   name: qbittorrent
   namespace: media
   labels:
-    app: qflood
+    app: qbittorrent
 spec:
   selector:
-    app: qflood
+    app: qbittorrent
   ports:
-    - port: 3000
-      targetPort: 3000
-      name: qflood-web
     - port: 8080
       targetPort: 8080
-      name: qbittorrent-api
+      name: qbittorrent-web
+    - port: 3000
+      targetPort: 3000
+      name: flood-web
     - port: 8000
       targetPort: 8000
       name: gluetun-control
@@ -213,15 +246,33 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: qflood
+  name: flood
   namespace: media
   labels:
-    app: qflood
+    app: qbittorrent
 spec:
   selector:
-    app: qflood
+    app: qbittorrent
   ports:
     - port: 3000
       targetPort: 3000
-      name: qflood-web
+      name: flood-web
+  type: ClusterIP
+
+---
+# Service specifically for qBittorrent Web UI
+apiVersion: v1
+kind: Service
+metadata:
+  name: qbittorrent-web
+  namespace: media
+  labels:
+    app: qbittorrent
+spec:
+  selector:
+    app: qbittorrent
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: qbittorrent-web
   type: ClusterIP

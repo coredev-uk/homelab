@@ -13,5 +13,5 @@ resources:
   - prowlarr/
   - vpn-config.yaml
   - sabnzbd/
-  - qflood/
+  - qbittorrent/
   - notifiarr/
