@@ -28,7 +28,7 @@ spec:
               name: metrics
           env:
             - name: FRIGATE_STATS_URL
-              value: "http://frigate.security.svc.cluster.local:5000/api/stats"
+              value: "http://frigate.security.svc.cluster.local:5001/stats"
           resources:
             requests:
               memory: "64Mi"
