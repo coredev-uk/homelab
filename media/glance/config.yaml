@@ -643,7 +643,7 @@ pages:
                 name: Homelab Server
 
           - type: custom-api
-            title: qFlood VPN Status
+            title: qBittorrent VPN Status
             cache: 1m
             url: http://qbittorrent.media:8000/v1/publicip/ip
             subrequests:
@@ -760,7 +760,8 @@ pages:
               - linuxserver/docker-bazarr # Subtitles
               - linuxserver/docker-prowlarr # Indexers
               - linuxserver/docker-sabnzbd # Usenet
-              - dockerhub:engels74/qflood # Torrent Client UI
+              - lscr.io/linuxserver/qbittorrent # Torrent Client
+              - dockerhub:jesec/flood # Torrent Web UI
               - Notifiarr/notifiarr # Notifications
               - cleanuparr/cleanuparr # Media Cleanup
               - plexguide/Huntarr.io # Duplicate Hunter
