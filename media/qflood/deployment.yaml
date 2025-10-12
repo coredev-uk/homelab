@@ -137,9 +137,6 @@ spec:
               value: "false"
             - name: WEBUI_PORTS
               value: "8081/tcp,8081/udp,3000/tcp,3000/udp"
-            # Fix memory leak by using POSIX-compliant disk IO instead of memory mapped files
-            - name: QBT_DISKIO_TYPE
-              value: "posix"
           ports:
             - containerPort: 3000
               name: qflood-web
