@@ -64,3 +64,4 @@ spec:
       name: metrics
   selector:
     app: frigate-exporter
+

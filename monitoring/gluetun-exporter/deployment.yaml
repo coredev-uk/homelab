@@ -102,4 +102,3 @@ spec:
       name: qflood-metrics
   selector:
     app: gluetun-exporter
-

@@ -76,11 +76,11 @@ spec:
             requests:
               memory: "1Gi"
               cpu: "500m"
-             limits:
-               memory: "4Gi"
-               cpu: "2000m"
-           securityContext:
-             privileged: false
+            limits:
+              memory: "4Gi"
+              cpu: "2000m"
+          securityContext:
+            privileged: false
       volumes:
         - name: data
           persistentVolumeClaim:

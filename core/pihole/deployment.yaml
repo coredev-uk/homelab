@@ -104,8 +104,8 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "500m"
-           securityContext:
-             runAsNonRoot: false
+          securityContext:
+            runAsNonRoot: false
       volumes:
         - name: config
           persistentVolumeClaim:
