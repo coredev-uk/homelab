@@ -190,3 +190,7 @@ spec:
       port: 443
       targetPort: 443
       protocol: TCP
+    - name: traefik
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
