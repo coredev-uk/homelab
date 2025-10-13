@@ -74,6 +74,7 @@ spec:
               port: 8096
             initialDelaySeconds: 30
             periodSeconds: 10
+            timeoutSeconds: 10
           volumeMounts:
             - name: storage
               mountPath: /config
