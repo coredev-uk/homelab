@@ -3,10 +3,3 @@ kind: Kustomization
 
 resources:
   - deployment.yaml
-
-configMapGenerator:
-  - name: grafana-dashboards
-    files:
-      - dashboards/cluster-overview.json
-      - dashboards/security.json
-      - dashboards/media.json
