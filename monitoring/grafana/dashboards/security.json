@@ -92,7 +92,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "gluetun_vpn_status{job=\"gluetun-sabnzbd\"}",
+          "expr": "gluetun_vpn_status{instance=\"gluetun-sabnzbd:8000\"}",
           "legendFormat": "SABnzbd VPN",
           "range": true,
           "refId": "A"
@@ -103,7 +103,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "gluetun_vpn_status{job=\"gluetun-qbittorrent\"}",
+          "expr": "gluetun_vpn_status{instance=\"gluetun-qbittorrent:8000\"}",
           "legendFormat": "qBittorrent VPN",
           "range": true,
           "refId": "B"
@@ -173,7 +173,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "gluetun_public_ip_country",
+          "expr": "gluetun_vpn_infos",
           "format": "table",
           "legendFormat": "__auto",
           "range": true,
