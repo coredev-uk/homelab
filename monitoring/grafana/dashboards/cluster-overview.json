@@ -106,7 +106,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "pihole_queries_today",
+          "expr": "pihole_dns_queries_today",
           "legendFormat": "DNS Queries Today",
           "range": true,
           "refId": "A"

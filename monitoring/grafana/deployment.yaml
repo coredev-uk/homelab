@@ -30,6 +30,7 @@ data:
     datasources:
       - name: Prometheus
         type: prometheus
+        uid: prometheus
         access: proxy
         url: http://prometheus:9090
         isDefault: true
@@ -130,6 +131,10 @@ spec:
               mountPath: /etc/grafana
             - name: datasources
               mountPath: /etc/grafana/provisioning/datasources
+            - name: dashboards-config
+              mountPath: /etc/grafana/provisioning/dashboards
+            - name: dashboards
+              mountPath: /var/lib/grafana/dashboards
             - name: config-storage
               mountPath: /var/lib/grafana
           resources:
@@ -149,6 +154,12 @@ spec:
         - name: datasources
           configMap:
             name: grafana-datasources
+        - name: dashboards-config
+          configMap:
+            name: grafana-dashboards-config
+        - name: dashboards
+          configMap:
+            name: grafana-dashboards
         - name: config-storage
           persistentVolumeClaim:
             claimName: grafana-config
