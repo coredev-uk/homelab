@@ -24,7 +24,7 @@ metadata:
     glance/name: "Flood"
     glance/icon: "di:flood"
     glance/url: "https://qbittorrent.home.coredev.uk"
-    glance/description: "Torrent client with Flood UI and VPN"
+    glance/description: "Torrent download client"
 spec:
   replicas: 1
   strategy:
