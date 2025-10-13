@@ -125,8 +125,8 @@ data:
       # Frigate metrics
       - job_name: 'frigate'
         static_configs:
-          - targets: ['frigate-exporter.monitoring.svc.cluster.local:9100']
-        metrics_path: '/metrics'
+          - targets: ['frigate.security.svc.cluster.local:5000']
+        metrics_path: '/api/metrics'
         scrape_interval: 30s
 
       - job_name: 'kubernetes-pods'

@@ -12,49 +12,111 @@
   "panels": [
     {
       "id": 1,
-      "title": "Storage Growth Rate",
+      "title": "Storage Usage Growth",
       "type": "timeseries",
       "targets": [
         {
-          "expr": "node_filesystem_size_bytes{mountpoint=~\"/media.*\"} - node_filesystem_avail_bytes{mountpoint=~\"/media.*\"}",
-          "legendFormat": "{{mountpoint}} - Used Space"
+          "expr": "node_filesystem_size_bytes{mountpoint=~\"/(|home|opt|var|media).*\"} - node_filesystem_avail_bytes{mountpoint=~\"/(|home|opt|var|media).*\"}",
+          "legendFormat": "{{mountpoint}} - Used"
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "binBps"
+          "unit": "bytes",
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "barAlignment": 0,
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "spanNulls": false,
+            "insertNulls": false,
+            "showPoints": "never",
+            "pointSize": 5,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisPlacement": "auto",
+            "axisLabel": "",
+            "axisColorMode": "text",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "axisCenteredZero": false,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
         }
       },
       "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
     },
     {
       "id": 2,
-      "title": "Network Bandwidth Trends",
+      "title": "Primary Network Bandwidth",
       "type": "timeseries",
       "targets": [
         {
-          "expr": "rate(node_network_receive_bytes_total{device!=\"lo\"}[1h]) * 8",
+          "expr": "rate(node_network_receive_bytes_total{device=~\"eth0|ens.*|enp.*\"}[5m]) * 8",
           "legendFormat": "{{device}} RX"
         },
         {
-          "expr": "rate(node_network_transmit_bytes_total{device!=\"lo\"}[1h]) * 8",
+          "expr": "rate(node_network_transmit_bytes_total{device=~\"eth0|ens.*|enp.*\"}[5m]) * 8",
           "legendFormat": "{{device}} TX"
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "bps"
+          "unit": "bps",
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "barAlignment": 0,
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "spanNulls": false,
+            "insertNulls": false,
+            "showPoints": "never",
+            "pointSize": 5,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisPlacement": "auto",
+            "axisLabel": "",
+            "axisColorMode": "text",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "axisCenteredZero": false,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
         }
       },
       "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
     },
     {
       "id": 3,
-      "title": "CPU Utilization Trends",
+      "title": "CPU Usage Trend",
       "type": "timeseries",
       "targets": [
         {
-          "expr": "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[1h])) * 100)",
+          "expr": "100 - (avg(rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
           "legendFormat": "CPU Usage %"
         }
       ],
@@ -62,14 +124,53 @@
         "defaults": {
           "unit": "percent",
           "min": 0,
-          "max": 100
+          "max": 100,
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "barAlignment": 0,
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "gradientMode": "opacity",
+            "spanNulls": false,
+            "insertNulls": false,
+            "showPoints": "never",
+            "pointSize": 5,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisPlacement": "auto",
+            "axisLabel": "",
+            "axisColorMode": "text",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "axisCenteredZero": false,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            },
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 70},
+              {"color": "red", "value": 90}
+            ]
+          }
         }
       },
       "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
     },
     {
       "id": 4,
-      "title": "Memory Usage Trends",
+      "title": "Memory Usage Trend",
       "type": "timeseries",
       "targets": [
         {
@@ -81,18 +182,69 @@
         "defaults": {
           "unit": "percent",
           "min": 0,
-          "max": 100
+          "max": 100,
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "barAlignment": 0,
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "gradientMode": "opacity",
+            "spanNulls": false,
+            "insertNulls": false,
+            "showPoints": "never",
+            "pointSize": 5,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisPlacement": "auto",
+            "axisLabel": "",
+            "axisColorMode": "text",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "axisCenteredZero": false,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            },
+            "thresholdsStyle": {
+              "mode": "line"
+            }
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 80},
+              {"color": "red", "value": 95}
+            ]
+          }
         }
       },
       "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
     },
     {
       "id": 5,
-      "title": "Disk Space Forecast",
+      "title": "Storage Capacity Status",
       "type": "table",
       "targets": [
         {
-          "expr": "predict_linear(node_filesystem_avail_bytes{mountpoint=~\"/.*\"}[7d], 30*24*3600) / 1024 / 1024 / 1024",
+          "expr": "node_filesystem_size_bytes{mountpoint=~\"/(|home|opt|var|media).*\"} / 1024 / 1024 / 1024",
+          "legendFormat": "{{mountpoint}}",
+          "format": "table",
+          "instant": true
+        },
+        {
+          "expr": "node_filesystem_avail_bytes{mountpoint=~\"/(|home|opt|var|media).*\"} / 1024 / 1024 / 1024",
+          "legendFormat": "{{mountpoint}}",
+          "format": "table",
+          "instant": true
+        },
+        {
+          "expr": "(1 - (node_filesystem_avail_bytes{mountpoint=~\"/(|home|opt|var|media).*\"} / node_filesystem_size_bytes{mountpoint=~\"/(|home|opt|var|media).*\"})) * 100",
           "legendFormat": "{{mountpoint}}",
           "format": "table",
           "instant": true
@@ -100,17 +252,45 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "GiB",
           "thresholds": {
+            "mode": "absolute",
             "steps": [
-              {"color": "red", "value": null},
-              {"color": "yellow", "value": 10},
-              {"color": "green", "value": 50}
+              {"color": "green", "value": null},
+              {"color": "yellow", "value": 70},
+              {"color": "red", "value": 90}
             ]
           }
-        }
+        },
+        "overrides": [
+          {
+            "matcher": {"id": "byName", "options": "Value #A"},
+            "properties": [
+              {"id": "displayName", "value": "Total (GiB)"},
+              {"id": "unit", "value": "GiB"}
+            ]
+          },
+          {
+            "matcher": {"id": "byName", "options": "Value #B"},
+            "properties": [
+              {"id": "displayName", "value": "Available (GiB)"},
+              {"id": "unit", "value": "GiB"}
+            ]
+          },
+          {
+            "matcher": {"id": "byName", "options": "Value #C"},
+            "properties": [
+              {"id": "displayName", "value": "Used %"},
+              {"id": "unit", "value": "percent"},
+              {"id": "custom.cellOptions", "value": {"type": "color-background"}}
+            ]
+          }
+        ]
       },
       "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        },
         {
           "id": "organize",
           "options": {
@@ -123,8 +303,7 @@
               "job": true
             },
             "renameByName": {
-              "mountpoint": "Mount Point",
-              "Value": "Available in 30 days (GiB)"
+              "mountpoint": "Mount Point"
             }
           }
         }
@@ -133,11 +312,17 @@
     },
     {
       "id": 6,
-      "title": "Resource Usage by Container",
+      "title": "Container Resource Usage",
       "type": "table",
       "targets": [
         {
-          "expr": "avg_over_time(rate(container_cpu_usage_seconds_total[1h])[7d:1h]) * 100",
+          "expr": "rate(container_cpu_usage_seconds_total{container!=\"\",container!=\"POD\"}[5m]) * 100",
+          "legendFormat": "{{namespace}}/{{pod}}/{{container}}",
+          "format": "table",
+          "instant": true
+        },
+        {
+          "expr": "container_memory_working_set_bytes{container!=\"\",container!=\"POD\"} / 1024 / 1024",
           "legendFormat": "{{namespace}}/{{pod}}/{{container}}",
           "format": "table",
           "instant": true
@@ -145,17 +330,38 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "percent",
           "thresholds": {
+            "mode": "absolute",
             "steps": [
               {"color": "green", "value": null},
               {"color": "yellow", "value": 50},
               {"color": "red", "value": 80}
             ]
           }
-        }
+        },
+        "overrides": [
+          {
+            "matcher": {"id": "byName", "options": "Value #A"},
+            "properties": [
+              {"id": "displayName", "value": "CPU %"},
+              {"id": "unit", "value": "percent"},
+              {"id": "custom.cellOptions", "value": {"type": "color-background"}}
+            ]
+          },
+          {
+            "matcher": {"id": "byName", "options": "Value #B"},
+            "properties": [
+              {"id": "displayName", "value": "Memory (MiB)"},
+              {"id": "unit", "value": "MiB"}
+            ]
+          }
+        ]
       },
       "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        },
         {
           "id": "organize",
           "options": {
@@ -164,13 +370,14 @@
               "__name__": true,
               "instance": true,
               "job": true,
-              "id": true
+              "id": true,
+              "image": true,
+              "name": true
             },
             "renameByName": {
               "namespace": "Namespace",
-              "pod": "Pod",
-              "container": "Container",
-              "Value": "Avg CPU % (7d)"
+              "pod": "Pod", 
+              "container": "Container"
             }
           }
         }

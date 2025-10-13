@@ -16,7 +16,7 @@
       "type": "stat",
       "targets": [
         {
-          "expr": "up",
+          "expr": "up{job=~\"frigate|pihole|traefik|gluetun|prometheus|node-exporter\"}",
           "legendFormat": "{{job}}"
         }
       ],
@@ -39,91 +39,109 @@
     },
     {
       "id": 2,
-      "title": "HTTP Response Times",
-      "type": "timeseries",
+      "title": "Frigate Service Status",
+      "type": "stat",
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))",
-          "legendFormat": "{{service}} - 95th percentile"
-        },
-        {
-          "expr": "histogram_quantile(0.50, rate(http_request_duration_seconds_bucket[5m]))",
-          "legendFormat": "{{service}} - 50th percentile"
+          "expr": "frigate_service_uptime_seconds",
+          "legendFormat": "Frigate v{{version}}"
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "s"
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "green", "value": 1}
+            ]
+          },
+          "mappings": [
+            {"options": {"0": {"text": "Down"}}, "type": "value"},
+            {"options": {"1": {"text": "Running"}}, "type": "value"}
+          ]
         }
       },
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8}
+      "gridPos": {"h": 4, "w": 8, "x": 0, "y": 8}
     },
     {
       "id": 3,
-      "title": "HTTP Error Rates",
-      "type": "timeseries",
+      "title": "VPN Status",
+      "type": "stat",
       "targets": [
         {
-          "expr": "rate(http_requests_total{code=~\"5[0-9][0-9]\"}[5m])",
-          "legendFormat": "{{service}} - 5xx errors"
-        },
-        {
-          "expr": "rate(http_requests_total{code=~\"4[0-9][0-9]\"}[5m])",
-          "legendFormat": "{{service}} - 4xx errors"
+          "expr": "gluetun_vpn_status",
+          "legendFormat": "VPN {{instance}}"
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "reqps"
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "green", "value": 1}
+            ]
+          },
+          "mappings": [
+            {"options": {"0": {"text": "Disconnected"}}, "type": "value"},
+            {"options": {"1": {"text": "Connected"}}, "type": "value"}
+          ]
         }
       },
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8}
+      "gridPos": {"h": 4, "w": 8, "x": 8, "y": 8}
     },
     {
       "id": 4,
-      "title": "Request Rate",
-      "type": "timeseries",
+      "title": "Container Status",
+      "type": "stat",
       "targets": [
         {
-          "expr": "rate(http_requests_total[5m])",
-          "legendFormat": "{{service}}"
+          "expr": "kube_pod_status_phase{namespace=~\"media|security|monitoring|dns\"} == 1",
+          "legendFormat": "{{namespace}}/{{pod}}"
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "reqps"
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "green", "value": 1}
+            ]
+          },
+          "mappings": [
+            {"options": {"0": {"text": "Down"}}, "type": "value"},
+            {"options": {"1": {"text": "Running"}}, "type": "value"}
+          ]
         }
       },
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 16}
+      "gridPos": {"h": 4, "w": 8, "x": 16, "y": 8}
     },
     {
       "id": 5,
-      "title": "Database Connection Pool",
+      "title": "CPU Usage by Container",
       "type": "timeseries",
       "targets": [
         {
-          "expr": "db_connections_active",
-          "legendFormat": "{{service}} - Active"
-        },
-        {
-          "expr": "db_connections_idle",
-          "legendFormat": "{{service}} - Idle"
+          "expr": "rate(container_cpu_usage_seconds_total{container!=\"POD\",container!=\"\",namespace=~\"media|security|monitoring|dns\"}[5m]) * 100",
+          "legendFormat": "{{namespace}}/{{pod}}/{{container}}"
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "short"
+          "unit": "percent"
         }
       },
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 16}
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12}
     },
     {
       "id": 6,
-      "title": "Memory Usage by Service",
+      "title": "Memory Usage by Container",
       "type": "timeseries",
       "targets": [
         {
-          "expr": "container_memory_usage_bytes{container!=\"POD\",container!=\"\"} / 1024 / 1024",
+          "expr": "container_memory_usage_bytes{container!=\"POD\",container!=\"\",namespace=~\"media|security|monitoring|dns\"} / 1024 / 1024",
           "legendFormat": "{{namespace}}/{{pod}}/{{container}}"
         }
       ],
@@ -132,7 +150,53 @@
           "unit": "MiB"
         }
       },
-      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 24}
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12}
+    },
+    {
+      "id": 7,
+      "title": "Frigate Detection Performance",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "frigate_detection_fps",
+          "legendFormat": "Detection FPS"
+        },
+        {
+          "expr": "frigate_process_fps",
+          "legendFormat": "Process FPS"
+        },
+        {
+          "expr": "frigate_skipped_fps",
+          "legendFormat": "Skipped FPS"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "fps"
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 20}
+    },
+    {
+      "id": 8,
+      "title": "Network Bandwidth Usage",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(container_network_receive_bytes_total{namespace=~\"media|security|monitoring|dns\"}[5m]) * 8 / 1024 / 1024",
+          "legendFormat": "{{namespace}}/{{pod}} - RX"
+        },
+        {
+          "expr": "rate(container_network_transmit_bytes_total{namespace=~\"media|security|monitoring|dns\"}[5m]) * 8 / 1024 / 1024",
+          "legendFormat": "{{namespace}}/{{pod}} - TX"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Mbps"
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 20}
     }
   ]
 }

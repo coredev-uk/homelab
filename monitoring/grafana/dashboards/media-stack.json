@@ -12,12 +12,12 @@
   "panels": [
     {
       "id": 1,
-      "title": "Container Status",
+      "title": "Media Services Status",
       "type": "stat",
       "targets": [
         {
           "expr": "kube_pod_container_status_running{namespace=\"media\"}",
-          "legendFormat": "{{pod}} - {{container}}"
+          "legendFormat": "{{pod}}"
         }
       ],
       "fieldConfig": {
@@ -25,22 +25,26 @@
           "color": {"mode": "thresholds"},
           "thresholds": {
             "steps": [
-              {"color": "red", "value": null},
+              {"color": "red", "value": 0},
               {"color": "green", "value": 1}
             ]
-          }
+          },
+          "mappings": [
+            {"options": {"0": {"text": "Down"}}, "type": "value"},
+            {"options": {"1": {"text": "Running"}}, "type": "value"}
+          ]
         }
       },
-      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 0}
+      "gridPos": {"h": 6, "w": 24, "x": 0, "y": 0}
     },
     {
-      "id": 7,
-      "title": "VPN Status",
+      "id": 2,
+      "title": "Frigate Status",
       "type": "stat",
       "targets": [
         {
-          "expr": "gluetun_vpn_status",
-          "legendFormat": "Connection Status"
+          "expr": "frigate_service_uptime_seconds",
+          "legendFormat": "Frigate NVR"
         }
       ],
       "fieldConfig": {
@@ -53,15 +57,42 @@
             ]
           },
           "mappings": [
+            {"options": {"0": {"text": "Down"}}, "type": "value"},
+            {"options": {"1": {"text": "Running"}}, "type": "value"}
+          ]
+        }
+      },
+      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 6}
+    },
+    {
+      "id": 3,
+      "title": "VPN Status",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "gluetun_vpn_status",
+          "legendFormat": "VPN Connection"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "red", "value": 0},
+              {"color": "green", "value": 1}
+            ]
+          },
+          "mappings": [
             {"options": {"0": {"text": "Disconnected"}}, "type": "value"},
             {"options": {"1": {"text": "Connected"}}, "type": "value"}
           ]
         }
       },
-      "gridPos": {"h": 4, "w": 8, "x": 0, "y": 8}
+      "gridPos": {"h": 4, "w": 6, "x": 6, "y": 6}
     },
     {
-      "id": 8,
+      "id": 4,
       "title": "VPN Location",
       "type": "stat",
       "targets": [
@@ -76,10 +107,10 @@
           "noValue": "No Data"
         }
       },
-      "gridPos": {"h": 4, "w": 8, "x": 8, "y": 8}
+      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 6}
     },
     {
-      "id": 9,
+      "id": 5,
       "title": "VPN Public IP",
       "type": "stat",
       "targets": [
@@ -94,11 +125,113 @@
           "noValue": "No Data"
         }
       },
-      "gridPos": {"h": 4, "w": 8, "x": 16, "y": 8}
+      "gridPos": {"h": 4, "w": 6, "x": 18, "y": 6}
     },
     {
-      "id": 2,
-      "title": "Storage Usage - Media",
+      "id": 6,
+      "title": "Frigate Detection FPS",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "frigate_detection_fps",
+          "legendFormat": "{{name}} Detection FPS"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "fps",
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "barAlignment": 0,
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "gradientMode": "opacity",
+            "spanNulls": false,
+            "insertNulls": false,
+            "showPoints": "never",
+            "pointSize": 5,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisPlacement": "auto",
+            "axisLabel": "",
+            "axisColorMode": "text",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "axisCenteredZero": false,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 10}
+    },
+    {
+      "id": 7,
+      "title": "Frigate CPU & Memory Usage",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "frigate_cpu_usage_percent",
+          "legendFormat": "CPU %"
+        },
+        {
+          "expr": "frigate_mem_usage_percent",
+          "legendFormat": "Memory %"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "max": 100,
+          "min": 0,
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "barAlignment": 0,
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "gradientMode": "opacity",
+            "spanNulls": false,
+            "insertNulls": false,
+            "showPoints": "never",
+            "pointSize": 5,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisPlacement": "auto",
+            "axisLabel": "",
+            "axisColorMode": "text",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "axisCenteredZero": false,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        }
+      },
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 10}
+    },
+    {
+      "id": 8,
+      "title": "Media Storage Usage",
       "type": "stat",
       "targets": [
         {
@@ -120,83 +253,207 @@
           }
         }
       },
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12}
+      "gridPos": {"h": 6, "w": 12, "x": 0, "y": 18}
     },
     {
-      "id": 3,
-      "title": "Network Usage - VPN Containers",
+      "id": 9,
+      "title": "Download Network Usage",
       "type": "timeseries",
       "targets": [
         {
-          "expr": "rate(container_network_receive_bytes_total{pod=~\".*gluetun.*|.*qflood.*|.*sabnzbd.*\"}[5m]) * 8",
-          "legendFormat": "{{pod}} RX"
+          "expr": "rate(container_network_receive_bytes_total{pod=~\".*qbittorrent.*|.*sabnzbd.*\"}[5m]) * 8",
+          "legendFormat": "{{pod}} Download"
         },
         {
-          "expr": "rate(container_network_transmit_bytes_total{pod=~\".*gluetun.*|.*qflood.*|.*sabnzbd.*\"}[5m]) * 8",
-          "legendFormat": "{{pod}} TX"
+          "expr": "rate(container_network_transmit_bytes_total{pod=~\".*qbittorrent.*|.*sabnzbd.*\"}[5m]) * 8",
+          "legendFormat": "{{pod}} Upload"
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "bps"
+          "unit": "bps",
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "barAlignment": 0,
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "spanNulls": false,
+            "insertNulls": false,
+            "showPoints": "never",
+            "pointSize": 5,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisPlacement": "auto",
+            "axisLabel": "",
+            "axisColorMode": "text",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "axisCenteredZero": false,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
         }
       },
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12}
+      "gridPos": {"h": 6, "w": 12, "x": 12, "y": 18}
     },
     {
-      "id": 4,
-      "title": "CPU Usage - Media Services",
+      "id": 10,
+      "title": "Media Service CPU Usage",
       "type": "timeseries",
       "targets": [
         {
-          "expr": "rate(container_cpu_usage_seconds_total{namespace=\"media\"}[5m]) * 100",
-          "legendFormat": "{{pod}}"
+          "expr": "rate(container_cpu_usage_seconds_total{namespace=\"media\",container!=\"\",container!=\"POD\"}[5m]) * 100",
+          "legendFormat": "{{pod}}/{{container}}"
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "percent"
+          "unit": "percent",
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "barAlignment": 0,
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "spanNulls": false,
+            "insertNulls": false,
+            "showPoints": "never",
+            "pointSize": 5,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisPlacement": "auto",
+            "axisLabel": "",
+            "axisColorMode": "text",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "axisCenteredZero": false,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
         }
       },
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 20}
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 24}
     },
     {
-      "id": 5,
-      "title": "Memory Usage - Media Services",
+      "id": 11,
+      "title": "Media Service Memory Usage",
       "type": "timeseries",
       "targets": [
         {
-          "expr": "container_memory_usage_bytes{namespace=\"media\"} / 1024 / 1024",
-          "legendFormat": "{{pod}}"
+          "expr": "container_memory_working_set_bytes{namespace=\"media\",container!=\"\",container!=\"POD\"} / 1024 / 1024",
+          "legendFormat": "{{pod}}/{{container}}"
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "MiB"
+          "unit": "MiB",
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "barAlignment": 0,
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "spanNulls": false,
+            "insertNulls": false,
+            "showPoints": "never",
+            "pointSize": 5,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisPlacement": "auto",
+            "axisLabel": "",
+            "axisColorMode": "text",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "axisCenteredZero": false,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
         }
       },
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 20}
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 24}
     },
     {
-      "id": 6,
-      "title": "Disk I/O - Media Storage",
+      "id": 12,
+      "title": "Storage Disk I/O",
       "type": "timeseries",
       "targets": [
         {
-          "expr": "rate(node_disk_read_bytes_total{device=~\"sd.*\"}[5m])",
+          "expr": "rate(node_disk_read_bytes_total{device=~\"sd.*|nvme.*\"}[5m])",
           "legendFormat": "{{device}} Read"
         },
         {
-          "expr": "rate(node_disk_written_bytes_total{device=~\"sd.*\"}[5m])",
+          "expr": "rate(node_disk_written_bytes_total{device=~\"sd.*|nvme.*\"}[5m])",
           "legendFormat": "{{device}} Write"
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "binBps"
+          "unit": "binBps",
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "barAlignment": 0,
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "spanNulls": false,
+            "insertNulls": false,
+            "showPoints": "never",
+            "pointSize": 5,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisPlacement": "auto",
+            "axisLabel": "",
+            "axisColorMode": "text",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "axisCenteredZero": false,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
         }
       },
-      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 28}
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 32}
     }
   ]
 }

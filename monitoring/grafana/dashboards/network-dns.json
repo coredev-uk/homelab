@@ -12,11 +12,11 @@
   "panels": [
     {
       "id": 1,
-      "title": "Pi-hole Status",
+      "title": "Pi-hole Pod Status",
       "type": "stat",
       "targets": [
         {
-          "expr": "up{job=\"pihole\"} or on() (kube_deployment_status_replicas{deployment=\"pihole\", namespace=\"dns\"} > 0)",
+          "expr": "kube_pod_status_phase{namespace=\"core\",pod=~\"pihole.*\",phase=\"Running\"}",
           "legendFormat": "Pi-hole"
         }
       ],
@@ -31,7 +31,7 @@
           },
           "mappings": [
             {"options": {"0": {"text": "Down"}}, "type": "value"},
-            {"options": {"1": {"text": "Up"}}, "type": "value"}
+            {"options": {"1": {"text": "Running"}}, "type": "value"}
           ]
         }
       },
@@ -39,12 +39,66 @@
     },
     {
       "id": 2,
-      "title": "Traefik Status",
+      "title": "Traefik Pod Status",
       "type": "stat",
       "targets": [
         {
-          "expr": "up{job=\"traefik\"}",
+          "expr": "kube_pod_status_phase{namespace=\"core\",pod=~\"traefik.*\",phase=\"Running\"}",
           "legendFormat": "Traefik"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "red", "value": null},
+              {"color": "green", "value": 1}
+            ]
+          },
+          "mappings": [
+            {"options": {"0": {"text": "Down"}}, "type": "value"},
+            {"options": {"1": {"text": "Running"}}, "type": "value"}
+          ]
+        }
+      },
+      "gridPos": {"h": 4, "w": 6, "x": 6, "y": 0}
+    },
+    {
+      "id": 3,
+      "title": "VPN Status",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "gluetun_vpn_status",
+          "legendFormat": "VPN Connected"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {"mode": "thresholds"},
+          "thresholds": {
+            "steps": [
+              {"color": "red", "value": 0},
+              {"color": "green", "value": 1}
+            ]
+          },
+          "mappings": [
+            {"options": {"0": {"text": "Disconnected"}}, "type": "value"},
+            {"options": {"1": {"text": "Connected"}}, "type": "value"}
+          ]
+        }
+      },
+      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 0}
+    },
+    {
+      "id": 4,
+      "title": "Primary Network Interface",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "node_network_up{device=~\"eth0|ens.*|enp.*\"}",
+          "legendFormat": "{{device}}"
         }
       ],
       "fieldConfig": {
@@ -62,126 +116,263 @@
           ]
         }
       },
-      "gridPos": {"h": 4, "w": 6, "x": 6, "y": 0}
-    },
-    {
-      "id": 3,
-      "title": "VPN Connections",
-      "type": "stat",
-      "targets": [
-        {
-          "expr": "count(kube_deployment_status_replicas{deployment=~\".*gluetun.*\", namespace=\"media\"})",
-          "legendFormat": "VPN Pods"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "color": {"mode": "thresholds"},
-          "thresholds": {
-            "steps": [
-              {"color": "red", "value": null},
-              {"color": "green", "value": 1}
-            ]
-          }
-        }
-      },
-      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 0}
-    },
-    {
-      "id": 4,
-      "title": "Network Interfaces",
-      "type": "stat",
-      "targets": [
-        {
-          "expr": "node_network_up{device=~\"enp.*|eth.*|wlan.*\"}",
-          "legendFormat": "{{device}}"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "color": {"mode": "thresholds"},
-          "thresholds": {
-            "steps": [
-              {"color": "red", "value": null},
-              {"color": "green", "value": 1}
-            ]
-          }
-        }
-      },
       "gridPos": {"h": 4, "w": 6, "x": 18, "y": 0}
     },
     {
       "id": 5,
-      "title": "DNS Queries Rate",
+      "title": "Network Traffic - Primary Interface",
       "type": "timeseries",
       "targets": [
         {
-          "expr": "rate(pihole_dns_queries_today[5m])",
-          "legendFormat": "Queries/sec"
+          "expr": "rate(node_network_receive_bytes_total{device=~\"eth0|ens.*|enp.*\"}[5m]) * 8",
+          "legendFormat": "{{device}} RX"
+        },
+        {
+          "expr": "rate(node_network_transmit_bytes_total{device=~\"eth0|ens.*|enp.*\"}[5m]) * 8",
+          "legendFormat": "{{device}} TX"
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "qps"
+          "unit": "bps",
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "barAlignment": 0,
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "gradientMode": "opacity",
+            "spanNulls": false,
+            "insertNulls": false,
+            "showPoints": "never",
+            "pointSize": 5,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisPlacement": "auto",
+            "axisLabel": "",
+            "axisColorMode": "text",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "axisCenteredZero": false,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
         }
       },
       "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4}
     },
     {
       "id": 6,
-      "title": "DNS Blocked Rate",
+      "title": "Network Errors & Drops",
       "type": "timeseries",
       "targets": [
         {
-          "expr": "rate(pihole_ads_blocked_today[5m])",
-          "legendFormat": "Blocked/sec"
+          "expr": "rate(node_network_receive_errs_total{device=~\"eth0|ens.*|enp.*\"}[5m])",
+          "legendFormat": "{{device}} RX Errors"
+        },
+        {
+          "expr": "rate(node_network_transmit_errs_total{device=~\"eth0|ens.*|enp.*\"}[5m])",
+          "legendFormat": "{{device}} TX Errors"
+        },
+        {
+          "expr": "rate(node_network_receive_drop_total{device=~\"eth0|ens.*|enp.*\"}[5m])",
+          "legendFormat": "{{device}} RX Drops"
+        },
+        {
+          "expr": "rate(node_network_transmit_drop_total{device=~\"eth0|ens.*|enp.*\"}[5m])",
+          "legendFormat": "{{device}} TX Drops"
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "qps",
-          "color": {"mode": "palette-classic"}
+          "unit": "pps",
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "barAlignment": 0,
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "spanNulls": false,
+            "insertNulls": false,
+            "showPoints": "never",
+            "pointSize": 5,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisPlacement": "auto",
+            "axisLabel": "",
+            "axisColorMode": "text",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "axisCenteredZero": false,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
         }
       },
       "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4}
     },
     {
       "id": 7,
-      "title": "HTTP Requests - Traefik",
-      "type": "timeseries",
+      "title": "DNS Service Containers",
+      "type": "table",
       "targets": [
         {
-          "expr": "rate(traefik_service_requests_total[5m])",
-          "legendFormat": "{{service}}"
+          "expr": "kube_pod_container_status_running{namespace=\"core\",pod=~\"pihole.*\"}",
+          "legendFormat": "{{pod}}/{{container}}",
+          "format": "table",
+          "instant": true
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "reqps"
+          "mappings": [
+            {"options": {"0": {"text": "Not Running"}}, "type": "value"},
+            {"options": {"1": {"text": "Running"}}, "type": "value"}
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {"color": "red", "value": 0},
+              {"color": "green", "value": 1}
+            ]
+          },
+          "custom": {
+            "cellOptions": {
+              "type": "color-background"
+            }
+          }
         }
       },
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12}
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true,
+              "namespace": true,
+              "uid": true
+            },
+            "renameByName": {
+              "pod": "Pod",
+              "container": "Container",
+              "Value": "Status"
+            }
+          }
+        }
+      ],
+      "gridPos": {"h": 6, "w": 12, "x": 0, "y": 12}
     },
     {
       "id": 8,
-      "title": "HTTP Response Times",
-      "type": "timeseries",
+      "title": "VPN Connection Details",
+      "type": "table",
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, rate(traefik_service_request_duration_seconds_bucket[5m]))",
-          "legendFormat": "95th percentile"
-        },
-        {
-          "expr": "histogram_quantile(0.50, rate(traefik_service_request_duration_seconds_bucket[5m]))",
-          "legendFormat": "50th percentile"
+          "expr": "gluetun_vpn_infos",
+          "legendFormat": "{{city}}, {{country}} - {{ip}}",
+          "format": "table",
+          "instant": true
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "s"
+          "color": {"mode": "fixed", "fixedColor": "blue"}
         }
       },
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 12}
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "instance": true,
+              "job": true,
+              "Value": true
+            },
+            "renameByName": {
+              "city": "City",
+              "country": "Country",
+              "ip": "Public IP"
+            }
+          }
+        }
+      ],
+      "gridPos": {"h": 6, "w": 12, "x": 12, "y": 12}
+    },
+    {
+      "id": 9,
+      "title": "Container Network Usage",
+      "type": "timeseries",
+      "targets": [
+        {
+          "expr": "rate(container_network_receive_bytes_total{pod=~\"pihole.*|traefik.*\"}[5m]) * 8",
+          "legendFormat": "{{pod}} RX"
+        },
+        {
+          "expr": "rate(container_network_transmit_bytes_total{pod=~\"pihole.*|traefik.*\"}[5m]) * 8",
+          "legendFormat": "{{pod}} TX"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bps",
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "linear",
+            "barAlignment": 0,
+            "lineWidth": 1,
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "spanNulls": false,
+            "insertNulls": false,
+            "showPoints": "never",
+            "pointSize": 5,
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            },
+            "axisPlacement": "auto",
+            "axisLabel": "",
+            "axisColorMode": "text",
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "axisCenteredZero": false,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "vis": false
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          }
+        }
+      },
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 18}
     }
   ]
 }
