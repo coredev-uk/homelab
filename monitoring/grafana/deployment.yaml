@@ -28,7 +28,7 @@ data:
   datasources.yaml: |
     apiVersion: 1
     datasources:
-      - name: Prometheus
+      - name: prometheus
         type: prometheus
         uid: prometheus
         access: proxy
