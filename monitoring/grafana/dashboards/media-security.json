@@ -475,13 +475,13 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "increase(frigate_camera_events_total[1h])",
-          "legendFormat": "{{name}} Events/hour",
+          "expr": "frigate_process_fps",
+          "legendFormat": "{{camera_name}} Process FPS",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Camera Events per Hour",
+       "title": "Camera Processing FPS",
       "type": "timeseries"
     },
     {
@@ -568,7 +568,7 @@
           },
           "editorMode": "code",
           "expr": "gluetun_vpn_status",
-          "legendFormat": "{{server_name}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -630,7 +630,7 @@
           },
           "editorMode": "code",
           "expr": "gluetun_forwarded_ports_total",
-          "legendFormat": "Forwarded Ports",
+          "legendFormat": "{{instance}} Ports",
           "range": true,
           "refId": "A"
         }
@@ -691,11 +691,11 @@
                 "color": "red",
                 "value": 80
               }
-            ]
-          },
-          "unit": "binBps"
-        },
-        "overrides": []
+             ]
+           },
+           "unit": "fps"
+         },
+         "overrides": []
       },
       "gridPos": {
         "h": 8,
@@ -1161,6 +1161,89 @@
       ],
       "title": "Frigate Detector Inference Speed",
       "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 25
+      },
+      "id": 21,
+      "panels": [],
+      "title": "Certificate Management",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 7
+              },
+              {
+                "color": "green",
+                "value": 30
+              }
+            ]
+          },
+          "unit": "d"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 26
+      },
+      "id": 22,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "values": false,
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": ""
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "code",
+          "expr": "(certmanager_certificate_expiration_timestamp_seconds{job=\"cert-manager\"} - time()) / 86400",
+          "legendFormat": "{{name}}.{{namespace}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Certificate Expiration (Days Remaining)",
+      "type": "stat"
     }
   ],
   "refresh": "30s",
