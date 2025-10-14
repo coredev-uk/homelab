@@ -24,7 +24,7 @@ spec:
             - name: FRIGATE_STATS_URL
               value: "http://frigate.security.svc.cluster.local:5000/api/stats"
             - name: PORT
-              value: 9100
+              value: "9100"
           ports:
             - containerPort: 9100
               name: frigate-metrics
