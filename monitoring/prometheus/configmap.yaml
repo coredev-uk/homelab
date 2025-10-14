@@ -10,6 +10,8 @@ data:
       evaluation_interval: 15s
 
     scrape_configs:
+      # ----------- Monitoring Namespace -------------
+
       - job_name: 'prometheus'
         static_configs:
           - targets: ['localhost:9090']
@@ -21,6 +23,25 @@ data:
       - job_name: 'kube-state-metrics'
         static_configs:
           - targets: ['kube-state-metrics:8080']
+
+      # Pi-hole metrics
+      - job_name: 'pihole'
+        static_configs:
+          - targets: ['pihole-exporter:9617']
+      
+      # Frigate metrics
+      - job_name: 'frigate'
+        static_configs:
+          - targets: ['frigate-exporter:9100']
+        metrics_path: '/metrics'
+      
+      # Gluetun VPN exporters
+      - job_name: 'gluetun'
+        static_configs:
+          - targets: ['gluetun-exporter:8001', 'gluetun-exporter:8002']
+        metrics_path: '/metrics'
+
+      # ------------------------------------------------  
 
       # Container metrics from kubelet cAdvisor
       - job_name: 'cadvisor'
@@ -64,22 +85,9 @@ data:
           - targets: ['cert-manager.cert-manager.svc.cluster.local:9402']
         scrape_interval: 60s
 
-      # Pi-hole metrics
-      - job_name: 'pihole'
-        static_configs:
-          - targets: ['pihole-exporter.monitoring.svc.cluster.local:9617']
-        scrape_interval: 30s
-
       - job_name: 'traefik'
         static_configs:
           - targets: ['traefik.traefik.svc.cluster.local:8080']
-        metrics_path: '/metrics'
-        scrape_interval: 30s
-
-      # Gluetun VPN exporters
-      - job_name: 'gluetun'
-        static_configs:
-          - targets: ['gluetun-exporter.monitoring.svc.cluster.local:8001', 'gluetun-exporter.monitoring.svc.cluster.local:8002']
         metrics_path: '/metrics'
         scrape_interval: 30s
 
@@ -122,13 +130,6 @@ data:
         metrics_path: '/metrics'
         scrape_interval: 30s
 
-      # Frigate metrics
-      - job_name: 'frigate'
-        static_configs:
-          - targets: ['frigate.security.svc.cluster.local:5000']
-        metrics_path: '/api/metrics'
-        scrape_interval: 30s
-
       - job_name: 'kubernetes-pods'
         kubernetes_sd_configs:
           - role: pod
@@ -145,4 +146,3 @@ data:
             regex: ([^:]+)(?::\d+)?;(\d+)
             replacement: $1:$2
             target_label: __address__
-
