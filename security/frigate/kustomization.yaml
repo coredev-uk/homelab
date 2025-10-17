@@ -5,8 +5,3 @@ namespace: security
 
 resources:
   - deployment.yaml
-
-configMapGenerator:
-  - name: frigate-config
-    files:
-      - config.yml=config.yaml

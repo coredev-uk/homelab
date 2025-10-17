@@ -59,13 +59,10 @@ spec:
                   key: RTSP_PASSWORD
                   optional: true
           volumeMounts:
-            - name: data
+            - name: frigate-data
               mountPath: /config
-            - name: frigate-config
-              mountPath: /config/config.yml
-              subPath: config.yml
-              readOnly: true
-            - name: media
+              subPath: config
+            - name: frigate-data
               mountPath: /media/frigate
             - name: cache
               mountPath: /tmp/cache
@@ -86,13 +83,7 @@ spec:
           securityContext:
             privileged: true
       volumes:
-        - name: data
-          persistentVolumeClaim:
-            claimName: frigate-config
-        - name: frigate-config
-          configMap:
-            name: frigate-config
-        - name: media
+        - name: frigate-data
           persistentVolumeClaim:
             claimName: frigate-media-host
         - name: cache
@@ -114,19 +105,6 @@ spec:
           hostPath:
             path: /dev/apex_0
             type: CharDevice
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: frigate-config
-  namespace: security
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 2Gi
-  storageClassName: longhorn
 ---
 apiVersion: v1
 kind: Service
