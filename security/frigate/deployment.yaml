@@ -19,6 +19,8 @@ spec:
       labels:
         app: frigate
     spec:
+      nodeSelector:
+        feature.node.kubernetes.io/coral-tpu: "true"
       containers:
         - name: frigate
           image: ghcr.io/blakeblackshear/frigate:0.16.1
@@ -72,6 +74,8 @@ spec:
             - name: tls-certs
               mountPath: /etc/letsencrypt/live/frigate/
               readOnly: true
+            - name: coral-tpu
+              mountPath: /dev/apex_0
           resources:
             requests:
               memory: "1Gi"
@@ -80,7 +84,7 @@ spec:
               memory: "4Gi"
               cpu: "2000m"
           securityContext:
-            privileged: false
+            privileged: true
       volumes:
         - name: data
           persistentVolumeClaim:
@@ -106,6 +110,10 @@ spec:
                 path: fullchain.pem
               - key: tls.key
                 path: privkey.pem
+        - name: coral-tpu
+          hostPath:
+            path: /dev/apex_0
+            type: CharDevice
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

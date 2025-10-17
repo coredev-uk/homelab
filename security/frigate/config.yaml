@@ -1,6 +1,12 @@
 mqtt:
   enabled: false
 
+# Edge TPU Detector Configuration
+detectors:
+  coral:
+    type: edgetpu
+    device: pci
+
 # telemetry enabled for prometheus
 telemetry:
   stats:
@@ -42,8 +48,9 @@ objects:
   track:
     - person
     - car
-    - dog
-    - cat
+    - motorcycle
+    - bicycle
+    - truck
   filters:
     person:
       min_score: 0.5
@@ -65,6 +72,11 @@ objects:
       threshold: 0.75
       min_area: 1500
       max_area: 25000
+    truck:
+      min_score: 0.6
+      threshold: 0.8
+      min_area: 20000
+      max_area: 150000
 
 record:
   enabled: true
@@ -111,6 +123,9 @@ cameras:
         Sub Stream: front_door_sub # Lower quality stream (stream1)
     detect:
       enabled: true
+      detector: coral
+      fps: 5
+      max_disappeared: 25
     record:
       enabled: true
     snapshots:
@@ -136,9 +151,14 @@ cameras:
         loitering_time: 10
       driveway:
         coordinates: 0.65,0.139,0.941,0.244,0.946,0.388,0.81,0.309,0.569,0.199
+        distances: 8,10,9,11 # Real-world distances in meters
+        speed_threshold: 15 # Minimum speed in kph for alerts
         objects:
           - car
           - person
+          - motorcycle
+          - bicycle
+          - truck
     motion:
       mask:
         - 0,0,200,0,200,50,0,50
@@ -172,6 +192,7 @@ cameras:
         enabled: false
     detect:
       enabled: true
+      detector: coral
     record:
       enabled: true
     snapshots:
@@ -237,6 +258,7 @@ cameras:
           - garden_main
     detect:
       enabled: true
+      detector: coral
     record:
       enabled: true
     snapshots:
