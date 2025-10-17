@@ -39,10 +39,12 @@ camera_groups:
     order: 0
 
 auth:
-  enabled: false
+  enabled: true
 
 tls:
-  enabled: false
+  enabled: true
+  cert_path: /etc/letsencrypt/live/frigate/fullchain.pem
+  key_path: /etc/letsencrypt/live/frigate/privkey.pem
 
 objects:
   track:
