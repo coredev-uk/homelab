@@ -43,8 +43,6 @@ auth:
 
 tls:
   enabled: true
-  cert_path: /etc/letsencrypt/live/frigate/fullchain.pem
-  key_path: /etc/letsencrypt/live/frigate/privkey.pem
 
 objects:
   track:

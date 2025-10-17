@@ -13,8 +13,9 @@ spec:
         - name: frigate-headers
       services:
         - name: frigate
-          port: 5443
+          port: 8971
           scheme: https
+          serversTransport: frigate-transport
   tls:
     secretName: security-tls
 ---
@@ -29,4 +30,12 @@ spec:
       X-Forwarded-Proto: "https"
     customResponseHeaders:
       Strict-Transport-Security: "max-age=63072000"
+---
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: frigate-transport
+  namespace: security
+spec:
+  insecureSkipVerify: true
 
