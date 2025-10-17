@@ -123,76 +123,6 @@ cameras:
         Sub Stream: front_door_sub # Lower quality stream (stream1)
     detect:
       enabled: true
-      detector: coral
-      fps: 5
-      max_disappeared: 25
-    record:
-      enabled: true
-    snapshots:
-      enabled: true
-    objects:
-      track:
-        - person
-        - car
-      filters:
-        person:
-          min_area: 5000
-          max_area: 100000
-          threshold: 0.8
-        car:
-          min_area: 15000
-          max_area: 100000
-          threshold: 0.85
-    zones:
-      entrance:
-        coordinates: 0.874,0.403,0.958,0.401,0.854,0.886,0.635,0.909
-        objects:
-          - person
-        loitering_time: 10
-      driveway:
-        coordinates: 0.65,0.139,0.941,0.244,0.946,0.388,0.81,0.309,0.569,0.199
-        distances: 8,10,9,11 # Real-world distances in meters
-        speed_threshold: 15 # Minimum speed in kph for alerts
-        objects:
-          - car
-          - person
-          - motorcycle
-          - bicycle
-          - truck
-    motion:
-      mask:
-        - 0,0,200,0,200,50,0,50
-    review:
-      alerts:
-        required_zones:
-          - entrance
-          - driveway
-
-  back_door:
-    enabled: true
-    webui_url: "http://192.168.20.6"
-    ffmpeg:
-      inputs:
-        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/11
-          roles:
-            - record
-        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/12
-          roles:
-            - detect
-    live:
-      streams:
-        Main Stream: back_door_main # Higher quality stream (11)
-        Sub Stream: back_door_sub # Lower quality stream (12) - used for detection
-    onvif:
-      host: 192.168.20.6
-      port: 8080
-      user: "{FRIGATE_RTSP_USER}"
-      password: "{FRIGATE_RTSP_PASSWORD}"
-      autotracking:
-        enabled: false
-    detect:
-      enabled: true
-      detector: coral
     record:
       enabled: true
     snapshots:
@@ -258,7 +188,6 @@ cameras:
           - garden_main
     detect:
       enabled: true
-      detector: coral
     record:
       enabled: true
     snapshots:
