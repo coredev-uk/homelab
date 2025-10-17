@@ -13,7 +13,7 @@ spec:
         - name: frigate-headers
       services:
         - name: frigate
-          port: 5000
+          port: 8971
   tls:
     secretName: security-tls
 ---
@@ -28,3 +28,4 @@ spec:
       X-Forwarded-Proto: "https"
     customResponseHeaders:
       Strict-Transport-Security: "max-age=63072000"
+
