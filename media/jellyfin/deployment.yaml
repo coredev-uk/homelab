@@ -49,7 +49,13 @@ spec:
           image: jellyfin/jellyfin:10.11.0 #lscr.io/linuxserver/jellyfin:version-10.11.0
           ports:
             - containerPort: 8096
+              protocol: TCP
             - containerPort: 8920
+              protocol: TCP
+            - containerPort: 7359
+              protocol: UDP
+            - containerPort: 1900
+              protocol: UDP
           env:
             - name: TZ
               value: "Europe/London"
@@ -118,7 +124,17 @@ spec:
     - name: http
       port: 8096
       targetPort: 8096
+      protocol: TCP
     - name: https
       port: 8920
       targetPort: 8920
+      protocol: TCP
+    - name: client-discovery
+      port: 7359
+      targetPort: 7359
+      protocol: UDP
+    - name: dlna-discovery
+      port: 1900
+      targetPort: 1900
+      protocol: UDP
   type: ClusterIP
