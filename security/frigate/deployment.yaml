@@ -25,8 +25,8 @@ spec:
         - name: frigate
           image: ghcr.io/blakeblackshear/frigate:0.16.1
           ports:
-            # - containerPort: 5000  # Internal unauthenticated access. Expose carefully.
-            #   protocol: TCP
+            - containerPort: 5000 # Exposed for Frigate-Exporter
+              protocol: TCP
             - containerPort: 8971
               protocol: TCP
             - containerPort: 8554
@@ -113,9 +113,9 @@ spec:
   selector:
     app: frigate
   ports:
-    # - name: web-http        # Internal unauthenticated access. Expose carefully.
-    #   port: 5000
-    #   targetPort: 5000
+    - name: web-http # Exposed for Frigate-Exporter
+      port: 5000
+      targetPort: 5000
     - name: web-auth
       port: 8971
       targetPort: 8971
