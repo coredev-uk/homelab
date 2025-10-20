@@ -181,7 +181,7 @@ spec:
             claimName: sabnzbd-config
         - name: downloads
           persistentVolumeClaim:
-            claimName: downloads-data-host
+            claimName: downloads-pvc
         - name: sabnzbd-scripts
           configMap:
             name: sabnzbd-scripts

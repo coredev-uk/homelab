@@ -50,7 +50,7 @@ spec:
             claimName: bazarr-config
         - name: data
           persistentVolumeClaim:
-            claimName: media-data-host
+            claimName: media-pvc
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

@@ -100,27 +100,13 @@ spec:
       volumes:
         - name: storage
           persistentVolumeClaim:
-            claimName: jellyfin-storage-host
+            claimName: jellyfin-pvc
         - name: data
           persistentVolumeClaim:
-            claimName: media-data-host
+            claimName: media-pvc
         - name: render-device
           hostPath:
             path: /dev/dri/renderD128
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: jellyfin-storage-host
-  namespace: media
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 55Gi
-  volumeName: jellyfin-storage
-  storageClassName: ""
 ---
 apiVersion: v1
 kind: Service

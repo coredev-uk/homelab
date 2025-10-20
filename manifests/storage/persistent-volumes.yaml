@@ -1,12 +1,24 @@
-# Host-path media storage PV
-# This PV uses local host storage instead of Longhorn for large media files
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: media-data
+  name: downloads-pv
 spec:
   capacity:
-    storage: 300Gi
+    storage: 100Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /opt/downloads
+  storageClassName: ""
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: media-pv
+spec:
+  capacity:
+    storage: 500Gi
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
@@ -14,34 +26,30 @@ spec:
     path: /opt/media
   storageClassName: ""
 ---
-# Jellyfin storage PV (essential data - config and cache combined)
-# This PV uses local host storage for essential config and cache data to prevent data loss
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: jellyfin-storage
+  name: frigate-pv
 spec:
   capacity:
-    storage: 55Gi
+    storage: 50Gi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   hostPath:
-    path: /opt/jellyfin-storage
+    path: /opt/frigate
   storageClassName: ""
 ---
-# Shared media storage PVC using host-path
-# This PVC is shared across all media services for storing movies, TV shows, etc.
 apiVersion: v1
-kind: PersistentVolumeClaim
+kind: PersistentVolume
 metadata:
-  name: media-data-host
-  namespace: media
+  name: jellyfin-pv
 spec:
+  capacity:
+    storage: 50Gi
   accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 300Gi
-  volumeName: media-data
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /opt/jellyfin
   storageClassName: ""

@@ -59,10 +59,10 @@ spec:
                   key: RTSP_PASSWORD
                   optional: true
           volumeMounts:
-            - name: frigate-data
+            - name: storage
               mountPath: /config
               subPath: config
-            - name: frigate-data
+            - name: storage
               mountPath: /media/frigate
             - name: cache
               mountPath: /tmp/cache
@@ -83,9 +83,9 @@ spec:
           securityContext:
             privileged: true
       volumes:
-        - name: frigate-data
+        - name: storage
           persistentVolumeClaim:
-            claimName: frigate-media-host
+            claimName: frigate-pvc
         - name: cache
           emptyDir:
             sizeLimit: 20Gi

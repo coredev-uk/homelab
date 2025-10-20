@@ -52,10 +52,10 @@ spec:
             claimName: radarr-config
         - name: media
           persistentVolumeClaim:
-            claimName: media-data-host
+            claimName: media-pvc
         - name: downloads
           persistentVolumeClaim:
-            claimName: downloads-data-host
+            claimName: downloads-pvc
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
