@@ -136,7 +136,7 @@ spec:
         # NOTE: For port forwarding access, add your domain to host_whitelist in SABnzbd config:
         # Settings -> General -> Special -> host_whitelist (add: sabnzbd.home.coredev.uk)
         - name: sabnzbd
-          image: lscr.io/linuxserver/sabnzbd:latest
+          image: lscr.io/linuxserver/sabnzbd:version-4.5.3
           env:
             - name: PUID
               value: "1000"

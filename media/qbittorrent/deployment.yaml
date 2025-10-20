@@ -125,7 +125,7 @@ spec:
 
         # qBittorrent container using Gluetun network
         - name: qbittorrent
-          image: lscr.io/linuxserver/qbittorrent:latest
+          image: lscr.io/linuxserver/qbittorrent:version-5.1.2-r3
           env:
             - name: PUID
               value: "1000"
@@ -177,7 +177,7 @@ spec:
 
         # Flood UI sidecar container
         - name: flood
-          image: jesec/flood:4.10.0
+          image: jesec/flood:4.11.0
           ports:
             - containerPort: 3000
               name: flood-web

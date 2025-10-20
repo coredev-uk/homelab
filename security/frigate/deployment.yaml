@@ -23,7 +23,7 @@ spec:
         feature.node.kubernetes.io/coral-tpu: "true"
       containers:
         - name: frigate
-          image: ghcr.io/blakeblackshear/frigate:0.16.1
+          image: ghcr.io/blakeblackshear/frigate:0.16.2
           ports:
             - containerPort: 5000 # Exposed for Frigate-Exporter
               protocol: TCP

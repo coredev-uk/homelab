@@ -772,7 +772,7 @@ pages:
               - linuxserver/docker-prowlarr # Indexers
               - linuxserver/docker-sabnzbd # Usenet
               - linuxserver/docker-qbittorrent # Torrent Client
-              - dockerhub:jesec/flood # Torrent Web UI
+              - jesec/flood # Torrent Web UI
               - Notifiarr/notifiarr # Notifications
               - cleanuparr/cleanuparr # Media Cleanup
               - plexguide/Huntarr.io # Duplicate Hunter
