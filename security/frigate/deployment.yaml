@@ -73,7 +73,7 @@ spec:
               mountPath: /dev/apex_0
           startupProbe:
             httpGet:
-              path: /
+              path: /api/
               port: 5000
               scheme: HTTP
             initialDelaySeconds: 15
@@ -83,7 +83,7 @@ spec:
             successThreshold: 1
           livenessProbe:
             httpGet:
-              path: /
+              path: /api/
               port: 5000
               scheme: HTTP
             initialDelaySeconds: 60
@@ -93,7 +93,7 @@ spec:
             successThreshold: 1
           readinessProbe:
             httpGet:
-              path: /
+              path: /api/
               port: 5000
               scheme: HTTP
             initialDelaySeconds: 30
