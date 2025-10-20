@@ -764,15 +764,14 @@ pages:
             title: Media Stack Updates
             token: ${GITHUB_TOKEN}
             repositories:
-              - repository: jellyfin/jellyfin # Media Server
-                include-prereleases: true
-              - fallenbagel/jellyseerr # Request Management
+              - jellyfin/jellyfin # Media Server
+              - seerr-team/seerr # Request Management
               - linuxserver/docker-radarr # Movies
               - linuxserver/docker-sonarr # TV Shows
               - linuxserver/docker-bazarr # Subtitles
               - linuxserver/docker-prowlarr # Indexers
               - linuxserver/docker-sabnzbd # Usenet
-              - lscr.io/linuxserver/qbittorrent # Torrent Client
+              - linuxserver/docker-qbittorrent # Torrent Client
               - dockerhub:jesec/flood # Torrent Web UI
               - Notifiarr/notifiarr # Notifications
               - cleanuparr/cleanuparr # Media Cleanup
