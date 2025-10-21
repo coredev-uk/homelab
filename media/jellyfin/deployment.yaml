@@ -38,6 +38,16 @@ spec:
             - containerPort: 1900
               protocol: UDP
           env:
+            - name: PUID
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env-config
+                  key: PUID
+            - name: PGID
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env-config
+                  key: PGID
             - name: TZ
               valueFrom:
                 configMapKeyRef:
@@ -45,8 +55,6 @@ spec:
                   key: TZ
 
           securityContext:
-            runAsUser: 1000
-            runAsGroup: 100
             capabilities:
               add:
                 - SYS_ADMIN # Required for Intel VA-API access
