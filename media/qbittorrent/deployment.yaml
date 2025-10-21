@@ -55,6 +55,13 @@ spec:
               add:
                 - NET_ADMIN
           env:
+            # Timezone
+            - name: TZ
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env-config
+                  key: TZ
+            
             # VPN Provider Configuration
             - name: VPN_SERVICE_PROVIDER
               valueFrom:
@@ -128,11 +135,20 @@ spec:
           image: lscr.io/linuxserver/qbittorrent:version-5.1.2-r3
           env:
             - name: PUID
-              value: "1000"
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env-config
+                  key: PUID
             - name: PGID
-              value: "1000"
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env-config
+                  key: PGID
             - name: TZ
-              value: "Europe/London"
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env-config
+                  key: TZ
             - name: WEBUI_PORT
               value: "8080"
           ports:
@@ -182,6 +198,11 @@ spec:
             - containerPort: 3000
               name: flood-web
           env:
+            - name: TZ
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env-config
+                  key: TZ
             - name: FLOOD_OPTION_host
               value: "0.0.0.0"
             - name: FLOOD_OPTION_port

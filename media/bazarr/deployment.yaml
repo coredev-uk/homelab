@@ -27,11 +27,20 @@ spec:
             - containerPort: 6767
           env:
             - name: PUID
-              value: "1000"
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env-config
+                  key: PUID
             - name: PGID
-              value: "1000"
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env-config
+                  key: PGID
             - name: TZ
-              value: "Europe/London"
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env-config
+                  key: TZ
           volumeMounts:
             - name: config
               mountPath: /config

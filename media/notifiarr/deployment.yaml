@@ -29,8 +29,8 @@ spec:
       serviceAccountName: notifiarr
       securityContext:
         runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
+        runAsGroup: 100
+        fsGroup: 100
         runAsNonRoot: true
       hostname: hyperion-cluster-1
       containers:
@@ -51,11 +51,20 @@ spec:
             - containerPort: 5454
           env:
             - name: PUID
-              value: "1000"
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env-config
+                  key: PUID
             - name: PGID
-              value: "1000"
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env-config
+                  key: PGID
             - name: TZ
-              value: "Europe/London"
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env-config
+                  key: TZ
             - name: DN_API_KEY
               valueFrom:
                 secretKeyRef:

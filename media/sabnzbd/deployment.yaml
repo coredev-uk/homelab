@@ -49,6 +49,13 @@ spec:
               add:
                 - NET_ADMIN
           env:
+            # Timezone
+            - name: TZ
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env-config
+                  key: TZ
+            
             # VPN Provider Configuration
             - name: VPN_SERVICE_PROVIDER
               valueFrom:
@@ -139,11 +146,20 @@ spec:
           image: lscr.io/linuxserver/sabnzbd:version-4.5.3
           env:
             - name: PUID
-              value: "1000"
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env-config
+                  key: PUID
             - name: PGID
-              value: "1000"
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env-config
+                  key: PGID
             - name: TZ
-              value: "Europe/London"
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env-config
+                  key: TZ
           volumeMounts:
             - name: sabnzbd-config
               mountPath: /config

@@ -69,8 +69,8 @@ spec:
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
+        runAsGroup: 100
+        fsGroup: 100
 
       containers:
         # Prowlarr - Indexer manager
@@ -81,11 +81,20 @@ spec:
               name: web-ui
           env:
             - name: PUID
-              value: "1000"
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env-config
+                  key: PUID
             - name: PGID
-              value: "1000"
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env-config
+                  key: PGID
             - name: TZ
-              value: "Europe/London"
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env-config
+                  key: TZ
           volumeMounts:
             - name: prowlarr-config
               mountPath: /config
