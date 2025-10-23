@@ -10,7 +10,7 @@ detectors:
 # telemetry enabled for prometheus
 telemetry:
   stats:
-    network_bandwidth: True
+    network_bandwidth: true
 
 # Go2RTC configuration for stream management
 go2rtc:
@@ -38,6 +38,10 @@ camera_groups:
     icon: LuWebcam
     order: 0
 
+notifications:
+  enabled: true
+  email: admin@coredev.uk
+
 auth:
   enabled: true
 
@@ -48,9 +52,8 @@ objects:
   track:
     - person
     - car
-    - motorcycle
-    - bicycle
-    - truck
+    - dog
+    - cat
   filters:
     person:
       min_score: 0.5
@@ -72,11 +75,25 @@ objects:
       threshold: 0.75
       min_area: 1500
       max_area: 25000
-    truck:
-      min_score: 0.6
-      threshold: 0.8
-      min_area: 20000
-      max_area: 150000
+
+detect:
+  enabled: true
+
+semantic_search:
+  enabled: true
+  model_size: small
+
+face_recognition:
+  enabled: true
+  model_size: small
+
+lpr:
+  enabled: true
+  min_plate_length: 4
+
+classification:
+  bird:
+    enabled: false
 
 record:
   enabled: true
@@ -108,12 +125,13 @@ motion:
 cameras:
   front_door:
     enabled: true
-    webui_url: "http://192.168.20.5:8080"
+    webui_url: http://192.168.20.5:8080
     ffmpeg:
       inputs:
         - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream0
           roles:
             - record
+            - audio
         - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream1
           roles:
             - detect
@@ -121,6 +139,69 @@ cameras:
       streams:
         Main Stream: front_door_main # Higher quality stream (stream0)
         Sub Stream: front_door_sub # Lower quality stream (stream1)
+    detect:
+      enabled: true
+    record:
+      enabled: true
+    snapshots:
+      enabled: true
+    objects:
+      track:
+        - person
+        - car
+      filters:
+        person:
+          min_area: 5000
+          max_area: 100000
+          threshold: 0.8
+        car:
+          min_area: 15000
+          max_area: 100000
+          threshold: 0.85
+    zones:
+      entrance:
+        coordinates: 0.874,0.403,0.958,0.401,0.854,0.886,0.635,0.909
+        objects:
+          - person
+        loitering_time: 10
+      driveway:
+        coordinates: 0.65,0.139,0.941,0.244,0.946,0.388,0.81,0.309,0.569,0.199
+        objects:
+          - car
+          - person
+    motion:
+      mask:
+        - 0,0,200,0,200,50,0,50
+    review:
+      alerts:
+        required_zones:
+          - entrance
+          - driveway
+
+    notifications:
+      enabled: true
+  back_door:
+    enabled: true
+    webui_url: http://192.168.20.6
+    ffmpeg:
+      inputs:
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/11
+          roles:
+            - record
+        - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/12
+          roles:
+            - detect
+    live:
+      streams:
+        Main Stream: back_door_main # Higher quality stream (11)
+        Sub Stream: back_door_sub # Lower quality stream (12) - used for detection
+    onvif:
+      host: 192.168.20.6
+      port: 8080
+      user: "{FRIGATE_RTSP_USER}"
+      password: "{FRIGATE_RTSP_PASSWORD}"
+      autotracking:
+        enabled: false
     detect:
       enabled: true
     record:
@@ -160,14 +241,17 @@ cameras:
           - back_entrance
           - back_driveway
 
+    notifications:
+      enabled: true
   back_garden:
     enabled: false
-    webui_url: "http://192.168.20.7"
+    webui_url: http://192.168.20.7
     ffmpeg:
       inputs:
         - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/11
           roles:
             - record
+            - audio
         - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/12
           roles:
             - detect
@@ -186,6 +270,8 @@ cameras:
         timeout: 30
         required_zones:
           - garden_main
+    lpr:
+      enabled: false
     detect:
       enabled: true
     record:
@@ -227,3 +313,8 @@ cameras:
       detections:
         required_zones:
           - garden_main
+
+    notifications:
+      enabled: true
+
+version: 0.16-0
