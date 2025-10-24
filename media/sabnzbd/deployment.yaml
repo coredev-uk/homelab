@@ -55,7 +55,7 @@ spec:
                 configMapKeyRef:
                   name: common-env-config
                   key: TZ
-            
+
             # VPN Provider Configuration
             - name: VPN_SERVICE_PROVIDER
               valueFrom:
@@ -143,7 +143,7 @@ spec:
         # NOTE: For port forwarding access, add your domain to host_whitelist in SABnzbd config:
         # Settings -> General -> Special -> host_whitelist (add: sabnzbd.home.coredev.uk)
         - name: sabnzbd
-          image: lscr.io/linuxserver/sabnzbd:version-4.5.3
+          image: lscr.io/linuxserver/sabnzbd:version-4.5.4
           env:
             - name: PUID
               valueFrom:
