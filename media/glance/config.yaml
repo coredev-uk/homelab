@@ -766,12 +766,12 @@ pages:
             repositories:
               - jellyfin/jellyfin # Media Server
               - seerr-team/seerr # Request Management
-              - linuxserver/docker-radarr # Movies
-              - linuxserver/docker-sonarr # TV Shows
-              - linuxserver/docker-bazarr # Subtitles
-              - linuxserver/docker-prowlarr # Indexers
-              - linuxserver/docker-sabnzbd # Usenet
-              - linuxserver/docker-qbittorrent # Torrent Client
+              - radarr/radarr # Movies
+              - sonarr/sonarr # TV Shows
+              - morpheus65535/bazarr # Subtitles
+              - prowlarr/prowlarr # Indexers
+              - sabnzbd/sabnzbd # Usenet
+              - qbittorrent/qbittorrent # Torrent Client
               - jesec/flood # Torrent Web UI
               - Notifiarr/notifiarr # Notifications
               - cleanuparr/cleanuparr # Media Cleanup
