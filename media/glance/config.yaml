@@ -754,7 +754,7 @@ pages:
               - longhorn/longhorn # Storage
               - bitnami-labs/sealed-secrets # Secret Management
               - blakeblackshear/frigate # CCTV/AI
-              - pi-hole/pi-hole # DNS Ad Blocker
+              - pi-hole/docker-pi-hole # DNS Ad Blocker
               - intel/intel-device-plugins-for-kubernetes # Intel GPU Device Plugin
               - traefik/traefik # Reverse Proxy
             limit: 9
