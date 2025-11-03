@@ -3,6 +3,7 @@ kind: Kustomization
 
 namespace: argocd
 
+# TODO: switch to ...stable/manifests/ha/install.yaml when multiple nodes are setup (TBC)
 resources:
   - namespace.yaml
   - https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
