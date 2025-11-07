@@ -27,7 +27,7 @@ spec:
         fsGroupChangePolicy: "OnRootMismatch"
       containers:
         - name: jellyfin
-          image: lscr.io/linuxserver/jellyfin:version-10.11.1ubu2404
+          image: lscr.io/linuxserver/jellyfin:version-10.11.2ubu2404
           ports:
             - containerPort: 8096
               protocol: TCP
