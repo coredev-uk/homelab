@@ -2,8 +2,18 @@
 
 # Script to generate SealedSecrets from the existing secrets.env file
 # This script requires kubeseal to be installed and the sealed-secrets controller to be running
+#
+# Usage:
+#   ./generate-sealed-secrets.sh           # Generate and apply sealed secrets
+#   ./generate-sealed-secrets.sh --dry-run # Generate only, don't apply
 
 set -e
+
+DRY_RUN=false
+if [[ "$1" == "--dry-run" ]]; then
+  DRY_RUN=true
+  echo "Running in dry-run mode - sealed secrets will be generated but not applied"
+fi
 
 if [ ! -f "secrets.env" ]; then
   echo "Error: secrets.env not found. Copy from secrets.env.example and fill in values."
@@ -104,21 +114,44 @@ create_sealed_secret_multi "vpn-secrets" "media" "vpn-sealed-secret.yaml" \
   "SAB_VPN_PRIVATE_KEY" "$SAB_VPN_PRIVATE_KEY" \
   "QBIT_VPN_PRIVATE_KEY" "$QBIT_VPN_PRIVATE_KEY"
 
+# Generate Cloudflare Tunnel SealedSecret
+create_sealed_secret "cloudflare-tunnel-token" "cloudflare-tunnel" "token" "$CLOUDFLARE_TUNNEL_TOKEN" "cloudflare-tunnel-sealed-secret.yaml"
+
 echo ""
 echo "All SealedSecrets generated successfully!"
 echo ""
-echo "Apply them with:"
-echo "kubectl apply -f sealed-secrets/pihole-sealed-secret.yaml"
-echo "kubectl apply -f sealed-secrets/frigate-sealed-secret.yaml"
-echo "kubectl apply -f sealed-secrets/cloudflare-sealed-secret.yaml"
-echo "kubectl apply -f sealed-secrets/notifiarr-sealed-secret.yaml"
-echo "kubectl apply -f sealed-secrets/glance-sealed-secret.yaml"
-echo "kubectl apply -f sealed-secrets/vpn-sealed-secret.yaml"
-echo ""
-echo "After applying, you can remove the old plain text secrets:"
-echo "kubectl delete secret pihole-secrets -n dns --ignore-not-found"
-echo "kubectl delete secret frigate-secrets -n security --ignore-not-found"
-echo "kubectl delete secret cloudflare-api-token-secret -n cert-manager --ignore-not-found"
-echo "kubectl delete secret notifiarr-secrets -n media --ignore-not-found"
-echo "kubectl delete secret glance-secrets -n media --ignore-not-found"
-echo "kubectl delete secret vpn-secrets -n media --ignore-not-found"
+
+if [[ "$DRY_RUN" == "true" ]]; then
+  echo "Dry-run mode: Sealed secrets generated but not applied."
+  echo ""
+  echo "To apply them manually, run:"
+  echo "kubectl apply -f sealed-secrets/pihole-sealed-secret.yaml"
+  echo "kubectl apply -f sealed-secrets/frigate-sealed-secret.yaml"
+  echo "kubectl apply -f sealed-secrets/cloudflare-sealed-secret.yaml"
+  echo "kubectl apply -f sealed-secrets/notifiarr-sealed-secret.yaml"
+  echo "kubectl apply -f sealed-secrets/glance-sealed-secret.yaml"
+  echo "kubectl apply -f sealed-secrets/vpn-sealed-secret.yaml"
+  echo "kubectl apply -f sealed-secrets/cloudflare-tunnel-sealed-secret.yaml"
+else
+  echo "Applying SealedSecrets to cluster..."
+  kubectl apply -f sealed-secrets/pihole-sealed-secret.yaml
+  kubectl apply -f sealed-secrets/frigate-sealed-secret.yaml
+  kubectl apply -f sealed-secrets/cloudflare-sealed-secret.yaml
+  kubectl apply -f sealed-secrets/notifiarr-sealed-secret.yaml
+  kubectl apply -f sealed-secrets/glance-sealed-secret.yaml
+  kubectl apply -f sealed-secrets/vpn-sealed-secret.yaml
+  kubectl apply -f sealed-secrets/cloudflare-tunnel-sealed-secret.yaml
+
+  echo ""
+  echo "Cleaning up old plain text secrets..."
+  kubectl delete secret pihole-secrets -n dns --ignore-not-found
+  kubectl delete secret frigate-secrets -n security --ignore-not-found
+  kubectl delete secret cloudflare-api-token-secret -n cert-manager --ignore-not-found
+  kubectl delete secret notifiarr-secrets -n media --ignore-not-found
+  kubectl delete secret glance-secrets -n media --ignore-not-found
+  kubectl delete secret vpn-secrets -n media --ignore-not-found
+  kubectl delete secret cloudflare-tunnel-token -n cloudflare-tunnel --ignore-not-found
+
+  echo ""
+  echo "SealedSecrets applied and old secrets cleaned up successfully!"
+fi

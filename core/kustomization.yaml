@@ -10,3 +10,4 @@ resources:
   - intel-gpu/
   - metallb/
   - traefik/
+  - cloudflare-tunnel/
