@@ -46,7 +46,7 @@ spec:
       containers:
         # Gluetun VPN sidecar for qBittorrent
         - name: gluetun
-          image: qmcgaw/gluetun:v3.40.0
+          image: qmcgaw/gluetun:v3.40.1
           ports:
             - containerPort: 8000
               name: control-api
@@ -61,7 +61,7 @@ spec:
                 configMapKeyRef:
                   name: common-env-config
                   key: TZ
-            
+
             # VPN Provider Configuration
             - name: VPN_SERVICE_PROVIDER
               valueFrom:
@@ -132,7 +132,7 @@ spec:
 
         # qBittorrent container using Gluetun network
         - name: qbittorrent
-          image: lscr.io/linuxserver/qbittorrent:version-5.1.2-r3
+          image: lscr.io/linuxserver/qbittorrent:version-5.1.2-r4
           env:
             - name: PUID
               valueFrom:
