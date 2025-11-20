@@ -25,7 +25,7 @@ spec:
       serviceAccountName: prometheus
       initContainers:
         - name: fix-permissions
-          image: busybox:1.35
+          image: busybox:1.37
           command:
             [
               "sh",
