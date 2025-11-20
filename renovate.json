@@ -5,6 +5,6 @@
     "managerFilePatterns": ["/\\.yaml$/"] 
   },
   "kubernetes": {
-    "managerFilePatterns": ["/^config/.*\\.yaml$/"]
+    "managerFilePatterns": ["/\\.yaml$/"]
   }
 }
