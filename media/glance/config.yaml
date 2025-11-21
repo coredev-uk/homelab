@@ -588,7 +588,7 @@ pages:
             style: horizontal-cards
             title: Tech News
             feeds:
-              - url: https://news.itsfoss.com/latest/rss
+              - url: https://itsfoss.com/rss/
                 title: "It's FOSS"
               - url: https://feeds.arstechnica.com/arstechnica/index
                 title: "Ars Technica"
