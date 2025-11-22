@@ -75,7 +75,7 @@ spec:
       containers:
         # Prowlarr - Indexer manager
         - name: prowlarr
-          image: lscr.io/linuxserver/prowlarr:version-2.1.5.5216
+          image: lscr.io/linuxserver/prowlarr:version-2.3.0.5236
           ports:
             - containerPort: 9696
               name: web-ui
