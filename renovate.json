@@ -10,10 +10,10 @@
   },
   "packageRules": [
     {
-      "description": "LinuxServer.io images - custom versioning pattern",
+      "description": "LinuxServer.io version tags - tracks 'version-X.Y.Z' format only. Per LSIO docs: version tags are dynamic (get OS updates) while build tags are static. See: https://www.linuxserver.io/blog/docker-tags-so-many-tags-so-little-time",
       "matchDatasources": ["docker"],
       "matchPackageNames": ["lscr.io/linuxserver/**"],
-      "versioning": "regex:^version-v?(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:\\.(?<build>\\d+))?(?:-(?<prerelease>[a-zA-Z]+\\d*))?(?<compatibility>.*)?$"
+      "versioning": "regex:^version-v?(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:-r(?<revision>\\d+))?$"
     }
   ]
 }
