@@ -87,6 +87,16 @@ spec:
                 secretKeyRef:
                   name: vpn-secrets
                   key: SAB_VPN_PRIVATE_KEY
+            - name: UPDATER_PROTONVPN_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: vpn-secrets
+                  key: PROTON_VPN_EMAIL
+            - name: UPDATER_PROTONVPN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: vpn-secrets
+                  key: PROTON_VPN_PASSWORD
 
             # Shadowsocks proxy configuration
             - name: SHADOWSOCKS

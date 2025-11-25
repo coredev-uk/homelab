@@ -112,7 +112,9 @@ create_sealed_secret_multi "glance-secrets" "media" "glance-sealed-secret.yaml" 
 # Generate VPN SealedSecret for Gluetun
 create_sealed_secret_multi "vpn-secrets" "media" "vpn-sealed-secret.yaml" \
   "SAB_VPN_PRIVATE_KEY" "$SAB_VPN_PRIVATE_KEY" \
-  "QBIT_VPN_PRIVATE_KEY" "$QBIT_VPN_PRIVATE_KEY"
+  "QBIT_VPN_PRIVATE_KEY" "$QBIT_VPN_PRIVATE_KEY" \
+  "PROTON_VPN_EMAIL" "$PROTON_VPN_EMAIL" \
+  "PROTON_VPN_PASSWORD" "$PROTON_VPN_PASSWORD"
 
 # Generate Cloudflare Tunnel SealedSecret
 create_sealed_secret "cloudflare-tunnel-token" "cloudflare-tunnel" "token" "$CLOUDFLARE_TUNNEL_TOKEN" "cloudflare-tunnel-sealed-secret.yaml"
