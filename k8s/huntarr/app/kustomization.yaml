@@ -4,4 +4,5 @@ kind: Kustomization
 namespace: huntarr
 
 resources:
+  - ingress.yaml
   - deployment.yaml

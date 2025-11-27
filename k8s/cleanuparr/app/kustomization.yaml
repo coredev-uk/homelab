@@ -4,4 +4,5 @@ kind: Kustomization
 namespace: cleanuparr
 
 resources:
+  - ingress.yaml
   - deployment.yaml

@@ -1,0 +1,56 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: notifiarr-ingressroute
+  namespace: notifiarr
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(\`notifiarr.home.coredev.uk\`)
+      kind: Rule
+      services:
+        - name: notifiarr
+          port: 5454
+  tls:
+    secretName: notifiarr-tls
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: notifiarr-redirect
+  namespace: notifiarr
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(\`notifiarr.home.coredev.uk\`)
+      kind: Rule
+      middlewares:
+        - name: https-redirect
+      services:
+        - name: notifiarr
+          port: 5454
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: https-redirect
+  namespace: notifiarr
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: notifiarr-tls
+  namespace: notifiarr
+spec:
+  secretName: notifiarr-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - notifiarr.home.coredev.uk
