@@ -156,8 +156,6 @@ spec:
               mountPath: /config
             - name: downloads
               mountPath: /downloads
-            - name: sabnzbd-scripts
-              mountPath: /scripts
           resources:
             requests:
               memory: "512Mi"
@@ -190,10 +188,6 @@ spec:
           hostPath:
             path: /opt/downloads
             type: Directory
-        - name: sabnzbd-scripts
-          configMap:
-            name: sabnzbd-scripts
-            defaultMode: 0755
         - name: gluetun-auth-config
           configMap:
             name: gluetun-auth-config-shared
