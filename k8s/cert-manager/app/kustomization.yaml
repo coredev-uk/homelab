@@ -4,11 +4,14 @@ kind: Kustomization
 namespace: cert-manager
 
 resources:
-  - https://github.com/cert-manager/cert-manager/releases/download/v1.18.2/cert-manager.yaml
+  - https://github.com/cert-manager/cert-manager/releases/download/v1.19.1/cert-manager.yaml
   - issuer.yaml
 
 patches:
-  - path: cainjector-patch.yaml
-    target:
+  - target:
       kind: Deployment
       name: cert-manager-cainjector
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/args/1
+        value: --leader-election-namespace=$(POD_NAMESPACE)
