@@ -1,0 +1,15 @@
+# This template shows the PVC configuration for downloads-pvc
+# Copy this to each namespace that needs access to shared downloads storage
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: downloads-pvc
+  # namespace: <app-namespace> - set this in each app
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
+  volumeName: downloads-pv
+  storageClassName: ""
