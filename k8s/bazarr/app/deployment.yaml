@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: bazarr
-  namespace: media
+  namespace: bazarr
   labels:
     app: bazarr
   annotations:
@@ -65,7 +65,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: bazarr-config
-  namespace: media
+  namespace: bazarr
 spec:
   accessModes:
     - ReadWriteOnce
@@ -78,7 +78,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: bazarr
-  namespace: media
+  namespace: bazarr
 spec:
   selector:
     app: bazarr
