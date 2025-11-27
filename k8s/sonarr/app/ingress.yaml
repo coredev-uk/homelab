@@ -7,8 +7,16 @@ spec:
   entryPoints:
     - websecure
   routes:
+    - match: Host(`sonarr.home.coredev.uk`) && (PathPrefix(`/api`) || Path(`/ping`) || Path(`/health`))
+      kind: Rule
+      services:
+        - name: sonarr
+          port: 8989
     - match: Host(`sonarr.home.coredev.uk`)
       kind: Rule
+      middlewares:
+        - name: authelia-forwardauth
+          namespace: authelia
       services:
         - name: sonarr
           port: 8989

@@ -7,8 +7,16 @@ spec:
   entryPoints:
     - websecure
   routes:
+    - match: Host(`radarr.home.coredev.uk`) && (PathPrefix(`/api`) || Path(`/ping`) || Path(`/health`))
+      kind: Rule
+      services:
+        - name: radarr
+          port: 7878
     - match: Host(`radarr.home.coredev.uk`)
       kind: Rule
+      middlewares:
+        - name: authelia-forwardauth
+          namespace: authelia
       services:
         - name: radarr
           port: 7878

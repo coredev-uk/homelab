@@ -1,30 +1,67 @@
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
 metadata:
-  name: pihole-ingress
+  name: pihole-ingressroute
   namespace: pihole
-  annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
-    traefik.ingress.kubernetes.io/router.tls: "true"
-    traefik.ingress.kubernetes.io/redirect-to-https: "true"
-    cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
-  ingressClassName: traefik
-  rules:
-    - host: pihole.home.coredev.uk
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: pihole-web
-                port:
-                  number: 80
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`pihole.home.coredev.uk`) && (PathPrefix(`/admin/api.php`) || PathPrefix(`/api`))
+      kind: Rule
+      services:
+        - name: pihole-web
+          port: 80
+    - match: Host(`pihole.home.coredev.uk`)
+      kind: Rule
+      middlewares:
+        - name: authelia-forwardauth
+          namespace: authelia
+      services:
+        - name: pihole-web
+          port: 80
   tls:
-    - hosts:
-        - pihole.home.coredev.uk
-      secretName: pihole-tls
+    secretName: pihole-tls
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: pihole-redirect
+  namespace: pihole
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`pihole.home.coredev.uk`)
+      kind: Rule
+      middlewares:
+        - name: https-redirect
+      services:
+        - name: pihole-web
+          port: 80
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: https-redirect
+  namespace: pihole
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: pihole-tls
+  namespace: pihole
+spec:
+  secretName: pihole-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - pihole.home.coredev.uk
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware

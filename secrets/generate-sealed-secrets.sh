@@ -124,6 +124,26 @@ create_sealed_secret_multi "vpn-secrets" "sabnzbd" "sabnzbd-vpn-sealed-secret.ya
 # Generate Cloudflare Tunnel SealedSecret (in cloudflare-tunnel namespace)
 create_sealed_secret "cloudflare-tunnel-token" "cloudflare-tunnel" "token" "$CLOUDFLARE_TUNNEL_TOKEN" "cloudflare-tunnel-sealed-secret.yaml"
 
+# Generate LLDAP SealedSecret (in authelia namespace)
+create_sealed_secret_multi "lldap-secret" "authelia" "lldap-sealed-secret.yaml" \
+  "admin-password" "$LLDAP_ADMIN_PASSWORD" \
+  "jwt-secret" "$LLDAP_JWT_SECRET"
+
+# Generate Authelia SealedSecret (in authelia namespace)
+create_sealed_secret_multi "authelia-secrets" "authelia" "authelia-sealed-secret.yaml" \
+  "ldap-password" "$LLDAP_ADMIN_PASSWORD" \
+  "storage-encryption-key" "$AUTHELIA_STORAGE_ENCRYPTION_KEY" \
+  "oidc-hmac-secret" "$AUTHELIA_OIDC_HMAC_SECRET" \
+  "oidc-private-key" "$AUTHELIA_OIDC_PRIVATE_KEY" \
+  "grafana-client-secret" "$AUTHELIA_GRAFANA_CLIENT_SECRET" \
+  "argocd-client-secret" "$AUTHELIA_ARGOCD_CLIENT_SECRET"
+
+# Generate Grafana OIDC SealedSecret (in grafana namespace)
+create_sealed_secret "grafana-secrets" "grafana" "oidc-client-secret" "$AUTHELIA_GRAFANA_CLIENT_SECRET" "grafana-sealed-secret.yaml"
+
+# Generate ArgoCD OIDC SealedSecret (in argocd namespace)
+create_sealed_secret "argocd-secret" "argocd" "oidc.authelia.clientSecret" "$AUTHELIA_ARGOCD_CLIENT_SECRET" "argocd-sealed-secret.yaml"
+
 echo ""
 echo "All SealedSecrets generated successfully!"
 echo ""
@@ -140,6 +160,10 @@ if [[ "$DRY_RUN" == "true" ]]; then
   echo "kubectl apply -f sealed-secrets/qbittorrent-vpn-sealed-secret.yaml"
   echo "kubectl apply -f sealed-secrets/sabnzbd-vpn-sealed-secret.yaml"
   echo "kubectl apply -f sealed-secrets/cloudflare-tunnel-sealed-secret.yaml"
+  echo "kubectl apply -f sealed-secrets/lldap-sealed-secret.yaml"
+  echo "kubectl apply -f sealed-secrets/authelia-sealed-secret.yaml"
+  echo "kubectl apply -f sealed-secrets/grafana-sealed-secret.yaml"
+  echo "kubectl apply -f sealed-secrets/argocd-sealed-secret.yaml"
 else
   echo "Applying SealedSecrets to cluster..."
   kubectl apply -f sealed-secrets/pihole-sealed-secret.yaml
@@ -150,6 +174,10 @@ else
   kubectl apply -f sealed-secrets/qbittorrent-vpn-sealed-secret.yaml
   kubectl apply -f sealed-secrets/sabnzbd-vpn-sealed-secret.yaml
   kubectl apply -f sealed-secrets/cloudflare-tunnel-sealed-secret.yaml
+  kubectl apply -f sealed-secrets/lldap-sealed-secret.yaml
+  kubectl apply -f sealed-secrets/authelia-sealed-secret.yaml
+  kubectl apply -f sealed-secrets/grafana-sealed-secret.yaml
+  kubectl apply -f sealed-secrets/argocd-sealed-secret.yaml
 
   echo ""
   echo "Cleaning up old plain text secrets from old namespaces..."

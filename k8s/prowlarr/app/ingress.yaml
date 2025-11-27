@@ -7,8 +7,16 @@ spec:
   entryPoints:
     - websecure
   routes:
+    - match: Host(`prowlarr.home.coredev.uk`) && (PathPrefix(`/api`) || Path(`/ping`) || Path(`/health`))
+      kind: Rule
+      services:
+        - name: prowlarr
+          port: 9696
     - match: Host(`prowlarr.home.coredev.uk`)
       kind: Rule
+      middlewares:
+        - name: authelia-forwardauth
+          namespace: authelia
       services:
         - name: prowlarr
           port: 9696

@@ -7,8 +7,16 @@ spec:
   entryPoints:
     - websecure
   routes:
+    - match: Host(`bazarr.home.coredev.uk`) && PathPrefix(`/api`)
+      kind: Rule
+      services:
+        - name: bazarr
+          port: 6767
     - match: Host(`bazarr.home.coredev.uk`)
       kind: Rule
+      middlewares:
+        - name: authelia-forwardauth
+          namespace: authelia
       services:
         - name: bazarr
           port: 6767

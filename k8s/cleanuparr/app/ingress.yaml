@@ -9,6 +9,9 @@ spec:
   routes:
     - match: Host(`cleanuparr.home.coredev.uk`)
       kind: Rule
+      middlewares:
+        - name: authelia-forwardauth
+          namespace: authelia
       services:
         - name: cleanuparr
           port: 11011

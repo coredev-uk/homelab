@@ -1,0 +1,91 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: lldap-data
+  namespace: authelia
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: longhorn
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lldap
+  namespace: authelia
+  labels:
+    app: lldap
+spec:
+  ports:
+    - port: 17170
+      targetPort: 17170
+      name: http
+    - port: 3890
+      targetPort: 3890
+      name: ldap
+  selector:
+    app: lldap
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lldap
+  namespace: authelia
+  labels:
+    app: lldap
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lldap
+  template:
+    metadata:
+      labels:
+        app: lldap
+    spec:
+      containers:
+        - name: lldap
+          image: lldap/lldap:v0.5.0
+          ports:
+            - containerPort: 17170
+              name: http
+            - containerPort: 3890
+              name: ldap
+          env:
+            - name: UID
+              value: "1000"
+            - name: GID
+              value: "1000"
+            - name: TZ
+              value: "Europe/London"
+            - name: LLDAP_LDAP_BASE_DN
+              value: "dc=home,dc=coredev,dc=uk"
+            - name: LLDAP_LDAP_USER_DN
+              value: "admin"
+            - name: LLDAP_LDAP_USER_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: lldap-secret
+                  key: admin-password
+            - name: LLDAP_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: lldap-secret
+                  key: jwt-secret
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "200m"
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: lldap-data

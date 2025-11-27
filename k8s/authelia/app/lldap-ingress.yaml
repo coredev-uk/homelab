@@ -1,28 +1,27 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: prometheus-ingress
-  namespace: prometheus
+  name: lldap-ingress
+  namespace: authelia
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
     traefik.ingress.kubernetes.io/redirect-to-https: "true"
     cert-manager.io/cluster-issuer: letsencrypt-prod
-    traefik.ingress.kubernetes.io/router.middlewares: authelia-authelia-forwardauth@kubernetescrd
 spec:
   ingressClassName: traefik
   rules:
-    - host: prometheus.home.coredev.uk
+    - host: lldap.home.coredev.uk
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: prometheus
+                name: lldap
                 port:
-                  number: 9090
+                  number: 17170
   tls:
     - hosts:
-        - prometheus.home.coredev.uk
-      secretName: prometheus-tls
+        - lldap.home.coredev.uk
+      secretName: lldap-tls

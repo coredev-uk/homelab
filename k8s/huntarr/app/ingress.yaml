@@ -9,6 +9,9 @@ spec:
   routes:
     - match: Host(`huntarr.home.coredev.uk`)
       kind: Rule
+      middlewares:
+        - name: authelia-forwardauth
+          namespace: authelia
       services:
         - name: huntarr
           port: 9705

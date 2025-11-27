@@ -7,8 +7,16 @@ spec:
   entryPoints:
     - websecure
   routes:
+    - match: Host(`notifiarr.home.coredev.uk`) && (PathPrefix(`/api`) || PathPrefix(`/webhook`))
+      kind: Rule
+      services:
+        - name: notifiarr
+          port: 5454
     - match: Host(`notifiarr.home.coredev.uk`)
       kind: Rule
+      middlewares:
+        - name: authelia-forwardauth
+          namespace: authelia
       services:
         - name: notifiarr
           port: 5454
