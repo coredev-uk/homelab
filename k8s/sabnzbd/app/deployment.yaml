@@ -118,6 +118,9 @@ spec:
             - name: BLOCK_MALICIOUS
               value: "off"
 
+            - name: DOT
+              value: "off"
+
             # Firewall Ports - only SABnzbd
             - name: FIREWALL_INPUT_PORTS
               value: "8080"
