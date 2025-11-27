@@ -40,6 +40,18 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "500m"
+      livenessProbe:
+        httpGet:
+          path: /health
+          port: 11011
+        initialDelaySeconds: 5
+        timeoutSeconds: 5
+      readinessProbe:
+        httpGet:
+          path: /health/ready
+          port: 11011
+        initialDelaySeconds: 30
+        periodSeconds: 10
       volumes:
         - name: config
           persistentVolumeClaim:
