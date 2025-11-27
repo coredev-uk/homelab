@@ -185,7 +185,7 @@ spec:
     spec:
       containers:
         - name: authelia
-          image: authelia/authelia:4.38.16
+          image: authelia/authelia:4.39.14
           ports:
             - containerPort: 9091
               name: http
