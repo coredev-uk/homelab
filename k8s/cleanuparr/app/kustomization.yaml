@@ -5,6 +5,5 @@ namespace: cleanuparr
 
 resources:
   - deployment.yaml
-  - service.yaml
   - ingress.yaml
   - storage.yaml
