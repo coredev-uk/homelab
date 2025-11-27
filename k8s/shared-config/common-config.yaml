@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: common-env-config
+  namespace: media
+  labels:
+    app: common
+    component: environment
+data:
+  # Standard timezone for all applications
+  TZ: "Europe/London"
+  
+  # LinuxServer.io standard user/group IDs
+  # PUID 1000 = dedicated media user
+  # PGID 100 = users group (NixOS standard)
+  PUID: "1000"
+  PGID: "100"
+  
+  # Common application settings
+  UMASK: "002"
