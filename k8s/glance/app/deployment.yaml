@@ -65,6 +65,10 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "200m"
+      volumes:
+        - name: config
+          configMap:
+            name: glance-config
 ---
 apiVersion: v1
 kind: Service
