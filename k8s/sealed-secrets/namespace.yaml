@@ -1,6 +1,7 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: node-exporter
+  name: sealed-secrets
   labels:
-    name: node-exporter
+    name: sealed-secrets
+
