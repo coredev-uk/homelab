@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gluetun-auth-config-shared
+  namespace: qbittorrent
+data:
+  config.toml: |
+    [[roles]]
+    name = "glance"
+    routes = [
+      "GET /v1/publicip/ip",
+      "GET /v1/openvpn/portforwarded",
+      "GET /v1/vpn/status"
+    ]
+    auth = "none"
