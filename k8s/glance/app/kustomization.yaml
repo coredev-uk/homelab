@@ -6,6 +6,7 @@ namespace: glance
 resources:
   - ingress.yaml
   - deployment.yaml
+  - pod-monitoring.yaml
 
 configMapGenerator:
   - name: glance-config

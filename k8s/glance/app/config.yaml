@@ -623,7 +623,7 @@ pages:
               show-grabbed: false
               interval: 20
               timezone: "+00"
-              api-base-url: "http://radarr.media:7878"
+              api-base-url: "http://radarr.radarr.svc.cluster.local:7878"
               key: ${RADARR_API_KEY}
               url: "https://radarr.home.coredev.uk"
 
@@ -638,14 +638,14 @@ pages:
               collapse-after: 2
               show-grabbed: false
               interval: 20
-              api-base-url: "http://sonarr.media:8989"
+              api-base-url: "http://sonarr.sonarr.svc.cluster.local:8989"
               key: ${SONARR_API_KEY}
               url: "https://sonarr.home.coredev.uk"
               timezone: "+00"
 
           - type: dns-stats
             service: pihole-v6
-            url: http://pihole-web.dns
+            url: http://pihole-web.pihole.svc.cluster.local
             username: admin
             password: ${PIHOLE_PASSWORD}
 
@@ -658,10 +658,10 @@ pages:
           - type: custom-api
             title: qBittorrent VPN Status
             cache: 1m
-            url: http://qbittorrent.media:8000/v1/publicip/ip
+            url: http://qbittorrent.qbittorrent.svc.cluster.local:8000/v1/publicip/ip
             subrequests:
               port-status:
-                url: http://qbittorrent.media:8000/v1/openvpn/portforwarded
+                url: http://qbittorrent.qbittorrent.svc.cluster.local:8000/v1/openvpn/portforwarded
             template: |
               {{ if eq .Response.StatusCode 200 }}
                 {{ $ip := (.JSON.String "public_ip") }}
@@ -701,7 +701,7 @@ pages:
           - type: custom-api
             title: SABnzbd VPN Status
             cache: 1m
-            url: http://sabnzbd.media:8000/v1/publicip/ip
+            url: http://sabnzbd.sabnzbd.svc.cluster.local:8000/v1/publicip/ip
             template: |
               {{ if eq .Response.StatusCode 200 }}
                 {{ $ip := (.JSON.String "public_ip") }}
@@ -733,7 +733,7 @@ pages:
         widgets:
           - type: extension
             title: Services Status
-            url: http://glance-k8s.media:8080/extension/apps
+            url: http://glance-k8s:8080/extension/apps
             allow-potentially-dangerous-html: true
             cache: 1s
             parameters:
