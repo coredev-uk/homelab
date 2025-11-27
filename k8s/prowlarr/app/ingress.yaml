@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(\`prowlarr.home.coredev.uk\`)
+    - match: Host(`prowlarr.home.coredev.uk`)
       kind: Rule
       services:
         - name: prowlarr
@@ -24,7 +24,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(\`prowlarr.home.coredev.uk\`)
+    - match: Host(`prowlarr.home.coredev.uk`)
       kind: Rule
       middlewares:
         - name: https-redirect
