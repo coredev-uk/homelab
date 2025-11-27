@@ -73,6 +73,9 @@ spec:
                 192.168.20.30 argocd.home.coredev.uk
                 192.168.20.30 longhorn.home.coredev.uk
 
+                192.168.20.30 auth.home.coredev.uk
+                192.168.20.30 lldap.home.coredev.uk
+
                 192.168.20.30 bazarr.home.coredev.uk
                 192.168.20.30 cleanuparr.home.coredev.uk
                 192.168.20.30 glance.home.coredev.uk
