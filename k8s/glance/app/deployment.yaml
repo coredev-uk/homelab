@@ -54,6 +54,10 @@ spec:
                 secretKeyRef:
                   name: glance-secrets
                   key: GITHUB_TOKEN
+          volumeMounts:
+            - name: config
+              mountPath: /app/config
+              readOnly: true
           resources:
             requests:
               memory: "128Mi"
