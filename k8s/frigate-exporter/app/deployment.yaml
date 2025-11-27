@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frigate-exporter
-  namespace: monitoring
+  namespace: frigate-exporter
   annotations:
     glance/hide: "true"
   labels:
@@ -53,7 +53,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: frigate-exporter
-  namespace: monitoring
+  namespace: frigate-exporter
   labels:
     app: frigate-exporter
 spec:
