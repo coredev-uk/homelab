@@ -89,8 +89,9 @@ spec:
           persistentVolumeClaim:
             claimName: jellyfin-pvc
         - name: data
-          persistentVolumeClaim:
-            claimName: media-pvc
+          hostPath:
+            path: /opt/media
+            type: Directory
         - name: render-device
           hostPath:
             path: /dev/dri/renderD128

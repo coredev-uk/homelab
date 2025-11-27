@@ -6,4 +6,3 @@ namespace: sonarr
 resources:
   - deployment.yaml
   - ingress.yaml
-  - storage.yaml

@@ -187,8 +187,9 @@ spec:
           persistentVolumeClaim:
             claimName: sabnzbd-config
         - name: downloads
-          persistentVolumeClaim:
-            claimName: downloads-pvc
+          hostPath:
+            path: /opt/downloads
+            type: Directory
         - name: sabnzbd-scripts
           configMap:
             name: sabnzbd-scripts

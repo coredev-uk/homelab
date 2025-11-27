@@ -6,6 +6,5 @@ namespace: qbittorrent
 resources:
   - deployment.yaml
   - ingress.yaml
-  - storage.yaml
   - exporter.yaml
   - config.yaml

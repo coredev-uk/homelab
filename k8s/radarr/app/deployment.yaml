@@ -51,11 +51,13 @@ spec:
           persistentVolumeClaim:
             claimName: radarr-config
         - name: media
-          persistentVolumeClaim:
-            claimName: media-pvc
+          hostPath:
+            path: /opt/media
+            type: Directory
         - name: downloads
-          persistentVolumeClaim:
-            claimName: downloads-pvc
+          hostPath:
+            path: /opt/downloads
+            type: Directory
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

@@ -6,4 +6,3 @@ namespace: radarr
 resources:
   - deployment.yaml
   - ingress.yaml
-  - storage.yaml
