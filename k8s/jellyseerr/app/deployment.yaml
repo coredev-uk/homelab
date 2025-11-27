@@ -26,21 +26,8 @@ spec:
           ports:
             - containerPort: 5055
           env:
-            - name: PUID
-              valueFrom:
-                configMapKeyRef:
-                  name: common-env-config
-                  key: PUID
-            - name: PGID
-              valueFrom:
-                configMapKeyRef:
-                  name: common-env-config
-                  key: PGID
             - name: TZ
-              valueFrom:
-                configMapKeyRef:
-                  name: common-env-config
-                  key: TZ
+              value: "Europe/London"
           volumeMounts:
             - name: config
               mountPath: /app/config

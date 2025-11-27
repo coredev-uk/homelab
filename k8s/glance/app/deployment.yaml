@@ -24,10 +24,7 @@ spec:
             - containerPort: 8080
           env:
             - name: TZ
-              valueFrom:
-                configMapKeyRef:
-                  name: common-env-config
-                  key: TZ
+              value: "Europe/London"
             - name: PIHOLE_PASSWORD
               valueFrom:
                 secretKeyRef:

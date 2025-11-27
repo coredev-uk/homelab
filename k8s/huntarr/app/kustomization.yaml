@@ -6,8 +6,3 @@ namespace: huntarr
 resources:
   - ingress.yaml
   - deployment.yaml
-
-configMapGenerator:
-  - name: common-env-config
-    envs:
-      - ../../../config/common-env.env

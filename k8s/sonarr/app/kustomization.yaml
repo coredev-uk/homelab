@@ -5,12 +5,5 @@ namespace: sonarr
 
 resources:
   - deployment.yaml
-  - service.yaml
-  - network-policy.yaml
   - ingress.yaml
   - storage.yaml
-
-configMapGenerator:
-  - name: common-env-config
-    envs:
-      - ../../../config/common-env.env
