@@ -10,3 +10,12 @@ resources:
   - ingress.yaml
   - storage.yaml
   - exporter.yaml
+  - gluetun-config.yaml
+
+configMapGenerator:
+  - name: common-env-config
+    envs:
+      - ../../../config/common-env.env
+  - name: vpn-config-shared
+    envs:
+      - ../../../config/vpn-config.env

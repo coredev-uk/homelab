@@ -1,19 +1,19 @@
 # Shared Configuration
 
-This directory contains ConfigMaps that are used across multiple application namespaces.
+This directory contains shared configuration files that are used across multiple application namespaces via Kustomize.
 
-## ConfigMaps
+## Configuration Files
 
-### common-env-config
+### common-env.env
 Contains standard environment variables used by LinuxServer.io-based containers:
 - `TZ`: Timezone (Europe/London)
 - `PUID`: User ID (1000)
 - `PGID`: Group ID (100 - users group)
 - `UMASK`: File creation mask (002)
 
-**Used by:** radarr, sonarr, bazarr, jellyfin, jellyseerr, sabnzbd, qbittorrent, notifiarr, glance, huntarr
+**Used by:** radarr, sonarr, bazarr, jellyfin, jellyseerr, sabnzbd, qbittorrent, notifiarr, glance, huntarr, prowlarr, cleanuparr
 
-### vpn-config-shared
+### vpn-config.env
 Contains VPN configuration for gluetun sidecars:
 - VPN provider and connection settings
 - Firewall rules and subnet configuration
@@ -21,17 +21,35 @@ Contains VPN configuration for gluetun sidecars:
 
 **Used by:** sabnzbd, qbittorrent
 
-### gluetun-auth-config-shared
+### gluetun-auth.toml
 Contains gluetun authentication and authorization configuration:
 - API access control for monitoring tools
 
 **Used by:** sabnzbd, qbittorrent
 
-## Deployment Strategy
+## How It Works
 
-These ConfigMaps need to be created in each namespace that uses them, since ConfigMaps are namespace-scoped. Consider using a tool like:
-- Kustomize with `configMapGenerator` and namespace overlays
-- ArgoCD's multi-source applications
-- A custom controller to sync ConfigMaps across namespaces
+Each app uses Kustomize's `configMapGenerator` to create namespace-scoped ConfigMaps from these shared files.
 
-Alternatively, convert to environment variables directly in deployments or use a centralized configuration service.
+Example from `k8s/radarr/app/kustomization.yaml`:
+```yaml
+configMapGenerator:
+  - name: common-env-config
+    envs:
+      - ../../../config/common-env.env
+```
+
+This generates a ConfigMap named `common-env-config` in the `radarr` namespace with the values from the shared file.
+
+## Benefits
+
+- **Single source of truth**: Update once in `config/`, applies to all apps
+- **Namespace isolation**: Each app gets its own ConfigMap instance
+- **No duplication**: Config files are not copied into each app directory
+- **Version control**: Kustomize tracks changes via hash suffixes
+
+## Legacy Files
+
+The following files are kept for reference but not actively used:
+- `common-config.yaml` - Original ConfigMap format
+- `vpn-config.yaml` - Original ConfigMap format
