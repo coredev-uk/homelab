@@ -6,6 +6,10 @@ secrets/sealed-secrets/*.yaml
 !secrets/README.md
 !secrets/generate-sealed-secrets.sh
 
+# Migration backups
+pre-migration-backup-*/
+migration-backup-*/
+
 # Temporary files
 *.tmp
 .DS_Store
