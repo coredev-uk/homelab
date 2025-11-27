@@ -4,5 +4,8 @@ kind: Kustomization
 namespace: qbittorrent
 
 resources:
-  - ingress.yaml
   - deployment.yaml
+  - service.yaml
+  - network-policy.yaml
+  - ingress.yaml
+  - storage.yaml

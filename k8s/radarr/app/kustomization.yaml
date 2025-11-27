@@ -4,5 +4,8 @@ kind: Kustomization
 namespace: radarr
 
 resources:
-  - ingress.yaml
   - deployment.yaml
+  - service.yaml
+  - network-policy.yaml
+  - ingress.yaml
+  - storage.yaml

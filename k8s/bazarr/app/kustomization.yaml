@@ -4,5 +4,7 @@ kind: Kustomization
 namespace: bazarr
 
 resources:
-  - ingress.yaml
   - deployment.yaml
+  - service.yaml
+  - ingress.yaml
+  - storage.yaml
