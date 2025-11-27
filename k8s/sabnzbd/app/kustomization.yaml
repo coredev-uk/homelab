@@ -8,3 +8,4 @@ resources:
   - ingress.yaml
   - exporter.yaml
   - config.yaml
+  - scripts.yaml
