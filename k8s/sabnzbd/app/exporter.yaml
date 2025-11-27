@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sabnzbd-vpn-exporter
+  namespace: sabnzbd
+  annotations:
+    glance/hide: "true"
+  labels:
+    app: sabnzbd-vpn-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sabnzbd-vpn-exporter
+  template:
+    metadata:
+      labels:
+        app: sabnzbd-vpn-exporter
+    spec:
+      containers:
+        - name: sabnzbd-vpn-exporter
+          image: ghcr.io/thecfu/gluetun-exporter:0.1.1-standalone
+          env:
+            - name: GLUETUN_URL
+              value: "http://sabnzbd.sabnzbd.svc.cluster.local:8000"
+            - name: EXPORTER_PORT
+              value: "8001"
+            - name: EXPORTER_INTERVAL
+              value: "30"
+          ports:
+            - containerPort: 8001
+              name: sabnzbd-metrics
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "10m"
+            limits:
+              memory: "64Mi"
+              cpu: "50m"
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 8001
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: 8001
+            initialDelaySeconds: 5
+            periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sabnzbd-vpn-exporter
+  namespace: sabnzbd
+  labels:
+    app: sabnzbd-vpn-exporter
+spec:
+  ports:
+    - port: 8001
+      targetPort: 8001
+      name: sabnzbd-metrics
+  selector:
+    app: sabnzbd-vpn-exporter
