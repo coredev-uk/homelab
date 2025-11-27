@@ -7,10 +7,21 @@ spec:
   entryPoints:
     - websecure
   routes:
+    - match: Host(`frigate.home.coredev.uk`) && (PathPrefix(`/api`) || PathPrefix(`/vod`) || PathPrefix(`/clips`) || PathPrefix(`/recordings`))
+      kind: Rule
+      middlewares:
+        - name: frigate-headers
+      services:
+        - name: frigate
+          port: 8971
+          scheme: https
+          serversTransport: frigate-transport
     - match: Host(`frigate.home.coredev.uk`)
       kind: Rule
       middlewares:
         - name: frigate-headers
+        - name: authelia-forwardauth
+          namespace: authelia
       services:
         - name: frigate
           port: 8971

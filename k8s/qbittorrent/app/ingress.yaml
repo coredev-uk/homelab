@@ -7,8 +7,16 @@ spec:
   entryPoints:
     - websecure
   routes:
+    - match: Host(`qbittorrent.home.coredev.uk`) && PathPrefix(`/api/v2`)
+      kind: Rule
+      services:
+        - name: flood
+          port: 3000
     - match: Host(`qbittorrent.home.coredev.uk`)
       kind: Rule
+      middlewares:
+        - name: authelia-forwardauth
+          namespace: authelia
       services:
         - name: flood
           port: 3000
