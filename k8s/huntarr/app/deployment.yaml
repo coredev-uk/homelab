@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: huntarr
+  namespace: huntarr
+  labels:
+    app: huntarr
+  annotations:
+    glance/name: "Huntarr"
+    glance/icon: "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/webp/huntarr.webp"
+    glance/url: "https://huntarr.home.coredev.uk"
+    glance/description: "Duplicate Hunter"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: huntarr
+  template:
+    metadata:
+      labels:
+        app: huntarr
+    spec:
+      containers:
+        - name: huntarr
+          image: huntarr/huntarr:8.2.10
+          ports:
+            - containerPort: 9705
+          env:
+            - name: PUID
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env-config
+                  key: PUID
+            - name: PGID
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env-config
+                  key: PGID
+            - name: TZ
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env-config
+                  key: TZ
+            - name: HUNTARR_PORT
+              value: "9705"
+            - name: HUNTARR_SERVICE_PORT
+              value: "9705"
+          volumeMounts:
+            - name: config
+              mountPath: /config
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "50m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: huntarr-config
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: huntarr-config
+  namespace: huntarr
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: longhorn
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: huntarr
+  namespace: huntarr
+spec:
+  selector:
+    app: huntarr
+  ports:
+    - port: 9705
+      targetPort: 9705
+  type: ClusterIP

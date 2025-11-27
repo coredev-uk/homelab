@@ -1,0 +1,161 @@
+#
+# Prowlarr - Indexer Manager
+# Uses Gluetun HTTP proxy for VPN tunnelling
+# IMPORTANT: Configure HTTP proxy in Prowlarr UI: Settings -> General -> Proxy
+# Proxy Type: HTTP
+# Proxy Host: sabnzbd-proxy.media.svc.cluster.local:8888
+# This ensures indexer tests use the same IP as SABnzbd/qFlood for TRaSH compliance
+#
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: prowlarr-config
+  namespace: prowlarr
+  labels:
+    app: prowlarr
+    component: config
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: longhorn
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prowlarr
+  namespace: prowlarr
+  labels:
+    app: prowlarr
+spec:
+  selector:
+    app: prowlarr
+  ports:
+    - name: web-ui
+      port: 9696
+      targetPort: web-ui
+    - name: flaresolverr
+      port: 8191
+      targetPort: flare-api
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prowlarr
+  namespace: prowlarr
+  labels:
+    app: prowlarr
+  annotations:
+    glance/name: "Prowlarr"
+    glance/icon: "di:prowlarr"
+    glance/url: "https://prowlarr.home.coredev.uk"
+    glance/description: "Indexer Manager"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prowlarr
+  template:
+    metadata:
+      labels:
+        app: prowlarr
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 100
+        fsGroup: 100
+
+      containers:
+        # Prowlarr - Indexer manager
+        - name: prowlarr
+          image: lscr.io/linuxserver/prowlarr:version-2.3.0.5236
+          ports:
+            - containerPort: 9696
+              name: web-ui
+          env:
+            - name: PUID
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env-config
+                  key: PUID
+            - name: PGID
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env-config
+                  key: PGID
+            - name: TZ
+              valueFrom:
+                configMapKeyRef:
+                  name: common-env-config
+                  key: TZ
+          volumeMounts:
+            - name: prowlarr-config
+              mountPath: /config
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 9696
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 9696
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+        # Byparr - CloudFlare bypass for protected indexers (replaces FlareSolverr)
+        - name: byparr
+          image: ghcr.io/thephaseless/byparr:2.0.1
+          ports:
+            - containerPort: 8191
+              name: flare-api
+          env:
+            - name: HOST
+              value: "0.0.0.0"
+            - name: PROXY_SERVER
+              value: "http://sabnzbd-proxy.media.svc.cluster.local:8888"
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+            runAsNonRoot: false
+          resources:
+            requests:
+              memory: "384Mi"
+              cpu: "150m"
+            limits:
+              memory: "1.5Gi"
+              cpu: "750m"
+          livenessProbe:
+            httpGet:
+              path: /docs
+              port: 8191
+            initialDelaySeconds: 90
+            periodSeconds: 30
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /docs
+              port: 8191
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            timeoutSeconds: 5
+
+      volumes:
+        - name: prowlarr-config
+          persistentVolumeClaim:
+            claimName: prowlarr-config

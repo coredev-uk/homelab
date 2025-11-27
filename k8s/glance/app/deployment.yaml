@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: glance
-  namespace: media
+  namespace: glance
   labels:
     app: glance
   annotations:
@@ -77,7 +77,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: glance
-  namespace: media
+  namespace: glance
 spec:
   selector:
     app: glance
