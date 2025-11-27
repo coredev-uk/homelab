@@ -50,21 +50,8 @@ spec:
           ports:
             - containerPort: 5454
           env:
-            - name: PUID
-              valueFrom:
-                configMapKeyRef:
-                  name: common-env-config
-                  key: PUID
-            - name: PGID
-              valueFrom:
-                configMapKeyRef:
-                  name: common-env-config
-                  key: PGID
             - name: TZ
-              valueFrom:
-                configMapKeyRef:
-                  name: common-env-config
-                  key: TZ
+              value: "Europe/London"
             - name: DN_API_KEY
               valueFrom:
                 secretKeyRef:

@@ -1,12 +1,11 @@
 #
-# Shared VPN Configuration for Tunnelled Applications
-# Used by all individual gluetun sidecars
+# VPN Configuration for qBittorrent
 #
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: vpn-config-shared
-  namespace: media
+  namespace: qbittorrent
   labels:
     app: vpn
     component: config
@@ -34,7 +33,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gluetun-auth-config-shared
-  namespace: media
+  namespace: qbittorrent
   labels:
     app: vpn
     component: auth

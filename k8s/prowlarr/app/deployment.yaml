@@ -3,7 +3,7 @@
 # Uses Gluetun HTTP proxy for VPN tunnelling
 # IMPORTANT: Configure HTTP proxy in Prowlarr UI: Settings -> General -> Proxy
 # Proxy Type: HTTP
-# Proxy Host: sabnzbd-proxy.media.svc.cluster.local:8888
+# Proxy Host: proxy.sabnzbd.svc.cluster.local:8888
 # This ensures indexer tests use the same IP as SABnzbd/qFlood for TRaSH compliance
 #
 ---
@@ -81,20 +81,11 @@ spec:
               name: web-ui
           env:
             - name: PUID
-              valueFrom:
-                configMapKeyRef:
-                  name: common-env-config
-                  key: PUID
+              value: "1000"
             - name: PGID
-              valueFrom:
-                configMapKeyRef:
-                  name: common-env-config
-                  key: PGID
+              value: "100"
             - name: TZ
-              valueFrom:
-                configMapKeyRef:
-                  name: common-env-config
-                  key: TZ
+              value: "Europe/London"
           volumeMounts:
             - name: prowlarr-config
               mountPath: /config
@@ -128,7 +119,7 @@ spec:
             - name: HOST
               value: "0.0.0.0"
             - name: PROXY_SERVER
-              value: "http://sabnzbd-proxy.media.svc.cluster.local:8888"
+              value: "http://proxy.sabnzbd.svc.cluster.local:8888"
           securityContext:
             runAsUser: 0
             runAsGroup: 0
