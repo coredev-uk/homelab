@@ -1,71 +1,5 @@
 # =============================================================================
-# Core Infrastructure
-# =============================================================================
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: infrastructure
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/coredev-uk/homelab
-    targetRevision: HEAD
-    path: apps/infrastructure
-  destination:
-    server: https://kubernetes.default.svc
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-
----
-# =============================================================================
-# Media Stack
-# =============================================================================
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: media-stack
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/coredev-uk/homelab
-    targetRevision: HEAD
-    path: apps/media-stack
-  destination:
-    server: https://kubernetes.default.svc
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-
----
-# =============================================================================
-# Monitoring
-# =============================================================================
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: monitoring
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/coredev-uk/homelab
-    targetRevision: HEAD
-    path: apps/monitoring
-  destination:
-    server: https://kubernetes.default.svc
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-
----
-# =============================================================================
-# Media Management
+# Media Management (Arr Stack)
 # =============================================================================
 apiVersion: argoproj.io/v1alpha1
 kind: Application
@@ -151,6 +85,9 @@ spec:
       - CreateNamespace=true
 
 ---
+# =============================================================================
+# Downloaders
+# =============================================================================
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -193,6 +130,9 @@ spec:
       - CreateNamespace=true
 
 ---
+# =============================================================================
+# Media Maintenance
+# =============================================================================
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -339,93 +279,6 @@ spec:
     repoURL: https://github.com/coredev-uk/homelab
     targetRevision: HEAD
     path: k8s/glance
-  destination:
-    server: https://kubernetes.default.svc
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-
----
-# =============================================================================
-# Monitoring Apps
-# =============================================================================
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: prometheus
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/coredev-uk/homelab
-    targetRevision: HEAD
-    path: k8s/prometheus
-  destination:
-    server: https://kubernetes.default.svc
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: grafana
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/coredev-uk/homelab
-    targetRevision: HEAD
-    path: k8s/grafana
-  destination:
-    server: https://kubernetes.default.svc
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: kube-state-metrics
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/coredev-uk/homelab
-    targetRevision: HEAD
-    path: k8s/kube-state-metrics
-  destination:
-    server: https://kubernetes.default.svc
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: node-exporter
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: https://github.com/coredev-uk/homelab
-    targetRevision: HEAD
-    path: k8s/node-exporter
   destination:
     server: https://kubernetes.default.svc
   syncPolicy:
