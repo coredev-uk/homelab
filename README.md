@@ -4,9 +4,19 @@
 
 </div>
 
-A personal Kubernetes homelab configuration using ArgoCD for GitOps deployment of a complete media automation stack, DNS services, storage management, and monitoring tools. This setup includes the popular *arr media management suite, torrent/usenet clients with VPN integration, and essential infrastructure services.
+A personal Kubernetes homelab configuration using ArgoCD for GitOps deployment of a complete media automation stack, DNS services, storage management, and monitoring tools. This setup includes the popular *arr media management suite, torrent/usenet clients, and essential infrastructure services.
 
 **Note:** This configuration is tailored for my specific environment and setup. You can fork this repository and modify the configurations to work with your own infrastructure.
+
+## Architecture
+
+This homelab uses ArgoCD's **App of Apps** pattern to organize applications into logical groups:
+
+- **Infrastructure**: Core services (storage, networking, security, certificates)
+- **Media Stack**: Media server, automation tools, and download clients
+- **Monitoring**: Observability stack (Prometheus, Grafana, exporters)
+
+Each application is deployed as a separate ArgoCD Application resource, allowing for independent management, updates, and rollbacks while maintaining a GitOps workflow.
 
 ## Quick Start
 
@@ -15,11 +25,12 @@ A personal Kubernetes homelab configuration using ArgoCD for GitOps deployment o
 
 ### Prerequisites
 
-- **Kubernetes cluster** with k3s v1.25+ running
-- **kubectl** configured with cluster access
-- **kubeseal** CLI installed ([installation instructions](https://github.com/bitnami-labs/sealed-secrets#kubeseal))
-- **Git access** to clone repository
-- **Storage requirements**: Sufficient disk space for Longhorn (recommended: 100GB+ per node)
+- **Kubernetes cluster** running k3s v1.25+ or similar
+- **kubectl** configured with cluster admin access
+- **kubeseal** CLI installed for sealed secrets ([installation guide](https://github.com/bitnami-labs/sealed-secrets#kubeseal))
+- **Git** for cloning the repository
+- **Storage**: Sufficient disk space for Longhorn distributed storage (recommended: 100GB+ per node)
+- **Network**: Static IP range for MetalLB load balancer
 
 ### Setup Steps
 
@@ -30,11 +41,11 @@ git clone https://github.com/coredev-uk/homelab.git
 cd homelab
 ```
 
-#### 2. Deploy Sealed Secrets Controller
+#### 2. Bootstrap ArgoCD
 
 ```bash
-kubectl apply -k core/sealed-secrets/
-kubectl wait --for=condition=available --timeout=300s deployment/sealed-secrets-controller -n sealed-secrets
+kubectl apply -k bootstrap/
+kubectl wait --for=condition=available --timeout=300s deployment/argocd-server -n argocd
 ```
 
 #### 3. Configure Secrets
@@ -50,98 +61,46 @@ nano secrets.env
 **Required secrets:**
 - **PIHOLE_WEBPASSWORD**: Pi-hole admin password
 - **FRIGATE_MQTT_PASSWORD**: MQTT broker password for Frigate
-- **WIREGUARD_PRIVATE_KEY**: Legacy VPN private key (kept for compatibility)
 - **CLOUDFLARE_API_TOKEN**: API token for cert-manager DNS challenges
 - **NOTIFIARR_API_KEY**: Notifiarr API key for notifications
 - **GLANCE_WEATHER_LOCATION**: Weather location for Glance dashboard
 
-#### 4. VPN Configuration
-
-This homelab uses a ConfigMap approach for VPN settings, making it easy to switch providers by updating `/manifests/vpn-config.yaml`.
-
-##### a. Configure VPN Settings
-
-1. **Update the ConfigMap** (`manifests/vpn-config.yaml`) with your VPN provider's details:
-   - Replace `YOUR_VPN_SERVER_PUBLIC_KEY_HERE` with your VPN server's public key
-   - Replace `YOUR_VPN_ENDPOINT_HERE:51820` with your VPN server's endpoint
-   - Update IP addresses if needed (Address fields in the WireGuard configs)
-
-2. **Add private keys to secrets.env**:
-   ```bash
-   QFLOOD_WIREGUARD_PRIVATE_KEY="your_qflood_private_key_here"
-   SABNZBD_WIREGUARD_PRIVATE_KEY="your_sabnzbd_private_key_here"
-   ```
-
-##### b. (Optional) Customize VPN Settings
-
-Edit `manifests/vpn-config.yaml` to change VPN provider or settings:
-```yaml
-# Change VPN_PROVIDER to switch providers (wireguard, custom, etc.)
-VPN_PROVIDER: "custom"
-```
-
-##### c. Generate All Sealed Secrets
+#### 4. Generate Sealed Secrets
 
 ```bash
-# Generate sealed secrets (including VPN configs)
+# Generate sealed secrets
 ./generate-sealed-secrets.sh
 
 cd ..
 ```
 
-#### 5. Bootstrap ArgoCD
-
-```bash
-kubectl apply -k bootstrap/
-kubectl wait --for=condition=available --timeout=300s deployment/argocd-server -n argocd
-```
-
-#### 6. Deploy Applications
+#### 5. Deploy Applications
 
 ```bash
 kubectl apply -f apps/app-of-apps.yaml
 
 # Monitor deployment
 kubectl get applications -n argocd
-kubectl get namespaces | grep -E "(dns|security|cert-manager|media|monitoring)"
+watch kubectl get pods -A
 ```
 
-#### 7. Apply Sealed Secrets
-
-```bash
-cd secrets
-
-# Apply standard secrets
-kubectl apply -f sealed-secrets/pihole-sealed-secret.yaml
-kubectl apply -f sealed-secrets/frigate-sealed-secret.yaml
-kubectl apply -f sealed-secrets/vpn-sealed-secret.yaml
-kubectl apply -f sealed-secrets/cloudflare-sealed-secret.yaml
-kubectl apply -f sealed-secrets/notifiarr-sealed-secret.yaml
-kubectl apply -f sealed-secrets/glance-sealed-secret.yaml
-
-# Apply VPN secrets (if generated)
-kubectl apply -f sealed-secrets/qflood-wireguard-sealed-secret.yaml
-kubectl apply -f sealed-secrets/sabnzbd-wireguard-sealed-secret.yaml
-
-# Verify secrets were created
-kubectl get sealedsecrets -A
-kubectl get secrets -A | grep -E "(pihole|frigate|vpn|cloudflare|notifiarr|glance|qflood|sabnzbd)"
-
-cd ..
-```
-
-#### 8. Get ArgoCD Admin Password
+#### 6. Get ArgoCD Admin Password
 
 ```bash
 echo "ArgoCD Password:"
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
 ```
 
-#### 9. Watch Deployment Progress
+#### 7. Access Services
 
+Once deployed, services are accessible via their configured ingress routes. ArgoCD is exposed via LoadBalancer service.
+
+Find the ArgoCD LoadBalancer IP:
 ```bash
-kubectl get pods -A --watch
+kubectl get svc argocd-server -n argocd
 ```
+
+Access the ArgoCD UI at `http://<LOADBALANCER-IP>` with username `admin` and the password from step 6.
 
 </details>
 
@@ -149,47 +108,43 @@ kubectl get pods -A --watch
 <summary><strong>📋 Services Overview</strong></summary>
 
 ### Core Infrastructure
-- **ArgoCD**: GitOps deployment and management
-- **Sealed Secrets**: Secure secret management
-- **Longhorn**: Distributed persistent storage
-- **Traefik**: Ingress controller and load balancer
-- **MetalLB**: Load balancer for bare metal
-- **Cert Manager**: Automatic SSL certificate management
+- **ArgoCD**: GitOps deployment and management with web UI
+- **Sealed Secrets**: Secure secret management with encryption
+- **Longhorn**: Distributed persistent storage with replication
+- **Traefik**: Ingress controller and reverse proxy
+- **MetalLB**: Load balancer for bare metal Kubernetes
+- **Cert Manager**: Automatic SSL certificate management via Let's Encrypt
+- **Cloudflare Tunnel**: Secure external access without port forwarding
 
 ### DNS & Security
-- **Pihole**: Network-wide DNS ad blocking
+- **Pi-hole**: Network-wide DNS ad blocking with metrics exporter
 - **Frigate**: AI-powered security camera system with Intel GPU acceleration
 
-### Media Automation Stack
-- **Jellyfin**: Media server for movies, TV shows, and music
+### Media Server
+- **Jellyfin**: Media server for movies, TV shows, and music with hardware transcoding
 - **Jellyseerr**: Media request management interface
-- **Radarr**: Movie collection management
-- **Sonarr**: TV series collection management  
-- **Bazarr**: Subtitle management for media
-- **Prowlarr**: Indexer management for search providers
 
-### Download Clients (VPN-Protected)
-- **QFlood**: Modern qBittorrent + Flood UI with VPN protection
-  - Auto port forwarding for optimal seeding
-  - Privoxy proxy for secure indexer access
-  - Modern web interface replacing old qBittorrent UI
-- **SABnzbd**: Usenet downloader with dedicated VPN connection
+### Media Automation
+- **Radarr**: Automated movie collection management
+- **Sonarr**: Automated TV series collection management  
+- **Bazarr**: Automated subtitle management
+- **Prowlarr**: Indexer management and search aggregation
 
-### Monitoring & Dashboards
-- **Glance**: All-in-one dashboard with stocks, crypto, RSS feeds, and service monitoring
-- **Grafana**: Metrics visualization and alerting
-- **Prometheus**: Metrics collection and storage
-- **Node Exporter**: System metrics collection
+### Download Clients
+- **qBittorrent**: Torrent client with web UI
+- **SABnzbd**: Usenet downloader with metrics exporter
+
+### Monitoring & Observability
+- **Glance**: Unified dashboard with weather, stocks, RSS feeds, and service status
+- **Grafana**: Metrics visualization and alerting dashboards
+- **Prometheus**: Time-series metrics collection and storage
+- **Kube State Metrics**: Kubernetes cluster metrics
+- **Node Exporter**: Host system metrics collection
 
 ### Utilities
-- **Notifiarr**: Centralized notification system
-- **Cleanuparr**: Automated media library cleanup
-- **Huntarr**: Advanced torrent management
-
-### Storage & Networking
-- **Longhorn**: Replicated block storage with web UI
-- **Host Path Volumes**: Direct node storage access for media files
-- **Ingress Routes**: HTTPS access via custom domain names
+- **Notifiarr**: Centralized notification system for *arr apps
+- **Cleanuparr**: Automated media library cleanup and management
+- **Huntarr**: Advanced torrent health monitoring
 
 </details>
 
@@ -197,12 +152,41 @@ kubectl get pods -A --watch
 
 ```
 ├── apps/                    # ArgoCD application definitions
+│   ├── infrastructure/      # Infrastructure app-of-apps
+│   ├── media-stack/         # Media stack app-of-apps
+│   ├── monitoring/          # Monitoring app-of-apps
+│   └── app-of-apps.yaml    # Root application manifest
 ├── bootstrap/               # ArgoCD installation and initial setup
-├── core/                    # Core infrastructure services
-├── manifests/               # Shared Kubernetes manifests
-├── media/                   # Media automation stack (including VPN-secured apps)
-├── monitoring/              # Observability stack
+├── k8s/                     # Kubernetes manifests for all services
+│   ├── argocd/             # ArgoCD ingress and configuration
+│   ├── cert-manager/       # Certificate management
+│   ├── cloudflare-tunnel/  # Cloudflare tunnel for external access
+│   ├── intel-gpu/          # Intel GPU device plugin
+│   ├── longhorn/           # Distributed block storage
+│   ├── metallb/            # Load balancer
+│   ├── pihole/             # DNS ad blocking
+│   ├── sealed-secrets/     # Secret encryption controller
+│   ├── shared-storage/     # Shared persistent volumes
+│   ├── traefik/            # Ingress controller
+│   ├── frigate/            # Security camera system
+│   ├── jellyfin/           # Media server
+│   ├── jellyseerr/         # Media requests
+│   ├── radarr/             # Movie management
+│   ├── sonarr/             # TV series management
+│   ├── bazarr/             # Subtitle management
+│   ├── prowlarr/           # Indexer management
+│   ├── qbittorrent/        # Torrent client
+│   ├── sabnzbd/            # Usenet client
+│   ├── cleanuparr/         # Media cleanup
+│   ├── huntarr/            # Torrent management
+│   ├── notifiarr/          # Notifications
+│   ├── glance/             # Dashboard
+│   ├── prometheus/         # Metrics collection
+│   ├── grafana/            # Metrics visualization
+│   ├── kube-state-metrics/ # Kubernetes metrics
+│   └── node-exporter/      # Node metrics
 └── secrets/                 # Sealed secrets configuration
+    └── sealed-secrets/      # Generated sealed secret manifests
 ```
 
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
