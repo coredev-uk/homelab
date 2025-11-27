@@ -2,17 +2,6 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - media-ingressroute.yaml
-  - media-certificate.yaml
-  - dns-ingress.yaml
-  - frigate-ingressroute.yaml
-  - security-certificate.yaml
   - argocd-ingressroute.yaml
   - argocd-certificate.yaml
-  - monitoring-ingress.yaml
-  - pihole-middleware.yaml
-  - ip-forwarding-middleware.yaml
   - https-redirect-middleware.yaml
-  - network-policies-media.yaml
-  - network-policies-monitoring.yaml
-  - network-policies-security.yaml
