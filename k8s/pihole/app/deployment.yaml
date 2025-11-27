@@ -39,7 +39,7 @@ spec:
     spec:
       containers:
         - name: pihole
-          image: pihole/pihole:2025.11.0
+          image: pihole/pihole:2025.11.1
           ports:
             - containerPort: 80
             - containerPort: 53
