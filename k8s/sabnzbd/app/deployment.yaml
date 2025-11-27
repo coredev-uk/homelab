@@ -230,7 +230,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: proxy
+  name: sabnzbd-proxy
   namespace: sabnzbd
   labels:
     app: sabnzbd
