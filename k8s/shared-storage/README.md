@@ -2,21 +2,20 @@
 
 This directory contains PersistentVolume definitions for shared storage across multiple applications.
 
-## Current Status
-
-⚠️ **ACTION REQUIRED**: The PVCs need to be created in each namespace that uses them.
-
 ## Storage Resources
 
 ### PersistentVolumes (Cluster-scoped)
 - `downloads-pv`: 100Gi, ReadWriteMany, hostPath: /opt/downloads
 - `media-pv`: 500Gi, ReadWriteMany, hostPath: /opt/media
-- `frigate-pv`: 50Gi, ReadWriteOnce, hostPath: /opt/frigate
-- `jellyfin-pv`: 50Gi, ReadWriteOnce, hostPath: /opt/jellyfin
+
+### Application-Specific PVs
+App-specific PVs are now defined in each app's deployment.yaml:
+- `frigate-pv`: 50Gi, ReadWriteOnce, hostPath: /opt/frigate (in k8s/frigate/app/deployment.yaml)
+- `jellyfin-pv`: 50Gi, ReadWriteOnce, hostPath: /opt/jellyfin (in k8s/jellyfin/app/deployment.yaml)
 
 ### PersistentVolumeClaims (Namespace-scoped)
 
-The following apps need PVCs created in their namespaces:
+Each app has PVCs created in their namespace (defined in storage.yaml):
 
 **media-pvc** (binds to media-pv):
 - bazarr
@@ -32,15 +31,13 @@ The following apps need PVCs created in their namespaces:
 - sonarr
 
 **jellyfin-pvc** (binds to jellyfin-pv):
-- jellyfin
+- jellyfin (defined in k8s/jellyfin/app/storage.yaml)
 
 **frigate-pvc** (binds to frigate-pv):
-- frigate
+- frigate (defined in k8s/frigate/app/deployment.yaml)
 
-## Migration Note
+## Architecture Notes
 
-These PVCs were previously in the shared `media` and `security` namespaces. Now that apps are in individual namespaces, the PVCs need to be created in each app's namespace. Since hostPath volumes with ReadWriteMany can be bound by multiple PVCs, this is safe.
-
-## TODO
-
-Create PVC resources in each app's namespace, or create a kustomization to generate them automatically.
+- **Shared volumes** (downloads-pv, media-pv): Use ReadWriteMany with hostPath, allowing multiple PVCs from different namespaces to bind to the same volume
+- **App-specific volumes** (frigate-pv, jellyfin-pv): Use ReadWriteOnce and are co-located with their app deployments for better encapsulation
+- All PVCs reference `storageClassName: ""` to prevent dynamic provisioning and ensure binding to pre-defined PVs
