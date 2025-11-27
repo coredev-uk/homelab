@@ -4,4 +4,5 @@ kind: Kustomization
 namespace: glance
 
 resources:
+  - ingress.yaml
   - deployment.yaml

@@ -1,0 +1,56 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: bazarr-ingressroute
+  namespace: bazarr
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(\`bazarr.home.coredev.uk\`)
+      kind: Rule
+      services:
+        - name: bazarr
+          port: 6767
+  tls:
+    secretName: bazarr-tls
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: bazarr-redirect
+  namespace: bazarr
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(\`bazarr.home.coredev.uk\`)
+      kind: Rule
+      middlewares:
+        - name: https-redirect
+      services:
+        - name: bazarr
+          port: 6767
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: https-redirect
+  namespace: bazarr
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: bazarr-tls
+  namespace: bazarr
+spec:
+  secretName: bazarr-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - bazarr.home.coredev.uk

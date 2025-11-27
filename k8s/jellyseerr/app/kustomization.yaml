@@ -4,4 +4,5 @@ kind: Kustomization
 namespace: jellyseerr
 
 resources:
+  - ingress.yaml
   - deployment.yaml

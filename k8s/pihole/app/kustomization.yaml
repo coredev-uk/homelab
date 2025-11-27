@@ -5,3 +5,4 @@ namespace: pihole
 
 resources:
   - deployment.yaml
+  - ingress.yaml
