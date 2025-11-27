@@ -86,37 +86,42 @@ create_sealed_secret_multi() {
   echo "Generated sealed-secrets/$output_file"
 }
 
-# Generate Pihole SealedSecret
-create_sealed_secret "pihole-secrets" "dns" "WEBPASSWORD" "$PIHOLE_WEBPASSWORD" "pihole-sealed-secret.yaml"
+# Generate Pihole SealedSecret (in pihole namespace)
+create_sealed_secret "pihole-secrets" "pihole" "WEBPASSWORD" "$PIHOLE_WEBPASSWORD" "pihole-sealed-secret.yaml"
 
-# Generate Frigate SealedSecret with MQTT and RTSP credentials
-create_sealed_secret_multi "frigate-secrets" "security" "frigate-sealed-secret.yaml" \
+# Generate Frigate SealedSecret with MQTT and RTSP credentials (in frigate namespace)
+create_sealed_secret_multi "frigate-secrets" "frigate" "frigate-sealed-secret.yaml" \
   "MQTT_PASSWORD" "$FRIGATE_MQTT_PASSWORD" \
   "RTSP_USER" "$FRIGATE_RTSP_USER" \
   "RTSP_PASSWORD" "$FRIGATE_RTSP_PASSWORD"
 
-# Generate Cloudflare SealedSecret
+# Generate Cloudflare SealedSecret (in cert-manager namespace)
 create_sealed_secret "cloudflare-api-token-secret" "cert-manager" "api-token" "$CLOUDFLARE_API_TOKEN" "cloudflare-sealed-secret.yaml"
 
-# Generate Notifiarr SealedSecret
-create_sealed_secret "notifiarr-secrets" "media" "API_KEY" "$NOTIFIARR_API_KEY" "notifiarr-sealed-secret.yaml"
+# Generate Notifiarr SealedSecret (in notifiarr namespace)
+create_sealed_secret "notifiarr-secrets" "notifiarr" "API_KEY" "$NOTIFIARR_API_KEY" "notifiarr-sealed-secret.yaml"
 
-# Generate Glance SealedSecret with weather location and pihole password
-create_sealed_secret_multi "glance-secrets" "media" "glance-sealed-secret.yaml" \
+# Generate Glance SealedSecret with weather location and pihole password (in glance namespace)
+create_sealed_secret_multi "glance-secrets" "glance" "glance-sealed-secret.yaml" \
   "PIHOLE_WEBPASSWORD" "$PIHOLE_WEBPASSWORD" \
   "GLANCE_WEATHER_LOCATION" "$GLANCE_WEATHER_LOCATION" \
   "RADARR_API_KEY" "$RADARR_API_KEY" \
   "SONARR_API_KEY" "$SONARR_API_KEY" \
   "GITHUB_TOKEN" "$GITHUB_TOKEN"
 
-# Generate VPN SealedSecret for Gluetun
-create_sealed_secret_multi "vpn-secrets" "media" "vpn-sealed-secret.yaml" \
-  "SAB_VPN_PRIVATE_KEY" "$SAB_VPN_PRIVATE_KEY" \
+# Generate VPN SealedSecret for qBittorrent (in qbittorrent namespace)
+create_sealed_secret_multi "vpn-secrets" "qbittorrent" "qbittorrent-vpn-sealed-secret.yaml" \
   "QBIT_VPN_PRIVATE_KEY" "$QBIT_VPN_PRIVATE_KEY" \
   "PROTON_VPN_EMAIL" "$PROTON_VPN_EMAIL" \
   "PROTON_VPN_PASSWORD" "$PROTON_VPN_PASSWORD"
 
-# Generate Cloudflare Tunnel SealedSecret
+# Generate VPN SealedSecret for SABnzbd (in sabnzbd namespace)
+create_sealed_secret_multi "vpn-secrets" "sabnzbd" "sabnzbd-vpn-sealed-secret.yaml" \
+  "SAB_VPN_PRIVATE_KEY" "$SAB_VPN_PRIVATE_KEY" \
+  "PROTON_VPN_EMAIL" "$PROTON_VPN_EMAIL" \
+  "PROTON_VPN_PASSWORD" "$PROTON_VPN_PASSWORD"
+
+# Generate Cloudflare Tunnel SealedSecret (in cloudflare-tunnel namespace)
 create_sealed_secret "cloudflare-tunnel-token" "cloudflare-tunnel" "token" "$CLOUDFLARE_TUNNEL_TOKEN" "cloudflare-tunnel-sealed-secret.yaml"
 
 echo ""
@@ -132,7 +137,8 @@ if [[ "$DRY_RUN" == "true" ]]; then
   echo "kubectl apply -f sealed-secrets/cloudflare-sealed-secret.yaml"
   echo "kubectl apply -f sealed-secrets/notifiarr-sealed-secret.yaml"
   echo "kubectl apply -f sealed-secrets/glance-sealed-secret.yaml"
-  echo "kubectl apply -f sealed-secrets/vpn-sealed-secret.yaml"
+  echo "kubectl apply -f sealed-secrets/qbittorrent-vpn-sealed-secret.yaml"
+  echo "kubectl apply -f sealed-secrets/sabnzbd-vpn-sealed-secret.yaml"
   echo "kubectl apply -f sealed-secrets/cloudflare-tunnel-sealed-secret.yaml"
 else
   echo "Applying SealedSecrets to cluster..."
@@ -141,17 +147,24 @@ else
   kubectl apply -f sealed-secrets/cloudflare-sealed-secret.yaml
   kubectl apply -f sealed-secrets/notifiarr-sealed-secret.yaml
   kubectl apply -f sealed-secrets/glance-sealed-secret.yaml
-  kubectl apply -f sealed-secrets/vpn-sealed-secret.yaml
+  kubectl apply -f sealed-secrets/qbittorrent-vpn-sealed-secret.yaml
+  kubectl apply -f sealed-secrets/sabnzbd-vpn-sealed-secret.yaml
   kubectl apply -f sealed-secrets/cloudflare-tunnel-sealed-secret.yaml
 
   echo ""
-  echo "Cleaning up old plain text secrets..."
+  echo "Cleaning up old plain text secrets from old namespaces..."
   kubectl delete secret pihole-secrets -n dns --ignore-not-found
+  kubectl delete secret pihole-secrets -n pihole --ignore-not-found
   kubectl delete secret frigate-secrets -n security --ignore-not-found
+  kubectl delete secret frigate-secrets -n frigate --ignore-not-found
   kubectl delete secret cloudflare-api-token-secret -n cert-manager --ignore-not-found
   kubectl delete secret notifiarr-secrets -n media --ignore-not-found
+  kubectl delete secret notifiarr-secrets -n notifiarr --ignore-not-found
   kubectl delete secret glance-secrets -n media --ignore-not-found
+  kubectl delete secret glance-secrets -n glance --ignore-not-found
   kubectl delete secret vpn-secrets -n media --ignore-not-found
+  kubectl delete secret vpn-secrets -n qbittorrent --ignore-not-found
+  kubectl delete secret vpn-secrets -n sabnzbd --ignore-not-found
   kubectl delete secret cloudflare-tunnel-token -n cloudflare-tunnel --ignore-not-found
 
   echo ""
