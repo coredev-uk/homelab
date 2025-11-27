@@ -25,31 +25,3 @@ spec:
   hostPath:
     path: /opt/media
   storageClassName: ""
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: frigate-pv
-spec:
-  capacity:
-    storage: 50Gi
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  hostPath:
-    path: /opt/frigate
-  storageClassName: ""
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: jellyfin-pv
-spec:
-  capacity:
-    storage: 50Gi
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  hostPath:
-    path: /opt/jellyfin
-  storageClassName: ""
