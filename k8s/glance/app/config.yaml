@@ -518,9 +518,10 @@ pages:
                     icon: si:argo
                   - title: LLDAP
                     url: https://lldap.home.coredev.uk
+                    icon: si:lldap
                   - title: Authelia
                     url: https://auth.home.coredev.uk
-                    icon: mdi:account-group
+                    icon: si:authelia
                   - title: Pihole
                     url: https://pihole.home.coredev.uk/admin
                     icon: si:pihole
