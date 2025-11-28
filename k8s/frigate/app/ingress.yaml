@@ -20,8 +20,6 @@ spec:
       kind: Rule
       middlewares:
         - name: frigate-headers
-        - name: authelia-forwardauth
-          namespace: authelia
       services:
         - name: frigate
           port: 8971
