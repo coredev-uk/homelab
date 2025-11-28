@@ -20,7 +20,7 @@ data:
       - groups
     enableUserInfoGroups: true
     userInfoPath: /api/oidc/userinfo
-    logoutURL: https://auth.home.coredev.uk/api/oidc/authorization/revoke
+    logoutURL: https://auth.home.coredev.uk/logout
 ---
 apiVersion: v1
 kind: ConfigMap
