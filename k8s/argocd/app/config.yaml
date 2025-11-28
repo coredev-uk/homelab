@@ -21,6 +21,8 @@ data:
     requestedIDTokenClaims:
       groups:
         essential: true
+    enableUserInfoGroups: true
+    userInfoPath: /api/oidc/userinfo
 ---
 apiVersion: v1
 kind: ConfigMap
