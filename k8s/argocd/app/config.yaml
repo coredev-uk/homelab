@@ -13,14 +13,11 @@ data:
     issuer: https://auth.home.coredev.uk
     clientID: argocd
     clientSecret: $oidc.authelia.clientSecret
+    cliClientID: argocd-cli
     requestedScopes:
       - openid
-      - profile
       - email
       - groups
-    requestedIDTokenClaims:
-      groups:
-        essential: true
     enableUserInfoGroups: true
     userInfoPath: /api/oidc/userinfo
 ---
