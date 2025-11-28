@@ -516,6 +516,9 @@ pages:
                   - title: ArgoCD
                     url: https://argocd.home.coredev.uk
                     icon: si:argo
+                  - title: LDAP (LLDAP)
+                    url: https://auth.home.coredev.uk
+                    icon: mdi:account-group
                   - title: Pihole
                     url: https://pihole.home.coredev.uk/admin
                     icon: si:pihole
