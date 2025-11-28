@@ -27,6 +27,16 @@ echo "# Authelia Storage Encryption Key"
 echo "AUTHELIA_STORAGE_ENCRYPTION_KEY=$(openssl rand -hex 32)"
 echo ""
 
+# Authelia JWT Secret for Password Reset
+echo "# Authelia JWT Secret for Password Reset"
+echo "AUTHELIA_JWT_SECRET=$(openssl rand -hex 32)"
+echo ""
+
+# Authelia Session Secret
+echo "# Authelia Session Secret"
+echo "AUTHELIA_SESSION_SECRET=$(openssl rand -hex 32)"
+echo ""
+
 # Authelia OIDC HMAC Secret
 echo "# Authelia OIDC HMAC Secret"
 echo "AUTHELIA_OIDC_HMAC_SECRET=$(openssl rand -hex 32)"

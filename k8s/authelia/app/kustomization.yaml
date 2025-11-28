@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - lldap.yaml
   - lldap-ingress.yaml
+  - redis.yaml
   - deployment.yaml
   - ingress.yaml
   - middleware.yaml

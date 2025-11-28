@@ -133,6 +133,8 @@ create_sealed_secret_multi "lldap-secret" "authelia" "lldap-sealed-secret.yaml" 
 create_sealed_secret_multi "authelia-secrets" "authelia" "authelia-sealed-secret.yaml" \
   "ldap-password" "$LLDAP_ADMIN_PASSWORD" \
   "storage-encryption-key" "$AUTHELIA_STORAGE_ENCRYPTION_KEY" \
+  "jwt-secret" "$AUTHELIA_JWT_SECRET" \
+  "session-secret" "$AUTHELIA_SESSION_SECRET" \
   "oidc-hmac-secret" "$AUTHELIA_OIDC_HMAC_SECRET" \
   "oidc-private-key" "$AUTHELIA_OIDC_PRIVATE_KEY" \
   "grafana-client-secret" "$AUTHELIA_GRAFANA_CLIENT_SECRET" \
