@@ -25,7 +25,7 @@ data:
     
     identity_validation:
       reset_password:
-        jwt_secret: AUTHELIA_JWT_SECRET_PLACEHOLDER
+        jwt_secret: ''
     
     authentication_backend:
       password_reset:
@@ -58,7 +58,7 @@ data:
           policy: one_factor
     
     session:
-      secret: AUTHELIA_SESSION_SECRET_PLACEHOLDER
+      secret: ''
       cookies:
         - domain: home.coredev.uk
           authelia_url: https://auth.home.coredev.uk
@@ -88,10 +88,10 @@ data:
     
     identity_providers:
       oidc:
-        hmac_secret: AUTHELIA_OIDC_HMAC_SECRET_PLACEHOLDER
+        hmac_secret: ''
         jwks:
           - key: |
-              OIDC_PRIVATE_KEY_PLACEHOLDER
+              {{- fileContent "/secrets/oidc-private-key" | nindent 14 }}
         lifespans:
           access_token: 1h
           authorize_code: 1m
@@ -109,7 +109,7 @@ data:
         clients:
           - client_id: grafana
             client_name: Grafana Monitoring
-            client_secret: GRAFANA_CLIENT_SECRET_PLACEHOLDER
+            client_secret: {{ fileContent "/secrets/grafana-client-secret" }}
             public: false
             authorization_policy: one_factor
             redirect_uris:
@@ -126,7 +126,7 @@ data:
           
           - client_id: argocd
             client_name: ArgoCD GitOps
-            client_secret: ARGOCD_CLIENT_SECRET_PLACEHOLDER
+            client_secret: {{ fileContent "/secrets/argocd-client-secret" }}
             public: false
             authorization_policy: one_factor
             redirect_uris:
@@ -201,52 +201,27 @@ spec:
           env:
             - name: TZ
               value: "Europe/London"
-            - name: AUTHELIA_AUTHENTICATION_BACKEND_LDAP_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: authelia-secrets
-                  key: ldap-password
-            - name: AUTHELIA_STORAGE_ENCRYPTION_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: authelia-secrets
-                  key: storage-encryption-key
-            - name: AUTHELIA_IDENTITY_VALIDATION_RESET_PASSWORD_JWT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: authelia-secrets
-                  key: jwt-secret
-            - name: AUTHELIA_SESSION_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: authelia-secrets
-                  key: session-secret
-            - name: AUTHELIA_IDENTITY_PROVIDERS_OIDC_HMAC_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: authelia-secrets
-                  key: oidc-hmac-secret
-            - name: AUTHELIA_IDENTITY_PROVIDERS_OIDC_JWKS_0_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: authelia-secrets
-                  key: oidc-private-key
-            - name: AUTHELIA_IDENTITY_PROVIDERS_OIDC_CLIENTS_0_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: authelia-secrets
-                  key: grafana-client-secret
-            - name: AUTHELIA_IDENTITY_PROVIDERS_OIDC_CLIENTS_1_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: authelia-secrets
-                  key: argocd-client-secret
+            - name: X_AUTHELIA_CONFIG_FILTERS
+              value: "template"
+            - name: AUTHELIA_AUTHENTICATION_BACKEND_LDAP_PASSWORD_FILE
+              value: "/secrets/ldap-password"
+            - name: AUTHELIA_STORAGE_ENCRYPTION_KEY_FILE
+              value: "/secrets/storage-encryption-key"
+            - name: AUTHELIA_IDENTITY_VALIDATION_RESET_PASSWORD_JWT_SECRET_FILE
+              value: "/secrets/jwt-secret"
+            - name: AUTHELIA_SESSION_SECRET_FILE
+              value: "/secrets/session-secret"
+            - name: AUTHELIA_IDENTITY_PROVIDERS_OIDC_HMAC_SECRET_FILE
+              value: "/secrets/oidc-hmac-secret"
           volumeMounts:
             - name: config
               mountPath: /config/configuration.yml
               subPath: configuration.yml
             - name: data
               mountPath: /config
+            - name: secrets
+              mountPath: /secrets
+              readOnly: true
           resources:
             requests:
               memory: "64Mi"
@@ -273,3 +248,23 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: authelia-config
+        - name: secrets
+          secret:
+            secretName: authelia-secrets
+            items:
+              - key: ldap-password
+                path: ldap-password
+              - key: storage-encryption-key
+                path: storage-encryption-key
+              - key: jwt-secret
+                path: jwt-secret
+              - key: session-secret
+                path: session-secret
+              - key: oidc-hmac-secret
+                path: oidc-hmac-secret
+              - key: oidc-private-key
+                path: oidc-private-key
+              - key: grafana-client-secret
+                path: grafana-client-secret
+              - key: argocd-client-secret
+                path: argocd-client-secret
