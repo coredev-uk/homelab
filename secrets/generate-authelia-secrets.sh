@@ -50,8 +50,17 @@ TEMP_PUB=$(mktemp)
 openssl genrsa -out "$TEMP_KEY" 4096 2>/dev/null
 openssl rsa -in "$TEMP_KEY" -pubout -out "$TEMP_PUB" 2>/dev/null
 
+echo "# ============================================================"
 echo "# Authelia OIDC Private Key (RSA 4096)"
-echo "# Note: This is a multi-line value - copy everything including BEGIN/END lines"
+echo "# ============================================================"
+echo "# IMPORTANT: Copy this ENTIRE block exactly as shown below"
+echo "# The \$(cat <<'EOF' ... EOF) syntax is correct - it's a bash"
+echo "# command substitution that will be evaluated when the file"
+echo "# is sourced by generate-sealed-secrets.sh"
+echo "#"
+echo "# Copy from AUTHELIA_OIDC_PRIVATE_KEY through the closing )\""
+echo "# ============================================================"
+echo ""
 echo "AUTHELIA_OIDC_PRIVATE_KEY=\"\$(cat <<'EOF'"
 cat "$TEMP_KEY"
 echo "EOF"
