@@ -26,8 +26,8 @@ data:
     client_secret = $__env{GRAFANA_OIDC_CLIENT_SECRET}
     scopes = openid profile email groups
     auth_url = https://auth.home.coredev.uk/api/oidc/authorization
-    token_url = https://auth.home.coredev.uk/api/oidc/token
-    api_url = https://auth.home.coredev.uk/api/oidc/userinfo
+    token_url = http://authelia.authelia.svc.cluster.local:9091/api/oidc/token
+    api_url = http://authelia.authelia.svc.cluster.local:9091/api/oidc/userinfo
     use_pkce = true
     login_attribute_path = preferred_username
     name_attribute_path = name
