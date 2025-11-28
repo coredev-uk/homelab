@@ -34,6 +34,7 @@ spec:
             - --providers.kubernetesIngress=true
             - --providers.kubernetesIngress.ingressEndpoint.publishedService=traefik/traefik
             - --providers.kubernetesCRD=true
+            - --providers.kubernetesCRD.allowCrossNamespace=true
             - --metrics.prometheus=true
             - --metrics.prometheus.addEntryPointsLabels=true
             - --metrics.prometheus.addServicesLabels=true
