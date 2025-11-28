@@ -89,6 +89,7 @@ data:
     identity_providers:
       oidc:
         hmac_secret: ''
+        issuer: https://auth.home.coredev.uk
         jwks:
           - key: |
               {{- fileContent "/secrets/oidc-private-key" | nindent 14 }}
