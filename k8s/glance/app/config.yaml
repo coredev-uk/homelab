@@ -516,7 +516,9 @@ pages:
                   - title: ArgoCD
                     url: https://argocd.home.coredev.uk
                     icon: si:argo
-                  - title: LDAP (LLDAP)
+                  - title: LLDAP
+                    url: https://lldap.home.coredev.uk
+                  - title: Authelia
                     url: https://auth.home.coredev.uk
                     icon: mdi:account-group
                   - title: Pihole
