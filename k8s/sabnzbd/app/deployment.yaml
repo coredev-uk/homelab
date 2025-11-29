@@ -29,6 +29,8 @@ metadata:
     glance/description: "Usenet download client"
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: sabnzbd
@@ -48,6 +50,10 @@ spec:
             capabilities:
               add:
                 - NET_ADMIN
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh", "-c", "(ip rule del table 51820; ip -6 rule del table 51820) || true"]
           env:
             # VPN Provider Configuration
             - name: VPN_SERVICE_PROVIDER
