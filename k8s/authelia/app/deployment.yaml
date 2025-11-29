@@ -52,7 +52,7 @@ spec:
       enableServiceLinks: false
       containers:
         - name: authelia
-          image: authelia/authelia:4.39.14
+          image: authelia/authelia:4.39.15
           ports:
             - containerPort: 9091
               name: http
