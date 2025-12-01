@@ -615,6 +615,22 @@ pages:
               - UCUyeluBRhGPCW4rPe_UvBZQ # ThePrimeagen
             limit: 8
 
+          - type: group
+            widgets:
+              - type: reddit
+                subreddit: unixporn
+                show-thumbnails: true
+                limit: 10
+                collapse-after: 5
+              - type: reddit
+                subreddit: technology
+                limit: 10
+                collapse-after: 5
+              - type: reddit
+                subreddit: ubiquiti
+                limit: 10
+                collapse-after: 5
+
       - size: small
         widgets:
           - <<: *media-widget
