@@ -60,7 +60,7 @@ spec:
             failureThreshold: 5
           volumeMounts:
             - name: storage
-              mountPath: /data
+              mountPath: /config
               subPath: config
             - name: storage
               mountPath: /cache
