@@ -11,7 +11,7 @@ metadata:
     glance/url: "https://jellyfin.home.coredev.uk"
     glance/description: "Media Server"
 spec:
-  replicas: 0
+  replicas: 1
   strategy:
     type: Recreate
   selector:
