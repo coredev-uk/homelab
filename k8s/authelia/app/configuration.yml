@@ -4,6 +4,10 @@ server:
   address: 'tcp://0.0.0.0:9091'
   asset_path: ''
   disable_healthcheck: false
+  endpoints:
+    authz:
+      auth-request:
+        implementation: 'AuthRequest'
 
 log:
   level: info
@@ -47,6 +51,10 @@ access_control:
   rules:
     - domain: auth.home.coredev.uk
       policy: bypass
+    - domain: jellyfin.home.coredev.uk
+      policy: one_factor
+    - domain: jellyfin.coredev.uk
+      policy: one_factor
     - domain: '*.home.coredev.uk'
       policy: one_factor
 
