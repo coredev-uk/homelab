@@ -9,8 +9,6 @@ spec:
   routes:
     - match: Host(`glance.home.coredev.uk`)
       kind: Rule
-      middlewares:
-        - name: authelia-authelia-forwardauth@kubernetescrd
       services:
         - name: glance
           port: 8080
