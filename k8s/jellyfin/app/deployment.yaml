@@ -27,7 +27,7 @@ spec:
         fsGroupChangePolicy: "OnRootMismatch"
       containers:
         - name: jellyfin
-          image: jellyfin/jellyfin:10.11.4
+          image: lscr.io/linuxserver/jellyfin:version-10.11.3ubu2404
           ports:
             - containerPort: 8096
               protocol: TCP
@@ -37,9 +37,15 @@ spec:
               protocol: UDP
             - containerPort: 1900
               protocol: UDP
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "100"
+            - name: TZ
+              value: "Europe/London"
+
           securityContext:
-            runAsUser: 1000
-            runAsGroup: 100
             capabilities:
               add:
                 - SYS_ADMIN # Required for Intel VA-API access
