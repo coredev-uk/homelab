@@ -1,17 +1,57 @@
+
 # =============================================================================
-# Core Infrastructure
+# Storage
 # =============================================================================
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: infrastructure
+  name: longhorn
+  namespace: argocd
+spec:
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: true
+  project: default
+  sources:
+    - chart: longhorn
+      repoURL: https://charts.longhorn.io/
+      targetRevision: v1.10.1
+      helm:
+        values: |
+          preUpgradeChecker:
+            jobEnabled: false
+          longhornUI:
+            replicas: 1
+          service:
+            ui:
+              type: ClusterIP
+          defaultSettings:
+            defaultReplicaCount: "1"
+            storageOverProvisioningPercentage: "200"
+            storageMinimalAvailablePercentage: "10"
+            defaultDataLocality: "best-effort"
+    - repoURL: https://github.com/coredev-uk/homelab
+      targetRevision: HEAD
+      path: k8s/longhorn
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: longhorn-system
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: shared-storage
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: https://github.com/coredev-uk/homelab
     targetRevision: HEAD
-    path: apps/infrastructure
+    path: k8s/shared-storage
   destination:
     server: https://kubernetes.default.svc
   syncPolicy:
@@ -21,41 +61,199 @@ spec:
 
 ---
 # =============================================================================
-# Media Stack
+# Security & Certificates
 # =============================================================================
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: media-stack
+  name: authelia
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: https://github.com/coredev-uk/homelab
     targetRevision: HEAD
-    path: apps/media-stack
+    path: k8s/authelia
   destination:
     server: https://kubernetes.default.svc
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
 
 ---
-# =============================================================================
-# Monitoring
-# =============================================================================
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: monitoring
+  name: sealed-secrets
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: https://github.com/coredev-uk/homelab
     targetRevision: HEAD
-    path: apps/monitoring
+    path: k8s/sealed-secrets
+  destination:
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-manager
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/coredev-uk/homelab
+    targetRevision: HEAD
+    path: k8s/cert-manager
+  destination:
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+
+---
+# =============================================================================
+# Networking
+# =============================================================================
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: metallb
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/coredev-uk/homelab
+    targetRevision: HEAD
+    path: k8s/metallb
+  destination:
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: traefik
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/coredev-uk/homelab
+    targetRevision: HEAD
+    path: k8s/traefik
+  destination:
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cloudflare-tunnel
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/coredev-uk/homelab
+    targetRevision: HEAD
+    path: k8s/cloudflare-tunnel
+  destination:
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+
+---
+# =============================================================================
+# DNS
+# =============================================================================
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: pihole
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/coredev-uk/homelab
+    targetRevision: HEAD
+    path: k8s/pihole
+  destination:
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+
+---
+# =============================================================================
+# Hardware Support
+# =============================================================================
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: intel-gpu
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/coredev-uk/homelab
+    targetRevision: HEAD
+    path: k8s/intel-gpu
+  destination:
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+
+---
+# =============================================================================
+# ArgoCD Apps
+# =============================================================================
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd-apps
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/coredev-uk/homelab
+    targetRevision: HEAD
+    path: k8s/argocd
   destination:
     server: https://kubernetes.default.svc
   syncPolicy:
