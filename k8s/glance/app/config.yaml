@@ -760,11 +760,7 @@ pages:
             cache: 1s
             parameters:
               show-if: |
-                (namespace == "media" or
-                namespace == "core" or
-                namespace == "monitoring" or
-                namespace == "dns" or
-                namespace == "security") and
+                (namespace != "argocd") and
                 ("glance/hide" not in annotations || annotations["glance/hide"] != "true")
 
           - type: releases
