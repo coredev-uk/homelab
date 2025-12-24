@@ -59,7 +59,7 @@ spec:
                 fieldRef:
                   fieldPath: status.podIP
             - name: FTLCONF_dns_upstreams
-              value: "192.168.20.1"
+              value: "192.168.10.1"
             - name: DNSMASQ_LISTENING
               value: "all"
             - name: FTLCONF_dns_interface
