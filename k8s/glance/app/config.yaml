@@ -683,7 +683,7 @@ pages:
             url: http://qbittorrent.qbittorrent.svc.cluster.local:8000/v1/publicip/ip
             subrequests:
               port-status:
-                url: http://qbittorrent.qbittorrent.svc.cluster.local:8000/v1/openvpn/portforwarded
+                url: http://qbittorrent.qbittorrent.svc.cluster.local:8000/v1/portforward
             template: |
               {{ if eq .Response.StatusCode 200 }}
                 {{ $ip := (.JSON.String "public_ip") }}
