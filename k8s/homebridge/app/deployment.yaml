@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: homebridge
+  namespace: homebridge
+  labels:
+    app: homebridge
+  annotations:
+    glance/name: "Homebridge"
+    glance/icon: "si:homebridge"
+    glance/url: "https://homebridge.home.coredev.uk"
+    glance/description: "HomeKit Bridge"
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: homebridge
+  template:
+    metadata:
+      labels:
+        app: homebridge
+    spec:
+      # CRITICAL: hostNetwork is required for HomeKit mDNS discovery
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      containers:
+        - name: homebridge
+          image: homebridge/homebridge:latest
+          env:
+            - name: TZ
+              value: "Europe/London"
+            - name: ENABLE_AVAHI
+              value: "1"
+          ports:
+            - name: ui
+              containerPort: 8581
+              protocol: TCP
+              hostPort: 8581
+            - name: homekit
+              containerPort: 51826
+              protocol: TCP
+              hostPort: 51826
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8581
+            initialDelaySeconds: 300
+            periodSeconds: 60
+            timeoutSeconds: 2
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8581
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 2
+          volumeMounts:
+            - name: storage
+              mountPath: /homebridge
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+      volumes:
+        - name: storage
+          persistentVolumeClaim:
+            claimName: homebridge-pvc
+      # Optional: Pin to a specific node if needed
+      # nodeSelector:
+      #   kubernetes.io/hostname: your-node-name
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: homebridge
+  namespace: homebridge
+spec:
+  selector:
+    app: homebridge
+  ports:
+    - name: ui
+      port: 8581
+      targetPort: 8581
+      protocol: TCP
+  type: ClusterIP
