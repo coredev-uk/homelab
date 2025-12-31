@@ -1,0 +1,21 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: jellyseerr
+  namespace: flux-system
+spec:
+  interval: 10m0s
+  retryInterval: 2m
+  path: ./k8s/jellyseerr
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: homelab
+    namespace: flux-system
+  dependsOn:
+    - name: traefik
+    - name: jellyfin
+    - name: radarr
+    - name: sonarr
+  wait: true
+  timeout: 5m

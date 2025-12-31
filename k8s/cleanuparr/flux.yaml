@@ -1,0 +1,20 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: cleanuparr
+  namespace: flux-system
+spec:
+  interval: 10m0s
+  retryInterval: 2m
+  path: ./k8s/cleanuparr
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: homelab
+    namespace: flux-system
+  dependsOn:
+    - name: traefik
+    - name: radarr
+    - name: sonarr
+  wait: true
+  timeout: 5m
