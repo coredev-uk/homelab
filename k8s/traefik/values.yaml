@@ -1,0 +1,91 @@
+# Traefik Helm Chart Values
+# Chart version: 38.0.1
+# App version: v3.6.5
+
+# Set Traefik as the default ingress class
+ingressClass:
+  enabled: true
+  isDefaultClass: true
+
+# Disable API dashboard (was set to false in deployment)
+ingressRoute:
+  dashboard:
+    enabled: false
+
+# Configure entrypoints
+ports:
+  web:
+    port: 8000
+    exposedPort: 80
+    expose:
+      default: true
+    forwardedHeaders:
+      trustedIPs:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/16
+      insecure: false
+  websecure:
+    port: 8443
+    exposedPort: 443
+    expose:
+      default: true
+    forwardedHeaders:
+      trustedIPs:
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/16
+      insecure: false
+  traefik:
+    port: 9000
+    exposedPort: 8080
+    expose:
+      default: true
+
+# Configure providers
+providers:
+  kubernetesIngress:
+    enabled: true
+    publishedService:
+      enabled: true
+  kubernetesCRD:
+    enabled: true
+    allowCrossNamespace: true
+
+# Configure service with LoadBalancer and specific IP
+service:
+  type: LoadBalancer
+  spec:
+    loadBalancerIP: 192.168.20.30
+
+# Configure persistence for certificates
+persistence:
+  enabled: true
+  storageClass: longhorn
+  size: 1Gi
+  path: /data
+
+# Resource limits (from deployment.yaml)
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "100m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+
+# Disable version checking and anonymous usage
+globalArguments:
+  - "--global.checknewversion=false"
+  - "--global.sendanonymoususage=false"
+
+# Enable Prometheus metrics
+metrics:
+  prometheus:
+    enabled: true
+    addEntryPointsLabels: true
+    addServicesLabels: true
+    serviceMonitor:
+      enabled: true
+      additionalLabels:
+        release: kube-prometheus-stack
