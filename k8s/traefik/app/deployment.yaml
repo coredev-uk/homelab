@@ -38,7 +38,6 @@ spec:
             - --metrics.prometheus=true
             - --metrics.prometheus.addEntryPointsLabels=true
             - --metrics.prometheus.addServicesLabels=true
-            - --entryPoints.websecure.http.encodedPath=true
           ports:
             - name: web
               containerPort: 80
