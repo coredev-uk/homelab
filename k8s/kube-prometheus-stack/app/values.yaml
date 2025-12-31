@@ -60,6 +60,7 @@ data:
         annotations:
           traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
           traefik.ingress.kubernetes.io/router.tls: "true"
+          traefik.ingress.kubernetes.io/redirect-to-https: "true"
           cert-manager.io/cluster-issuer: letsencrypt-prod
           traefik.ingress.kubernetes.io/router.middlewares: authelia-authelia-forwardauth@kubernetescrd
         hosts:
@@ -137,6 +138,7 @@ data:
         annotations:
           traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
           traefik.ingress.kubernetes.io/router.tls: "true"
+          traefik.ingress.kubernetes.io/redirect-to-https: "true"
           cert-manager.io/cluster-issuer: letsencrypt-prod
         hosts:
           - grafana.home.coredev.uk
