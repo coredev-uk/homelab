@@ -47,6 +47,11 @@ access_control:
   rules:
     - domain: auth.home.coredev.uk
       policy: bypass
+    - domain: homebridge.home.coredev.uk
+      resources:
+        - '^/api/.*$'
+        - '^/socket.io/.*$'
+      policy: bypass
     - domain: '*.home.coredev.uk'
       policy: one_factor
 
