@@ -19,7 +19,7 @@ spec:
       automountServiceAccountToken: true
       containers:
         - name: traefik
-          image: traefik:v3.6.5
+          image: traefik:v3.6.6
           args:
             - --global.checknewversion=false
             - --global.sendanonymoususage=false
