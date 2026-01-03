@@ -27,7 +27,7 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
         - name: homebridge
-          image: homebridge/homebridge:latest
+          image: homebridge/homebridge:2026-01-03
           env:
             - name: TZ
               value: "Europe/London"
