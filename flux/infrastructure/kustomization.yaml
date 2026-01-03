@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  # Core infrastructure dependencies
+  - ../../k8s/cert-manager/flux.yaml
+  - ../../k8s/metallb/flux.yaml
+  
+  # Networking
+  - ../../k8s/traefik/flux.yaml
+  - ../../k8s/cloudflare-tunnel/flux.yaml
+  
+  # Storage
+  - ../../k8s/longhorn/flux.yaml
+  - ../../k8s/shared-storage/flux.yaml
+  
+  # Hardware
+  - ../../k8s/intel-gpu/flux.yaml
+  
+  # DNS & Security
+  - ../../k8s/pihole/flux.yaml
+  - ../../k8s/authelia/flux.yaml

@@ -1,0 +1,11 @@
+# This file should be generated using:
+# flux install --export > flux/flux-system/gotk-components.yaml
+#
+# For now, this is a placeholder. To generate the actual Flux components:
+# 1. Install flux CLI: brew install fluxcd/tap/flux
+# 2. Run: flux install --export > flux/flux-system/gotk-components.yaml
+#
+# This will generate all Flux controllers (source-controller, kustomize-controller, 
+# helm-controller, notification-controller) as Kubernetes manifests.
+#
+# Note: We keep this as a separate file to track Flux version explicitly.
