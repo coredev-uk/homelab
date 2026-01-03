@@ -33,3 +33,4 @@ spec:
   valuesFrom:
     - kind: ConfigMap
       name: traefik-values
+      valuesKey: values.yaml

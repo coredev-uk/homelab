@@ -36,6 +36,9 @@ ports:
         - 172.16.0.0/12
         - 192.168.0.0/16
       insecure: false
+    http:
+      encodedCharacters:
+        allowEncodedSlash: true
   traefik:
     port: 9000
     exposedPort: 8080

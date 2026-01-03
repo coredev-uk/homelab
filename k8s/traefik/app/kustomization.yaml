@@ -3,3 +3,11 @@ kind: Kustomization
 
 resources:
   - helm.yaml
+
+configMapGenerator:
+  - name: traefik-values
+    namespace: flux-system
+    files:
+      - values.yaml
+    options:
+      disableNameSuffixHash: true
