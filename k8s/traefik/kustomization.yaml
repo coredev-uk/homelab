@@ -4,11 +4,3 @@ kind: Kustomization
 resources:
   - app/
 
-configMapGenerator:
-  - name: traefik-values
-    namespace: flux-system
-    files:
-      - values.yaml=app/values.yaml
-
-generatorOptions:
-  disableNameSuffixHash: true
