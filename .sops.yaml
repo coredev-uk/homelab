@@ -1,0 +1,19 @@
+# This file configures SOPS (Secrets OPerationS) for encrypting Kubernetes secrets
+# SOPS will automatically encrypt files matching the patterns below using the specified age key
+
+creation_rules:
+  # Encrypt all files in k8s/**/secrets/ directories
+  - path_regex: k8s/.*/secrets/.*\.yaml$
+    encrypted_regex: ^(data|stringData)$
+    age: >-
+      age1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+  # Encrypt any file with 'secret' in the name
+  - path_regex: .*secret.*\.yaml$
+    encrypted_regex: ^(data|stringData)$
+    age: >-
+      age1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Note: Replace the age public key above with your own!
+# Generate a new age key pair with: age-keygen -o age.agekey
+# The public key will be displayed after generation
