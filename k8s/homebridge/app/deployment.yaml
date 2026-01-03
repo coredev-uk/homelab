@@ -31,10 +31,6 @@ spec:
           env:
             - name: TZ
               value: "Europe/London"
-            - name: ENABLE_AVAHI
-              value: "0"  # Use Ciao instead of Avahi for better K8s compatibility
-            - name: HOMEBRIDGE_INSECURE
-              value: "1"  # May help with plugin installation over HTTP
           ports:
             - name: ui
               containerPort: 8581
