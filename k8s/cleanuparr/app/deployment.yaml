@@ -31,8 +31,8 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /config
-            - name: media
-              mountPath: /media
+            - name: data
+              mountPath: /data
           resources:
             requests:
               memory: "128Mi"
@@ -56,10 +56,10 @@ spec:
         - name: config
           persistentVolumeClaim:
             claimName: cleanuparr-config
-        - name: media
+        - name: data
           nfs:
             server: 192.168.20.40
-            path: /homelab/media
+            path: /homelab
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

@@ -145,8 +145,8 @@ spec:
           volumeMounts:
             - name: qbittorrent-config
               mountPath: /config
-            - name: downloads
-              mountPath: /downloads
+            - name: data
+              mountPath: /data
           resources:
             requests:
               memory: "2Gi"
@@ -233,10 +233,10 @@ spec:
         - name: qbittorrent-config
           persistentVolumeClaim:
             claimName: qbittorrent-config
-        - name: downloads
-          hostPath:
-            path: /opt/downloads
-            type: Directory
+        - name: data
+          nfs:
+            server: 192.168.20.40
+            path: /homelab
         - name: gluetun-auth-config
           configMap:
             name: gluetun-auth-config-shared

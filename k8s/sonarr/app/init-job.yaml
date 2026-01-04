@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: init-sonarr-directories
+  namespace: sonarr
+spec:
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: init-directories
+          image: busybox:stable
+          command:
+            - sh
+            - -c
+            - |
+              echo "Creating Sonarr directory structure..."
+              mkdir -p /data/media/tv
+              chown -R 1000:100 /data/media/tv
+              chmod -R 775 /data/media/tv
+              echo "Sonarr directories created successfully"
+              ls -la /data/media/
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          securityContext:
+            runAsUser: 0
+      volumes:
+        - name: data
+          nfs:
+            server: 192.168.20.40
+            path: /homelab

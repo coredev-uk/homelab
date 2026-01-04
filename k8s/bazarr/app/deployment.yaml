@@ -36,7 +36,7 @@ spec:
             - name: config
               mountPath: /config
             - name: data
-              mountPath: /media
+              mountPath: /data
           resources:
             requests:
               memory: "256Mi"
@@ -51,7 +51,7 @@ spec:
         - name: data
           nfs:
             server: 192.168.20.40
-            path: /homelab/media
+            path: /homelab
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
