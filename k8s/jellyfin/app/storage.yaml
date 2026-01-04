@@ -8,9 +8,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
-  hostPath:
-    path: /opt/jellyfin
-  storageClassName: ""
+  storageClassName: longhorn
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -23,5 +21,4 @@ spec:
   resources:
     requests:
       storage: 50Gi
-  volumeName: jellyfin-pv
-  storageClassName: ""
+  storageClassName: longhorn

@@ -57,9 +57,9 @@ spec:
           persistentVolumeClaim:
             claimName: cleanuparr-config
         - name: media
-          hostPath:
-            path: /opt/media
-            type: Directory
+          nfs:
+            server: 192.168.20.40
+            path: /homelab/media
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
