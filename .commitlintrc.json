@@ -6,6 +6,7 @@
       "always",
       [
         "argocd",
+        "flux",
         "media", 
         "downloads",
         "infra",
