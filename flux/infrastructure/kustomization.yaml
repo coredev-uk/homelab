@@ -12,7 +12,6 @@ resources:
   
   # Storage
   - ../../k8s/longhorn/flux.yaml
-  - ../../k8s/shared-storage/flux.yaml
   
   # Hardware
   - ../../k8s/intel-gpu/flux.yaml
