@@ -14,6 +14,7 @@ spec:
     namespace: flux-system
   dependsOn:
     - name: traefik
+    - name: longhorn
     - name: jellyfin
     - name: radarr
     - name: sonarr
