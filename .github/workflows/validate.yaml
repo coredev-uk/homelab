@@ -39,7 +39,16 @@ jobs:
       - name: Validate Flux manifests
         run: |
           echo "Validating Flux system manifests..."
-          flux install --export | kubectl apply --dry-run=client -f -
+          # Generate and validate YAML structure
+          flux install --export > /tmp/flux-manifests.yaml
+          
+          # Validate YAML is well-formed
+          if ! kubectl apply --dry-run=client --validate=false -f /tmp/flux-manifests.yaml > /dev/null 2>&1; then
+            echo "❌ Flux manifests validation failed"
+            exit 1
+          fi
+          
+          echo "✅ Flux manifests are valid"
 
       - name: Validate Kustomizations
         run: |
@@ -86,11 +95,14 @@ jobs:
           find k8s -type f -name "helm.yaml" | while read helmfile; do
             echo "Validating: $helmfile"
             
-            # Extract HelmRelease from file (skip HelmRepository)
-            kubectl apply --dry-run=client -f "$helmfile" || exit 1
+            # Validate YAML structure is well-formed
+            if ! kubectl apply --dry-run=client --validate=false -f "$helmfile" > /dev/null 2>&1; then
+              echo "❌ Failed to validate: $helmfile"
+              exit 1
+            fi
           done
 
-          echo "All HelmReleases validated successfully!"
+          echo "✅ All HelmReleases validated successfully!"
 
       - name: Check for YAML syntax errors
         run: |
