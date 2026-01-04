@@ -1,0 +1,38 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: authelia
+  namespace: flux-system
+spec:
+  interval: 1h0m0s
+  url: https://charts.authelia.com
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: authelia
+  namespace: flux-system
+spec:
+  interval: 10m0s
+  retryInterval: 2m
+  chart:
+    spec:
+      chart: authelia
+      version: 0.10.49
+      sourceRef:
+        kind: HelmRepository
+        name: authelia
+        namespace: flux-system
+      interval: 1m0s
+  targetNamespace: authelia
+  install:
+    createNamespace: true
+  dependsOn:
+    - name: traefik
+  wait: true
+  timeout: 5m
+  valuesFrom:
+    - kind: ConfigMap
+      name: authelia-values
+      valuesKey: values.yaml

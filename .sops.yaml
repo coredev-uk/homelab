@@ -1,0 +1,12 @@
+creation_rules:
+  # Encrypt all files in k8s/**/secrets/ directories
+  - path_regex: k8s/.*/secrets/.*\.yaml$
+    encrypted_regex: ^(data|stringData)$
+    age: >-
+      age14vtdunml8z4k3y0k2jrrutkf65rntqdsye83awyzm87ur5gw2pts3wkw3k
+
+  # Encrypt any file with 'secret' in the name
+  - path_regex: .*secret.*\.yaml$
+    encrypted_regex: ^(data|stringData)$
+    age: >-
+      age14vtdunml8z4k3y0k2jrrutkf65rntqdsye83awyzm87ur5gw2pts3wkw3k

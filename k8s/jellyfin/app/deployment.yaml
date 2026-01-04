@@ -66,7 +66,7 @@ spec:
               mountPath: /cache
               subPath: cache
             - name: data
-              mountPath: /media
+              mountPath: /data
             - name: render-device
               mountPath: /dev/dri/renderD128
           resources:
@@ -83,9 +83,9 @@ spec:
           persistentVolumeClaim:
             claimName: jellyfin-pvc
         - name: data
-          hostPath:
-            path: /opt/media
-            type: Directory
+          nfs:
+            server: 192.168.20.40
+            path: /homelab
         - name: render-device
           hostPath:
             path: /dev/dri/renderD128

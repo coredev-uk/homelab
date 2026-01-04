@@ -4,12 +4,13 @@ metadata:
   name: frigate-pv
 spec:
   capacity:
-    storage: 50Gi
+    storage: 350Gi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
-  hostPath:
-    path: /opt/frigate
+  nfs:
+    server: 192.168.20.40
+    path: /homelab/frigate
   storageClassName: ""
 ---
 apiVersion: v1
@@ -22,6 +23,6 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 50Gi
+      storage: 350Gi
   volumeName: frigate-pv
   storageClassName: ""
