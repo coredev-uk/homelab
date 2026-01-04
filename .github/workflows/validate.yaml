@@ -35,37 +35,26 @@ jobs:
         with:
           kubectl: '1.31.0'
           kustomize: '5.4.3'
+          kubeconform: '0.7.0'
 
       - name: Validate Flux manifests
         run: |
-          echo "Validating Flux system manifests..."
-          # Generate Flux manifests and validate they're well-formed YAML
-          if ! flux install --export > /tmp/flux-manifests.yaml 2>&1; then
-            echo "❌ Failed to generate Flux manifests"
-            cat /tmp/flux-manifests.yaml
-            exit 1
-          fi
-          
-          # Check that manifests were generated
-          if [ ! -s /tmp/flux-manifests.yaml ]; then
-            echo "❌ Flux manifests are empty"
-            exit 1
-          fi
-          
-          echo "✅ Flux manifests are valid ($(wc -l < /tmp/flux-manifests.yaml) lines generated)"
+          echo "Validating Flux system manifests with kubeconform..."
+          flux install --export | kubeconform -strict -ignore-missing-schemas -summary
+          echo "✅ Flux manifests are valid"
 
       - name: Validate Kustomizations
         run: |
-          echo "Validating Kustomization builds..."
+          echo "Validating and testing Kustomization builds with kubeconform..."
           
           # Validate all app Kustomizations
           find k8s -type f -name "kustomization.yaml" | while read kustomization; do
             dir=$(dirname "$kustomization")
-            echo "Building: $dir"
-            kustomize build "$dir" > /dev/null || exit 1
+            echo "Building and validating: $dir"
+            kustomize build "$dir" | kubeconform -strict -ignore-missing-schemas -summary || exit 1
           done
 
-          echo "All Kustomization builds validated successfully!"
+          echo "✅ All Kustomization builds validated successfully!"
 
       - name: Validate Flux Kustomizations
         run: |
@@ -93,17 +82,12 @@ jobs:
 
       - name: Validate HelmReleases
         run: |
-          echo "Validating HelmReleases..."
+          echo "Validating HelmReleases with kubeconform..."
           
-          # Find all HelmRelease files and validate they're parseable
+          # Find all HelmRelease files and validate with kubeconform
           find k8s -type f -name "helm.yaml" | while read helmfile; do
             echo "Validating: $helmfile"
-            
-            # Just check that YAML is parseable - use yq or python
-            if ! python3 -c "import yaml; yaml.safe_load_all(open('$helmfile'))" 2>&1; then
-              echo "❌ Failed to parse: $helmfile"
-              exit 1
-            fi
+            kubeconform -strict -ignore-missing-schemas -summary "$helmfile"
           done
 
           echo "✅ All HelmReleases validated successfully!"
