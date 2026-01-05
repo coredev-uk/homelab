@@ -103,7 +103,7 @@ configMap:
       - domain: homebridge.home.coredev.uk
         resources:
           - '^/api/.*$'
-          -  ^/socket.io/.*$'
+          - '^/socket.io/.*$'
         policy: bypass
   
   # Session configuration with Redis
