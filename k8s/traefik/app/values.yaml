@@ -2,17 +2,20 @@
 # Chart version: 38.0.1
 # App version: v3.6.5
 
-# Set Traefik as the default ingress class
 ingressClass:
   enabled: true
   isDefaultClass: true
 
-# Disable API dashboard (was set to false in deployment)
 ingressRoute:
   dashboard:
-    enabled: false
+    enabled: true
+    matchRule: Host(`traefik.home.coredev.uk`)
+    entryPoints: ["websecure"]
+    middlewares:
+      - name: authelia-forwardauth@kubernetescrd
+    tls:
+      secretName: traefik-dashboard-tls
 
-# Configure entrypoints
 ports:
   web:
     port: 8000
@@ -45,7 +48,6 @@ ports:
     expose:
       default: true
 
-# Configure providers
 providers:
   kubernetesIngress:
     enabled: true
@@ -55,20 +57,17 @@ providers:
     enabled: true
     allowCrossNamespace: true
 
-# Configure service with LoadBalancer and specific IP
 service:
   type: LoadBalancer
   spec:
     loadBalancerIP: 192.168.20.30
 
-# Configure persistence for certificates
 persistence:
   enabled: true
   storageClass: longhorn
   size: 1Gi
   path: /data
 
-# Resource limits (from deployment.yaml)
 resources:
   requests:
     memory: "128Mi"
@@ -77,12 +76,10 @@ resources:
     memory: "512Mi"
     cpu: "500m"
 
-# Disable version checking and anonymous usage
 globalArguments:
   - "--global.checknewversion=false"
   - "--global.sendanonymoususage=false"
 
-# Enable Prometheus metrics
 metrics:
   prometheus:
     enabled: true

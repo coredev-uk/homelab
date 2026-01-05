@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - helm.yaml
+  - certificate.yaml
 
 configMapGenerator:
   - name: traefik-values
