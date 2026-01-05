@@ -111,6 +111,27 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "500m"
+          startupProbe:
+            tcpSocket:
+              port: 53
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 12
+          livenessProbe:
+            tcpSocket:
+              port: 53
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 53
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
           securityContext:
             runAsNonRoot: false
       volumes:
