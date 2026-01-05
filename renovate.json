@@ -2,11 +2,15 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
   "prHourlyLimit": 0,
-  "argocd": { 
-    "managerFilePatterns": ["/\\.yaml$/"] 
+  "flux": {
+    "managerFilePatterns": [
+      "/flux/.+\\.ya?ml$/",
+      "/k8s/.+\\.ya?ml$/",
+      "!/flux/flux-system/gotk-components\\.ya?ml$"
+    ]
   },
   "kubernetes": {
-    "managerFilePatterns": ["/\\.yaml$/"]
+    "managerFilePatterns": ["/k8s/.+\\.ya?ml$/"]
   },
   "packageRules": [
     {
@@ -14,6 +18,12 @@
       "matchDatasources": ["docker"],
       "matchPackageNames": ["lscr.io/linuxserver/**"],
       "versioning": "regex:^version-v?(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:-r(?<revision>\\d+))?$"
+    },
+    {
+      "description": "Flux system updates are handled by the update-flux.yaml workflow",
+      "matchManagers": ["flux"],
+      "matchPaths": ["flux/flux-system/gotk-components.yaml"],
+      "enabled": false
     }
   ]
 }
