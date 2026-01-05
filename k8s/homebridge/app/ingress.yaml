@@ -9,6 +9,9 @@ spec:
   routes:
     - match: Host(`homebridge.home.coredev.uk`)
       kind: Rule
+      middlewares:
+        - name: authelia-forwardauth
+          namespace: authelia
       services:
         - name: homebridge
           port: 8581
