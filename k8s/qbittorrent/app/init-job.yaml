@@ -15,8 +15,7 @@ spec:
             - -c
             - |
               echo "Creating qBittorrent directory structure..."
-              mkdir -p /data/downloads/torrents/movies
-              mkdir -p /data/downloads/torrents/tv
+              mkdir -p /data/downloads/torrents/{movies,tv}
               chown -R 1000:100 /data/downloads/torrents
               chmod -R 775 /data/downloads/torrents
               echo "qBittorrent directories created successfully"
