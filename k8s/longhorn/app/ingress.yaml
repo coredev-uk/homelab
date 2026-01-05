@@ -9,6 +9,10 @@ metadata:
     traefik.ingress.kubernetes.io/redirect-to-https: "true"
     cert-manager.io/cluster-issuer: letsencrypt-prod
     traefik.ingress.kubernetes.io/router.middlewares: authelia-authelia-forwardauth@kubernetescrd
+    glance/name: "Longhorn"
+    glance/icon: "si:longhorn"
+    glance/url: "https://longhorn.home.coredev.uk"
+    glance/description: "Storage Management"
 spec:
   tls:
     - hosts:
