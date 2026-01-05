@@ -98,13 +98,13 @@ spec:
               cpu: "1000m"
           livenessProbe:
             httpGet:
-              path: /
+              path: /ping
               port: 9696
             initialDelaySeconds: 60
             periodSeconds: 30
           readinessProbe:
             httpGet:
-              path: /
+              path: /ping
               port: 9696
             initialDelaySeconds: 30
             periodSeconds: 10

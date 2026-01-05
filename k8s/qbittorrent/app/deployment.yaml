@@ -155,21 +155,24 @@ spec:
               memory: "4Gi"
               cpu: "500m"
           startupProbe:
-            tcpSocket:
+            httpGet:
+              path: /api/v2/app/version
               port: 8080
             initialDelaySeconds: 60
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 20
           livenessProbe:
-            tcpSocket:
+            httpGet:
+              path: /api/v2/app/version
               port: 8080
             initialDelaySeconds: 120
             periodSeconds: 30
             timeoutSeconds: 5
             failureThreshold: 3
           readinessProbe:
-            tcpSocket:
+            httpGet:
+              path: /api/v2/app/version
               port: 8080
             initialDelaySeconds: 60
             periodSeconds: 10
