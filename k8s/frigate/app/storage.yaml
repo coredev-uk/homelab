@@ -10,7 +10,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   nfs:
     server: 192.168.20.40
-    path: /homelab/frigate
+    path: /var/nfs/shared/Homelab/frigate
   storageClassName: ""
 ---
 apiVersion: v1

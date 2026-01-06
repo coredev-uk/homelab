@@ -30,4 +30,4 @@ spec:
         - name: data
           nfs:
             server: 192.168.20.40
-            path: /homelab
+            path: /var/nfs/shared/Homelab
