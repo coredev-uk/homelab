@@ -7,11 +7,6 @@ age.agekey
 # Plaintext secrets file
 secrets/secrets.env
 
-# Block all secret YAML files (remove these lines after encrypting with SOPS)
-**/secrets/*.yaml
-!**/secrets/*example*.yaml
-!**/secrets/README.md
-
 # Migration backups
 pre-migration-backup-*/
 migration-backup-*/
