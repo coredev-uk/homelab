@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   # Core infrastructure dependencies
   - ../../k8s/cert-manager/flux.yaml
+  - ../../k8s/cert-manager/supporting-flux.yaml
   - ../../k8s/metallb/flux.yaml
   
   # Networking
