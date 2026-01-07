@@ -41,8 +41,6 @@ spec:
       leaderElection:
         namespace: cert-manager
     
-    # Enable Prometheus metrics
+    # Disable Prometheus ServiceMonitor (Prometheus not installed yet)
     prometheus:
-      enabled: true
-      servicemonitor:
-        enabled: false
+      enabled: false
