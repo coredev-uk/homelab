@@ -95,7 +95,7 @@ spec:
         mountPath: /tmp/cache
 
     nodeSelector:
-      feature.node.kubernetes.io/coral-tpu: "true"
+      frigate.feature.node.kubernetes.io/coral-tpu: "true"
 
     securityContext:
       privileged: true

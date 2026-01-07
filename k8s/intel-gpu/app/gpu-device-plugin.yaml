@@ -19,7 +19,7 @@ spec:
         app: intel-gpu-plugin
     spec:
       nodeSelector:
-        intel.feature.node.kubernetes.io/gpu: 'true'
+        intel-gpu-plugin.feature.node.kubernetes.io/gpu: 'true'
       tolerations:
       - operator: Exists
         effect: NoSchedule
