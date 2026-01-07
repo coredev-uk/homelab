@@ -14,7 +14,6 @@ metadata:
   namespace: flux-system
 spec:
   interval: 30m
-  retryInterval: 2m
   chart:
     spec:
       chart: metallb
