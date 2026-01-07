@@ -6,44 +6,6 @@
 # Proxy Host: vpn-proxy.sabnzbd.svc.cluster.local:8888
 # This ensures indexer tests use the same IP as SABnzbd/qFlood for TRaSH compliance
 #
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: prowlarr-config
-  namespace: prowlarr
-  labels:
-    app: prowlarr
-    component: config
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: longhorn
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: prowlarr
-  namespace: prowlarr
-  labels:
-    app: prowlarr
-spec:
-  selector:
-    app: prowlarr
-  ports:
-    - name: web-ui
-      port: 9696
-      targetPort: web-ui
-    - name: flaresolverr
-      port: 8191
-      targetPort: flare-api
-  type: ClusterIP
-
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -150,3 +112,38 @@ spec:
         - name: prowlarr-config
           persistentVolumeClaim:
             claimName: prowlarr-config
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: prowlarr-config
+  namespace: prowlarr
+  labels:
+    app: prowlarr
+    component: config
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: longhorn
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prowlarr
+  namespace: prowlarr
+  labels:
+    app: prowlarr
+spec:
+  selector:
+    app: prowlarr
+  ports:
+    - name: web-ui
+      port: 9696
+      targetPort: web-ui
+    - name: flaresolverr
+      port: 8191
+      targetPort: flare-api

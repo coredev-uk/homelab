@@ -74,6 +74,19 @@ spec:
       #   kubernetes.io/hostname: your-node-name
 ---
 apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: homebridge-pvc
+  namespace: homebridge
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: longhorn
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: homebridge
@@ -86,4 +99,3 @@ spec:
       port: 8581
       targetPort: 8581
       protocol: TCP
-  type: ClusterIP

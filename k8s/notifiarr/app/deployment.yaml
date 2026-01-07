@@ -127,7 +127,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi
+      storage: 250Mi
   storageClassName: longhorn
 ---
 apiVersion: v1
@@ -141,4 +141,3 @@ spec:
   ports:
     - port: 5454
       targetPort: 5454
-  type: ClusterIP

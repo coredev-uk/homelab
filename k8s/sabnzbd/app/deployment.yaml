@@ -228,7 +228,6 @@ spec:
     - port: 8118
       targetPort: 8118
       name: http-proxy
-  type: ClusterIP
 
 ---
 # Separate SABnzbd proxy service for other services to use
@@ -250,4 +249,3 @@ spec:
     - port: 8388
       targetPort: 8388
       name: shadowsocks
-  type: ClusterIP

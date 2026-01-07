@@ -77,7 +77,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi
+      storage: 250Mi
   storageClassName: longhorn
 ---
 apiVersion: v1
@@ -91,4 +91,3 @@ spec:
   ports:
     - port: 11011
       targetPort: 11011
-  type: ClusterIP
