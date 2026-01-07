@@ -23,7 +23,7 @@ spec:
         app: jellyfin
     spec:
       securityContext:
-        fsGroup: 100
+        fsGroup: 988
         fsGroupChangePolicy: "OnRootMismatch"
       containers:
         - name: jellyfin
@@ -39,7 +39,7 @@ spec:
               protocol: UDP
           securityContext:
             runAsUser: 1000
-            runAsGroup: 100
+            runAsGroup: 988
             capabilities:
               add:
                 - SYS_ADMIN # Required for Intel VA-API access

@@ -16,7 +16,6 @@ spec:
             - |
               echo "Creating Radarr directory structure..."
               mkdir -p /data/media/movies
-              chown -R 1000:100 /data/media/movies
               chmod -R 775 /data/media/movies
               echo "Radarr directories created successfully"
               ls -la /data/media/

@@ -29,7 +29,7 @@ spec:
             - name: PUID
               value: "1000"
             - name: PGID
-              value: "100"
+              value: "988"
             - name: TZ
               value: "Europe/London"
           volumeMounts:

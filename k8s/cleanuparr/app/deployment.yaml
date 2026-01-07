@@ -31,8 +31,6 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /config
-            - name: data
-              mountPath: /data
           resources:
             requests:
               memory: "256Mi"
@@ -40,26 +38,34 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "500m"
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 11011
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 3
           livenessProbe:
             httpGet:
               path: /health
               port: 11011
-            initialDelaySeconds: 5
-            timeoutSeconds: 5
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /health/ready
+              path: /health
               port: 11011
             initialDelaySeconds: 30
             periodSeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 3
       volumes:
         - name: config
           persistentVolumeClaim:
             claimName: cleanuparr-config
-        - name: data
-          nfs:
-            server: 192.168.20.40
-            path: /var/nfs/shared/Homelab
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

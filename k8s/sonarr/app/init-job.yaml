@@ -16,7 +16,6 @@ spec:
             - |
               echo "Creating Sonarr directory structure..."
               mkdir -p /data/media/tv
-              chown -R 1000:100 /data/media/tv
               chmod -R 775 /data/media/tv
               echo "Sonarr directories created successfully"
               ls -la /data/media/
