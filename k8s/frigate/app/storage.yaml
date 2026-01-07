@@ -1,3 +1,18 @@
+# Config storage (Longhorn) - UI-managed configuration
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: frigate-config-pvc
+  namespace: frigate
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: longhorn
+---
+# Media storage (NFS) - recordings and clips
 apiVersion: v1
 kind: PersistentVolume
 metadata:
