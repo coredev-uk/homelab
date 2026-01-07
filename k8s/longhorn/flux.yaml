@@ -1,43 +1,16 @@
----
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: HelmRepository
-metadata:
-  name: longhorn
-  namespace: flux-system
-spec:
-  interval: 1h0m0s
-  url: https://charts.longhorn.io/
----
-apiVersion: helm.toolkit.fluxcd.io/v2
-kind: HelmRelease
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
 metadata:
   name: longhorn
   namespace: flux-system
 spec:
   interval: 10m0s
   retryInterval: 2m
-  chart:
-    spec:
-      chart: longhorn
-      version: v1.10.1
-      sourceRef:
-        kind: HelmRepository
-        name: longhorn
-        namespace: flux-system
-      interval: 1m0s
-  targetNamespace: longhorn-system
-  install:
-    createNamespace: true
-  values:
-    preUpgradeChecker:
-      jobEnabled: false
-    longhornUI:
-      replicas: 1
-    service:
-      ui:
-        type: ClusterIP
-    defaultSettings:
-      defaultReplicaCount: "1"
-      storageOverProvisioningPercentage: "200"
-      storageMinimalAvailablePercentage: "10"
-      defaultDataLocality: "best-effort"
+  path: ./k8s/longhorn
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: homelab
+    namespace: flux-system
+  wait: true
+  timeout: 5m
