@@ -25,11 +25,7 @@ spec:
               value: "pihole-web.pihole.svc.cluster.local"
             - name: PIHOLE_PORT
               value: "80"
-            - name: PIHOLE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: pihole-secrets
-                  key: WEBPASSWORD
+            # No password needed - Pi-hole authentication disabled (Authelia handles web UI auth)
             - name: INTERVAL
               value: "30s"
           ports:

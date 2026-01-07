@@ -33,11 +33,9 @@ spec:
           env:
             - name: TZ
               value: "Europe/London"
-            - name: FTLCONF_webserver_api_password
-              valueFrom:
-                secretKeyRef:
-                  name: pihole-secrets
-                  key: WEBPASSWORD
+            # Password authentication disabled - Authelia handles authentication
+            - name: FTLCONF_webserver_api_pwhash
+              value: ""
             - name: FTLCONF_dns_upstreams
               value: "1.1.1.1;1.0.0.1"
             - name: FTLCONF_dns_listeningMode
