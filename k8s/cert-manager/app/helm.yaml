@@ -30,8 +30,6 @@ spec:
     crds: CreateReplace
   upgrade:
     crds: CreateReplace
-  wait: true
-  timeout: 5m
   values:
     # Install CRDs as part of installation
     crds:

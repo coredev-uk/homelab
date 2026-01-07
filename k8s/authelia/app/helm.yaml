@@ -29,8 +29,6 @@ spec:
     createNamespace: true
   dependsOn:
     - name: traefik
-  wait: true
-  timeout: 5m
   valuesFrom:
     - kind: ConfigMap
       name: authelia-values

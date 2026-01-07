@@ -32,8 +32,6 @@ spec:
     crds: CreateReplace
   dependsOn:
     - name: traefik
-  wait: true
-  timeout: 10m
   valuesFrom:
     - kind: ConfigMap
       name: kube-prometheus-stack-values
