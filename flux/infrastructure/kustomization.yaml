@@ -6,6 +6,7 @@ resources:
   - ../../k8s/cert-manager/flux.yaml
   - ../../k8s/cert-manager/supporting-flux.yaml
   - ../../k8s/metallb/flux.yaml
+  - ../../k8s/metallb/config-flux.yaml
   
   # Networking
   - ../../k8s/traefik/flux.yaml
