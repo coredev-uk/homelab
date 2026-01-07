@@ -29,16 +29,14 @@ spec:
             - name: PUID
               value: "1000"
             - name: PGID
-              value: "100"
+              value: "988"
             - name: TZ
               value: "Europe/London"
           volumeMounts:
             - name: config
               mountPath: /config
-            - name: media
-              mountPath: /media
-            - name: downloads
-              mountPath: /downloads
+            - name: data
+              mountPath: /data
           resources:
             requests:
               memory: "256Mi"
@@ -46,18 +44,38 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "1000m"
+          startupProbe:
+            httpGet:
+              path: /ping
+              port: 7878
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: 7878
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: 7878
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
       volumes:
         - name: config
           persistentVolumeClaim:
             claimName: radarr-config
-        - name: media
-          hostPath:
-            path: /opt/media
-            type: Directory
-        - name: downloads
-          hostPath:
-            path: /opt/downloads
-            type: Directory
+        - name: data
+          nfs:
+            server: 192.168.20.40
+            path: /var/nfs/shared/Homelab
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -83,5 +101,3 @@ spec:
   ports:
     - port: 7878
       targetPort: 7878
-  type: ClusterIP
-  clusterIP: 10.43.100.10 # Static IP for VPN containers

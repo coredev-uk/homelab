@@ -6,4 +6,3 @@ namespace: jellyfin
 resources:
   - deployment.yaml
   - ingress.yaml
-  - storage.yaml
