@@ -1,0 +1,137 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: blakeshome
+  namespace: frigate
+spec:
+  interval: 24h
+  url: https://blakeblackshear.github.io/blakeshome-charts/
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: frigate
+  namespace: frigate
+  annotations:
+    glance/name: "Frigate"
+    glance/icon: "di:frigate-light"
+    glance/url: "https://frigate.home.coredev.uk"
+    glance/description: "CCTV & AI Detection"
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: frigate
+      version: "7.9.0"
+      sourceRef:
+        kind: HelmRepository
+        name: blakeshome
+        namespace: frigate
+      interval: 12h
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    image:
+      repository: ghcr.io/blakeblackshear/frigate
+      tag: "0.16.3"
+      pullPolicy: IfNotPresent
+
+    env:
+      TZ: "Europe/London"
+
+    envFromSecrets:
+      - frigate-secrets
+
+    coral:
+      enabled: true
+      hostPath: "/dev/apex_0"
+
+    shmSize: "1Gi"
+
+    tmpfs:
+      enabled: true
+      sizeLimit: "1Gi"
+
+    # Using existing PVCs for storage
+    # Config PVC: Longhorn (1Gi) - stores Frigate configuration
+    # Media PVC: NFS (350Gi) - stores recordings, snapshots, clips
+    persistence:
+      config:
+        enabled: true
+        existingClaim: frigate-config-pvc
+        size: 1Gi
+        accessMode: ReadWriteOnce
+      media:
+        enabled: true
+        existingClaim: frigate-pvc
+        size: 350Gi
+        accessMode: ReadWriteOnce
+
+    extraVolumes:
+      - name: tls-certs
+        secret:
+          secretName: frigate-tls
+          items:
+            - key: tls.crt
+              path: fullchain.pem
+            - key: tls.key
+              path: privkey.pem
+      - name: cache
+        emptyDir:
+          sizeLimit: 20Gi
+
+    extraVolumeMounts:
+      - name: tls-certs
+        mountPath: /etc/letsencrypt/live/frigate/
+        readOnly: true
+      - name: cache
+        mountPath: /tmp/cache
+
+    nodeSelector:
+      feature.node.kubernetes.io/coral-tpu: "true"
+
+    securityContext:
+      privileged: true
+
+    resources:
+      requests:
+        memory: "2Gi"
+        cpu: "500m"
+      limits:
+        memory: "4Gi"
+        cpu: "2000m"
+
+    probes:
+      startup:
+        enabled: true
+        failureThreshold: 30
+        periodSeconds: 10
+      liveness:
+        enabled: true
+        initialDelaySeconds: 60
+        periodSeconds: 30
+        timeoutSeconds: 10
+        failureThreshold: 3
+      readiness:
+        enabled: true
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 3
+
+    service:
+      type: ClusterIP
+      port: 5000
+      annotations: {}
+      labels: {}
+
+    # Ingress disabled - using Traefik IngressRoute (see ingress.yaml)
+    ingress:
+      enabled: false
