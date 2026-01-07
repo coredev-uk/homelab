@@ -9,7 +9,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi
+      storage: 100Mi
   storageClassName: longhorn
 ---
 # Media storage (NFS) - recordings and clips
