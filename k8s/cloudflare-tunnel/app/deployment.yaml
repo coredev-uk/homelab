@@ -95,7 +95,6 @@ metadata:
   labels:
     app: cloudflared
 spec:
-  type: ClusterIP
   selector:
     app: cloudflared
   ports:

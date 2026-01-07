@@ -1,0 +1,94 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: lldap
+  namespace: flux-system
+spec:
+  interval: 1h0m0s
+  url: https://evantage-ws.github.io/lldap-kubernetes/
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: lldap
+  namespace: flux-system
+spec:
+  interval: 10m0s
+  chart:
+    spec:
+      chart: lldap
+      version: 0.4.0
+      sourceRef:
+        kind: HelmRepository
+        name: lldap
+        namespace: authelia
+      interval: 1m0s
+  targetNamespace: authelia
+  valuesFrom:
+    - kind: Secret
+      name: authelia-secrets
+      valuesKey: lldap-jwt-secret
+      targetPath: secret.lldapJwtSecret
+    - kind: Secret
+      name: authelia-secrets  
+      valuesKey: lldap-admin-password
+      targetPath: secret.lldapUserPass
+    - kind: Secret
+      name: authelia-secrets
+      valuesKey: lldap-key-seed
+      targetPath: secret.lldapKeySeed
+  values:
+    secret:
+      create: true
+      useExisting: false
+      lldapUserName: "admin"
+      lldapBaseDn: "dc=home,dc=coredev,dc=uk"
+    
+    persistence:
+      enabled: true
+      storageClassName: longhorn
+      storageSize: 1Gi
+    
+    service:
+      type: ClusterIP
+      ports:
+        web: 17170
+        ldap: 3890
+    
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "50m"
+      limits:
+        memory: "128Mi"
+        cpu: "200m"
+    
+    env:
+      TZ: "Europe/London"
+      UID: "1001"
+      GID: "1001"
+    
+    hpa:
+      enabled: false
+    
+    certmanager:
+      enabled: false
+    
+    ingress:
+      enabled: true
+      ingressClassName: traefik
+      annotations:
+        traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+        traefik.ingress.kubernetes.io/router.tls: "true"
+        traefik.ingress.kubernetes.io/redirect-to-https: "true"
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+      hosts:
+        - host: lldap.home.coredev.uk
+          paths:
+            - path: /
+              pathType: Prefix
+      tls:
+        - secretName: lldap-tls
+          hosts:
+            - lldap.home.coredev.uk

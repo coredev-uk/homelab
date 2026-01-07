@@ -22,21 +22,21 @@ spec:
     spec:
       containers:
         - name: bazarr
-          image: lscr.io/linuxserver/bazarr:version-v1.5.3
+          image: lscr.io/linuxserver/bazarr:version-v1.5.4
           ports:
             - containerPort: 6767
           env:
             - name: PUID
               value: "1000"
             - name: PGID
-              value: "100"
+              value: "988"
             - name: TZ
               value: "Europe/London"
           volumeMounts:
             - name: config
               mountPath: /config
             - name: data
-              mountPath: /media
+              mountPath: /data
           resources:
             requests:
               memory: "256Mi"
@@ -44,14 +44,38 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "1000m"
+          startupProbe:
+            httpGet:
+              path: /
+              port: 6767
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 6767
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 6767
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
       volumes:
         - name: config
           persistentVolumeClaim:
             claimName: bazarr-config
         - name: data
-          hostPath:
-            path: /opt/media
-            type: Directory
+          nfs:
+            server: 192.168.20.40
+            path: /var/nfs/shared/Homelab
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -63,7 +87,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi
+      storage: 500Mi
   storageClassName: longhorn
 ---
 apiVersion: v1
@@ -77,4 +101,3 @@ spec:
   ports:
     - port: 6767
       targetPort: 6767
-  type: ClusterIP

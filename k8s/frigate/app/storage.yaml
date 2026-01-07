@@ -1,15 +1,31 @@
+# Config storage (Longhorn) - UI-managed configuration
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: frigate-config-pvc
+  namespace: frigate
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+  storageClassName: longhorn
+---
+# Media storage (NFS) - recordings and clips
 apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: frigate-pv
 spec:
   capacity:
-    storage: 50Gi
+    storage: 350Gi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
-  hostPath:
-    path: /opt/frigate
+  nfs:
+    server: 192.168.20.40
+    path: /var/nfs/shared/Homelab
   storageClassName: ""
 ---
 apiVersion: v1
@@ -22,6 +38,6 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 50Gi
+      storage: 350Gi
   volumeName: frigate-pv
   storageClassName: ""

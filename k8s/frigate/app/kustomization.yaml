@@ -4,7 +4,8 @@ kind: Kustomization
 namespace: frigate
 
 resources:
-  - deployment.yaml
-  - ingress.yaml
+  - init-job.yaml
+  - helm.yaml
   - storage.yaml
+  - ingress.yaml
   - exporter.yaml

@@ -1,20 +1,3 @@
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: sabnzbd-config
-  namespace: sabnzbd
-  labels:
-    app: sabnzbd
-    component: config
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: longhorn
-
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -53,68 +36,23 @@ spec:
           env:
             # VPN Provider Configuration
             - name: VPN_SERVICE_PROVIDER
-              valueFrom:
-                configMapKeyRef:
-                  name: vpn-config-shared
-                  key: VPN_SERVICE_PROVIDER
-            - name: VPN_TYPE
-              valueFrom:
-                configMapKeyRef:
-                  name: vpn-config-shared
-                  key: VPN_TYPE
-            - name: SERVER_COUNTRIES
-              valueFrom:
-                configMapKeyRef:
-                  name: vpn-config-shared
-                  key: SERVER_COUNTRIES
-            - name: FIREWALL_OUTBOUND_SUBNETS
-              valueFrom:
-                configMapKeyRef:
-                  name: vpn-config-shared
-                  key: OUTBOUND_SUBNETS_CLUSTER
-            - name: UPDATER_PERIOD
-              valueFrom:
-                configMapKeyRef:
-                  name: vpn-config-shared
-                  key: UPDATER_PERIOD
-            - name: WIREGUARD_PRIVATE_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: vpn-secrets
-                  key: SAB_VPN_PRIVATE_KEY
-            - name: UPDATER_PROTONVPN_EMAIL
-              valueFrom:
-                secretKeyRef:
-                  name: vpn-secrets
-                  key: PROTON_VPN_EMAIL
-            - name: UPDATER_PROTONVPN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: vpn-secrets
-                  key: PROTON_VPN_PASSWORD
+              value: "protonvpn"
 
-            # Shadowsocks proxy configuration
-            - name: SHADOWSOCKS
-              valueFrom:
-                configMapKeyRef:
-                  name: vpn-config-shared
-                  key: SHADOWSOCKS
-            - name: SHADOWSOCKS_PASSWORD
-              valueFrom:
-                configMapKeyRef:
-                  name: vpn-config-shared
-                  key: SHADOWSOCKS_PASSWORD
+            - name: VPN_TYPE
+              value: "wireguard"
+
+            - name: SERVER_COUNTRIES
+              value: "United Kingdom,Netherlands"
+            
+            - name: UPDATER_PERIOD
+              value: "24h"
+
             - name: HTTPPROXY
-              valueFrom:
-                configMapKeyRef:
-                  name: vpn-config-shared
-                  key: HTTPPROXY
+              value: "on"
 
             # Control server authentication
             - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
               value: "/gluetun/auth/config.toml"
-            - name: HTTP_CONTROL_SERVER_LOG
-              value: "on"
 
             # Disable malicious to prevent blocking Usenet
             - name: BLOCK_MALICIOUS
@@ -123,6 +61,25 @@ spec:
             # Firewall Ports - only SABnzbd
             - name: FIREWALL_INPUT_PORTS
               value: "8080"
+
+            # Secrets
+            - name: WIREGUARD_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: vpn-secrets
+                  key: private-key
+
+            - name: UPDATER_PROTONVPN_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: vpn-secrets
+                  key: proton-email
+
+            - name: UPDATER_PROTONVPN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: vpn-secrets
+                  key: proton-password
 
           volumeMounts:
             - name: gluetun-auth-config
@@ -147,7 +104,7 @@ spec:
             - name: PUID
               value: "1000"
             - name: PGID
-              value: "100"
+              value: "988"
             - name: TZ
               value: "Europe/London"
           volumeMounts:
@@ -155,6 +112,8 @@ spec:
               mountPath: /config
             - name: downloads
               mountPath: /downloads
+            - name: data
+              mountPath: /data
             - name: scripts
               mountPath: /scripts
           resources:
@@ -186,12 +145,15 @@ spec:
           persistentVolumeClaim:
             claimName: sabnzbd-config
         - name: downloads
-          hostPath:
-            path: /opt/downloads
-            type: Directory
+          persistentVolumeClaim:
+            claimName: sabnzbd-downloads
+        - name: data
+          nfs:
+            server: 192.168.20.40
+            path: /var/nfs/shared/Homelab
         - name: gluetun-auth-config
           configMap:
-            name: gluetun-auth-config-shared
+            name: gluetun-auth-config
         - name: tun-device
           hostPath:
             path: /dev/net/tun
@@ -199,7 +161,38 @@ spec:
           configMap:
             name: scripts
             defaultMode: 0755
-
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sabnzbd-config
+  namespace: sabnzbd
+  labels:
+    app: sabnzbd
+    component: config
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: longhorn
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: sabnzbd-downloads
+  namespace: sabnzbd
+  labels:
+    app: sabnzbd
+    component: downloads
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: longhorn
 ---
 apiVersion: v1
 kind: Service
@@ -218,18 +211,6 @@ spec:
     - port: 8000
       targetPort: 8000
       name: gluetun-control
-    - port: 8888
-      targetPort: 8888
-      name: shadowsocks
-    - port: 8388
-      targetPort: 8388
-      protocol: UDP
-      name: shadowsocks-udp
-    - port: 8118
-      targetPort: 8118
-      name: http-proxy
-  type: ClusterIP
-
 ---
 # Separate SABnzbd proxy service for other services to use
 apiVersion: v1
@@ -247,7 +228,22 @@ spec:
     - port: 8888
       targetPort: 8888
       name: http-proxy
-    - port: 8388
-      targetPort: 8388
-      name: shadowsocks
-  type: ClusterIP
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gluetun-auth-config
+  namespace: sabnzbd
+  labels:
+    app: vpn
+    component: auth
+data:
+  config.toml: |
+    [[roles]]
+    name = "glance"
+    routes = [
+      "GET /v1/publicip/ip",
+      "GET /v1/vpn/status"
+    ]
+    auth = "none"
+

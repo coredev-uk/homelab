@@ -1,0 +1,111 @@
+name: Flux Diff
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'flux/**'
+      - 'k8s/**'
+      - '.github/workflows/flux-diff.yaml'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  flux-diff:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v6
+        with:
+          path: pr
+
+      - name: Checkout base branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.base_ref }}
+          path: base
+
+      - name: Setup Flux CLI
+        uses: fluxcd/flux2/action@main
+        with:
+          version: 'latest'
+
+      - name: Diff Flux resources
+        id: diff
+        run: |
+          echo "## Flux Resource Diff" > /tmp/diff.txt
+          echo "" >> /tmp/diff.txt
+
+          # Run flux diff for each Kustomization
+          for kustomization in infrastructure media-stack monitoring; do
+            echo "### Diff for ${kustomization}" >> /tmp/diff.txt
+            echo '```diff' >> /tmp/diff.txt
+            
+            # Build the Flux Kustomization for both branches and diff them
+            cd base
+            flux build kustomization ${kustomization} \
+              --path ./flux/${kustomization} \
+              --kustomization-file ./flux/${kustomization}.yaml > /tmp/${kustomization}-base.yaml 2>&1 || true
+            
+            cd ../pr
+            flux build kustomization ${kustomization} \
+              --path ./flux/${kustomization} \
+              --kustomization-file ./flux/${kustomization}.yaml > /tmp/${kustomization}-pr.yaml 2>&1 || true
+            
+            # Diff the results
+            diff -u /tmp/${kustomization}-base.yaml /tmp/${kustomization}-pr.yaml >> /tmp/diff.txt || true
+            
+            echo '```' >> /tmp/diff.txt
+            echo "" >> /tmp/diff.txt
+            
+            # Return to root for next iteration
+            cd ..
+          done
+
+          # Save diff output
+          cat /tmp/diff.txt > pr/diff-output.txt
+
+      - name: Comment PR with diff
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('fs');
+            const diffOutput = fs.readFileSync('pr/diff-output.txt', 'utf8');
+            
+            // GitHub comment has a character limit, truncate if needed
+            const maxLength = 65000;
+            const output = diffOutput.length > maxLength 
+              ? diffOutput.substring(0, maxLength) + '\n\n... (truncated)'
+              : diffOutput;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(comment => 
+              comment.user.type === 'Bot' && 
+              comment.body.includes('Flux Resource Diff')
+            );
+
+            const commentBody = `${output}\n\n---\n*Flux diff generated for commit ${{ github.event.pull_request.head.sha }}*`;
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: commentBody
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: commentBody
+              });
+            }

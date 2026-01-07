@@ -513,9 +513,6 @@ pages:
             groups:
               - title: Management
                 links:
-                  - title: ArgoCD
-                    url: https://argocd.home.coredev.uk
-                    icon: si:argo
                   - title: LLDAP
                     url: https://lldap.home.coredev.uk
                     icon: mdi:account-group
@@ -531,6 +528,9 @@ pages:
                   - title: UniFi Dashboard
                     url: https://192.168.10.1/network/default/dashboard
                     icon: si:ubiquiti
+                  - title: Homebridge
+                    url: https://homebridge.home.coredev.uk
+                    icon: si:homebridge
 
               - title: Media Stack
                 links:
@@ -668,8 +668,7 @@ pages:
           - type: dns-stats
             service: pihole-v6
             url: http://pihole-web.pihole.svc.cluster.local
-            username: admin
-            password: ${PIHOLE_PASSWORD}
+            password: "password"
 
           - type: server-stats
             title: Server Performance

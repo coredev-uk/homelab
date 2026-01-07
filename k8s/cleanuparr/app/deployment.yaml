@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: cleanuparr
-          image: ghcr.io/cleanuparr/cleanuparr:2.4.7
+          image: ghcr.io/cleanuparr/cleanuparr:2.5.0
           ports:
             - containerPort: 11011
           env:
@@ -31,35 +31,41 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /config
-            - name: media
-              mountPath: /media
           resources:
             requests:
-              memory: "128Mi"
+              memory: "256Mi"
               cpu: "50m"
             limits:
               memory: "512Mi"
               cpu: "500m"
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 11011
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 3
           livenessProbe:
             httpGet:
               path: /health
               port: 11011
-            initialDelaySeconds: 5
-            timeoutSeconds: 5
+            initialDelaySeconds: 30
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /health/ready
+              path: /health
               port: 11011
             initialDelaySeconds: 30
             periodSeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 3
       volumes:
         - name: config
           persistentVolumeClaim:
             claimName: cleanuparr-config
-        - name: media
-          hostPath:
-            path: /opt/media
-            type: Directory
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -71,7 +77,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi
+      storage: 250Mi
   storageClassName: longhorn
 ---
 apiVersion: v1
@@ -85,4 +91,3 @@ spec:
   ports:
     - port: 11011
       targetPort: 11011
-  type: ClusterIP

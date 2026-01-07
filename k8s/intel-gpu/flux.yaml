@@ -1,0 +1,15 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: intel-gpu
+  namespace: flux-system
+spec:
+  interval: 10m0s
+  path: ./k8s/intel-gpu
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: homelab
+    namespace: flux-system
+  wait: true
+  timeout: 5m

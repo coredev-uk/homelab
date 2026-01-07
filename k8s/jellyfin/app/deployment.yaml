@@ -23,7 +23,7 @@ spec:
         app: jellyfin
     spec:
       securityContext:
-        fsGroup: 100
+        fsGroup: 988
         fsGroupChangePolicy: "OnRootMismatch"
       containers:
         - name: jellyfin
@@ -39,7 +39,7 @@ spec:
               protocol: UDP
           securityContext:
             runAsUser: 1000
-            runAsGroup: 100
+            runAsGroup: 988
             capabilities:
               add:
                 - SYS_ADMIN # Required for Intel VA-API access
@@ -66,7 +66,7 @@ spec:
               mountPath: /cache
               subPath: cache
             - name: data
-              mountPath: /media
+              mountPath: /data
             - name: render-device
               mountPath: /dev/dri/renderD128
           resources:
@@ -83,12 +83,25 @@ spec:
           persistentVolumeClaim:
             claimName: jellyfin-pvc
         - name: data
-          hostPath:
-            path: /opt/media
-            type: Directory
+          nfs:
+            server: 192.168.20.40
+            path: /var/nfs/shared/Homelab
         - name: render-device
           hostPath:
             path: /dev/dri/renderD128
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jellyfin-pvc
+  namespace: jellyfin
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: longhorn
 ---
 apiVersion: v1
 kind: Service
@@ -115,4 +128,3 @@ spec:
       port: 1900
       targetPort: 1900
       protocol: UDP
-  type: ClusterIP

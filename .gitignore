@@ -1,10 +1,11 @@
-# Secrets
+# Age encryption keys - NEVER commit these!
+age.agekey
+*.agekey
+.age/
+.config/sops/age/keys.txt
+
+# Plaintext secrets file
 secrets/secrets.env
-secrets/*.yaml
-secrets/sealed-secrets/*.yaml
-!secrets/secrets.env.example
-!secrets/README.md
-!secrets/generate-sealed-secrets.sh
 
 # Migration backups
 pre-migration-backup-*/

@@ -25,35 +25,41 @@ spec:
           env:
             - name: TZ
               value: "Europe/London"
-            - name: PIHOLE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: glance-secrets
-                  key: PIHOLE_WEBPASSWORD
-            - name: GLANCE_WEATHER_LOCATION
-              valueFrom:
-                secretKeyRef:
-                  name: glance-secrets
-                  key: GLANCE_WEATHER_LOCATION
             - name: SONARR_URL
               value: "https://sonarr.home.coredev.uk"
             - name: RADARR_URL
               value: "https://radarr.home.coredev.uk"
+
+            # Secrets
+            - name: GLANCE_WEATHER_LOCATION
+              valueFrom:
+                secretKeyRef:
+                  name: glance-secrets
+                  key: weather-location
+
             - name: SONARR_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: glance-secrets
-                  key: SONARR_API_KEY
+                  key: sonarr-api-key
+
             - name: RADARR_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: glance-secrets
-                  key: RADARR_API_KEY
+                  key: radarr-api-key
+
             - name: GITHUB_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: glance-secrets
-                  key: GITHUB_TOKEN
+                  key: github-token
+
+            - name: PIHOLE_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: glance-secrets
+                  key: pihole-token
           volumeMounts:
             - name: config
               mountPath: /app/config
@@ -65,6 +71,30 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "200m"
+          startupProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
       volumes:
         - name: config
           configMap:
@@ -82,4 +112,3 @@ spec:
     - name: http
       port: 8080
       targetPort: 8080
-  type: ClusterIP

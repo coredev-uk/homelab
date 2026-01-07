@@ -1,0 +1,29 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  # Media automation
+  - ../../k8s/radarr/flux.yaml
+  - ../../k8s/sonarr/flux.yaml
+  - ../../k8s/bazarr/flux.yaml
+  - ../../k8s/prowlarr/flux.yaml
+  
+  # Download clients
+  - ../../k8s/qbittorrent/flux.yaml
+  - ../../k8s/sabnzbd/flux.yaml
+  
+  # Media consumption
+  - ../../k8s/jellyfin/flux.yaml
+  - ../../k8s/jellyseerr/flux.yaml
+  
+  # Utilities
+  - ../../k8s/cleanuparr/flux.yaml
+  - ../../k8s/huntarr/flux.yaml
+  - ../../k8s/notifiarr/flux.yaml
+  
+  # Smart home & security
+  - ../../k8s/frigate/flux.yaml
+  - ../../k8s/homebridge/flux.yaml
+  
+  # Dashboard
+  - ../../k8s/glance/flux.yaml
