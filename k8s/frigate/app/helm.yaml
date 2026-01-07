@@ -22,7 +22,7 @@ spec:
   chart:
     spec:
       chart: frigate
-      version: "7.9.0"
+      version: "7.8.0"
       sourceRef:
         kind: HelmRepository
         name: blakeshome
@@ -66,7 +66,7 @@ spec:
       config:
         enabled: true
         existingClaim: frigate-config-pvc
-        size: 1Gi
+        size: 100Mi
         accessMode: ReadWriteOnce
       media:
         enabled: true
@@ -127,7 +127,6 @@ spec:
         failureThreshold: 3
 
     service:
-      type: ClusterIP
       port: 5000
       annotations: {}
       labels: {}

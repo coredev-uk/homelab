@@ -37,5 +37,9 @@ spec:
     prometheus:
       serviceMonitor:
         enabled: true
-        additionalLabels:
-          release: kube-prometheus-stack
+        speaker:
+          additionalLabels:
+            release: kube-prometheus-stack
+        controller:
+          additionalLabels:
+            release: kube-prometheus-stack
