@@ -35,10 +35,4 @@ spec:
       validationFailurePolicy: Fail
     prometheus:
       serviceMonitor:
-        enabled: true
-        speaker:
-          additionalLabels:
-            release: kube-prometheus-stack
-        controller:
-          additionalLabels:
-            release: kube-prometheus-stack
+        enabled: false

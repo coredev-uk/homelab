@@ -45,7 +45,4 @@ spec:
     prometheus:
       enabled: true
       servicemonitor:
-        enabled: true
-        prometheusInstance: default
-        labels:
-          release: kube-prometheus-stack
+        enabled: false
