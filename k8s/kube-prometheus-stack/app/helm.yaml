@@ -27,7 +27,6 @@ spec:
       interval: 1m0s
   targetNamespace: monitoring
   install:
-    createNamespace: true
     crds: CreateReplace
   upgrade:
     crds: CreateReplace
