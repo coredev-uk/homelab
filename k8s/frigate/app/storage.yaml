@@ -1,4 +1,4 @@
-# Config storage (Longhorn) - UI-managed configuration
+# Config storage (Longhorn) - UI-managed configuration, database, and AI models
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -9,7 +9,7 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 100Mi
+      storage: 10Gi
   storageClassName: longhorn
 ---
 # Media storage (NFS) - recordings and clips
