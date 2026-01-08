@@ -76,19 +76,4 @@ spec:
       enabled: false
     
     ingress:
-      enabled: true
-      ingressClassName: traefik
-      annotations:
-        traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
-        traefik.ingress.kubernetes.io/router.tls: "true"
-        traefik.ingress.kubernetes.io/redirect-to-https: "true"
-        cert-manager.io/cluster-issuer: letsencrypt-prod
-      hosts:
-        - host: lldap.home.coredev.uk
-          paths:
-            - path: /
-              pathType: Prefix
-      tls:
-        - secretName: lldap-tls
-          hosts:
-            - lldap.home.coredev.uk
+      enabled: false
