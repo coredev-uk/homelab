@@ -128,3 +128,9 @@ spec:
   ports:
     - port: 5454
       targetPort: 5454
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: notifiarr
+  namespace: notifiarr
