@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`frigate.home.coredev.uk`) && (PathPrefix(`/api`) || PathPrefix(`/vod`) || PathPrefix(`/clips`) || PathPrefix(`/recordings`))
+    - match: Host(`frigate.home.coredev.uk`) && (PathPrefix(`/api`) || PathPrefix(`/vod`) || PathPrefix(`/clips`) || PathPrefix(`/recordings`) || PathPrefix(`/live`))
       kind: Rule
       middlewares:
         - name: frigate-headers
