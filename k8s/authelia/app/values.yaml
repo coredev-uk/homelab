@@ -33,14 +33,16 @@ service:
     glance/url: "https://auth.home.coredev.uk"
     glance/description: "Authentication & SSO"
 
-# Ingress configuration
+# Ingress configuration - Using Traefik IngressRoute CRD
 ingress:
   enabled: true
   className: traefik
-  annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
-    traefik.ingress.kubernetes.io/router.tls: "true"
-    cert-manager.io/cluster-issuer: letsencrypt-prod
+  certManager: true
+  traefikCRD:
+    enabled: true
+    disableIngressRoute: false
+    entryPoints:
+      - websecure
   tls:
     enabled: true
     secret: authelia-tls
