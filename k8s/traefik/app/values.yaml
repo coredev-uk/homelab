@@ -12,7 +12,8 @@ ingressRoute:
     matchRule: Host(`traefik.home.coredev.uk`)
     entryPoints: ["websecure"]
     middlewares:
-      - name: authelia-forwardauth@kubernetescrd
+      - name: authelia-forwardauth
+        namespace: authelia
     tls:
       secretName: traefik-dashboard-tls
 
