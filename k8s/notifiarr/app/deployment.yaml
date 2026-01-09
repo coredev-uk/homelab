@@ -53,8 +53,6 @@ spec:
                   key: api-key
             - name: DN_UPSTREAMS_0
               value: "10.244.0.0/16"  # Kubernetes pod CIDR - trust traffic from Traefik pods
-            - name: DN_UI_PASSWORD
-              value: ""  # Disable local password when using reverse proxy auth
           volumeMounts:
             - name: config
               mountPath: /config

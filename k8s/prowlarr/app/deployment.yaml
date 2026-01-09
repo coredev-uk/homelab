@@ -80,8 +80,6 @@ spec:
           env:
             - name: HOST
               value: "0.0.0.0"
-            - name: PROXY_SERVER
-              value: "http://vpn-proxy.sabnzbd.svc.cluster.local:8888"
           securityContext:
             runAsUser: 0
             runAsGroup: 0

@@ -47,8 +47,16 @@ spec:
             - name: UPDATER_PERIOD
               value: "24h"
 
+            # Proxy for Prowlarr
             - name: HTTPPROXY
               value: "on"
+
+            # Proxy for Byparr (Prowlarr)
+            - name: SHADOWSOCKS
+              value: "on"
+
+            - name: SHADOWSOCKS_PASSWORD
+              value: "gluetun123"
 
             # Control server authentication
             - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
@@ -216,7 +224,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: vpn-proxy
+  name: gluetun-proxy
   namespace: sabnzbd
   labels:
     app: sabnzbd
@@ -228,6 +236,9 @@ spec:
     - port: 8888
       targetPort: 8888
       name: http-proxy
+    - port: 8388
+      targetPort: 8388
+      name: shadowsocks
 ---
 apiVersion: v1
 kind: ConfigMap
