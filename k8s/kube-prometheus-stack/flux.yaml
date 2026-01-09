@@ -13,4 +13,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: homelab
-  # No dependencies - must be first for ServiceMonitor CRDs
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age

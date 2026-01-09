@@ -59,12 +59,10 @@ spec:
             timeoutSeconds: 10
             failureThreshold: 5
           volumeMounts:
-            - name: storage
+            - name: config
               mountPath: /config
-              subPath: config
-            - name: storage
+            - name: cache
               mountPath: /cache
-              subPath: cache
             - name: data
               mountPath: /data
             - name: render-device
@@ -79,9 +77,12 @@ spec:
               cpu: "6000m"
               gpu.intel.com/i915: 1
       volumes:
-        - name: storage
+        - name: config
           persistentVolumeClaim:
-            claimName: jellyfin-pvc
+            claimName: jellyfin-config-pvc
+        - name: cache
+          persistentVolumeClaim:
+            claimName: jellyfin-cache-pvc
         - name: data
           nfs:
             server: 192.168.20.40
@@ -93,7 +94,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: jellyfin-pvc
+  name: jellyfin-config-pvc
   namespace: jellyfin
 spec:
   accessModes:
@@ -101,6 +102,19 @@ spec:
   resources:
     requests:
       storage: 10Gi
+  storageClassName: longhorn
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jellyfin-cache-pvc
+  namespace: jellyfin
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi
   storageClassName: longhorn
 ---
 apiVersion: v1
