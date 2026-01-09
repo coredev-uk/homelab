@@ -60,10 +60,10 @@ spec:
               mountPath: /homebridge
           resources:
             requests:
-              memory: "512Mi"
+              memory: "256Mi"
               cpu: "250m"
             limits:
-              memory: "2Gi"
+              memory: "512Mi"
               cpu: "1000m"
       volumes:
         - name: storage

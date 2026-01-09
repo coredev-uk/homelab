@@ -28,10 +28,10 @@ data:
                   storage: 10Gi
         resources:
           requests:
-            memory: "512Mi"
+            memory: "1Gi"
             cpu: "200m"
           limits:
-            memory: "2Gi"
+            memory: "3Gi"
             cpu: "1000m"
         externalLabels:
           cluster: 'homelab'
