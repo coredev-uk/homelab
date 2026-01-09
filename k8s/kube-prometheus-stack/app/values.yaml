@@ -1,220 +1,203 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: kube-prometheus-stack-values
-  namespace: flux-system
-data:
-  values.yaml: |
-    # Global settings
-    fullnameOverride: ""
-    
-    # Prometheus Operator
-    prometheusOperator:
-      enabled: true
-    
-    # Prometheus configuration
-    prometheus:
-      enabled: true
-      prometheusSpec:
-        retention: 7d
-        retentionSize: ""
-        storageSpec:
-          volumeClaimTemplate:
-            spec:
-              storageClassName: longhorn
-              accessModes: ["ReadWriteOnce"]
-              resources:
-                requests:
-                  storage: 10Gi
-        resources:
-          requests:
-            memory: "1Gi"
-            cpu: "200m"
-          limits:
-            memory: "3Gi"
-            cpu: "1000m"
-        externalLabels:
-          cluster: 'homelab'
-          replica: 'prometheus-1'
-        additionalScrapeConfigs:
-          - job_name: 'pihole-exporter'
-            static_configs:
-              - targets: ['pihole-exporter.pihole.svc.cluster.local:9617']
-          - job_name: 'frigate-exporter'
-            static_configs:
-              - targets: ['frigate-exporter.frigate.svc.cluster.local:9999']
-          - job_name: 'qbittorrent-vpn-exporter'
-            static_configs:
-              - targets: ['qbittorrent-vpn-exporter.qbittorrent.svc.cluster.local:9090']
-          - job_name: 'sabnzbd-vpn-exporter'
-            static_configs:
-              - targets: ['sabnzbd-vpn-exporter.sabnzbd.svc.cluster.local:9090']
-          - job_name: 'longhorn'
-            static_configs:
-              - targets: ['longhorn-backend.longhorn-system.svc.cluster.local:9500']
-      
-      # Prometheus ingress
-      ingress:
-        enabled: true
-        ingressClassName: traefik
-        annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          traefik.ingress.kubernetes.io/redirect-to-https: "true"
-          cert-manager.io/cluster-issuer: letsencrypt-prod
-          traefik.ingress.kubernetes.io/router.middlewares: authelia-authelia-forwardauth@kubernetescrd
+# Global settings
+fullnameOverride: ""
+
+# Prometheus Operator
+prometheusOperator:
+  enabled: true
+
+# Prometheus configuration
+prometheus:
+  enabled: true
+  prometheusSpec:
+    retention: 7d
+    retentionSize: ""
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: longhorn
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 10Gi
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "200m"
+      limits:
+        memory: "3Gi"
+        cpu: "1000m"
+    externalLabels:
+      cluster: 'homelab'
+      replica: 'prometheus-1'
+    additionalScrapeConfigs:
+      - job_name: 'pihole-exporter'
+        static_configs:
+          - targets: ['pihole-exporter.pihole.svc.cluster.local:9617']
+      - job_name: 'frigate-exporter'
+        static_configs:
+          - targets: ['frigate-exporter.frigate.svc.cluster.local:9999']
+      - job_name: 'qbittorrent-vpn-exporter'
+        static_configs:
+          - targets: ['qbittorrent-vpn-exporter.qbittorrent.svc.cluster.local:9090']
+      - job_name: 'sabnzbd-vpn-exporter'
+        static_configs:
+          - targets: ['sabnzbd-vpn-exporter.sabnzbd.svc.cluster.local:9090']
+      - job_name: 'longhorn'
+        static_configs:
+          - targets: ['longhorn-backend.longhorn-system.svc.cluster.local:9500']
+  
+  # Prometheus ingress
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+      traefik.ingress.kubernetes.io/router.tls: "true"
+      traefik.ingress.kubernetes.io/redirect-to-https: "true"
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+      traefik.ingress.kubernetes.io/router.middlewares: authelia-authelia-forwardauth@kubernetescrd
+    hosts:
+      - prometheus.home.coredev.uk
+    paths:
+      - /
+    pathType: Prefix
+    tls:
+      - secretName: prometheus-tls
         hosts:
           - prometheus.home.coredev.uk
-        paths:
-          - /
-        pathType: Prefix
-        tls:
-          - secretName: prometheus-tls
-            hosts:
-              - prometheus.home.coredev.uk
-      
-      # Add Glance annotations to Prometheus service
-      service:
-        annotations:
-          glance/name: "Prometheus"
-          glance/icon: "di:prometheus"
-          glance/url: "https://prometheus.home.coredev.uk"
-          glance/description: "Metrics Collection"
-    
-    # Grafana configuration
-    grafana:
+  
+  # Add Glance annotations to Prometheus service
+  service:
+    annotations:
+      glance/name: "Prometheus"
+      glance/icon: "di:prometheus"
+      glance/url: "https://prometheus.home.coredev.uk"
+      glance/description: "Metrics Collection"
+
+# Grafana configuration
+grafana:
+  enabled: true
+  persistence:
+    enabled: true
+    storageClassName: longhorn
+    size: 2Gi
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+  
+  # Grafana configuration
+  assertNoLeakedSecrets: false
+  "grafana.ini":
+    server:
+      root_url: https://grafana.home.coredev.uk
+    security:
+      disable_initial_admin_creation: true
+    auth:
+      oauth_auto_login: true
+      disable_login_form: true
+      disable_signout_menu: false
+    "auth.generic_oauth":
       enabled: true
-      adminPassword: admin
-      persistence:
-        enabled: true
-        storageClassName: longhorn
-        size: 2Gi
-      resources:
-        requests:
-          memory: "256Mi"
-          cpu: "100m"
-        limits:
-          memory: "512Mi"
-          cpu: "500m"
-      
-      # Grafana configuration
-      grafana.ini:
-        server:
-          root_url: https://grafana.home.coredev.uk
-        security:
-          admin_user: admin
-          admin_password: admin
-        database:
-          type: sqlite3
-          path: /var/lib/grafana/grafana.db
-        auth.anonymous:
-          enabled: false
-        auth.generic_oauth:
-          enabled: true
-          name: Authelia
-          client_id: grafana
-          client_secret: $__env{GRAFANA_OIDC_CLIENT_SECRET}
-          scopes: openid profile email groups
-          auth_url: https://auth.home.coredev.uk/api/oidc/authorization
-          token_url: http://authelia.authelia.svc.cluster.local:9091/api/oidc/token
-          api_url: http://authelia.authelia.svc.cluster.local:9091/api/oidc/userinfo
-          use_pkce: true
-          login_attribute_path: preferred_username
-          name_attribute_path: name
-          role_attribute_path: contains(groups[*], 'grafana_admin') && 'Admin' || contains(groups[*], 'grafana_editor') && 'Editor' || 'Viewer'
-          allow_sign_up: true
-      
-      # Grafana environment variables for OIDC secret
-      envValueFrom:
-        GRAFANA_OIDC_CLIENT_SECRET:
-          secretKeyRef:
-            name: grafana-secrets
-            key: oidc-client-secret
-      
-      # Grafana ingress
-      ingress:
-        enabled: true
-        ingressClassName: traefik
-        annotations:
-          traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
-          traefik.ingress.kubernetes.io/router.tls: "true"
-          traefik.ingress.kubernetes.io/redirect-to-https: "true"
-          cert-manager.io/cluster-issuer: letsencrypt-prod
+      allow_sign_up: true
+      client_id: grafana
+      client_secret: $__env{GRAFANA_OIDC_CLIENT_SECRET}
+      scopes: openid profile email groups
+      auth_url: https://auth.home.coredev.uk/api/oidc/authorization
+      token_url: http://authelia-authelia.authelia.svc.cluster.local/api/oidc/token
+      api_url: http://authelia-authelia.authelia.svc.cluster.local/api/oidc/userinfo
+      use_pkce: true
+      login_attribute_path: preferred_username
+      name_attribute_path: name
+      email_attribute_name: email
+    users:
+      allow_sign_up: false
+  
+  # Inject secret as environment variable
+  envValueFrom:
+    GRAFANA_OIDC_CLIENT_SECRET:
+      secretKeyRef:
+        name: grafana-secrets
+        key: GRAFANA_OIDC_CLIENT_SECRET
+  
+  # Grafana ingress
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+      traefik.ingress.kubernetes.io/router.tls: "true"
+      traefik.ingress.kubernetes.io/redirect-to-https: "true"
+      cert-manager.io/cluster-issuer: letsencrypt-prod
+    hosts:
+      - grafana.home.coredev.uk
+    path: /
+    pathType: Prefix
+    tls:
+      - secretName: grafana-tls
         hosts:
           - grafana.home.coredev.uk
-        path: /
-        pathType: Prefix
-        tls:
-          - secretName: grafana-tls
-            hosts:
-              - grafana.home.coredev.uk
-      
-      # Datasources - Prometheus automatically configured by chart
-      datasources:
-        datasources.yaml:
-          apiVersion: 1
-          datasources:
-            - name: Prometheus
-              type: prometheus
-              url: http://kube-prometheus-stack-prometheus:9090
-              access: proxy
-              isDefault: true
-              editable: true
-      
-      # Add Glance annotations to Grafana service
-      service:
-        annotations:
-          glance/name: "Grafana"
-          glance/icon: "di:grafana"
-          glance/url: "https://grafana.home.coredev.uk"
-          glance/description: "Metrics Visualization"
-    
-    # Alertmanager - can be disabled if not needed
-    alertmanager:
-      enabled: false
-    
-    # Node exporter configuration
-    nodeExporter:
-      enabled: true
-    
-    # Kube-state-metrics configuration
-    kubeStateMetrics:
-      enabled: true
-    
-    # Default rules for monitoring
-    defaultRules:
-      create: true
-      rules:
-        alertmanager: false
-        etcd: true
-        configReloaders: true
-        general: true
-        k8sContainerCpuUsageSecondsTotal: true
-        k8sContainerMemoryCache: true
-        k8sContainerMemoryRss: true
-        k8sContainerMemorySwap: true
-        k8sContainerResource: true
-        k8sContainerMemoryWorkingSetBytes: true
-        k8sPodOwner: true
-        kubeApiserverAvailability: true
-        kubeApiserverBurnrate: true
-        kubeApiserverHistogram: true
-        kubeApiserverSlos: true
-        kubeControllerManager: true
-        kubelet: true
-        kubeProxy: true
-        kubePrometheusGeneral: true
-        kubePrometheusNodeRecording: true
-        kubernetesApps: true
-        kubernetesResources: true
-        kubernetesStorage: true
-        kubernetesSystem: true
-        kubeSchedulerAlerting: true
-        kubeSchedulerRecording: true
-        kubeStateMetrics: true
-        network: true
-        node: true
-        nodeExporterAlerting: true
-        nodeExporterRecording: true
-        prometheus: true
-        prometheusOperator: true
+  
+  # Datasources - Prometheus automatically configured by chart
+  # Loki datasource added via separate ConfigMap with grafana_datasource label
+  
+  # Add Glance annotations to Grafana service
+  service:
+    annotations:
+      glance/name: "Grafana"
+      glance/icon: "di:grafana"
+      glance/url: "https://grafana.home.coredev.uk"
+      glance/description: "Metrics Visualization"
+
+# Alertmanager - can be disabled if not needed
+alertmanager:
+  enabled: false
+
+# Node exporter configuration
+nodeExporter:
+  enabled: true
+
+# Kube-state-metrics configuration
+kubeStateMetrics:
+  enabled: true
+
+# Default rules for monitoring
+defaultRules:
+  create: true
+  rules:
+    alertmanager: false
+    etcd: true
+    configReloaders: true
+    general: true
+    k8sContainerCpuUsageSecondsTotal: true
+    k8sContainerMemoryCache: true
+    k8sContainerMemoryRss: true
+    k8sContainerMemorySwap: true
+    k8sContainerResource: true
+    k8sContainerMemoryWorkingSetBytes: true
+    k8sPodOwner: true
+    kubeApiserverAvailability: true
+    kubeApiserverBurnrate: true
+    kubeApiserverHistogram: true
+    kubeApiserverSlos: true
+    kubeControllerManager: true
+    kubelet: true
+    kubeProxy: true
+    kubePrometheusGeneral: true
+    kubePrometheusNodeRecording: true
+    kubernetesApps: true
+    kubernetesResources: true
+    kubernetesStorage: true
+    kubernetesSystem: true
+    kubeSchedulerAlerting: true
+    kubeSchedulerRecording: true
+    kubeStateMetrics: true
+    network: true
+    node: true
+    nodeExporterAlerting: true
+    nodeExporterRecording: true
+    prometheus: true
+    prometheusOperator: true
