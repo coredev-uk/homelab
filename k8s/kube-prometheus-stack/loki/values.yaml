@@ -1,0 +1,100 @@
+# Loki configuration for SingleBinary deployment mode
+# Optimized for homelab use (~70 pods, <5GB/day log ingestion)
+# Total memory: ~3GB (vs production defaults of 11.9GB)
+deploymentMode: SingleBinary
+
+loki:
+  auth_enabled: false
+  commonConfig:
+    replication_factor: 1
+  storage:
+    type: 'filesystem'
+  schemaConfig:
+    configs:
+      - from: "2024-01-01"
+        store: tsdb
+        object_store: filesystem
+        schema: v13
+        index:
+          prefix: loki_index_
+          period: 24h
+
+# SingleBinary configuration
+singleBinary:
+  replicas: 1
+  persistence:
+    enabled: true
+    storageClass: longhorn
+    size: 10Gi
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "100m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+
+# Disable other deployment modes
+backend:
+  replicas: 0
+read:
+  replicas: 0
+write:
+  replicas: 0
+
+# Optimized cache configuration for homelab
+# Reduced from production defaults: chunks 9.6GB->1.5GB, results 1.2GB->512MB
+chunksCache:
+  enabled: true
+  replicas: 1
+  allocatedMemory: 1536  # 1.5GB for memcached (stores compressed log chunks)
+  resources:
+    requests:
+      cpu: 100m
+      memory: 1536Mi
+    limits:
+      cpu: 500m
+      memory: 1843Mi  # 1536 * 1.2 for overhead
+
+resultsCache:
+  enabled: true
+  replicas: 1
+  allocatedMemory: 512  # 512MB for memcached (stores query results)
+  resources:
+    requests:
+      cpu: 50m
+      memory: 512Mi
+    limits:
+      cpu: 200m
+      memory: 614Mi  # 512 * 1.2 for overhead
+
+# Monitoring integration
+monitoring:
+  serviceMonitor:
+    enabled: true
+  selfMonitoring:
+    enabled: false
+    grafanaAgent:
+      installOperator: false
+
+# Disable test pod
+test:
+  enabled: false
+
+# Gateway (nginx) for Loki
+gateway:
+  enabled: true
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  service:
+    annotations:
+      glance/name: "Loki"
+      glance/icon: "si:loki"
+      glance/url: "http://loki-gateway.monitoring.svc.cluster.local"
+      glance/description: "Log Aggregation"
