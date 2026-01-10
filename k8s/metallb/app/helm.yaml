@@ -25,9 +25,9 @@ spec:
       interval: 12h
   install:
     createNamespace: true
-    crds: Create
+    crds: Skip
   upgrade:
-    crds: CreateReplace
+    crds: Skip
   targetNamespace: metallb-system
   values:
     crds:

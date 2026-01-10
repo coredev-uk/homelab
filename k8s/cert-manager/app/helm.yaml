@@ -27,9 +27,9 @@ spec:
   targetNamespace: cert-manager
   install:
     createNamespace: true
-    crds: CreateReplace
+    crds: Skip
   upgrade:
-    crds: CreateReplace
+    crds: Skip
   values:
     # Install CRDs as part of installation
     crds:
