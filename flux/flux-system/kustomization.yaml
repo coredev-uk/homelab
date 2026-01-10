@@ -3,3 +3,24 @@ kind: Kustomization
 resources:
 - gotk-components.yaml
 - gotk-sync.yaml
+patches:
+  # Increase memory limits for Flux controllers (recommended for 20+ apps)
+  # See: https://fluxcd.io/flux/installation/configuration/vertical-scaling/
+  - patch: |
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: all
+      spec:
+        template:
+          spec:
+            containers:
+              - name: manager
+                resources:
+                  limits:
+                    memory: 2Gi
+                  requests:
+                    memory: 1Gi
+    target:
+      kind: Deployment
+      name: "(source-controller|helm-controller|kustomize-controller)"
