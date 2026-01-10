@@ -22,6 +22,48 @@ spec:
       jobEnabled: false
     longhornUI:
       replicas: 1
+      resources:
+        limits:
+          memory: 256Mi
+        requests:
+          memory: 128Mi
+    longhornManager:
+      resources:
+        limits:
+          memory: 512Mi
+        requests:
+          memory: 256Mi
+    longhornDriver:
+      resources:
+        limits:
+          memory: 256Mi
+        requests:
+          memory: 128Mi
+    csi:
+      attacher:
+        resources:
+          limits:
+            memory: 128Mi
+          requests:
+            memory: 64Mi
+      provisioner:
+        resources:
+          limits:
+            memory: 128Mi
+          requests:
+            memory: 64Mi
+      resizer:
+        resources:
+          limits:
+            memory: 128Mi
+          requests:
+            memory: 64Mi
+      snapshotter:
+        resources:
+          limits:
+            memory: 128Mi
+          requests:
+            memory: 64Mi
     service:
       ui:
         type: ClusterIP

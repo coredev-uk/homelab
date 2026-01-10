@@ -33,6 +33,18 @@ spec:
     crds:
       enabled: true
       validationFailurePolicy: Fail
+    controller:
+      resources:
+        limits:
+          memory: 128Mi
+        requests:
+          memory: 64Mi
+    speaker:
+      resources:
+        limits:
+          memory: 128Mi
+        requests:
+          memory: 64Mi
     prometheus:
       serviceMonitor:
         enabled: true  # Enabled - Prometheus installed first via dependsOn

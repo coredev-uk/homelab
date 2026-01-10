@@ -73,7 +73,7 @@ spec:
               cpu: "500m"
               gpu.intel.com/i915: 1
             limits:
-              memory: "4Gi"
+              memory: "2Gi"
               cpu: "6000m"
               gpu.intel.com/i915: 1
       volumes:

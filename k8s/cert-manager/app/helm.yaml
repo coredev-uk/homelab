@@ -41,6 +41,27 @@ spec:
       leaderElection:
         namespace: cert-manager
     
+    # Resource limits for homelab
+    resources:
+      limits:
+        memory: 256Mi
+      requests:
+        memory: 128Mi
+    
+    webhook:
+      resources:
+        limits:
+          memory: 128Mi
+        requests:
+          memory: 64Mi
+    
+    cainjector:
+      resources:
+        limits:
+          memory: 256Mi
+        requests:
+          memory: 128Mi
+    
     # Enable Prometheus ServiceMonitor
     prometheus:
       enabled: true
