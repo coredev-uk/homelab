@@ -6,4 +6,3 @@ resources:
   - app/
   - secrets/
   - ingress/
-  - loki/
