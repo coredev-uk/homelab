@@ -142,7 +142,6 @@ grafana:
           - grafana.home.coredev.uk
   
   # Datasources - Prometheus automatically configured by chart
-  # Loki datasource added via separate ConfigMap with grafana_datasource label
   
   # Add Glance annotations to Grafana service
   service:
