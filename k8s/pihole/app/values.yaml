@@ -59,18 +59,15 @@ extraEnvVars:
   TZ: "Europe/London"
   FTLCONF_dns_listeningMode: "all"
   FTLCONF_dns_upstreams: "1.1.1.1;1.0.0.1"
-  # Disable web authentication - Authelia handles it
-  FTLCONF_webserver_api_password: "password"
+  FTLCONF_webserver_api_password: ""
 
-# DNS Masq Configuration - CRITICAL FOR WILDCARD DNS
+# DNS Masq Configuration 
 dnsmasq:
   enableCustomDnsMasq: true
   
-  # Wildcard DNS entries - replaces all individual host entries
+  # Wildcard DNS entries
   customDnsEntries:
-    # All *.home.coredev.uk domains point to Traefik LoadBalancer
     - address=/.home.coredev.uk/192.168.20.30
-    # All *.infra.octanet.cloud domains point to router
     - address=/.infra.octanet.cloud/192.168.20.1
   
   # No custom CNAMEs needed with wildcard approach

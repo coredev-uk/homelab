@@ -665,10 +665,10 @@ pages:
               url: "https://sonarr.home.coredev.uk"
               timezone: "+00"
 
-          - type: dns-stats
-            service: pihole-v6
-            url: http://pihole-web.pihole.svc.cluster.local
-            password: "password"
+          # TODO: Uncomment on next release.
+          # - type: dns-stats
+          #   service: pihole-v6
+          #   url: http://pihole-pihole-web.pihole.svc.cluster.local
 
           - type: server-stats
             title: Server Performance
