@@ -145,13 +145,13 @@ grafana:
         hosts:
           - grafana.home.coredev.uk
   
-  # Datasources - Prometheus automatically configured by chart
-  # Add Loki datasource
+  # Additional datasources
   additionalDataSources:
     - name: Loki
       type: loki
+      uid: loki
       access: proxy
-      url: http://loki-gateway.monitoring.svc.cluster.local
+      url: http://monitoring-loki-gateway.monitoring.svc.cluster.local
       isDefault: false
       editable: false
       jsonData:
