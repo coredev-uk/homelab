@@ -48,6 +48,8 @@ chunksCache:
   enabled: true
   replicas: 1
   allocatedMemory: 1536  # 1.5GB for memcached (stores compressed log chunks)
+  # Disable anti-affinity for single-node cluster
+  affinity: {}
   resources:
     requests:
       cpu: 100m
@@ -60,6 +62,8 @@ resultsCache:
   enabled: true
   replicas: 1
   allocatedMemory: 512  # 512MB for memcached (stores query results)
+  # Disable anti-affinity for single-node cluster
+  affinity: {}
   resources:
     requests:
       cpu: 50m
@@ -85,6 +89,8 @@ test:
 gateway:
   enabled: true
   replicas: 1
+  # Disable anti-affinity for single-node cluster
+  affinity: {}
   resources:
     requests:
       cpu: 50m
