@@ -51,6 +51,9 @@ spec:
             - name: HTTPPROXY
               value: "on"
 
+            - name: HTTPPROXY_STEALTH
+              value: "on"
+
             # Control server authentication
             - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
               value: "/gluetun/auth/config.toml"
