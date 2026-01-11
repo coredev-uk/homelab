@@ -117,7 +117,7 @@ spec:
     spec:
       containers:
         - name: vector
-          image: timberio/vector:0.43.1-debian
+          image: timberio/vector:0.52.0-debian
           ports:
             - name: talos-kernel
               containerPort: 6001
