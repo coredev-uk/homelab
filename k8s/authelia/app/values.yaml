@@ -32,6 +32,8 @@ service:
     glance/icon: "mdi:shield-account"
     glance/url: "https://auth.home.coredev.uk"
     glance/description: "Authentication & SSO"
+    traefik.ingress.kubernetes.io/service.serversscheme: http
+    traefik.ingress.kubernetes.io/service.loadbalancer.strategy: wrr
 
 # Ingress configuration - Using Traefik IngressRoute CRD
 ingress:
