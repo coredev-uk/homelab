@@ -10,6 +10,7 @@ resources:
   
   # Download clients
   - ../../k8s/qbittorrent/flux.yaml
+  - ../../k8s/qui/flux.yaml
   - ../../k8s/sabnzbd/flux.yaml
   
   # Media consumption

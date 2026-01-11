@@ -220,7 +220,7 @@ configMap:
           public: false
           authorization_policy: one_factor
           redirect_uris:
-            - https://qbittorrent.home.coredev.uk/api/auth/oidc/callback
+            - https://qui.home.coredev.uk/api/auth/oidc/callback
           scopes:
             - openid
             - profile
