@@ -10,7 +10,7 @@ metadata:
     app.kubernetes.io/part-of: media-stack
   annotations:
     glance/name: "Qui"
-    glance/icon: "sh:qui"
+    glance/icon: "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/webp/qui.webp"
     glance/url: "https://qui.home.coredev.uk"
     glance/description: "Web interface for qBittorrent"
 spec:
