@@ -45,6 +45,7 @@ ingress:
     disableIngressRoute: false
     entryPoints:
       - websecure
+    strategy: wrr  # Use wrr instead of deprecated RoundRobin
   tls:
     enabled: true
     secret: authelia-tls
