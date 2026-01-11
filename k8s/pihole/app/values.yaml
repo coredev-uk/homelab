@@ -1,0 +1,246 @@
+# Pi-hole Helm Chart Configuration
+# Chart: mojo2600/pihole v2.35.0
+# Migrated from manual deployment to Helm chart
+
+# Image configuration - using latest 2025.11.1
+image:
+  repository: "pihole/pihole"
+  tag: "2025.11.1"
+  pullPolicy: IfNotPresent
+
+# Single replica for homelab
+replicaCount: 1
+
+# Disable anti-affinity for single-node cluster
+affinity: {}
+
+# DNS Service Configuration - LoadBalancer with fixed IP
+serviceDns:
+  type: LoadBalancer
+  loadBalancerIP: "192.168.20.20"
+  port: 53
+  mixedService: false
+  externalTrafficPolicy: Local
+  annotations:
+    metallb.universe.tf/allow-shared-ip: pihole-svc
+
+# Web Service Configuration - ClusterIP (Traefik handles external access)
+serviceWeb:
+  type: ClusterIP
+  http:
+    enabled: true
+    port: 80
+  https:
+    enabled: true
+    port: 443
+
+# Disable DHCP service (not needed)
+serviceDhcp:
+  enabled: false
+
+# Persistent Storage - 1Gi Longhorn PVC
+persistentVolumeClaim:
+  enabled: true
+  storageClass: "longhorn"
+  size: "1Gi"
+  accessModes:
+    - ReadWriteOnce
+
+# Admin Password - Disabled (Authelia handles authentication)
+admin:
+  enabled: false
+
+# Upstream DNS - Cloudflare
+DNS1: "1.1.1.1"
+DNS2: "1.0.0.1"
+
+# Extra Environment Variables
+extraEnvVars:
+  TZ: "Europe/London"
+  FTLCONF_dns_listeningMode: "all"
+  FTLCONF_dns_upstreams: "1.1.1.1;1.0.0.1"
+  # Disable web authentication - Authelia handles it
+  FTLCONF_webserver_api_password: "password"
+
+# DNS Masq Configuration - CRITICAL FOR WILDCARD DNS
+dnsmasq:
+  enableCustomDnsMasq: true
+  
+  # Wildcard DNS entries - replaces all individual host entries
+  customDnsEntries:
+    # All *.home.coredev.uk domains point to Traefik LoadBalancer
+    - address=/.home.coredev.uk/192.168.20.30
+    # All *.infra.octanet.cloud domains point to router
+    - address=/.infra.octanet.cloud/192.168.20.1
+  
+  # No custom CNAMEs needed with wildcard approach
+  customCnameEntries: []
+  
+  # Additional hosts entries (none needed)
+  additionalHostsEntries: []
+  
+  # Upstream servers (none needed, using DNS1/DNS2)
+  upstreamServers: []
+
+# Resource limits - matching current deployment
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "100m"
+  limits:
+    memory: "1Gi"
+    cpu: "500m"
+
+# Probes - using TCP probe instead of HTTP for simplicity
+probes:
+  liveness:
+    enabled: true
+    type: command
+    command:
+      - /bin/sh
+      - -c
+      - "dig @127.0.0.1 cloudflare.com || exit 1"
+    initialDelaySeconds: 60
+    failureThreshold: 10
+    timeoutSeconds: 5
+  readiness:
+    enabled: true
+    type: command
+    command:
+      - /bin/sh
+      - -c
+      - "dig @127.0.0.1 cloudflare.com || exit 1"
+    initialDelaySeconds: 30
+    failureThreshold: 10
+    timeoutSeconds: 5
+
+# Pod DNS Configuration - use itself for DNS after startup
+podDnsConfig:
+  enabled: true
+  policy: "None"
+  nameservers:
+    - 127.0.0.1
+    - 1.1.1.1
+
+# Monitoring - Enable sidecar exporter for Prometheus
+monitoring:
+  sidecar:
+    enabled: true
+    port: 9617
+    image:
+      repository: ekofr/pihole-exporter
+      tag: v1.2.0
+      pullPolicy: IfNotPresent
+    resources:
+      requests:
+        memory: "32Mi"
+        cpu: "10m"
+      limits:
+        memory: "64Mi"
+        cpu: "50m"
+
+# Pod Annotations - for Glance dashboard
+podAnnotations:
+  glance/name: "Pi-hole"
+  glance/icon: "di:pi-hole"
+  glance/url: "https://pihole.home.coredev.uk/admin"
+  glance/description: "DNS & Ad Blocking"
+
+# Deployment Annotations
+deploymentAnnotations: {}
+
+# Virtual Host
+virtualHost: pi.hole
+
+# Container ports
+webHttp: "80"
+webHttps: "443"
+
+# Security context
+privileged: "false"
+hostNetwork: "false"
+
+# No custom volumes needed
+customVolumes:
+  enabled: false
+
+extraVolumes: {}
+extraVolumeMounts: {}
+
+# No standard Kubernetes Ingress (using Traefik IngressRoute via extraObjects)
+ingress:
+  enabled: false
+
+# Extra Kubernetes objects - IngressRoute, Certificate, Middlewares
+extraObjects:
+  # Traefik IngressRoute for HTTPS
+  - apiVersion: traefik.io/v1alpha1
+    kind: IngressRoute
+    metadata:
+      name: pihole-ingressroute
+      namespace: pihole
+    spec:
+      entryPoints:
+        - websecure
+      routes:
+        # API endpoints without authentication
+        - match: Host(`pihole.home.coredev.uk`) && (PathPrefix(`/admin/api.php`) || PathPrefix(`/api`))
+          kind: Rule
+          services:
+            - name: pihole-web
+              port: 80
+        # All other paths require Authelia authentication
+        - match: Host(`pihole.home.coredev.uk`)
+          kind: Rule
+          middlewares:
+            - name: authelia-forwardauth
+              namespace: authelia
+          services:
+            - name: pihole-web
+              port: 80
+      tls:
+        secretName: pihole-tls
+  
+  # Traefik IngressRoute for HTTP redirect
+  - apiVersion: traefik.io/v1alpha1
+    kind: IngressRoute
+    metadata:
+      name: pihole-redirect
+      namespace: pihole
+    spec:
+      entryPoints:
+        - web
+      routes:
+        - match: Host(`pihole.home.coredev.uk`)
+          kind: Rule
+          middlewares:
+            - name: https-redirect
+              namespace: pihole
+          services:
+            - name: pihole-web
+              port: 80
+  
+  # HTTPS Redirect Middleware
+  - apiVersion: traefik.io/v1alpha1
+    kind: Middleware
+    metadata:
+      name: https-redirect
+      namespace: pihole
+    spec:
+      redirectScheme:
+        scheme: https
+        permanent: true
+  
+  # Let's Encrypt Certificate
+  - apiVersion: cert-manager.io/v1
+    kind: Certificate
+    metadata:
+      name: pihole-tls
+      namespace: pihole
+    spec:
+      secretName: pihole-tls
+      issuerRef:
+        name: letsencrypt-prod
+        kind: ClusterIssuer
+      dnsNames:
+        - pihole.home.coredev.uk
