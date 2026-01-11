@@ -187,7 +187,7 @@ extraObjects:
         - match: Host(`pihole.home.coredev.uk`) && (PathPrefix(`/admin/api.php`) || PathPrefix(`/api`))
           kind: Rule
           services:
-            - name: pihole-web
+            - name: pihole-pihole-web
               port: 80
         # All other paths require Authelia authentication
         - match: Host(`pihole.home.coredev.uk`)
@@ -196,7 +196,7 @@ extraObjects:
             - name: authelia-forwardauth
               namespace: authelia
           services:
-            - name: pihole-web
+            - name: pihole-pihole-web
               port: 80
       tls:
         secretName: pihole-tls
@@ -217,7 +217,7 @@ extraObjects:
             - name: https-redirect
               namespace: pihole
           services:
-            - name: pihole-web
+            - name: pihole-pihole-web
               port: 80
   
   # HTTPS Redirect Middleware
