@@ -101,13 +101,19 @@ configMap:
     rules:
       - domain: auth.home.coredev.uk
         policy: bypass
-      - domain: '*.home.coredev.uk'
-        policy: one_factor
+      # API bypass rules (must be before wildcard rule)
       - domain: homebridge.home.coredev.uk
         resources:
           - '^/api/.*$'
           - '^/socket.io/.*$'
         policy: bypass
+      - domain: qbittorrent.home.coredev.uk
+        resources:
+          - '^/api/.*$'
+        policy: bypass
+      # Default authentication for all other paths
+      - domain: '*.home.coredev.uk'
+        policy: one_factor
   
   # Session configuration with Redis
   session:

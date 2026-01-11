@@ -9,6 +9,9 @@ spec:
   routes:
     - match: Host(`qbittorrent.home.coredev.uk`)
       kind: Rule
+      middlewares:
+        - name: authelia-forwardauth
+          namespace: authelia
       services:
         - name: qbittorrent
           port: 8080
