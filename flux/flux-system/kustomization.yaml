@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
 - gotk-components.yaml
 - gotk-sync.yaml
+- monitoring/servicemonitors.yaml
 patches:
   # Enable OOM detection for helm-controller (graceful shutdown before OOMKill)
   # See: https://fluxcd.io/flux/installation/configuration/helm-oom-detection/

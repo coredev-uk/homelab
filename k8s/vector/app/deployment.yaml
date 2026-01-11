@@ -1,0 +1,145 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vector-config
+  namespace: vector
+data:
+  vector.yaml: |
+    # Vector configuration for Talos logs -> Loki
+    api:
+      enabled: true
+      address: 0.0.0.0:8686
+
+    # Source: Receive logs from Talos nodes via UDP JSON
+    sources:
+      talos_kernel:
+        type: socket
+        mode: udp
+        address: 0.0.0.0:6001
+        decoding:
+          codec: json
+
+      talos_service:
+        type: socket
+        mode: udp
+        address: 0.0.0.0:6002
+        decoding:
+          codec: json
+
+    # Transform: Add labels for Loki and handle Talos JSON format
+    transforms:
+      talos_kernel_transform:
+        type: remap
+        inputs:
+          - talos_kernel
+        source: |
+          .job = "talos-kernel"
+          .node = "unknown"
+          .facility = "kern"
+          .level = "info"
+          .service = "kernel"
+          if exists(."talos-node-name") { .node = ."talos-node-name" }
+          if exists(.hostname) { .node = .hostname }
+          if exists(."talos-facility") { .facility = ."talos-facility" }
+          if exists(."talos-level") { .level = ."talos-level" }
+
+      talos_service_transform:
+        type: remap
+        inputs:
+          - talos_service
+        source: |
+          .job = "talos-service"
+          .node = "unknown"
+          .facility = "daemon"
+          .service = "unknown"
+          if exists(."talos-node-name") { .node = ."talos-node-name" }
+          if exists(.hostname) { .node = .hostname }
+          if exists(."talos-facility") { .facility = ."talos-facility" }
+          if exists(."talos-service") { 
+            .service = ."talos-service"
+            .facility = ."talos-service"
+          }
+
+    # Sink: Send to Loki
+    sinks:
+      loki:
+        type: loki
+        inputs:
+          - talos_kernel_transform
+          - talos_service_transform
+        endpoint: http://monitoring-loki-gateway.monitoring.svc.cluster.local
+        encoding:
+          codec: json
+        labels:
+          job: "{{ job }}"
+          node: "{{ node }}"
+          facility: "{{ facility }}"
+          service: "{{ service }}"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vector
+  namespace: vector
+spec:
+  type: LoadBalancer
+  selector:
+    app: vector
+  ports:
+    - name: talos-kernel
+      port: 6001
+      targetPort: 6001
+      protocol: UDP
+    - name: talos-service
+      port: 6002
+      targetPort: 6002
+      protocol: UDP
+    - name: api
+      port: 8686
+      targetPort: 8686
+      protocol: TCP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vector
+  namespace: vector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vector
+  template:
+    metadata:
+      labels:
+        app: vector
+    spec:
+      containers:
+        - name: vector
+          image: timberio/vector:0.43.1-debian
+          ports:
+            - name: talos-kernel
+              containerPort: 6001
+              protocol: UDP
+            - name: talos-service
+              containerPort: 6002
+              protocol: UDP
+            - name: api
+              containerPort: 8686
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /etc/vector
+              readOnly: true
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      volumes:
+        - name: config
+          configMap:
+            name: vector-config

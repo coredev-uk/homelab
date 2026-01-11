@@ -1,0 +1,92 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: source-controller-metrics
+  namespace: flux-system
+  labels:
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/component: source-controller
+spec:
+  type: ClusterIP
+  selector:
+    app: source-controller
+  ports:
+    - name: http-prom
+      port: 8080
+      targetPort: http-prom
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kustomize-controller-metrics
+  namespace: flux-system
+  labels:
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/component: kustomize-controller
+spec:
+  type: ClusterIP
+  selector:
+    app: kustomize-controller
+  ports:
+    - name: http-prom
+      port: 8080
+      targetPort: http-prom
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: helm-controller-metrics
+  namespace: flux-system
+  labels:
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/component: helm-controller
+spec:
+  type: ClusterIP
+  selector:
+    app: helm-controller
+  ports:
+    - name: http-prom
+      port: 8080
+      targetPort: http-prom
+      protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-controller-metrics
+  namespace: flux-system
+  labels:
+    app.kubernetes.io/part-of: flux
+    app.kubernetes.io/component: notification-controller
+spec:
+  type: ClusterIP
+  selector:
+    app: notification-controller
+  ports:
+    - name: http-prom
+      port: 8080
+      targetPort: http-prom
+      protocol: TCP
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: flux-system
+  namespace: flux-system
+  labels:
+    app.kubernetes.io/part-of: flux
+    release: monitoring-kube-prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/part-of: flux
+  namespaceSelector:
+    matchNames:
+      - flux-system
+  endpoints:
+    - port: http-prom
+      interval: 30s
+      path: /metrics

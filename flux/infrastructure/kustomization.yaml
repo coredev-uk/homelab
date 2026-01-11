@@ -5,6 +5,9 @@ resources:
   # Monitoring (must be first for ServiceMonitor CRDs)
   - ../../k8s/kube-prometheus-stack/flux.yaml
   
+  # Logging
+  - ../../k8s/vector/flux.yaml
+  
   # Core infrastructure dependencies
   - ../../k8s/cert-manager/flux.yaml
   - ../../k8s/cert-manager-issuer/flux.yaml
