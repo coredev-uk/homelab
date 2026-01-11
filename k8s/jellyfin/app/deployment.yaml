@@ -69,13 +69,17 @@ spec:
               mountPath: /dev/dri/renderD128
           resources:
             requests:
-              memory: "2Gi"
+              memory: "4Gi"
               cpu: "500m"
               gpu.intel.com/i915: 1
             limits:
-              memory: "2Gi"
+              memory: "4Gi"
               cpu: "6000m"
               gpu.intel.com/i915: 1
+      tolerations:
+        - key: intel-gpu
+          operator: Exists
+          effect: NoSchedule
       volumes:
         - name: config
           persistentVolumeClaim:
