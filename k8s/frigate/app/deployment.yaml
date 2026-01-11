@@ -28,10 +28,10 @@ spec:
         app.kubernetes.io/component: nvr
         app.kubernetes.io/part-of: homelab
     spec:
-      tolerations:
-        - key: coral-tpu
-          operator: Exists
-          effect: NoSchedule
+      # tolerations:
+      #   - key: coral-tpu
+      #     operator: Exists
+      #     effect: NoSchedule
       containers:
         - name: frigate
           image: ghcr.io/blakeblackshear/frigate:0.16.3

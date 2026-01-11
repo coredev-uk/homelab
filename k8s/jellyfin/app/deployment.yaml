@@ -76,10 +76,10 @@ spec:
               memory: "4Gi"
               cpu: "6000m"
               gpu.intel.com/i915: 1
-      tolerations:
-        - key: intel-gpu
-          operator: Exists
-          effect: NoSchedule
+      # tolerations:
+      #   - key: intel-gpu
+      #     operator: Exists
+      #     effect: NoSchedule
       volumes:
         - name: config
           persistentVolumeClaim:
