@@ -117,9 +117,6 @@ kind: PersistentVolumeClaim
 metadata:
   name: qui-config
   namespace: qui
-  labels:
-    app: qui
-    component: config
 spec:
   accessModes:
     - ReadWriteOnce

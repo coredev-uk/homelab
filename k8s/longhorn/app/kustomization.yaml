@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
   - repository.yaml
   - helm.yaml
+  - recurring-jobs.yaml

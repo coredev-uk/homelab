@@ -1,0 +1,73 @@
+---
+# Daily backup job for critical config volumes
+# Runs at 2:00 AM daily, retains 7 backups
+apiVersion: longhorn.io/v1beta2
+kind: RecurringJob
+metadata:
+  name: backup-daily
+  namespace: longhorn-system
+spec:
+  name: backup-daily
+  cron: "0 2 * * *"
+  task: backup
+  retain: 7
+  concurrency: 2
+  groups:
+    - default
+  labels:
+    backup-type: daily
+    managed-by: gitops
+---
+# Weekly backup job for larger volumes
+# Runs at 3:00 AM every Sunday, retains 4 backups
+apiVersion: longhorn.io/v1beta2
+kind: RecurringJob
+metadata:
+  name: backup-weekly
+  namespace: longhorn-system
+spec:
+  name: backup-weekly
+  cron: "0 3 * * 0"
+  task: backup
+  retain: 4
+  concurrency: 2
+  groups: []
+  labels:
+    backup-type: weekly
+    managed-by: gitops
+---
+# Snapshot cleanup job to remove old system-generated snapshots
+# Runs at 4:00 AM daily to reclaim disk space
+apiVersion: longhorn.io/v1beta2
+kind: RecurringJob
+metadata:
+  name: snapshot-cleanup
+  namespace: longhorn-system
+spec:
+  name: snapshot-cleanup
+  cron: "0 4 * * *"
+  task: snapshot-cleanup
+  retain: 0
+  concurrency: 2
+  groups:
+    - default
+  labels:
+    managed-by: gitops
+---
+# Filesystem trim job to reclaim disk space
+# Runs at 5:00 AM every Sunday
+apiVersion: longhorn.io/v1beta2
+kind: RecurringJob
+metadata:
+  name: filesystem-trim
+  namespace: longhorn-system
+spec:
+  name: filesystem-trim
+  cron: "0 5 * * 0"
+  task: filesystem-trim
+  retain: 0
+  concurrency: 1
+  groups:
+    - default
+  labels:
+    managed-by: gitops

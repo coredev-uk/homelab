@@ -172,9 +172,6 @@ kind: PersistentVolumeClaim
 metadata:
   name: qbittorrent-config
   namespace: qbittorrent
-  labels:
-    app: qbittorrent
-    component: config
 spec:
   accessModes:
     - ReadWriteOnce

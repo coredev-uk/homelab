@@ -120,6 +120,9 @@ kind: PersistentVolumeClaim
 metadata:
   name: jellyfin-cache-pvc
   namespace: jellyfin
+  labels:
+    recurring-job.longhorn.io/source: enabled
+    recurring-job-group.longhorn.io/default: disabled
 spec:
   accessModes:
     - ReadWriteOnce
