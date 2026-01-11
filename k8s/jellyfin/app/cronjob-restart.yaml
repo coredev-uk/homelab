@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: jellyfin-auto-restart
+  namespace: jellyfin
+spec:
+  schedule: "0 5 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: restart-checker
+            image: curlimages/curl:8.5.0
+            command: ["/bin/sh", "-c"]
+            args:
+            - |
+              INFO=$(curl -s -H "X-Emby-Token: ${API_KEY}" http://jellyfin.jellyfin.svc.cluster.local:8096/System/Info)
+              if echo "$INFO" | grep -q '"HasPendingRestart":true'; then
+                curl -X POST -H "X-Emby-Token: ${API_KEY}" http://jellyfin.jellyfin.svc.cluster.local:8096/System/Restart
+                echo "Jellyfin restarted"
+              fi
+            env:
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jellyfin-secrets
+                  key: api-key

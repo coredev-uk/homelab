@@ -11,6 +11,10 @@ spec:
     kind: GitRepository
     name: homelab
     namespace: flux-system
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
   dependsOn:
     - name: longhorn
     - name: intel-gpu

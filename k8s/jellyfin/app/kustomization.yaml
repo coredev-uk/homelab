@@ -6,3 +6,4 @@ namespace: jellyfin
 resources:
   - deployment.yaml
   - ingress.yaml
+  - cronjob-restart.yaml
