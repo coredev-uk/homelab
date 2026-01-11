@@ -23,7 +23,3 @@ migration-backup-*/
 # Local config
 kubeconfig
 *.local
-
-# Secret YAML files in manifests
-**/secrets.yaml
-**/secret.yaml

@@ -211,3 +211,23 @@ configMap:
             - authorization_code
           response_types:
             - code
+        
+        # Qui qBittorrent UI client
+        - client_id: qui
+          client_name: Qui qBittorrent UI
+          client_secret:
+            path: /secrets/authelia-secrets/qui-client-secret
+          public: false
+          authorization_policy: one_factor
+          redirect_uris:
+            - https://qbittorrent.home.coredev.uk/api/auth/oidc/callback
+          scopes:
+            - openid
+            - profile
+            - email
+          userinfo_signed_response_alg: none
+          token_endpoint_auth_method: client_secret_post
+          grant_types:
+            - authorization_code
+          response_types:
+            - code
