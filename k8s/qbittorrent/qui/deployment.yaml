@@ -17,6 +17,19 @@ spec:
       labels:
         app: qui
     spec:
+      # Use Pi-hole DNS to resolve home.coredev.uk domains for OIDC
+      dnsPolicy: "None"
+      dnsConfig:
+        nameservers:
+          - "192.168.20.20"  # Pi-hole
+          - "10.96.0.10"     # CoreDNS (for cluster.local)
+        searches:
+          - "qbittorrent.svc.cluster.local"
+          - "svc.cluster.local"
+          - "cluster.local"
+        options:
+          - name: ndots
+            value: "5"
       containers:
         - name: qui
           image: ghcr.io/autobrr/qui:latest
