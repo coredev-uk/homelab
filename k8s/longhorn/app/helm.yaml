@@ -20,8 +20,6 @@ spec:
   values:
     preUpgradeChecker:
       jobEnabled: false
-    longhornUI:
-      replicas: 1
     service:
       ui:
         type: ClusterIP

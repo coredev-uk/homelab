@@ -27,9 +27,9 @@ spec:
   targetNamespace: cert-manager
   install:
     createNamespace: true
-    crds: CreateReplace
+    crds: Skip
   upgrade:
-    crds: CreateReplace
+    crds: Skip
   values:
     # Install CRDs as part of installation
     crds:
@@ -40,6 +40,27 @@ spec:
     global:
       leaderElection:
         namespace: cert-manager
+    
+    # Resource limits for homelab
+    resources:
+      limits:
+        memory: 256Mi
+      requests:
+        memory: 128Mi
+    
+    webhook:
+      resources:
+        limits:
+          memory: 128Mi
+        requests:
+          memory: 64Mi
+    
+    cainjector:
+      resources:
+        limits:
+          memory: 256Mi
+        requests:
+          memory: 128Mi
     
     # Enable Prometheus ServiceMonitor
     prometheus:

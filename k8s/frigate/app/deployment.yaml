@@ -28,8 +28,10 @@ spec:
         app.kubernetes.io/component: nvr
         app.kubernetes.io/part-of: homelab
     spec:
-      nodeSelector:
-        frigate.feature.node.kubernetes.io/coral-tpu: "true"
+      # tolerations:
+      #   - key: coral-tpu
+      #     operator: Exists
+      #     effect: NoSchedule
       containers:
         - name: frigate
           image: ghcr.io/blakeblackshear/frigate:0.16.3
@@ -112,7 +114,7 @@ spec:
             successThreshold: 1
           resources:
             requests:
-              memory: "2Gi"
+              memory: "4Gi"
               cpu: "500m"
             limits:
               memory: "4Gi"
