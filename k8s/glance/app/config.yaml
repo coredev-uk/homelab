@@ -759,7 +759,7 @@ pages:
             cache: 1s
             parameters:
               show-if: |
-                (namespace != "argocd") and
+                ("glance/name" in annotations) and
                 ("glance/hide" not in annotations || annotations["glance/hide"] != "true")
 
           - type: releases
