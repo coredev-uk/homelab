@@ -19,7 +19,8 @@ spec:
         app: intel-gpu-plugin
     spec:
       tolerations:
-      - operator: Exists
+      - key: intel-gpu
+        operator: Exists
         effect: NoSchedule
       containers:
       - name: intel-gpu-plugin
