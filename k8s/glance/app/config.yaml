@@ -531,6 +531,9 @@ pages:
                   - title: Homebridge
                     url: https://homebridge.home.coredev.uk
                     icon: si:homebridge
+                  - title: Traefik
+                    url: https://traefik.home.coredev.uk
+                    icon: si:traefikproxy
 
               - title: Media Stack
                 links:
