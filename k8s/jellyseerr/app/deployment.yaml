@@ -4,7 +4,10 @@ metadata:
   name: jellyseerr
   namespace: jellyseerr
   labels:
-    app: jellyseerr
+    app.kubernetes.io/name: jellyseerr
+    app.kubernetes.io/instance: jellyseerr
+    app.kubernetes.io/component: media-requests
+    app.kubernetes.io/part-of: media-stack
   annotations:
     glance/name: "Jellyseerr"
     glance/icon: "di:jellyseerr"
@@ -14,11 +17,15 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: jellyseerr
+      app.kubernetes.io/name: jellyseerr
+      app.kubernetes.io/instance: jellyseerr
   template:
     metadata:
       labels:
-        app: jellyseerr
+        app.kubernetes.io/name: jellyseerr
+        app.kubernetes.io/instance: jellyseerr
+        app.kubernetes.io/component: media-requests
+        app.kubernetes.io/part-of: media-stack
     spec:
       containers:
         - name: jellyseerr
@@ -85,7 +92,8 @@ metadata:
   namespace: jellyseerr
 spec:
   selector:
-    app: jellyseerr
+    app.kubernetes.io/name: jellyseerr
+    app.kubernetes.io/instance: jellyseerr
   ports:
     - port: 5055
       targetPort: 5055

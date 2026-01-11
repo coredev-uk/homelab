@@ -4,7 +4,10 @@ metadata:
   name: notifiarr
   namespace: notifiarr
   labels:
-    app: notifiarr
+    app.kubernetes.io/name: notifiarr
+    app.kubernetes.io/instance: notifiarr
+    app.kubernetes.io/component: notifications
+    app.kubernetes.io/part-of: media-stack
   annotations:
     glance/name: "Notifiarr"
     glance/icon: "di:notifiarr"
@@ -14,11 +17,15 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: notifiarr
+      app.kubernetes.io/name: notifiarr
+      app.kubernetes.io/instance: notifiarr
   template:
     metadata:
       labels:
-        app: notifiarr
+        app.kubernetes.io/name: notifiarr
+        app.kubernetes.io/instance: notifiarr
+        app.kubernetes.io/component: notifications
+        app.kubernetes.io/part-of: media-stack
     spec:
       serviceAccountName: notifiarr
       securityContext:
@@ -126,7 +133,8 @@ metadata:
   namespace: notifiarr
 spec:
   selector:
-    app: notifiarr
+    app.kubernetes.io/name: notifiarr
+    app.kubernetes.io/instance: notifiarr
   ports:
     - port: 5454
       targetPort: 5454

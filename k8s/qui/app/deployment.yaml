@@ -4,23 +4,30 @@ metadata:
   name: qui
   namespace: qui
   labels:
-    app: qui
+    app.kubernetes.io/name: qui
+    app.kubernetes.io/instance: qui
+    app.kubernetes.io/component: web-ui
+    app.kubernetes.io/part-of: media-stack
   annotations:
     glance/name: "Qui"
-    glance/icon: "si:qbittorrent"
+    glance/icon: "sh:qui"
     glance/url: "https://qui.home.coredev.uk"
-    glance/description: "qBittorrent Web UI"
+    glance/description: "Web interface for qBittorrent"
 spec:
   replicas: 1
   strategy:
     type: Recreate
   selector:
     matchLabels:
-      app: qui
+      app.kubernetes.io/name: qui
+      app.kubernetes.io/instance: qui
   template:
     metadata:
       labels:
-        app: qui
+        app.kubernetes.io/name: qui
+        app.kubernetes.io/instance: qui
+        app.kubernetes.io/component: web-ui
+        app.kubernetes.io/part-of: media-stack
     spec:
       # Use Pi-hole DNS to resolve home.coredev.uk domains for OIDC
       dnsPolicy: "None"
@@ -126,11 +133,10 @@ kind: Service
 metadata:
   name: qui
   namespace: qui
-  labels:
-    app: qui
 spec:
   selector:
-    app: qui
+    app.kubernetes.io/name: qui
+    app.kubernetes.io/instance: qui
   ports:
     - port: 7476
       targetPort: 7476

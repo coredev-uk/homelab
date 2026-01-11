@@ -4,7 +4,10 @@ metadata:
   name: homebridge
   namespace: homebridge
   labels:
-    app: homebridge
+    app.kubernetes.io/name: homebridge
+    app.kubernetes.io/instance: homebridge
+    app.kubernetes.io/component: homekit-bridge
+    app.kubernetes.io/part-of: homelab
   annotations:
     glance/name: "Homebridge"
     glance/icon: "si:homebridge"
@@ -16,11 +19,15 @@ spec:
     type: Recreate
   selector:
     matchLabels:
-      app: homebridge
+      app.kubernetes.io/name: homebridge
+      app.kubernetes.io/instance: homebridge
   template:
     metadata:
       labels:
-        app: homebridge
+        app.kubernetes.io/name: homebridge
+        app.kubernetes.io/instance: homebridge
+        app.kubernetes.io/component: homekit-bridge
+        app.kubernetes.io/part-of: homelab
     spec:
       # CRITICAL: hostNetwork is required for HomeKit mDNS discovery
       hostNetwork: true
@@ -93,7 +100,8 @@ metadata:
   namespace: homebridge
 spec:
   selector:
-    app: homebridge
+    app.kubernetes.io/name: homebridge
+    app.kubernetes.io/instance: homebridge
   ports:
     - name: ui
       port: 8581

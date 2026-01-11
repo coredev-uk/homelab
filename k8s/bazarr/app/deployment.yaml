@@ -4,7 +4,10 @@ metadata:
   name: bazarr
   namespace: bazarr
   labels:
-    app: bazarr
+    app.kubernetes.io/name: bazarr
+    app.kubernetes.io/instance: bazarr
+    app.kubernetes.io/component: subtitle-management
+    app.kubernetes.io/part-of: media-stack
   annotations:
     glance/name: "Bazarr"
     glance/icon: "di:bazarr"
@@ -14,11 +17,15 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: bazarr
+      app.kubernetes.io/name: bazarr
+      app.kubernetes.io/instance: bazarr
   template:
     metadata:
       labels:
-        app: bazarr
+        app.kubernetes.io/name: bazarr
+        app.kubernetes.io/instance: bazarr
+        app.kubernetes.io/component: subtitle-management
+        app.kubernetes.io/part-of: media-stack
     spec:
       containers:
         - name: bazarr
@@ -97,7 +104,8 @@ metadata:
   namespace: bazarr
 spec:
   selector:
-    app: bazarr
+    app.kubernetes.io/name: bazarr
+    app.kubernetes.io/instance: bazarr
   ports:
     - port: 6767
       targetPort: 6767

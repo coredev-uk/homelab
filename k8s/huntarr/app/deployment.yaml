@@ -4,7 +4,10 @@ metadata:
   name: huntarr
   namespace: huntarr
   labels:
-    app: huntarr
+    app.kubernetes.io/name: huntarr
+    app.kubernetes.io/instance: huntarr
+    app.kubernetes.io/component: duplicate-hunter
+    app.kubernetes.io/part-of: media-stack
   annotations:
     glance/name: "Huntarr"
     glance/icon: "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/webp/huntarr.webp"
@@ -14,11 +17,15 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: huntarr
+      app.kubernetes.io/name: huntarr
+      app.kubernetes.io/instance: huntarr
   template:
     metadata:
       labels:
-        app: huntarr
+        app.kubernetes.io/name: huntarr
+        app.kubernetes.io/instance: huntarr
+        app.kubernetes.io/component: duplicate-hunter
+        app.kubernetes.io/part-of: media-stack
     spec:
       containers:
         - name: huntarr
@@ -91,7 +98,8 @@ metadata:
   namespace: huntarr
 spec:
   selector:
-    app: huntarr
+    app.kubernetes.io/name: huntarr
+    app.kubernetes.io/instance: huntarr
   ports:
     - port: 9705
       targetPort: 9705

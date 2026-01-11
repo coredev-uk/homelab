@@ -85,7 +85,8 @@ metadata:
 spec:
   type: LoadBalancer
   selector:
-    app: vector
+    app.kubernetes.io/name: vector
+    app.kubernetes.io/instance: vector
   ports:
     - name: talos-kernel
       port: 6001
@@ -105,15 +106,24 @@ kind: Deployment
 metadata:
   name: vector
   namespace: vector
+  labels:
+    app.kubernetes.io/name: vector
+    app.kubernetes.io/instance: vector
+    app.kubernetes.io/component: log-aggregator
+    app.kubernetes.io/part-of: monitoring-stack
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: vector
+      app.kubernetes.io/name: vector
+      app.kubernetes.io/instance: vector
   template:
     metadata:
       labels:
-        app: vector
+        app.kubernetes.io/name: vector
+        app.kubernetes.io/instance: vector
+        app.kubernetes.io/component: log-aggregator
+        app.kubernetes.io/part-of: monitoring-stack
     spec:
       containers:
         - name: vector

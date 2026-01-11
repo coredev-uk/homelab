@@ -4,18 +4,25 @@ metadata:
   name: glance
   namespace: glance
   labels:
-    app: glance
+    app.kubernetes.io/name: glance
+    app.kubernetes.io/instance: glance
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/part-of: homelab
   annotations:
     glance/hide: "true"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: glance
+      app.kubernetes.io/name: glance
+      app.kubernetes.io/instance: glance
   template:
     metadata:
       labels:
-        app: glance
+        app.kubernetes.io/name: glance
+        app.kubernetes.io/instance: glance
+        app.kubernetes.io/component: dashboard
+        app.kubernetes.io/part-of: homelab
     spec:
       containers:
         - name: glance
@@ -107,7 +114,8 @@ metadata:
   namespace: glance
 spec:
   selector:
-    app: glance
+    app.kubernetes.io/name: glance
+    app.kubernetes.io/instance: glance
   ports:
     - name: http
       port: 8080

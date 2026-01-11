@@ -3,6 +3,11 @@ kind: Deployment
 metadata:
   name: qbittorrent
   namespace: qbittorrent
+  labels:
+    app.kubernetes.io/name: qbittorrent
+    app.kubernetes.io/instance: qbittorrent
+    app.kubernetes.io/component: download-client
+    app.kubernetes.io/part-of: media-stack
   annotations:
     glance/name: "qBittorrent"
     glance/icon: "si:qbittorrent"
@@ -14,11 +19,15 @@ spec:
     type: Recreate
   selector:
     matchLabels:
-      app: qbittorrent
+      app.kubernetes.io/name: qbittorrent
+      app.kubernetes.io/instance: qbittorrent
   template:
     metadata:
       labels:
-        app: qbittorrent
+        app.kubernetes.io/name: qbittorrent
+        app.kubernetes.io/instance: qbittorrent
+        app.kubernetes.io/component: download-client
+        app.kubernetes.io/part-of: media-stack
     spec:
       containers:
         # Gluetun VPN sidecar for qBittorrent
@@ -179,11 +188,10 @@ kind: Service
 metadata:
   name: qbittorrent
   namespace: qbittorrent
-  labels:
-    app: qbittorrent
 spec:
   selector:
-    app: qbittorrent
+    app.kubernetes.io/name: qbittorrent
+    app.kubernetes.io/instance: qbittorrent
   ports:
     - port: 8080
       targetPort: 8080
@@ -199,11 +207,10 @@ kind: Service
 metadata:
   name: qbittorrent-web
   namespace: qbittorrent
-  labels:
-    app: qbittorrent
 spec:
   selector:
-    app: qbittorrent
+    app.kubernetes.io/name: qbittorrent
+    app.kubernetes.io/instance: qbittorrent
   ports:
     - port: 8080
       targetPort: 8080

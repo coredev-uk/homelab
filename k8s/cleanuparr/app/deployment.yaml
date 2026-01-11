@@ -4,7 +4,10 @@ metadata:
   name: cleanuparr
   namespace: cleanuparr
   labels:
-    app: cleanuparr
+    app.kubernetes.io/name: cleanuparr
+    app.kubernetes.io/instance: cleanuparr
+    app.kubernetes.io/component: cleanup
+    app.kubernetes.io/part-of: media-stack
   annotations:
     glance/name: "Cleanuparr"
     glance/icon: "di:cleanuperr"
@@ -14,11 +17,15 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: cleanuparr
+      app.kubernetes.io/name: cleanuparr
+      app.kubernetes.io/instance: cleanuparr
   template:
     metadata:
       labels:
-        app: cleanuparr
+        app.kubernetes.io/name: cleanuparr
+        app.kubernetes.io/instance: cleanuparr
+        app.kubernetes.io/component: cleanup
+        app.kubernetes.io/part-of: media-stack
     spec:
       containers:
         - name: cleanuparr
@@ -93,7 +100,8 @@ metadata:
   namespace: cleanuparr
 spec:
   selector:
-    app: cleanuparr
+    app.kubernetes.io/name: cleanuparr
+    app.kubernetes.io/instance: cleanuparr
   ports:
     - port: 11011
       targetPort: 11011

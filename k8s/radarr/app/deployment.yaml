@@ -4,7 +4,10 @@ metadata:
   name: radarr
   namespace: radarr
   labels:
-    app: radarr
+    app.kubernetes.io/name: radarr
+    app.kubernetes.io/instance: radarr
+    app.kubernetes.io/component: movie-management
+    app.kubernetes.io/part-of: media-stack
   annotations:
     glance/name: "Radarr"
     glance/icon: "di:radarr"
@@ -14,11 +17,15 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: radarr
+      app.kubernetes.io/name: radarr
+      app.kubernetes.io/instance: radarr
   template:
     metadata:
       labels:
-        app: radarr
+        app.kubernetes.io/name: radarr
+        app.kubernetes.io/instance: radarr
+        app.kubernetes.io/component: movie-management
+        app.kubernetes.io/part-of: media-stack
     spec:
       containers:
         - name: radarr
@@ -97,7 +104,8 @@ metadata:
   namespace: radarr
 spec:
   selector:
-    app: radarr
+    app.kubernetes.io/name: radarr
+    app.kubernetes.io/instance: radarr
   ports:
     - port: 7878
       targetPort: 7878

@@ -4,7 +4,10 @@ metadata:
   name: sabnzbd
   namespace: sabnzbd
   labels:
-    app: sabnzbd
+    app.kubernetes.io/name: sabnzbd
+    app.kubernetes.io/instance: sabnzbd
+    app.kubernetes.io/component: download-client
+    app.kubernetes.io/part-of: media-stack
   annotations:
     glance/name: "SABnzbd"
     glance/icon: "di:sabnzbd"
@@ -16,11 +19,15 @@ spec:
     type: Recreate
   selector:
     matchLabels:
-      app: sabnzbd
+      app.kubernetes.io/name: sabnzbd
+      app.kubernetes.io/instance: sabnzbd
   template:
     metadata:
       labels:
-        app: sabnzbd
+        app.kubernetes.io/name: sabnzbd
+        app.kubernetes.io/instance: sabnzbd
+        app.kubernetes.io/component: download-client
+        app.kubernetes.io/part-of: media-stack
     spec:
       containers:
         # Gluetun VPN container
@@ -203,11 +210,10 @@ kind: Service
 metadata:
   name: sabnzbd
   namespace: sabnzbd
-  labels:
-    app: sabnzbd
 spec:
   selector:
-    app: sabnzbd
+    app.kubernetes.io/name: sabnzbd
+    app.kubernetes.io/instance: sabnzbd
   ports:
     - port: 8080
       targetPort: 8080
@@ -222,12 +228,10 @@ kind: Service
 metadata:
   name: gluetun-proxy
   namespace: sabnzbd
-  labels:
-    app: sabnzbd
-    component: proxy
 spec:
   selector:
-    app: sabnzbd
+    app.kubernetes.io/name: sabnzbd
+    app.kubernetes.io/instance: sabnzbd
   ports:
     - port: 8888
       targetPort: 8888
