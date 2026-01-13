@@ -11,6 +11,9 @@ prometheus:
   prometheusSpec:
     retention: 7d
     retentionSize: ""
+    # Increase scrape interval to reduce load (default was 30s)
+    scrapeInterval: 60s
+    evaluationInterval: 60s
     storageSpec:
       volumeClaimTemplate:
         spec:
@@ -42,9 +45,15 @@ prometheus:
       - job_name: 'sabnzbd-vpn-exporter'
         static_configs:
           - targets: ['sabnzbd-vpn-exporter.sabnzbd.svc.cluster.local:9090']
+      # Longhorn with metric filtering to reduce high-cardinality histograms
       - job_name: 'longhorn'
         static_configs:
           - targets: ['longhorn-backend.longhorn-system.svc.cluster.local:9500']
+        metric_relabel_configs:
+          # Drop high-cardinality REST client histogram buckets
+          - source_labels: [__name__]
+            regex: 'longhorn_rest_client_(rate_limiter_latency|request_latency)_seconds_bucket'
+            action: drop
   
   # Prometheus ingress
   ingress:
@@ -177,6 +186,49 @@ nodeExporter:
 # Kube-state-metrics configuration
 kubeStateMetrics:
   enabled: true
+
+# API Server monitoring - reduce high-cardinality histogram metrics
+kubeApiServer:
+  enabled: true
+  serviceMonitor:
+    metricRelabelings:
+      # Drop high-cardinality histogram bucket metrics (saves ~30k series)
+      - sourceLabels: [__name__]
+        regex: 'apiserver_request_(duration|body_size|sli_duration)_seconds_bucket'
+        action: drop
+      - sourceLabels: [__name__]
+        regex: 'apiserver_(response_sizes|watch_list_duration|watch_cache_read_wait)_seconds_bucket'
+        action: drop
+      # Drop verbose request metrics we don't need for homelab
+      - sourceLabels: [__name__]
+        regex: 'apiserver_request_filter_duration_seconds_bucket'
+        action: drop
+      - sourceLabels: [__name__]
+        regex: 'apiserver_admission_.*_bucket'
+        action: drop
+
+# etcd monitoring - reduce histogram bucket cardinality
+kubeEtcd:
+  enabled: true
+  serviceMonitor:
+    metricRelabelings:
+      - sourceLabels: [__name__]
+        regex: 'etcd_request_duration_seconds_bucket'
+        action: drop
+
+# Kubelet monitoring - reduce cAdvisor cardinality
+kubelet:
+  enabled: true
+  serviceMonitor:
+    metricRelabelings:
+      # Drop high-cardinality container metrics we don't need
+      - sourceLabels: [__name__]
+        regex: 'container_(memory_failures_total|tasks_state)'
+        action: drop
+      # Drop prober histogram buckets
+      - sourceLabels: [__name__]
+        regex: 'prober_probe_duration_seconds_bucket'
+        action: drop
 
 # Default rules for monitoring
 defaultRules:
