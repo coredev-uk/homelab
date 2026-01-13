@@ -41,3 +41,5 @@ spec:
       allowRecurringJobWhileVolumeDetached: "true"
       # Auto-delete old backups when backup volume is deleted
       autoDeletePodWhenVolumeDetachedUnexpectedly: "true"
+    persistence:
+      defaultClassReplicaCount: 1
