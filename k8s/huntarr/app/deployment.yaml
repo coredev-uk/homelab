@@ -70,7 +70,7 @@ spec:
               path: /health
               port: 9705
             initialDelaySeconds: 30
-            periodSeconds: 10
+            periodSeconds: 30
             timeoutSeconds: 5
             failureThreshold: 3
       volumes:

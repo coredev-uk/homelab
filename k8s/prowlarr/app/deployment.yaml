@@ -76,7 +76,7 @@ spec:
               path: /ping
               port: 9696
             initialDelaySeconds: 30
-            periodSeconds: 10
+            periodSeconds: 30
 
         # Byparr - CloudFlare bypass for protected indexers (replaces FlareSolverr)
         - name: byparr

@@ -72,7 +72,7 @@ spec:
               path: /
               port: 6767
             initialDelaySeconds: 30
-            periodSeconds: 10
+            periodSeconds: 30
             timeoutSeconds: 5
             failureThreshold: 3
       volumes:

@@ -68,7 +68,7 @@ spec:
               path: /health
               port: 11011
             initialDelaySeconds: 30
-            periodSeconds: 10
+            periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 3
       volumes:

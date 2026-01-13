@@ -92,7 +92,7 @@ spec:
               path: /
               port: 7476
             initialDelaySeconds: 30
-            periodSeconds: 20
+            periodSeconds: 30
             timeoutSeconds: 5
             failureThreshold: 3
           readinessProbe:
@@ -100,7 +100,7 @@ spec:
               path: /
               port: 7476
             initialDelaySeconds: 15
-            periodSeconds: 10
+            periodSeconds: 30
             timeoutSeconds: 3
             failureThreshold: 3
       volumes:

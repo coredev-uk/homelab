@@ -76,7 +76,7 @@ spec:
               port: 2000
             failureThreshold: 3
             initialDelaySeconds: 10
-            periodSeconds: 10
+            periodSeconds: 30
             timeoutSeconds: 5
           resources:
             requests:
