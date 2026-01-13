@@ -194,10 +194,22 @@ kubeApiServer:
     metricRelabelings:
       # Drop high-cardinality histogram bucket metrics (saves ~30k series)
       - sourceLabels: [__name__]
-        regex: 'apiserver_request_(duration|body_size|sli_duration)_seconds_bucket'
+        regex: 'apiserver_request_duration_seconds_bucket'
         action: drop
       - sourceLabels: [__name__]
-        regex: 'apiserver_(response_sizes|watch_list_duration|watch_cache_read_wait)_seconds_bucket'
+        regex: 'apiserver_request_body_size_bytes_bucket'
+        action: drop
+      - sourceLabels: [__name__]
+        regex: 'apiserver_request_sli_duration_seconds_bucket'
+        action: drop
+      - sourceLabels: [__name__]
+        regex: 'apiserver_response_sizes_bucket'
+        action: drop
+      - sourceLabels: [__name__]
+        regex: 'apiserver_watch_list_duration_seconds_bucket'
+        action: drop
+      - sourceLabels: [__name__]
+        regex: 'apiserver_watch_cache_read_wait_seconds_bucket'
         action: drop
       # Drop verbose request metrics we don't need for homelab
       - sourceLabels: [__name__]
@@ -225,9 +237,15 @@ kubelet:
       - sourceLabels: [__name__]
         regex: 'container_(memory_failures_total|tasks_state)'
         action: drop
+    probesMetricRelabelings:
       # Drop prober histogram buckets
       - sourceLabels: [__name__]
         regex: 'prober_probe_duration_seconds_bucket'
+        action: drop
+    cAdvisorMetricRelabelings:
+      # Drop high-cardinality cAdvisor metrics
+      - sourceLabels: [__name__]
+        regex: 'container_(memory_failures_total|tasks_state)'
         action: drop
 
 # Default rules for monitoring
