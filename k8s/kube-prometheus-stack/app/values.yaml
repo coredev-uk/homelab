@@ -218,6 +218,10 @@ kubeApiServer:
       - sourceLabels: [__name__]
         regex: 'apiserver_admission_.*_bucket'
         action: drop
+      # Drop etcd histogram buckets (exposed via apiserver)
+      - sourceLabels: [__name__]
+        regex: 'etcd_request_duration_seconds_bucket'
+        action: drop
 
 # etcd monitoring - reduce histogram bucket cardinality
 kubeEtcd:
