@@ -1,6 +1,8 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
+  "extends": [
+    "config:recommended"
+  ],
   "prHourlyLimit": 0,
   "platformAutomerge": true,
   "flux": {
@@ -11,24 +13,37 @@
     ]
   },
   "kubernetes": {
-    "managerFilePatterns": ["/k8s/.+\\.ya?ml$/"]
+    "managerFilePatterns": [
+      "/k8s/.+\\.ya?ml$/"
+    ]
   },
   "packageRules": [
     {
       "description": "Automerge minor and patch updates",
-      "matchUpdateTypes": ["minor", "patch"],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
       "automerge": true
     },
     {
       "description": "LinuxServer.io version tags - tracks 'version-X.Y.Z' format only. Per LSIO docs: version tags are dynamic (get OS updates) while build tags are static. See: https://www.linuxserver.io/blog/docker-tags-so-many-tags-so-little-time",
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["lscr.io/linuxserver/**"],
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "lscr.io/linuxserver/**"
+      ],
       "versioning": "regex:^version-v?(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:-r(?<revision>\\d+))?$"
     },
     {
       "description": "Flux system updates are handled by the update-flux.yaml workflow",
-      "matchManagers": ["flux"],
-      "matchPaths": ["flux/flux-system/gotk-components.yaml"],
+      "matchManagers": [
+        "flux"
+      ],
+      "matchFileNames": [
+        "flux/flux-system/gotk-components.yaml"
+      ],
       "enabled": false
     }
   ]
