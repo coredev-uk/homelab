@@ -49,6 +49,11 @@ spec:
           - "mediamanager.svc.cluster.local"
           - "svc.cluster.local"
           - "cluster.local"
+      
+      # Security context for volume permissions
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: "OnRootMismatch"
 
       containers:
         # PostgreSQL 17 database
