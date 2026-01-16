@@ -13,6 +13,9 @@ resources:
   - ../../k8s/qui/flux.yaml
   - ../../k8s/sabnzbd/flux.yaml
   
+  # Media management (replaces Sonarr/Radarr/Seerr)
+  - ../../k8s/mediamanager/flux.yaml
+  
   # Media consumption
   - ../../k8s/jellyfin/flux.yaml
   - ../../k8s/jellyseerr/flux.yaml

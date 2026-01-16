@@ -194,6 +194,15 @@ configMap:
             - groups
             - preferred_username
       
+      # Authorization policies for group-based access
+      authorization_policies:
+        media_admin:
+          default_policy: deny
+          rules:
+            - policy: one_factor
+              subject:
+                - group:media_admin
+      
       # OIDC Clients
       clients:
         # Grafana client
@@ -231,6 +240,27 @@ configMap:
             - openid
             - profile
             - email
+          userinfo_signed_response_alg: none
+          token_endpoint_auth_method: client_secret_post
+          grant_types:
+            - authorization_code
+          response_types:
+            - code
+        
+        # MediaManager client - restricted to media_admin group
+        - client_id: mediamanager
+          client_name: MediaManager
+          client_secret:
+            path: /secrets/authelia-secrets/mediamanager-client-secret
+          public: false
+          authorization_policy: media_admin
+          redirect_uris:
+            - https://mediamanager.home.coredev.uk/api/v1/auth/oauth/callback
+          scopes:
+            - openid
+            - profile
+            - email
+            - groups
           userinfo_signed_response_alg: none
           token_endpoint_auth_method: client_secret_post
           grant_types:

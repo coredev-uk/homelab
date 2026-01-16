@@ -1,0 +1,261 @@
+#
+# MediaManager - Modern media management system
+# Replaces Sonarr, Radarr, and Seerr with a single application
+# https://github.com/maxdorninger/MediaManager
+#
+# Configuration is declarative via config.toml ConfigMap
+# OIDC authentication via Authelia
+# Download clients: qBittorrent, SABnzbd
+# Indexer: Prowlarr
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mediamanager
+  namespace: mediamanager
+  labels:
+    app.kubernetes.io/name: mediamanager
+    app.kubernetes.io/instance: mediamanager
+    app.kubernetes.io/component: media-management
+    app.kubernetes.io/part-of: media-stack
+  annotations:
+    glance/name: "MediaManager"
+    glance/icon: "mdi:movie-open"
+    glance/url: "https://mediamanager.home.coredev.uk"
+    glance/description: "Media Library Management"
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mediamanager
+      app.kubernetes.io/instance: mediamanager
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: mediamanager
+        app.kubernetes.io/instance: mediamanager
+        app.kubernetes.io/component: media-management
+        app.kubernetes.io/part-of: media-stack
+    spec:
+      # Use Pi-hole DNS to resolve home.coredev.uk domains for OIDC
+      dnsPolicy: "None"
+      dnsConfig:
+        nameservers:
+          - "192.168.20.20"  # Pi-hole
+          - "10.96.0.10"     # CoreDNS
+        searches:
+          - "mediamanager.svc.cluster.local"
+          - "svc.cluster.local"
+          - "cluster.local"
+
+      containers:
+        # PostgreSQL 17 database
+        - name: postgres
+          image: postgres:17.2-alpine
+          env:
+            - name: POSTGRES_USER
+              value: "mediamanager"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mediamanager-secrets
+                  key: postgres-password
+            - name: POSTGRES_DB
+              value: "mediamanager"
+            - name: PGDATA
+              value: "/var/lib/postgresql/data/pgdata"
+          ports:
+            - containerPort: 5432
+              name: postgres
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          startupProbe:
+            exec:
+              command:
+                - pg_isready
+                - -d
+                - mediamanager
+                - -U
+                - mediamanager
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -d
+                - mediamanager
+                - -U
+                - mediamanager
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - pg_isready
+                - -d
+                - mediamanager
+                - -U
+                - mediamanager
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+
+        # MediaManager - unified frontend/backend application
+        - name: mediamanager
+          image: ghcr.io/maxdorninger/mediamanager/mediamanager:v1.12.1
+          env:
+            - name: TZ
+              value: "Europe/London"
+            - name: CONFIG_DIR
+              value: "/app/config"
+            # Database connection - use localhost since postgres is in same pod
+            - name: MEDIAMANAGER_DATABASE__HOST
+              value: "localhost"
+            - name: MEDIAMANAGER_DATABASE__PORT
+              value: "5432"
+            - name: MEDIAMANAGER_DATABASE__USER
+              value: "mediamanager"
+            - name: MEDIAMANAGER_DATABASE__PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mediamanager-secrets
+                  key: postgres-password
+            - name: MEDIAMANAGER_DATABASE__DBNAME
+              value: "mediamanager"
+            # Auth secrets from Kubernetes Secret
+            - name: MEDIAMANAGER_AUTH__TOKEN_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mediamanager-secrets
+                  key: token-secret
+            - name: MEDIAMANAGER_AUTH__OPENID_CONNECT__CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mediamanager-secrets
+                  key: oidc-client-secret
+            # Prowlarr API key
+            - name: MEDIAMANAGER_INDEXERS__PROWLARR__API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mediamanager-secrets
+                  key: prowlarr-api-key
+            # qBittorrent credentials
+            - name: MEDIAMANAGER_TORRENTS__QBITTORRENT__PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mediamanager-secrets
+                  key: qbittorrent-password
+            # SABnzbd API key
+            - name: MEDIAMANAGER_TORRENTS__SABNZBD__API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mediamanager-secrets
+                  key: sabnzbd-api-key
+          ports:
+            - containerPort: 8000
+              name: http
+          volumeMounts:
+            - name: config
+              mountPath: /app/config
+            - name: data
+              mountPath: /data
+            - name: images
+              mountPath: /data/images
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+          startupProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 60
+          livenessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8000
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /api/v1/health
+              port: 8000
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+      volumes:
+        - name: config
+          configMap:
+            name: mediamanager-config
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: mediamanager-postgres
+        - name: data
+          nfs:
+            server: 192.168.20.40
+            path: /var/nfs/shared/Homelab
+        - name: images
+          persistentVolumeClaim:
+            claimName: mediamanager-images
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mediamanager-postgres
+  namespace: mediamanager
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: longhorn
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mediamanager-images
+  namespace: mediamanager
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: longhorn
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mediamanager
+  namespace: mediamanager
+spec:
+  selector:
+    app.kubernetes.io/name: mediamanager
+    app.kubernetes.io/instance: mediamanager
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000

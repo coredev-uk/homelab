@@ -1,0 +1,74 @@
+#
+# MediaManager Ingress Configuration
+# Single unified application serving on port 8000
+# Using Authelia forward auth for the web UI
+#
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: mediamanager-ingressroute
+  namespace: mediamanager
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    # API routes - bypass Authelia for OAuth callback and health check
+    - match: Host(`mediamanager.home.coredev.uk`) && (PathPrefix(`/api/v1/auth/oauth`) || PathPrefix(`/api/v1/health`))
+      kind: Rule
+      services:
+        - name: mediamanager
+          port: 8000
+    # All other routes - protected by Authelia
+    - match: Host(`mediamanager.home.coredev.uk`)
+      kind: Rule
+      middlewares:
+        - name: authelia-forwardauth
+          namespace: authelia
+      services:
+        - name: mediamanager
+          port: 8000
+  tls:
+    secretName: mediamanager-tls
+---
+# HTTP to HTTPS redirect
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: mediamanager-redirect
+  namespace: mediamanager
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`mediamanager.home.coredev.uk`)
+      kind: Rule
+      middlewares:
+        - name: https-redirect
+      services:
+        - name: mediamanager
+          port: 8000
+---
+# HTTPS Redirect Middleware
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: https-redirect
+  namespace: mediamanager
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+---
+# TLS Certificate via cert-manager
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: mediamanager-tls
+  namespace: mediamanager
+spec:
+  secretName: mediamanager-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - mediamanager.home.coredev.uk

@@ -1,0 +1,175 @@
+# MediaManager Configuration
+# Declarative configuration - secrets are injected via environment variables
+# https://maximilian-dorninger.gitbook.io/mediamanager/configuration
+
+[misc]
+# Frontend URL must match your ingress
+frontend_url = "https://mediamanager.home.coredev.uk"
+cors_urls = ["https://mediamanager.home.coredev.uk"]
+
+# Media directories - matches NFS mount at /data
+image_directory = "/data/images"
+tv_directory = "/data/TV"
+movie_directory = "/data/Movies"
+torrent_directory = "/data/downloads"
+
+development = false
+
+# Custom TV Libraries
+[[misc.tv_libraries]]
+name = "TV Shows"
+path = "/data/TV"
+
+# Custom Movie Libraries
+[[misc.movie_libraries]]
+name = "Movies"
+path = "/data/Movies"
+
+[database]
+# Database connection configured via environment variables
+host = "localhost"
+port = 5432
+user = "mediamanager"
+password = "mediamanager"
+dbname = "mediamanager"
+
+[auth]
+# Token secret configured via MEDIAMANAGER_AUTH__TOKEN_SECRET env var
+token_secret = "placeholder"
+session_lifetime = 604800  # 1 week
+admin_emails = ["paul@coredev.uk"]
+email_password_resets = false
+
+# OpenID Connect via Authelia
+[auth.openid_connect]
+enabled = true
+client_id = "mediamanager"
+# client_secret configured via MEDIAMANAGER_AUTH__OPENID_CONNECT__CLIENT_SECRET env var
+client_secret = "placeholder"
+configuration_endpoint = "https://auth.home.coredev.uk/.well-known/openid-configuration"
+name = "Authelia"
+
+[notifications]
+# SMTP disabled - using OIDC authentication
+[notifications.smtp_config]
+smtp_host = ""
+smtp_port = 587
+smtp_user = ""
+smtp_password = ""
+from_email = ""
+use_tls = true
+
+[notifications.email_notifications]
+enabled = false
+emails = []
+
+[notifications.gotify]
+enabled = false
+api_key = ""
+url = ""
+
+[notifications.ntfy]
+enabled = false
+url = ""
+
+[notifications.pushover]
+enabled = false
+api_key = ""
+user = ""
+
+[torrents]
+# qBittorrent - connected via cluster service
+[torrents.qbittorrent]
+enabled = true
+host = "http://qbittorrent.qbittorrent.svc.cluster.local"
+port = 8080
+username = "admin"
+# password configured via MEDIAMANAGER_TORRENTS__QBITTORRENT__PASSWORD env var
+password = "placeholder"
+
+# Transmission disabled
+[torrents.transmission]
+enabled = false
+username = ""
+password = ""
+https_enabled = false
+host = ""
+port = 9091
+path = "/transmission/rpc"
+
+# SABnzbd - connected via cluster service
+[torrents.sabnzbd]
+enabled = true
+host = "http://sabnzbd.sabnzbd.svc.cluster.local"
+port = 8888
+# api_key configured via MEDIAMANAGER_TORRENTS__SABNZBD__API_KEY env var
+api_key = "placeholder"
+base_path = "/api"
+
+[indexers]
+# Prowlarr - connected via cluster service
+[indexers.prowlarr]
+enabled = true
+url = "http://prowlarr.prowlarr.svc.cluster.local:9696"
+# api_key configured via MEDIAMANAGER_INDEXERS__PROWLARR__API_KEY env var
+api_key = "placeholder"
+timeout_seconds = 60
+
+# Jackett disabled - using Prowlarr
+[indexers.jackett]
+enabled = false
+url = ""
+api_key = ""
+indexers = []
+timeout_seconds = 60
+
+# Scoring rules for torrent selection
+[[indexers.title_scoring_rules]]
+name = "prefer_h265"
+keywords = ["h265", "hevc", "x265", "h.265", "x.265"]
+score_modifier = 100
+negate = false
+
+[[indexers.title_scoring_rules]]
+name = "avoid_cam"
+keywords = ["cam", "ts", "hdcam", "hdts"]
+score_modifier = -10000
+negate = false
+
+[[indexers.title_scoring_rules]]
+name = "prefer_remux"
+keywords = ["remux"]
+score_modifier = 200
+negate = false
+
+[[indexers.title_scoring_rules]]
+name = "prefer_bluray"
+keywords = ["bluray", "blu-ray"]
+score_modifier = 50
+negate = false
+
+[[indexers.indexer_flag_scoring_rules]]
+name = "prefer_freeleech"
+flags = ["freeleech", "freeleech75"]
+score_modifier = 100
+negate = false
+
+[[indexers.indexer_flag_scoring_rules]]
+name = "reject_nuked"
+flags = ["nuked"]
+score_modifier = -10000
+negate = false
+
+[[indexers.scoring_rule_sets]]
+name = "default"
+libraries = ["ALL_TV", "ALL_MOVIES"]
+rule_names = ["prefer_h265", "avoid_cam", "prefer_remux", "prefer_bluray", "reject_nuked", "prefer_freeleech"]
+
+[metadata]
+[metadata.tmdb]
+tmdb_relay_url = "https://metadata-relay.dorninger.co/tmdb"
+primary_languages = ["en"]
+default_language = "en"
+
+[metadata.tvdb]
+tvdb_relay_url = "https://metadata-relay.dorninger.co/tvdb"
