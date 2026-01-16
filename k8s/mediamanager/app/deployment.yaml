@@ -58,7 +58,7 @@ spec:
       containers:
         # PostgreSQL 17 database
         - name: postgres
-          image: postgres:17.2-alpine
+          image: postgres:17.7-alpine
           env:
             - name: POSTGRES_USER
               value: "mediamanager"
