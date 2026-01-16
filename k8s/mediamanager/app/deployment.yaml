@@ -116,7 +116,7 @@ spec:
 
         # MediaManager - unified frontend/backend application
         - name: mediamanager
-          image: ghcr.io/maxdorninger/mediamanager/mediamanager:v1.12.1
+          image: quay.io/maxdorninger/mediamanager:1.12.1
           env:
             - name: TZ
               value: "Europe/London"
