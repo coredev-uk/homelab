@@ -194,6 +194,15 @@ configMap:
             - groups
             - preferred_username
       
+      # Authorization policies for group-based access
+      authorization_policies:
+        media_admin:
+          default_policy: deny
+          rules:
+            - policy: one_factor
+              subject:
+                - group:media_admin
+      
       # OIDC Clients
       clients:
         # Grafana client
