@@ -1,7 +1,7 @@
 #
 # MediaManager Ingress Configuration
 # Single unified application serving on port 8000
-# Using Authelia forward auth for the web UI
+# Using OIDC (OAuth) for authentication - no Authelia forward auth needed
 #
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
@@ -12,18 +12,9 @@ spec:
   entryPoints:
     - websecure
   routes:
-    # API routes - bypass Authelia for OAuth callback and health check
-    - match: Host(`mediamanager.home.coredev.uk`) && (PathPrefix(`/api/v1/auth/oauth`) || PathPrefix(`/api/v1/health`))
-      kind: Rule
-      services:
-        - name: mediamanager
-          port: 8000
-    # All other routes - protected by Authelia
+    # All routes - no Authelia middleware (using OIDC instead)
     - match: Host(`mediamanager.home.coredev.uk`)
       kind: Rule
-      middlewares:
-        - name: authelia-forwardauth
-          namespace: authelia
       services:
         - name: mediamanager
           port: 8000
