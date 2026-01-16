@@ -165,6 +165,9 @@ spec:
                 secretKeyRef:
                   name: mediamanager-secrets
                   key: sabnzbd-api-key
+            # Log to /tmp which is writable (config dir is read-only ConfigMap)
+            - name: LOG_FILE
+              value: "/tmp/media_manager.log"
           ports:
             - containerPort: 8000
               name: http
