@@ -60,7 +60,7 @@ spec:
               path: /
               port: 8581
             initialDelaySeconds: 30
-            periodSeconds: 10
+            periodSeconds: 30
             timeoutSeconds: 2
           volumeMounts:
             - name: storage
