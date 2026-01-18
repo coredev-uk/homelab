@@ -34,7 +34,7 @@ prometheus:
   enabled: true
   prometheusSpec:
     retention: 7d
-    retentionSize: ""
+    retentionSize: "18GB"
     # Increase scrape interval to reduce load (default was 30s)
     scrapeInterval: 60s
     evaluationInterval: 60s
