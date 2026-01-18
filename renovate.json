@@ -37,6 +37,17 @@
       "versioning": "regex:^version-v?(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:-r(?<revision>\\d+))?$"
     },
     {
+      "description": "Date-based versioning for Homebridge (YYYY-MM-DD) and Pi-hole (YYYY.MM.PATCH)",
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "homebridge/homebridge",
+        "pihole/pihole"
+      ],
+      "versioning": "loose"
+    },
+    {
       "description": "Flux system updates are handled by the update-flux.yaml workflow",
       "matchManagers": [
         "flux"
