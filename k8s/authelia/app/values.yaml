@@ -99,9 +99,11 @@ configMap:
   access_control:
     default_policy: deny
     rules:
+      # Authelia itself - no authentication required
       - domain: auth.home.coredev.uk
         policy: bypass
-      # API bypass rules (must be before wildcard rule)
+      
+      # API bypass rules (must be before group-specific rules)
       - domain: homebridge.home.coredev.uk
         resources:
           - '^/api/.*$'
@@ -111,8 +113,35 @@ configMap:
         resources:
           - '^/api/.*$'
         policy: bypass
-      # Default authentication for all other paths
-      - domain: '*.home.coredev.uk'
+      
+      # Media admin group - arr stack and related tools
+      - domain:
+          - radarr.home.coredev.uk
+          - sonarr.home.coredev.uk
+          - bazarr.home.coredev.uk
+          - prowlarr.home.coredev.uk
+          - sabnzbd.home.coredev.uk
+          - qbittorrent.home.coredev.uk
+          - huntarr.home.coredev.uk
+          - cleanuparr.home.coredev.uk
+          - notifiarr.home.coredev.uk
+        policy: one_factor
+        subject:
+          - "group:media_admin"
+      
+      # Cluster admin group - infrastructure services
+      - domain:
+          - traefik.home.coredev.uk
+          - longhorn.home.coredev.uk
+          - prometheus.home.coredev.uk
+          - pihole.home.coredev.uk
+          - homebridge.home.coredev.uk
+        policy: one_factor
+        subject:
+          - "group:cluster_admin"
+      
+      # Glance dashboard - accessible to all authenticated users
+      - domain: glance.home.coredev.uk
         policy: one_factor
   
   # Session configuration with Redis
