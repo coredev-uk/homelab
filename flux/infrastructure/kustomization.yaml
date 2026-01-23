@@ -26,4 +26,4 @@ resources:
   
   # DNS & Security
   - ../../k8s/pihole/flux.yaml
-  - ../../k8s/authelia/flux.yaml
+  - ../../k8s/pocket-id/flux.yaml

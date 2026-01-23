@@ -15,8 +15,8 @@ spec:
     - match: Host(`prowlarr.home.coredev.uk`)
       kind: Rule
       middlewares:
-        - name: authelia-forwardauth
-          namespace: authelia
+        - name: tinyauth-forwardauth
+          namespace: pocket-id
       services:
         - name: prowlarr
           port: 9696

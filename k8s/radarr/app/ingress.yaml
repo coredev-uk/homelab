@@ -15,8 +15,8 @@ spec:
     - match: Host(`radarr.home.coredev.uk`)
       kind: Rule
       middlewares:
-        - name: authelia-forwardauth
-          namespace: authelia
+        - name: tinyauth-forwardauth
+          namespace: pocket-id
       services:
         - name: radarr
           port: 7878

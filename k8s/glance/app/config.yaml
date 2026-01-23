@@ -513,12 +513,12 @@ pages:
             groups:
               - title: Management
                 links:
-                  - title: LLDAP
-                    url: https://lldap.home.coredev.uk
-                    icon: mdi:account-group
-                  - title: Authelia
-                    url: https://auth.home.coredev.uk
-                    icon: si:authelia
+                  - title: Pocket ID
+                    url: https://pocket-id.home.coredev.uk
+                    icon: si:openid
+                  - title: TinyAuth
+                    url: https://tinyauth.home.coredev.uk
+                    icon: si:traefik
                   - title: Pihole
                     url: https://pihole.home.coredev.uk/admin
                     icon: si:pihole

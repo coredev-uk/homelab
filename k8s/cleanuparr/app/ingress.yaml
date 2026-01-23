@@ -10,8 +10,8 @@ spec:
     - match: Host(`cleanuparr.home.coredev.uk`)
       kind: Rule
       middlewares:
-        - name: authelia-forwardauth
-          namespace: authelia
+        - name: tinyauth-forwardauth
+          namespace: pocket-id
       services:
         - name: cleanuparr
           port: 11011

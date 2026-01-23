@@ -23,8 +23,8 @@ spec:
     - match: Host(`prometheus.home.coredev.uk`)
       kind: Rule
       middlewares:
-        - name: authelia-forwardauth
-          namespace: authelia
+        - name: tinyauth-forwardauth
+          namespace: pocket-id
       services:
         - name: monitoring-kube-prometheus-prometheus
           port: 9090
