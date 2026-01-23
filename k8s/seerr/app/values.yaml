@@ -3,9 +3,7 @@
 
 image:
   pullPolicy: IfNotPresent
-  registry: docker.io
-  repository: fallenbagel/jellyseerr
-  tag: "preview-OIDC"
+  tag: "develop"
 
 # Health probes configuration
 probes:
