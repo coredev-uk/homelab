@@ -546,8 +546,8 @@ pages:
                   - title: Jellyfin
                     url: https://jellyfin.home.coredev.uk
                     icon: si:jellyfin
-                  - title: Jellyseerr
-                    url: https://jellyseerr.home.coredev.uk
+                  - title: Seerr
+                    url: https://seerr.home.coredev.uk
                     icon: sh:jellyseerr-light
                   - title: Radarr
                     url: https://radarr.home.coredev.uk
