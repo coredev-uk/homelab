@@ -1,0 +1,63 @@
+# Seerr Helm Values
+# Based on https://github.com/seerr-team/seerr/tree/develop/charts/seerr-chart
+
+image:
+  pullPolicy: IfNotPresent
+
+# Health probes configuration
+probes:
+  livenessProbe:
+    httpGet:
+      path: /api/v1/status
+      port: http
+    initialDelaySeconds: 30
+    periodSeconds: 30
+    timeoutSeconds: 5
+    failureThreshold: 5
+  readinessProbe:
+    httpGet:
+      path: /api/v1/status
+      port: http
+    initialDelaySeconds: 20
+    periodSeconds: 30
+    timeoutSeconds: 5
+    failureThreshold: 3
+  startupProbe:
+    httpGet:
+      path: /api/v1/status
+      port: http
+    initialDelaySeconds: 15
+    periodSeconds: 5
+    timeoutSeconds: 5
+    failureThreshold: 12
+
+# Environment variables
+extraEnv:
+  - name: TZ
+    value: "Europe/London"
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 80
+
+# Persistence for config
+config:
+  persistence:
+    size: 5Gi
+    accessModes:
+      - ReadWriteOnce
+    storageClassName: longhorn
+
+# Resource limits and requests
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "100m"
+  limits:
+    memory: "1Gi"
+    cpu: "1000m"
+
+# Ingress disabled (using Traefik IngressRoute instead)
+ingress:
+  enabled: false

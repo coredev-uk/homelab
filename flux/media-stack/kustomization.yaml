@@ -16,6 +16,7 @@ resources:
   # Media consumption
   - ../../k8s/jellyfin/flux.yaml
   - ../../k8s/jellyseerr/flux.yaml
+  - ../../k8s/seerr/flux.yaml
   
   # Utilities
   - ../../k8s/cleanuparr/flux.yaml
