@@ -47,9 +47,10 @@ spec:
       create: true
       useExisting: false
       lldapUserName: "admin"
-      lldapBaseDn: "dc=home,dc=coredev,dc=uk"
+      lldapBaseDn: "dc=homelab,dc=home"
     
     persistence:
+
       enabled: true
       storageClassName: longhorn
       storageSize: 1Gi
