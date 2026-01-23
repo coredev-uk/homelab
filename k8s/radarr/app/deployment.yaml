@@ -102,6 +102,8 @@ kind: Service
 metadata:
   name: radarr
   namespace: radarr
+  labels:
+    tinyauth.apps.radarr.oauth.groups: media_admin
 spec:
   selector:
     app.kubernetes.io/name: radarr

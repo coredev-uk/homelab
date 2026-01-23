@@ -131,6 +131,8 @@ kind: Service
 metadata:
   name: notifiarr
   namespace: notifiarr
+  labels:
+    tinyauth.apps.notifiarr.oauth.groups: cluster_admin
 spec:
   selector:
     app.kubernetes.io/name: notifiarr

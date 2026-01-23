@@ -185,6 +185,8 @@ kind: Service
 metadata:
   name: qbittorrent
   namespace: qbittorrent
+  labels:
+    tinyauth.apps.qbittorrent.oauth.groups: media_admin
 spec:
   selector:
     app.kubernetes.io/name: qbittorrent

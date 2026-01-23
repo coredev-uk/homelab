@@ -106,6 +106,8 @@ prometheus:
       glance/icon: "di:prometheus"
       glance/url: "https://prometheus.home.coredev.uk"
       glance/description: "Metrics Collection"
+    labels:
+      tinyauth.apps.prometheus.oauth.groups: cluster_admin
 
 # Grafana configuration
 grafana:

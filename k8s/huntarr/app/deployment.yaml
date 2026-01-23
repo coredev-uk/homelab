@@ -96,6 +96,8 @@ kind: Service
 metadata:
   name: huntarr
   namespace: huntarr
+  labels:
+    tinyauth.apps.huntarr.oauth.groups: cluster_admin
 spec:
   selector:
     app.kubernetes.io/name: huntarr

@@ -102,6 +102,8 @@ kind: Service
 metadata:
   name: bazarr
   namespace: bazarr
+  labels:
+    tinyauth.apps.bazarr.oauth.groups: media_admin
 spec:
   selector:
     app.kubernetes.io/name: bazarr

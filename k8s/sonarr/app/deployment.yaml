@@ -102,6 +102,8 @@ kind: Service
 metadata:
   name: sonarr
   namespace: sonarr
+  labels:
+    tinyauth.apps.sonarr.oauth.groups: media_admin
 spec:
   selector:
     app.kubernetes.io/name: sonarr

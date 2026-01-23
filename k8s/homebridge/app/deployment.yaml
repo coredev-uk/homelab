@@ -98,6 +98,8 @@ kind: Service
 metadata:
   name: homebridge
   namespace: homebridge
+  labels:
+    tinyauth.apps.homebridge.oauth.groups: cluster_admin
 spec:
   selector:
     app.kubernetes.io/name: homebridge

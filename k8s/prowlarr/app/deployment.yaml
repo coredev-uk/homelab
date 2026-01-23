@@ -137,6 +137,8 @@ kind: Service
 metadata:
   name: prowlarr
   namespace: prowlarr
+  labels:
+    tinyauth.apps.prowlarr.oauth.groups: cluster_admin
 spec:
   selector:
     app.kubernetes.io/name: prowlarr

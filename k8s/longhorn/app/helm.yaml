@@ -28,6 +28,8 @@ spec:
           glance/icon: "si:longhorn"
           glance/url: "https://longhorn.home.coredev.uk"
           glance/description: "Storage Management"
+        labels:
+          tinyauth.apps.longhorn.oauth.groups: cluster_admin
     ingress:
       enabled: false
     defaultSettings:

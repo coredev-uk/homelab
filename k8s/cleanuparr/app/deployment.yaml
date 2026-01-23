@@ -98,6 +98,8 @@ kind: Service
 metadata:
   name: cleanuparr
   namespace: cleanuparr
+  labels:
+    tinyauth.apps.cleanuparr.oauth.groups: cluster_admin
 spec:
   selector:
     app.kubernetes.io/name: cleanuparr
