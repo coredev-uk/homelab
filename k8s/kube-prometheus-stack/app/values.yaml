@@ -136,16 +136,19 @@ grafana:
     "auth.generic_oauth":
       name: PocketID
       enabled: true
+      allow_sign_up: true
       client_id: $__env{GRAFANA_OIDC_CLIENT_ID}
       client_secret: $__env{GRAFANA_OIDC_CLIENT_SECRET}
-      scopes: openid profile email
+      scopes: openid profile email groups
       auth_url: https://pocket-id.home.coredev.uk/authorize
       token_url: http://pocket-id.pocket-id.svc.cluster.local/api/oidc/token
       api_url: http://pocket-id.pocket-id.svc.cluster.local/api/oidc/userinfo
       use_pkce: true
+      login_attribute_path: preferred_username
+      name_attribute_path: name
       email_attribute_name: email:primary
       groups_attribute_path: groups
-      role_attribute_path: contains(groups[*], 'grafana_admin') && 'Admin' || contains(groups[*], 'grafana_editor') && 'Editor' || 'Viewer'
+      role_attribute_path: contains(groups[*], 'cluster_admin') && 'Admin' || contains(groups[*], 'monitoring_editor') && 'Editor' || 'Viewer'
       role_attribute_strict: false
       allow_assign_grafana_admin: true
     users:
