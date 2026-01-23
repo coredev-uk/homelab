@@ -29,66 +29,45 @@ spec:
             - name: TZ
               value: "Europe/London"
             # Base URL where TinyAuth is accessible
-            - name: TINYAUTH_APPURL
+            - name: APP_URL
               value: "https://tinyauth.home.coredev.uk"
-            # Database path
-            - name: TINYAUTH_DATABASEPATH
-              value: "/data/tinyauth.db"
+            - name: APP_TITLE
+              value: "Hyperion Authentication"
             # Disable analytics
-            - name: TINYAUTH_DISABLEANALYTICS
+            - name: DISABLE_ANALYTICS
               value: "true"
-            # Logging
-            - name: TINYAUTH_LOG_LEVEL
-              value: "info"
-            # Server configuration
-            - name: TINYAUTH_SERVER_PORT
-              value: "3000"
-            - name: TINYAUTH_SERVER_ADDRESS
-              value: "0.0.0.0"
             # Auth configuration - no local users, OAuth only
-            - name: TINYAUTH_AUTH_SECURECOOKIE
+            - name: SECURE_COOKIE
               value: "true"
-            - name: TINYAUTH_AUTH_SESSIONEXPIRY
+            - name: SESSION_EXPIRY
               value: "43200"
-            - name: TINYAUTH_AUTH_SESSIONMAXLIFETIME
-              value: "604800"
             # OAuth - auto redirect to PocketID
-            - name: TINYAUTH_OAUTH_AUTOREDIRECT
+            - name: OAUTH_AUTO_REDIRECT
               value: "pocketid"
             # PocketID OAuth Provider
-            - name: TINYAUTH_OAUTH_PROVIDERS_POCKETID_NAME
+            - name: PROVIDERS_POCKETID_NAME
               value: "Pocket ID"
-            - name: TINYAUTH_OAUTH_PROVIDERS_POCKETID_AUTHURL
+            - name: PROVIDERS_POCKETID_AUTH_URL
               value: "https://pocket-id.home.coredev.uk/authorize"
-            - name: TINYAUTH_OAUTH_PROVIDERS_POCKETID_TOKENURL
+            - name: PROVIDERS_POCKETID_TOKEN_URL
               value: "https://pocket-id.home.coredev.uk/api/oidc/token"
-            - name: TINYAUTH_OAUTH_PROVIDERS_POCKETID_USERINFOURL
+            - name: PROVIDERS_POCKETID_USER_INFO_URL
               value: "https://pocket-id.home.coredev.uk/api/oidc/userinfo"
-            - name: TINYAUTH_OAUTH_PROVIDERS_POCKETID_REDIRECTURL
+            - name: PROVIDERS_POCKETID_REDIRECT_URL
               value: "https://tinyauth.home.coredev.uk/api/oauth/callback/pocketid"
-            - name: TINYAUTH_OAUTH_PROVIDERS_POCKETID_SCOPES
+            - name: PROVIDERS_POCKETID_SCOPES
               value: "openid email profile groups"
-            - name: TINYAUTH_OAUTH_PROVIDERS_POCKETID_INSECURE
-              value: "false"
             # Secrets from Secret resource
-            - name: TINYAUTH_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: tinyauth-secrets
-                  key: secret-key
-            - name: TINYAUTH_OAUTH_PROVIDERS_POCKETID_CLIENTID
+            - name: PROVIDERS_POCKETID_CLIENT_ID
               valueFrom:
                 secretKeyRef:
                   name: tinyauth-secrets
                   key: client-id
-            - name: TINYAUTH_OAUTH_PROVIDERS_POCKETID_CLIENTSECRET
+            - name: PROVIDERS_POCKETID_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
                   name: tinyauth-secrets
                   key: client-secret
-            # UI customization
-            - name: TINYAUTH_UI_TITLE
-              value: "Homelab Auth"
           volumeMounts:
             - name: data
               mountPath: /data
