@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - helm.yaml
   - ingress.yaml
+
 configMapGenerator:
   - name: pocket-id-values
     namespace: pocket-id

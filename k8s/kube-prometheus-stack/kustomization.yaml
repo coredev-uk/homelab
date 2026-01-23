@@ -6,5 +6,4 @@ resources:
   - app/
   - secrets/
   - ingress/
-  - loki/
-  - alloy/
+  - supporting/

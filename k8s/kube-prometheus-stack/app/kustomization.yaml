@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - helm.yaml
+  - ingress.yaml
 
 configMapGenerator:
   - name: kube-prometheus-stack-values
