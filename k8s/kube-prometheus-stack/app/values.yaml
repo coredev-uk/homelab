@@ -128,10 +128,10 @@ grafana:
     server:
       root_url: https://grafana.home.coredev.uk
     security:
-      disable_initial_admin_creation: true
+      disable_initial_admin_creation: false
     auth:
-      oauth_auto_login: true
-      disable_login_form: true
+      oauth_auto_login: false
+      disable_login_form: false
       disable_signout_menu: false
     "auth.generic_oauth":
       name: PocketID
