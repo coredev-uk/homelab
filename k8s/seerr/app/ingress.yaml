@@ -10,7 +10,7 @@ spec:
     - match: Host(`seerr.home.coredev.uk`)
       kind: Rule
       services:
-        - name: seerr
+        - name: seerr-seerr-seerr-chart
           port: 80
   tls:
     secretName: seerr-tls
@@ -29,7 +29,7 @@ spec:
       middlewares:
         - name: https-redirect
       services:
-        - name: seerr
+        - name: seerr-seerr-seerr-chart
           port: 80
 ---
 apiVersion: traefik.io/v1alpha1
