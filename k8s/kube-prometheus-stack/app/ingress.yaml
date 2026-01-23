@@ -29,7 +29,7 @@ spec:
       kind: Rule
       middlewares:
         - name: tinyauth-forwardauth
-          namespace: pocket-id
+          namespace: tinyauth
       services:
         - name: monitoring-kube-prometheus-prometheus
           port: 9090

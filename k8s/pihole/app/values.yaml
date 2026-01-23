@@ -193,7 +193,7 @@ extraObjects:
           kind: Rule
           middlewares:
             - name: tinyauth-forwardauth
-              namespace: pocket-id
+              namespace: tinyauth
           services:
             - name: pihole-pihole-web
               port: 80

@@ -12,7 +12,7 @@ spec:
       kind: Rule
       middlewares:
         - name: tinyauth-forwardauth
-          namespace: pocket-id
+          namespace: tinyauth
       services:
         - name: longhorn-frontend
           port: 80

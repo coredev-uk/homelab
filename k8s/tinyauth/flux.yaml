@@ -1,11 +1,11 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: pocket-id
+  name: tinyauth
   namespace: flux-system
 spec:
   interval: 10m0s
-  path: ./k8s/pocket-id
+  path: ./k8s/tinyauth
   prune: true
   sourceRef:
     kind: GitRepository
@@ -21,7 +21,7 @@ spec:
   wait: true
   timeout: 5m
   healthChecks:
-    - apiVersion: apps/v1
-      kind: StatefulSet
-      name: pocket-id
-      namespace: pocket-id
+    - apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      name: tinyauth
+      namespace: flux-system

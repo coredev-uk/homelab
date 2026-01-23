@@ -16,7 +16,7 @@ spec:
       kind: Rule
       middlewares:
         - name: tinyauth-forwardauth
-          namespace: pocket-id
+          namespace: tinyauth
       services:
         - name: radarr
           port: 7878

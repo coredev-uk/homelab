@@ -13,7 +13,7 @@ ingressRoute:
     entryPoints: ["websecure"]
     middlewares:
       - name: tinyauth-forwardauth
-        namespace: pocket-id
+        namespace: tinyauth
     tls:
       secretName: traefik-dashboard-tls
 

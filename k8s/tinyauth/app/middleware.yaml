@@ -2,10 +2,10 @@ apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
   name: tinyauth-forwardauth
-  namespace: pocket-id
+  namespace: tinyauth
 spec:
   forwardAuth:
-    address: http://tinyauth.pocket-id.svc.cluster.local:3000/api/auth/traefik
+    address: http://tinyauth.tinyauth.svc.cluster.local/api/auth/traefik
     trustForwardHeader: true
     authResponseHeaders:
       - X-Forwarded-User

@@ -88,7 +88,7 @@ prometheus:
       traefik.ingress.kubernetes.io/router.tls: "true"
       traefik.ingress.kubernetes.io/redirect-to-https: "true"
       cert-manager.io/cluster-issuer: letsencrypt-prod
-      traefik.ingress.kubernetes.io/router.middlewares: pocket-id-tinyauth-forwardauth@kubernetescrd
+      traefik.ingress.kubernetes.io/router.middlewares: tinyauth-tinyauth-forwardauth@kubernetescrd
     hosts:
       - prometheus.home.coredev.uk
     paths:

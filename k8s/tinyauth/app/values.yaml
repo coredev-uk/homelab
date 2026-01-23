@@ -1,0 +1,83 @@
+# TinyAuth Helm Values
+# Migrated from manual deployment in pocket-id namespace
+
+replicaCount: 1
+
+# Pod annotations for Glance dashboard
+podAnnotations:
+  glance/name: "TinyAuth"
+  glance/icon: "di:tinyauth"
+  glance/url: "https://tinyauth.home.coredev.uk"
+  glance/description: "Forward Auth Middleware"
+
+# TinyAuth Configuration
+tinyauth:
+  general:
+    appTitle: "Hyperion Authentication"
+    appUrl: "https://tinyauth.home.coredev.uk"
+    disableAnalytics: true
+    secureCookie: true
+    sessionExpiry: 43200
+    # Dummy user (required by TinyAuth, but OAuth auto-redirect bypasses login form)
+    # This is "dummy" with password "notused" - OAuth is the actual auth method
+    users: "dummy:$2a$10$UdLYoJ5lgPsC0RKqYH/jMua7zIn0g9kPqWmhYayJYLaZQ/FTmH2/u"
+    # Auto redirect to PocketID for OAuth login
+    oauthAutoRedirect: "pocketid"
+
+  # Pocket ID OAuth Provider configuration
+  # clientId and clientSecret are injected via secrets.yaml using valuesFrom
+  providers:
+    - id: "pocketid"
+      name: "Pocket ID"
+      authUrl: "https://pocket-id.home.coredev.uk/authorize"
+      tokenUrl: "https://pocket-id.home.coredev.uk/api/oidc/token"
+      userInfoUrl: "https://pocket-id.home.coredev.uk/api/oidc/userinfo"
+      scopes: "openid email profile groups"
+      # clientId: provided via secrets valuesFrom
+      # clientSecret: provided via secrets valuesFrom
+
+# Additional environment variables
+env:
+  - name: TZ
+    value: "Europe/London"
+  - name: PROVIDERS_POCKETID_REDIRECT_URL
+    value: "https://tinyauth.home.coredev.uk/api/oauth/callback/pocketid"
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 80
+
+# Persistence for SQLite database
+persistence:
+  enabled: true
+  storageClass: "longhorn"
+  accessMode: ReadWriteOnce
+  size: 500Mi
+  mountPath: /data
+
+# Resource limits and requests
+resources:
+  requests:
+    memory: "64Mi"
+    cpu: "25m"
+  limits:
+    memory: "128Mi"
+    cpu: "250m"
+
+# Health probes - use the Helm chart defaults which use /api/healthz
+livenessProbe:
+  httpGet:
+    path: /api/healthz
+    port: http
+  periodSeconds: 30
+
+readinessProbe:
+  httpGet:
+    path: /api/healthz
+    port: http
+  periodSeconds: 10
+
+# Ingress disabled - using Traefik IngressRoute instead
+ingress:
+  enabled: false
