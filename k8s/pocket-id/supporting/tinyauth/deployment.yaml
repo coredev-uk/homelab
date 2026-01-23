@@ -83,20 +83,17 @@ spec:
               memory: "128Mi"
               cpu: "250m"
           startupProbe:
-            httpGet:
-              path: /api/healthcheck
+            tcpSocket:
               port: http
             initialDelaySeconds: 5
             periodSeconds: 5
             failureThreshold: 12
           livenessProbe:
-            httpGet:
-              path: /api/healthcheck
+            tcpSocket:
               port: http
             periodSeconds: 30
           readinessProbe:
-            httpGet:
-              path: /api/healthcheck
+            tcpSocket:
               port: http
             periodSeconds: 10
       volumes:
