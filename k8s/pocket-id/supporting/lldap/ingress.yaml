@@ -1,0 +1,44 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: lldap-ingressroute
+  namespace: pocket-id
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`lldap.home.coredev.uk`)
+      kind: Rule
+      services:
+        - name: pocket-id-lldap
+          port: 17170
+  tls:
+    secretName: lldap-tls
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: lldap-redirect
+  namespace: pocket-id
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`lldap.home.coredev.uk`)
+      kind: Rule
+      middlewares:
+        - name: lldap-https-redirect
+      services:
+        - name: pocket-id-lldap
+          port: 17170
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: lldap-https-redirect
+  namespace: pocket-id
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true

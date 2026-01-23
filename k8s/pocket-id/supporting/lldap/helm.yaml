@@ -74,20 +74,7 @@ spec:
         web: 17170
     
     ingress:
-      enabled: true
-      ingressClassName: traefik
-      annotations:
-        cert-manager.io/cluster-issuer: "letsencrypt-production"
-        traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
-      hosts:
-        - host: "lldap.home.coredev.uk"
-          paths:
-            - path: "/"
-              pathType: "Prefix"
-      tls:
-        - secretName: "lldap-tls"
-          hosts:
-            - "lldap.home.coredev.uk"
+      enabled: false 
     
     serviceAccount:
       create: true
