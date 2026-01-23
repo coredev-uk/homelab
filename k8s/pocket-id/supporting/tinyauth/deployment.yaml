@@ -5,7 +5,7 @@ metadata:
   namespace: pocket-id
   annotations:
     glance/name: "TinyAuth"
-    glance/icon: "sh:tinyauth"
+    glance/icon: "di:tinyauth"
     glance/url: "https://tinyauth.home.coredev.uk"
     glance/description: "Forward Auth Middleware"
 spec:
