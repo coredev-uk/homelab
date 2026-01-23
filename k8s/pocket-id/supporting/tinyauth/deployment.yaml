@@ -36,11 +36,15 @@ spec:
             # Disable analytics
             - name: DISABLE_ANALYTICS
               value: "true"
-            # Auth configuration - no local users, OAuth only
+            # Auth configuration
             - name: SECURE_COOKIE
               value: "true"
             - name: SESSION_EXPIRY
               value: "43200"
+            # Dummy user (required by TinyAuth, but OAuth auto-redirect bypasses login form)
+            # This is "dummy" with password "notused" - OAuth is the actual auth method
+            - name: USERS
+              value: "dummy:$2a$10$UdLYoJ5lgPsC0RKqYH/jMua7zIn0g9kPqWmhYayJYLaZQ/FTmH2/u"
             # OAuth - auto redirect to PocketID
             - name: OAUTH_AUTO_REDIRECT
               value: "pocketid"

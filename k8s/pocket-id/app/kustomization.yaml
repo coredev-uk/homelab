@@ -1,13 +1,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-resources:
-  - helm.yaml
-  - ingress.yaml
 
-configMapGenerator:
-  - name: pocket-id-values
-    namespace: pocket-id
-    files:
-      - values.yaml
-generatorOptions:
-  disableNameSuffixHash: true
+resources:
+  - deployment.yaml
+  - service.yaml
+  - pvc.yaml
+  - ingress.yaml
