@@ -7,6 +7,11 @@ spec:
   entryPoints:
     - websecure
   routes:
+    - match: Host(`qbittorrent.home.coredev.uk`) && PathPrefix(`/api/v2`)
+      kind: Rule
+      services:
+        - name: qbittorrent
+          port: 8080
     - match: Host(`qbittorrent.home.coredev.uk`)
       kind: Rule
       middlewares:

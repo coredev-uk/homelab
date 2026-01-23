@@ -7,6 +7,11 @@ spec:
   entryPoints:
     - websecure
   routes:
+    - match: Host(`homebridge.home.coredev.uk`) && PathPrefix(`/api`)
+      kind: Rule
+      services:
+        - name: homebridge
+          port: 8581
     - match: Host(`homebridge.home.coredev.uk`)
       kind: Rule
       middlewares:
