@@ -3,6 +3,7 @@
 
 image:
   pullPolicy: IfNotPresent
+  tag: "develop"
 
 # Health probes configuration
 probes:
