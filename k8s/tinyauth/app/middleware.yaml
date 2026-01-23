@@ -5,7 +5,7 @@ metadata:
   namespace: tinyauth
 spec:
   forwardAuth:
-    address: http://tinyauth.tinyauth.svc.cluster.local/api/auth/traefik
+    address: http://tinyauth-tinyauth.tinyauth.svc.cluster.local/api/auth/traefik
     trustForwardHeader: true
     authResponseHeaders:
       - X-Forwarded-User
