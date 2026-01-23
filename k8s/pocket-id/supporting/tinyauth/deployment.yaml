@@ -72,6 +72,25 @@ spec:
                 secretKeyRef:
                   name: tinyauth-secrets
                   key: client-secret
+            # LDAP Configuration
+            - name: LDAP_ADDRESS
+              value: "ldap://lldap-service.pocket-id.svc.cluster.local:389"
+            - name: LDAP_BASE_DN
+              valueFrom:
+                secretKeyRef:
+                  name: lldap-secrets
+                  key: base-dn
+            - name: LDAP_BIND_DN
+              value: "uid=admin,ou=people,dc=homelab,dc=home"
+            - name: LDAP_BIND_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: lldap-secrets
+                  key: admin-password
+            - name: LDAP_SEARCH_FILTER
+              value: "(uid=%s)"
+            - name: LDAP_INSECURE
+              value: "false"
           volumeMounts:
             - name: data
               mountPath: /data

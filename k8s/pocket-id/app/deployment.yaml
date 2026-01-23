@@ -40,6 +40,45 @@ spec:
               value: "Europe/London"
             - name: ANALYTICS_DISABLED
               value: "true"
+            # LDAP Configuration
+            - name: LDAP_ENABLED
+              value: "true"
+            - name: LDAP_URL
+              value: "ldap://lldap-service.pocket-id.svc.cluster.local:3890"
+            - name: LDAP_BIND_DN
+              value: "uid=admin,ou=people,dc=homelab,dc=home"
+            - name: LDAP_BIND_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: lldap-secrets
+                  key: admin-password
+            - name: LDAP_SEARCH_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: lldap-secrets
+                  key: base-dn
+            - name: LDAP_USER_SEARCH_FILTER
+              value: "(objectClass=person)"
+            - name: LDAP_USER_GROUP_SEARCH_FILTER
+              value: "(objectClass=groupOfNames)"
+            - name: LDAP_USER_UNIQUE_IDENTIFIER_ATTRIBUTE
+              value: "uid"
+            - name: LDAP_USERNAME_ATTRIBUTE
+              value: "uid"
+            - name: LDAP_USER_MAIL_ATTRIBUTE
+              value: "mail"
+            - name: LDAP_USER_FIRST_NAME_ATTRIBUTE
+              value: "givenName"
+            - name: LDAP_USER_LAST_NAME_ATTRIBUTE
+              value: "sn"
+            - name: LDAP_GROUP_MEMBERS_ATTRIBUTE
+              value: "member"
+            - name: LDAP_GROUP_UNIQUE_IDENTIFIER_ATTRIBUTE
+              value: "cn"
+            - name: LDAP_GROUP_NAME_ATTRIBUTE
+              value: "cn"
+            - name: LDAP_ADMIN_GROUP_NAME
+              value: "pocket_id_admins"
             - name: ENCRYPTION_KEY
               valueFrom:
                 secretKeyRef:

@@ -1,0 +1,116 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: lldap-kubernetes
+  namespace: flux-system
+spec:
+  interval: 1h
+  url: https://evantage-ws.github.io/lldap-kubernetes/
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: lldap
+  namespace: pocket-id
+  annotations:
+    glance/name: "LLDAP"
+    glance/icon: "mdi:account-group"
+    glance/url: "https://lldap.home.coredev.uk"
+    glance/description: "LDAP Authentication"
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: lldap
+      version: "0.4.0"
+      sourceRef:
+        kind: HelmRepository
+        name: lldap-kubernetes
+        namespace: flux-system
+      interval: 12h
+  values:
+    secret:
+      create: true
+      useExisting: false
+      name: lldap-credentials
+      lldapJwtSecret: "${LLDAP_JWT_SECRET}"
+      lldapKeySeed: "${LLDAP_KEY_SEED}"
+      lldapUserName: "admin"
+      lldapUserPass: "${LLDAP_ADMIN_PASSWORD}"
+      lldapBaseDn: "${LLDAP_BASE_DN}"
+    
+    persistence:
+      enabled: true
+      existingVolumeClaim: ""
+      storageClassName: "longhorn"
+      storageSize: "1Gi"
+      accessMode: "ReadWriteOnce"
+      manualProvision: false
+    
+    env:
+      TZ: "Europe/London"
+      GID: "1000"
+      UID: "1000"
+      LDAPS_OPTIONS__ENABLED: false
+    
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 128Mi
+    
+    replicaCount: 1
+    
+    hpa:
+      enabled: false
+    
+    service:
+      type: ClusterIP
+      ports:
+        ldap: 3890
+        ldaps: 6360
+        web: 17170
+    
+    ingress:
+      enabled: true
+      ingressClassName: traefik
+      annotations:
+        cert-manager.io/cluster-issuer: "letsencrypt-production"
+        traefik.ingress.kubernetes.io/router.entrypoints: "websecure"
+      hosts:
+        - host: "lldap.home.coredev.uk"
+          paths:
+            - path: "/"
+              pathType: "Prefix"
+      tls:
+        - secretName: "lldap-tls"
+          hosts:
+            - "lldap.home.coredev.uk"
+    
+    serviceAccount:
+      create: true
+    
+    probes:
+      enabled: true
+    
+    certmanager:
+      enabled: false
+  valuesFrom:
+    - kind: Secret
+      name: lldap-secrets
+      valuesKey: jwt-secret
+      targetPath: secret.lldapJwtSecret
+    - kind: Secret
+      name: lldap-secrets
+      valuesKey: key-seed
+      targetPath: secret.lldapKeySeed
+    - kind: Secret
+      name: lldap-secrets
+      valuesKey: admin-password
+      targetPath: secret.lldapUserPass
+    - kind: Secret
+      name: lldap-secrets
+      valuesKey: base-dn
+      targetPath: secret.lldapBaseDn
