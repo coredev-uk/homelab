@@ -25,7 +25,6 @@ tinyauth:
     oauthAutoRedirect: "pocketid"
 
   # Pocket ID OAuth Provider configuration
-  # Credentials are referenced from Kubernetes secret via clientSecretSecretRef
   providers:
     - id: "pocketid"
       name: "Pocket ID"
@@ -33,7 +32,7 @@ tinyauth:
       tokenUrl: "https://pocket-id.home.coredev.uk/api/oidc/token"
       userInfoUrl: "https://pocket-id.home.coredev.uk/api/oidc/userinfo"
       scopes: "openid email profile groups"
-      # clientId is set via env variable below
+      clientId: "c181ea7e-a060-4de9-88ec-06d49f46d2cb"
       # clientSecret is referenced from K8s secret
       clientSecretSecretRef:
         name: "tinyauth-oauth-credentials"
@@ -45,12 +44,6 @@ env:
     value: "Europe/London"
   - name: PROVIDERS_POCKETID_REDIRECT_URL
     value: "https://tinyauth.home.coredev.uk/api/oauth/callback/pocketid"
-  # Client ID from secret
-  - name: PROVIDERS_POCKETID_CLIENT_ID
-    valueFrom:
-      secretKeyRef:
-        name: tinyauth-oauth-credentials
-        key: client-id
 
 # Service configuration
 service:
