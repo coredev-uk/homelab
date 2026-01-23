@@ -74,7 +74,7 @@ spec:
                   key: client-secret
             # LDAP Configuration
             - name: LDAP_ADDRESS
-              value: "ldap://lldap-service.pocket-id.svc.cluster.local:3890"
+              value: "ldap://pocket-id-lldap.pocket-id.svc.cluster.local:3890"
             - name: LDAP_BASE_DN
               valueFrom:
                 secretKeyRef:
