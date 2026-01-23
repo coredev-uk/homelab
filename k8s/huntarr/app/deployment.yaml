@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
         - name: huntarr
-          image: huntarr/huntarr:8.2.20
+          image: huntarr/huntarr:8.2.25
           ports:
             - containerPort: 9705
           env:
