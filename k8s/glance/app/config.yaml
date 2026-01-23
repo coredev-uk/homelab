@@ -511,7 +511,7 @@ pages:
           - type: bookmarks
             title: Services
             groups:
-              - title: Infrastructure
+              - title: Core Infrastructure
                 links:
                   - title: Traefik
                     url: https://traefik.home.coredev.uk
@@ -526,7 +526,7 @@ pages:
                     url: https://unifi.ui.com
                     icon: si:ubiquiti
 
-              - title: Identity & Auth
+              - title: Identity & Monitoring
                 links:
                   - title: Pocket ID
                     url: https://pocket-id.home.coredev.uk
@@ -534,9 +534,6 @@ pages:
                   - title: TinyAuth
                     url: https://tinyauth.home.coredev.uk
                     icon: sh:tinyauth
-
-              - title: Monitoring
-                links:
                   - title: Grafana
                     url: https://grafana.home.coredev.uk
                     icon: si:grafana
@@ -544,7 +541,7 @@ pages:
                     url: https://prometheus.home.coredev.uk
                     icon: si:prometheus
 
-              - title: Media Stack
+              - title: Media Servers
                 links:
                   - title: Jellyfin
                     url: https://jellyfin.home.coredev.uk
@@ -558,14 +555,23 @@ pages:
                   - title: Sonarr
                     url: https://sonarr.home.coredev.uk
                     icon: si:sonarr
+
+              - title: Media Management
+                links:
                   - title: Bazarr
                     url: https://bazarr.home.coredev.uk
                     icon: sh:bazarr-light
                   - title: Prowlarr
                     url: https://prowlarr.home.coredev.uk
                     icon: sh:prowlarr-light
+                  - title: Notifiarr
+                    url: https://notifiarr.home.coredev.uk
+                    icon: mdi:bell-ring
+                  - title: Huntarr
+                    url: https://huntarr.home.coredev.uk
+                    icon: mdi:magnify
 
-              - title: Downloads
+              - title: Downloads & Cleanup
                 links:
                   - title: qBittorrent
                     url: https://qbittorrent.home.coredev.uk
@@ -573,20 +579,11 @@ pages:
                   - title: SABnzbd
                     url: https://sabnzbd.home.coredev.uk
                     icon: sh:sabnzbd-light
-
-              - title: Helper Apps
-                links:
-                  - title: Notifiarr
-                    url: https://notifiarr.home.coredev.uk
-                    icon: mdi:bell-ring
                   - title: Cleanuparr
                     url: https://cleanuparr.home.coredev.uk
                     icon: mdi:broom
-                  - title: Huntarr
-                    url: https://huntarr.home.coredev.uk
-                    icon: mdi:magnify
 
-              - title: Security & Home
+              - title: Home Automation
                 links:
                   - title: Frigate
                     url: https://frigate.home.coredev.uk
@@ -594,9 +591,6 @@ pages:
                   - title: Homebridge
                     url: https://homebridge.home.coredev.uk
                     icon: si:homebridge
-                  - title: Glance
-                    url: https://glance.home.coredev.uk
-                    icon: si:glance
 
           - type: to-do
 
