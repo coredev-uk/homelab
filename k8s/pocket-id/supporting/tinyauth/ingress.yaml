@@ -1,0 +1,46 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: tinyauth-ingressroute
+  namespace: pocket-id
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`tinyauth.home.coredev.uk`)
+      kind: Rule
+      services:
+        - name: tinyauth
+          port: 3000
+  tls:
+    secretName: tinyauth-tls
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: tinyauth-redirect
+  namespace: pocket-id
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`tinyauth.home.coredev.uk`)
+      kind: Rule
+      middlewares:
+        - name: https-redirect
+      services:
+        - name: tinyauth
+          port: 3000
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: tinyauth-tls
+  namespace: pocket-id
+spec:
+  secretName: tinyauth-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - tinyauth.home.coredev.uk

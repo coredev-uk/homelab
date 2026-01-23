@@ -10,8 +10,8 @@ spec:
     - match: Host(`homebridge.home.coredev.uk`)
       kind: Rule
       middlewares:
-        - name: authelia-forwardauth
-          namespace: authelia
+        - name: tinyauth-forwardauth
+          namespace: pocket-id
       services:
         - name: homebridge
           port: 8581

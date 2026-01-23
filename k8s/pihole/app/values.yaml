@@ -46,7 +46,7 @@ persistentVolumeClaim:
   accessModes:
     - ReadWriteOnce
 
-# Admin Password - Disabled (Authelia handles authentication)
+# Admin Password - Disabled (TinyAuth handles authentication)
 admin:
   enabled: false
 
@@ -186,12 +186,12 @@ extraObjects:
           services:
             - name: pihole-pihole-web
               port: 80
-        # All other paths require Authelia authentication
+        # All other paths require TinyAuth authentication
         - match: Host(`pihole.home.coredev.uk`)
           kind: Rule
           middlewares:
-            - name: authelia-forwardauth
-              namespace: authelia
+            - name: tinyauth-forwardauth
+              namespace: pocket-id
           services:
             - name: pihole-pihole-web
               port: 80

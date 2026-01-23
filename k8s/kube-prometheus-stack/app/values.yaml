@@ -88,7 +88,7 @@ prometheus:
       traefik.ingress.kubernetes.io/router.tls: "true"
       traefik.ingress.kubernetes.io/redirect-to-https: "true"
       cert-manager.io/cluster-issuer: letsencrypt-prod
-      traefik.ingress.kubernetes.io/router.middlewares: authelia-authelia-forwardauth@kubernetescrd
+      traefik.ingress.kubernetes.io/router.middlewares: pocket-id-tinyauth-forwardauth@kubernetescrd
     hosts:
       - prometheus.home.coredev.uk
     paths:
@@ -139,9 +139,9 @@ grafana:
       client_id: grafana
       client_secret: $__env{GRAFANA_OIDC_CLIENT_SECRET}
       scopes: openid profile email groups
-      auth_url: https://auth.home.coredev.uk/api/oidc/authorization
-      token_url: http://authelia-authelia.authelia.svc.cluster.local/api/oidc/token
-      api_url: http://authelia-authelia.authelia.svc.cluster.local/api/oidc/userinfo
+      auth_url: https://pocket-id.home.coredev.uk/authorize
+      token_url: http://pocket-id.pocket-id.svc.cluster.local/api/oidc/token
+      api_url: http://pocket-id.pocket-id.svc.cluster.local/api/oidc/userinfo
       use_pkce: true
       login_attribute_path: preferred_username
       name_attribute_path: name

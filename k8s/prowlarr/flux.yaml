@@ -14,7 +14,7 @@ spec:
   dependsOn:
     - name: traefik
     - name: longhorn
-    - name: authelia
+    - name: pocket-id
     - name: sabnzbd
   wait: true
   timeout: 5m

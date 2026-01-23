@@ -33,37 +33,148 @@ jobs:
         with:
           version: 'latest'
 
-      - name: Diff Flux resources
+      - name: Setup Kubernetes tools
+        uses: yokawasa/action-setup-kube-tools@v0.13.1
+        with:
+          kubectl: '1.31.0'
+          kustomize: '5.4.3'
+
+      - name: Diff Kubernetes resources
         id: diff
         run: |
-          echo "## Flux Resource Diff" > /tmp/diff.txt
+          echo "# Kubernetes Resource Diff" > /tmp/diff.txt
+          echo "" >> /tmp/diff.txt
+          echo "This shows the actual Kubernetes resources that will be created, updated, or deleted." >> /tmp/diff.txt
           echo "" >> /tmp/diff.txt
 
-          # Run flux diff for each Kustomization
-          for kustomization in infrastructure media-stack monitoring; do
-            echo "### Diff for ${kustomization}" >> /tmp/diff.txt
+          # Function to build all kustomizations in a directory
+          build_all_kustomizations() {
+            local branch_path=$1
+            local output_file=$2
+            
+            cd "$branch_path"
+            
+            # Find all kustomization.yaml files, excluding secrets directories
+            find k8s -type f -name "kustomization.yaml" | while read kustomization; do
+              dir=$(dirname "$kustomization")
+              
+              # Skip secrets directories
+              if [[ "$dir" == */secrets ]]; then
+                continue
+              fi
+              
+              # Skip parent kustomizations that include secrets
+              if grep -q "^  - secrets/" "$kustomization" 2>/dev/null; then
+                continue
+              fi
+              
+              # Build and append to output, suppress errors for missing resources
+              echo "---" >> "$output_file"
+              echo "# Source: $dir" >> "$output_file"
+              kustomize build "$dir" 2>/dev/null >> "$output_file" || true
+            done
+            
+            cd - > /dev/null
+          }
+
+          # Build resources for both branches
+          echo "Building base branch resources..."
+          build_all_kustomizations "base" "/tmp/base-resources.yaml"
+          
+          echo "Building PR branch resources..."
+          build_all_kustomizations "pr" "/tmp/pr-resources.yaml"
+
+          # Generate diff
+          echo "Generating diff..."
+          echo "## Changed Resources" >> /tmp/diff.txt
+          echo "" >> /tmp/diff.txt
+          
+          # Use dyff if available for better diff output, otherwise fall back to diff
+          if command -v dyff &> /dev/null; then
             echo '```diff' >> /tmp/diff.txt
-            
-            # Build the Flux Kustomization for both branches and diff them
-            cd base
-            flux build kustomization ${kustomization} \
-              --path ./flux/${kustomization} \
-              --kustomization-file ./flux/${kustomization}.yaml > /tmp/${kustomization}-base.yaml 2>&1 || true
-            
-            cd ../pr
-            flux build kustomization ${kustomization} \
-              --path ./flux/${kustomization} \
-              --kustomization-file ./flux/${kustomization}.yaml > /tmp/${kustomization}-pr.yaml 2>&1 || true
-            
-            # Diff the results
-            diff -u /tmp/${kustomization}-base.yaml /tmp/${kustomization}-pr.yaml >> /tmp/diff.txt || true
-            
+            dyff between /tmp/base-resources.yaml /tmp/pr-resources.yaml --omit-header >> /tmp/diff.txt 2>&1 || true
             echo '```' >> /tmp/diff.txt
+          else
+            # Count changes
+            added=$(diff /tmp/base-resources.yaml /tmp/pr-resources.yaml | grep "^>" | wc -l)
+            removed=$(diff /tmp/base-resources.yaml /tmp/pr-resources.yaml | grep "^<" | wc -l)
+            
+            echo "📊 **Summary:**" >> /tmp/diff.txt
+            echo "- Lines added: $added" >> /tmp/diff.txt
+            echo "- Lines removed: $removed" >> /tmp/diff.txt
             echo "" >> /tmp/diff.txt
             
-            # Return to root for next iteration
-            cd ..
-          done
+            # Show detailed diff (truncated to prevent huge output)
+            echo "<details>" >> /tmp/diff.txt
+            echo "<summary>View detailed diff (click to expand)</summary>" >> /tmp/diff.txt
+            echo "" >> /tmp/diff.txt
+            echo '```diff' >> /tmp/diff.txt
+            diff -u /tmp/base-resources.yaml /tmp/pr-resources.yaml | head -n 500 >> /tmp/diff.txt || true
+            
+            # Check if truncated
+            total_diff_lines=$(diff -u /tmp/base-resources.yaml /tmp/pr-resources.yaml 2>/dev/null | wc -l || echo 0)
+            if [ "$total_diff_lines" -gt 500 ]; then
+              echo "" >> /tmp/diff.txt
+              echo "... (diff truncated - showing first 500 lines of $total_diff_lines total)" >> /tmp/diff.txt
+            fi
+            
+            echo '```' >> /tmp/diff.txt
+            echo "</details>" >> /tmp/diff.txt
+          fi
+
+          # Identify new and deleted services
+          echo "" >> /tmp/diff.txt
+          echo "## Service Changes" >> /tmp/diff.txt
+          echo "" >> /tmp/diff.txt
+
+          # Extract namespace names from both builds
+          base_namespaces=$(grep "^kind: Namespace" /tmp/base-resources.yaml -A 3 | grep "name:" | awk '{print $2}' | sort -u || true)
+          pr_namespaces=$(grep "^kind: Namespace" /tmp/pr-resources.yaml -A 3 | grep "name:" | awk '{print $2}' | sort -u || true)
+
+          # Find new namespaces
+          new_namespaces=$(comm -13 <(echo "$base_namespaces") <(echo "$pr_namespaces") 2>/dev/null || true)
+          if [ -n "$new_namespaces" ]; then
+            echo "### ✨ New Services" >> /tmp/diff.txt
+            echo "$new_namespaces" | while read ns; do
+              echo "- \`$ns\`" >> /tmp/diff.txt
+            done
+            echo "" >> /tmp/diff.txt
+          fi
+
+          # Find deleted namespaces
+          deleted_namespaces=$(comm -23 <(echo "$base_namespaces") <(echo "$pr_namespaces") 2>/dev/null || true)
+          if [ -n "$deleted_namespaces" ]; then
+            echo "### 🗑️ Removed Services" >> /tmp/diff.txt
+            echo "$deleted_namespaces" | while read ns; do
+              echo "- \`$ns\`" >> /tmp/diff.txt
+            done
+            echo "" >> /tmp/diff.txt
+          fi
+
+          # Find modified services (exist in both but have changes)
+          common_namespaces=$(comm -12 <(echo "$base_namespaces") <(echo "$pr_namespaces") 2>/dev/null || true)
+          modified_namespaces=""
+          
+          if [ -n "$common_namespaces" ]; then
+            echo "$common_namespaces" | while read ns; do
+              # Extract resources for this namespace from both builds
+              base_ns_resources=$(grep -A 50 "namespace: $ns" /tmp/base-resources.yaml 2>/dev/null || true)
+              pr_ns_resources=$(grep -A 50 "namespace: $ns" /tmp/pr-resources.yaml 2>/dev/null || true)
+              
+              # Check if there are differences
+              if ! diff <(echo "$base_ns_resources") <(echo "$pr_ns_resources") &>/dev/null; then
+                echo "$ns" >> /tmp/modified-namespaces.txt
+              fi
+            done
+            
+            if [ -f /tmp/modified-namespaces.txt ] && [ -s /tmp/modified-namespaces.txt ]; then
+              echo "### 🔄 Modified Services" >> /tmp/diff.txt
+              cat /tmp/modified-namespaces.txt | while read ns; do
+                echo "- \`$ns\`" >> /tmp/diff.txt
+              done
+              echo "" >> /tmp/diff.txt
+            fi
+          fi
 
           # Save diff output
           cat /tmp/diff.txt > pr/diff-output.txt
@@ -78,7 +189,7 @@ jobs:
             // GitHub comment has a character limit, truncate if needed
             const maxLength = 65000;
             const output = diffOutput.length > maxLength 
-              ? diffOutput.substring(0, maxLength) + '\n\n... (truncated)'
+              ? diffOutput.substring(0, maxLength) + '\n\n... (output truncated due to size)'
               : diffOutput;
 
             const { data: comments } = await github.rest.issues.listComments({
@@ -89,10 +200,10 @@ jobs:
 
             const botComment = comments.find(comment => 
               comment.user.type === 'Bot' && 
-              comment.body.includes('Flux Resource Diff')
+              comment.body.includes('Kubernetes Resource Diff')
             );
 
-            const commentBody = `${output}\n\n---\n*Flux diff generated for commit ${{ github.event.pull_request.head.sha }}*`;
+            const commentBody = `${output}\n\n---\n*Diff generated for commit \`${context.payload.pull_request.head.sha.substring(0, 7)}\`*`;
 
             if (botComment) {
               await github.rest.issues.updateComment({

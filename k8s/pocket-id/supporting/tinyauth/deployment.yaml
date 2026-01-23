@@ -1,0 +1,122 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tinyauth
+  namespace: pocket-id
+  annotations:
+    glance/name: "TinyAuth"
+    glance/icon: "si:traefik"
+    glance/url: "https://tinyauth.home.coredev.uk"
+    glance/description: "Forward Auth Middleware"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tinyauth
+  template:
+    metadata:
+      labels:
+        app: tinyauth
+    spec:
+      containers:
+        - name: tinyauth
+          image: ghcr.io/steveiliop56/tinyauth:v4.1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+              name: http
+          env:
+            - name: TZ
+              value: "Europe/London"
+            # Base URL where TinyAuth is accessible
+            - name: TINYAUTH_APPURL
+              value: "https://tinyauth.home.coredev.uk"
+            # Database path
+            - name: TINYAUTH_DATABASEPATH
+              value: "/data/tinyauth.db"
+            # Disable analytics
+            - name: TINYAUTH_DISABLEANALYTICS
+              value: "true"
+            # Logging
+            - name: TINYAUTH_LOG_LEVEL
+              value: "info"
+            # Server configuration
+            - name: TINYAUTH_SERVER_PORT
+              value: "3000"
+            - name: TINYAUTH_SERVER_ADDRESS
+              value: "0.0.0.0"
+            # Auth configuration - no local users, OAuth only
+            - name: TINYAUTH_AUTH_SECURECOOKIE
+              value: "true"
+            - name: TINYAUTH_AUTH_SESSIONEXPIRY
+              value: "43200"
+            - name: TINYAUTH_AUTH_SESSIONMAXLIFETIME
+              value: "604800"
+            # OAuth - auto redirect to PocketID
+            - name: TINYAUTH_OAUTH_AUTOREDIRECT
+              value: "pocketid"
+            # PocketID OAuth Provider
+            - name: TINYAUTH_OAUTH_PROVIDERS_POCKETID_NAME
+              value: "Pocket ID"
+            - name: TINYAUTH_OAUTH_PROVIDERS_POCKETID_AUTHURL
+              value: "https://pocket-id.home.coredev.uk/authorize"
+            - name: TINYAUTH_OAUTH_PROVIDERS_POCKETID_TOKENURL
+              value: "https://pocket-id.home.coredev.uk/api/oidc/token"
+            - name: TINYAUTH_OAUTH_PROVIDERS_POCKETID_USERINFOURL
+              value: "https://pocket-id.home.coredev.uk/api/oidc/userinfo"
+            - name: TINYAUTH_OAUTH_PROVIDERS_POCKETID_REDIRECTURL
+              value: "https://tinyauth.home.coredev.uk/api/oauth/callback/pocketid"
+            - name: TINYAUTH_OAUTH_PROVIDERS_POCKETID_SCOPES
+              value: "openid email profile groups"
+            - name: TINYAUTH_OAUTH_PROVIDERS_POCKETID_INSECURE
+              value: "false"
+            # Secrets from Secret resource
+            - name: TINYAUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: tinyauth-secrets
+                  key: secret-key
+            - name: TINYAUTH_OAUTH_PROVIDERS_POCKETID_CLIENTID
+              valueFrom:
+                secretKeyRef:
+                  name: tinyauth-secrets
+                  key: client-id
+            - name: TINYAUTH_OAUTH_PROVIDERS_POCKETID_CLIENTSECRET
+              valueFrom:
+                secretKeyRef:
+                  name: tinyauth-secrets
+                  key: client-secret
+            # UI customization
+            - name: TINYAUTH_UI_TITLE
+              value: "Homelab Auth"
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "25m"
+            limits:
+              memory: "128Mi"
+              cpu: "250m"
+          startupProbe:
+            httpGet:
+              path: /api/healthcheck
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /api/healthcheck
+              port: http
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /api/healthcheck
+              port: http
+            periodSeconds: 10
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: tinyauth-data

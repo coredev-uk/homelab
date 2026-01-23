@@ -509,31 +509,40 @@ pages:
                 url: https://www.amazon.co.uk/s?k={QUERY}
 
           - type: bookmarks
-            title: Media Services
+            title: Services
             groups:
-              - title: Management
+              - title: Infrastructure
                 links:
-                  - title: LLDAP
-                    url: https://lldap.home.coredev.uk
-                    icon: mdi:account-group
-                  - title: Authelia
-                    url: https://auth.home.coredev.uk
-                    icon: si:authelia
-                  - title: Pihole
-                    url: https://pihole.home.coredev.uk/admin
-                    icon: si:pihole
-                  - title: Longhorn
-                    url: https://longhorn.home.coredev.uk
-                    icon: si:rancher
-                  - title: UniFi Dashboard
-                    url: https://192.168.10.1/network/default/dashboard
-                    icon: si:ubiquiti
-                  - title: Homebridge
-                    url: https://homebridge.home.coredev.uk
-                    icon: si:homebridge
                   - title: Traefik
                     url: https://traefik.home.coredev.uk
                     icon: si:traefikproxy
+                  - title: Longhorn
+                    url: https://longhorn.home.coredev.uk
+                    icon: si:rancher
+                  - title: Pihole
+                    url: https://pihole.home.coredev.uk/admin
+                    icon: si:pihole
+                  - title: UniFi
+                    url: https://unifi.ui.com
+                    icon: si:ubiquiti
+
+              - title: Identity & Auth
+                links:
+                  - title: Pocket ID
+                    url: https://pocket-id.home.coredev.uk
+                    icon: si:openid
+                  - title: TinyAuth
+                    url: https://tinyauth.home.coredev.uk
+                    icon: si:traefik
+
+              - title: Monitoring
+                links:
+                  - title: Grafana
+                    url: https://grafana.home.coredev.uk
+                    icon: si:grafana
+                  - title: Prometheus
+                    url: https://prometheus.home.coredev.uk
+                    icon: si:prometheus
 
               - title: Media Stack
                 links:
@@ -556,6 +565,15 @@ pages:
                     url: https://prowlarr.home.coredev.uk
                     icon: sh:prowlarr-light
 
+              - title: Downloads
+                links:
+                  - title: qBittorrent
+                    url: https://qbittorrent.home.coredev.uk
+                    icon: si:qbittorrent
+                  - title: SABnzbd
+                    url: https://sabnzbd.home.coredev.uk
+                    icon: sh:sabnzbd-light
+
               - title: Helper Apps
                 links:
                   - title: Notifiarr
@@ -568,29 +586,17 @@ pages:
                     url: https://huntarr.home.coredev.uk
                     icon: mdi:magnify
 
-              - title: Downloads
-                links:
-                  - title: qBittorrent (Flood)
-                    url: https://qbittorrent.home.coredev.uk
-                    icon: si:qbittorrent
-                  - title: SABnzbd
-                    url: https://sabnzbd.home.coredev.uk
-                    icon: sh:sabnzbd-light
-
-              - title: Security
+              - title: Security & Home
                 links:
                   - title: Frigate
                     url: https://frigate.home.coredev.uk
                     icon: si:frigate
-
-              - title: Monitoring
-                links:
-                  - title: Grafana
-                    url: https://grafana.home.coredev.uk
-                    icon: si:grafana
-                  - title: Prometheus
-                    url: https://prometheus.home.coredev.uk
-                    icon: si:prometheus
+                  - title: Homebridge
+                    url: https://homebridge.home.coredev.uk
+                    icon: si:homebridge
+                  - title: Glance
+                    url: https://glance.home.coredev.uk
+                    icon: si:glance
 
           - type: to-do
 
