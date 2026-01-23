@@ -28,16 +28,20 @@ spec:
   valuesFrom:
     - kind: Secret
       name: lldap-secrets
-      valuesKey: lldap-jwt-secret
+      valuesKey: jwt-secret
       targetPath: secret.lldapJwtSecret
     - kind: Secret
       name: lldap-secrets  
-      valuesKey: lldap-admin-password
+      valuesKey: admin-password
       targetPath: secret.lldapUserPass
     - kind: Secret
       name: lldap-secrets
-      valuesKey: lldap-key-seed
+      valuesKey: key-seed
       targetPath: secret.lldapKeySeed
+    - kind: Secret
+      name: lldap-secrets
+      valuesKey: base-dn
+      targetPath: secret.lldapBaseDn
   values:
     secret:
       create: true
