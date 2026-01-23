@@ -1,13 +1,17 @@
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
-kind: HelmRepository
+kind: GitRepository
 metadata:
   name: seerr
   namespace: flux-system
 spec:
   interval: 1h0m0s
-  type: oci
-  url: oci://ghcr.io/seerr-team/charts
+  url: https://github.com/seerr-team/seerr
+  ref:
+    branch: develop
+  ignore: |
+    /*
+    !/charts/
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -24,10 +28,9 @@ spec:
   timeout: 5m
   chart:
     spec:
-      chart: seerr-chart
-      version: ">=0.1.0"
+      chart: ./charts/seerr-chart
       sourceRef:
-        kind: HelmRepository
+        kind: GitRepository
         name: seerr
         namespace: flux-system
       interval: 1m0s
