@@ -48,7 +48,7 @@ config:
     size: 5Gi
     accessModes:
       - ReadWriteOnce
-    storageClassName: longhorn
+    storageClass: longhorn
 
 # Resource limits and requests
 resources:
