@@ -530,10 +530,10 @@ pages:
                 links:
                   - title: Pocket ID
                     url: https://pocket-id.home.coredev.uk
-                    icon: si:openid
+                    icon: sh:pocket-id
                   - title: TinyAuth
                     url: https://tinyauth.home.coredev.uk
-                    icon: si:traefik
+                    icon: sh:tinyauth
 
               - title: Monitoring
                 links:

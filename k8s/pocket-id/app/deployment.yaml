@@ -5,7 +5,7 @@ metadata:
   namespace: pocket-id
   annotations:
     glance/name: "Pocket ID"
-    glance/icon: "si:openid"
+    glance/icon: "sh:pocket-id"
     glance/url: "https://pocket-id.home.coredev.uk"
     glance/description: "Identity Provider"
 spec:
