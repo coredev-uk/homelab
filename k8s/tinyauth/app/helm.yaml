@@ -35,6 +35,3 @@ spec:
     - kind: ConfigMap
       name: tinyauth-values
       valuesKey: values.yaml
-    - kind: Secret
-      name: tinyauth-secrets
-      valuesKey: secrets.yaml
