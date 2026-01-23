@@ -134,18 +134,16 @@ grafana:
       disable_login_form: true
       disable_signout_menu: false
     "auth.generic_oauth":
+      name: PocketID
       enabled: true
-      allow_sign_up: true
-      client_id: grafana
+      client_id: $__env{GRAFANA_OIDC_CLIENT_ID}
       client_secret: $__env{GRAFANA_OIDC_CLIENT_SECRET}
-      scopes: openid profile email groups
+      scopes: openid profile email
       auth_url: https://pocket-id.home.coredev.uk/authorize
       token_url: http://pocket-id.pocket-id.svc.cluster.local/api/oidc/token
       api_url: http://pocket-id.pocket-id.svc.cluster.local/api/oidc/userinfo
       use_pkce: true
-      login_attribute_path: preferred_username
-      name_attribute_path: name
-      email_attribute_name: email
+      email_attribute_name: email:primary
       groups_attribute_path: groups
       role_attribute_path: contains(groups[*], 'grafana_admin') && 'Admin' || contains(groups[*], 'grafana_editor') && 'Editor' || 'Viewer'
       role_attribute_strict: false
@@ -158,7 +156,11 @@ grafana:
     GRAFANA_OIDC_CLIENT_SECRET:
       secretKeyRef:
         name: grafana-secrets
-        key: GRAFANA_OIDC_CLIENT_SECRET
+        key: client-secret 
+    GRAFANA_OIDC_CLIENT_ID:
+      secretKeyRef:
+        name: grafana-secrets
+        key: client-id 
   
   # Grafana ingress
   ingress:
