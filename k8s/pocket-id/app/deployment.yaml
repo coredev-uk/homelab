@@ -59,11 +59,11 @@ spec:
             - name: UI_CONFIG_DISABLED
               value: "true"
             - name: APP_NAME
-              value: "Hyperion Authentication"
+              value: "HyperionID"
             - name: SESSION_DURATION
               value: "120"
             - name: ACCENT_COLOR
-              value: "hsl(231 100% 41.9%)"
+              value: "hsl(232 100% 58.1%)"
           volumeMounts:
             - name: data
               mountPath: /app/data

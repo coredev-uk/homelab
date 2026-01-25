@@ -13,7 +13,7 @@ podAnnotations:
 # TinyAuth Configuration
 tinyauth:
   general:
-    appTitle: "Hyperion Authentication"
+    appTitle: "HyperionID"
     appUrl: "https://auth.home.coredev.uk"
     disableAnalytics: true
     secureCookie: true
