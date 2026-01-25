@@ -6,7 +6,7 @@ metadata:
   annotations:
     glance/name: "Pocket ID"
     glance/icon: "sh:pocket-id"
-    glance/url: "https://pocket-id.home.coredev.uk"
+    glance/url: "https://id.home.coredev.uk"
     glance/description: "Identity Provider"
 spec:
   replicas: 1
@@ -33,7 +33,7 @@ spec:
             - name: APP_NAME
               value: "Hyperion Authentication"
             - name: APP_URL
-              value: "https://pocket-id.home.coredev.uk"
+              value: "https://id.home.coredev.uk"
             - name: TRUST_PROXY
               value: "true"
             - name: PUID

@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`pocket-id.home.coredev.uk`)
+    - match: Host(`id.home.coredev.uk`)
       kind: Rule
       services:
         - name: pocket-id
@@ -24,7 +24,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`pocket-id.home.coredev.uk`)
+    - match: Host(`id.home.coredev.uk`)
       kind: Rule
       middlewares:
         - name: https-redirect
@@ -53,4 +53,4 @@ spec:
     name: letsencrypt-prod
     kind: ClusterIssuer
   dnsNames:
-    - pocket-id.home.coredev.uk
+    - id.home.coredev.uk
