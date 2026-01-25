@@ -23,7 +23,8 @@ tinyauth:
     users: "dummy:$2a$10$UdLYoJ5lgPsC0RKqYH/jMua7zIn0g9kPqWmhYayJYLaZQ/FTmH2/u"
     # Auto redirect to PocketID for OAuth login
     oauthAutoRedirect: "pocketid"
-    backgroundImage: "/data/resources/background.jpg"
+    backgroundImage: "/resources/auth-background.jpg"
+    resourcesDir: "/data/resources"
 
   # Pocket ID OAuth Provider configuration
   providers:
@@ -60,15 +61,17 @@ persistence:
   mountPath: /data
 
 # Additional volumes
-extraVolumes:
+volumes:
   - name: data-nfs
     nfs:
       server: 192.168.20.40
-      path: /var/nfs/shared/Homelab
+      path: /var/nfs/shared/Resources
+      readOnly: true
 
-extraVolumeMounts:
+volumeMounts:
   - name: data-nfs
-    mountPath: /data
+    mountPath: /data/resources
+    readOnly: true
 
 # Resource limits and requests
 resources:
