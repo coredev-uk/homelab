@@ -15,7 +15,7 @@ metadata:
   annotations:
     glance/name: "TinyAuth"
     glance/icon: "di:tinyauth"
-    glance/url: "https://tinyauth.home.coredev.uk"
+    glance/url: "https://auth.home.coredev.uk"
     glance/description: "Forward Auth Middleware"
 spec:
   interval: 30m

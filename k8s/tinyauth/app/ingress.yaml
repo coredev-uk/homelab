@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`tinyauth.home.coredev.uk`)
+    - match: Host(`auth.home.coredev.uk`)
       kind: Rule
       services:
         - name: tinyauth-tinyauth
@@ -24,7 +24,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`tinyauth.home.coredev.uk`)
+    - match: Host(`auth.home.coredev.uk`)
       kind: Rule
       middlewares:
         - name: https-redirect
@@ -43,4 +43,4 @@ spec:
     name: letsencrypt-prod
     kind: ClusterIssuer
   dnsNames:
-    - tinyauth.home.coredev.uk
+    - auth.home.coredev.uk

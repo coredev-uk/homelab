@@ -7,14 +7,14 @@ replicaCount: 1
 podAnnotations:
   glance/name: "TinyAuth"
   glance/icon: "di:tinyauth"
-  glance/url: "https://tinyauth.home.coredev.uk"
+  glance/url: "https://auth.home.coredev.uk"
   glance/description: "Forward Auth Middleware"
 
 # TinyAuth Configuration
 tinyauth:
   general:
     appTitle: "Hyperion Authentication"
-    appUrl: "https://tinyauth.home.coredev.uk"
+    appUrl: "https://auth.home.coredev.uk"
     disableAnalytics: true
     secureCookie: true
     sessionExpiry: 43200
@@ -44,7 +44,7 @@ env:
   - name: TZ
     value: "Europe/London"
   - name: PROVIDERS_POCKETID_REDIRECT_URL
-    value: "https://tinyauth.home.coredev.uk/api/oauth/callback/pocketid"
+    value: "https://auth.home.coredev.uk/api/oauth/callback/pocketid"
 
 # Service configuration
 service:

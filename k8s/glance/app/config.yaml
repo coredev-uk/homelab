@@ -532,7 +532,7 @@ pages:
                     url: https://id.home.coredev.uk
                     icon: sh:pocket-id
                   - title: TinyAuth
-                    url: https://tinyauth.home.coredev.uk
+                    url: https://auth.home.coredev.uk
                     icon: di:tinyauth
                   - title: Grafana
                     url: https://grafana.home.coredev.uk
