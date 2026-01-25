@@ -62,7 +62,7 @@ prometheus:
           - targets: ['pihole-exporter.pihole.svc.cluster.local:9617']
       - job_name: 'frigate-exporter'
         static_configs:
-          - targets: ['frigate-exporter.frigate.svc.cluster.local:9999']
+          - targets: ['frigate-exporter.frigate.svc.cluster.local:9100']
       - job_name: 'qbittorrent-vpn-exporter'
         static_configs:
           - targets: ['qbittorrent-vpn-exporter.qbittorrent.svc.cluster.local:9090']
