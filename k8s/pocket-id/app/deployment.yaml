@@ -30,8 +30,6 @@ spec:
             - containerPort: 9464
               name: metrics
           env:
-            - name: APP_NAME
-              value: "Hyperion Authentication"
             - name: APP_URL
               value: "https://id.home.coredev.uk"
             - name: TRUST_PROXY
@@ -57,6 +55,15 @@ spec:
                 secretKeyRef:
                   name: pocket-id-secrets
                   key: encryption-key
+            # UI Overrides
+            - name: UI_CONFIG_DISABLED
+              value: true
+            - name: APP_NAME
+              value: "Hyperion Authentication"
+            - name: SESSION_DURATION
+              value: 120
+            - name: ACCENT_COLOR
+              value: "hsl(231 100% 41.9%)"
           volumeMounts:
             - name: data
               mountPath: /app/data
