@@ -25,7 +25,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   nfs:
     server: 192.168.20.40
-    path: /var/nfs/shared/Homelab
+    path: /var/nfs/shared/Frigate
   storageClassName: ""
 ---
 apiVersion: v1

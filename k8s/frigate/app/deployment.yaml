@@ -72,7 +72,6 @@ spec:
               mountPath: /config
             - name: media
               mountPath: /media/frigate
-              subPath: frigate
             - name: cache
               mountPath: /tmp/cache
             - name: shm
