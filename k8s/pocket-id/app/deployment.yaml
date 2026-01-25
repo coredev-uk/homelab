@@ -57,11 +57,11 @@ spec:
                   key: encryption-key
             # UI Overrides
             - name: UI_CONFIG_DISABLED
-              value: true
+              value: "true"
             - name: APP_NAME
               value: "Hyperion Authentication"
             - name: SESSION_DURATION
-              value: 120
+              value: "120"
             - name: ACCENT_COLOR
               value: "hsl(231 100% 41.9%)"
           volumeMounts:
