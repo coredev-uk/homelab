@@ -11,4 +11,8 @@ spec:
       targetPort: 1411
       protocol: TCP
       name: http
+    - port: 9464
+      targetPort: 9464
+      protocol: TCP
+      name: metrics
   type: ClusterIP

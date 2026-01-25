@@ -27,7 +27,11 @@ spec:
           ports:
             - containerPort: 1411
               name: http
+            - containerPort: 9464
+              name: metrics
           env:
+            - name: APP_NAME
+              value: "Hyperion Authentication"
             - name: APP_URL
               value: "https://pocket-id.home.coredev.uk"
             - name: TRUST_PROXY
@@ -40,6 +44,14 @@ spec:
               value: "Europe/London"
             - name: ANALYTICS_DISABLED
               value: "true"
+            - name: METRICS_ENABLED
+              value: "true"
+            - name: OTEL_METRICS_EXPORTER
+              value: "prometheus"
+            - name: OTEL_EXPORTER_PROMETHEUS_HOST
+              value: "0.0.0.0"
+            - name: OTEL_EXPORTER_PROMETHEUS_PORT
+              value: "9464"
             - name: ENCRYPTION_KEY
               valueFrom:
                 secretKeyRef:

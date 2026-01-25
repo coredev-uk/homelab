@@ -69,6 +69,9 @@ prometheus:
       - job_name: 'sabnzbd-vpn-exporter'
         static_configs:
           - targets: ['sabnzbd-vpn-exporter.sabnzbd.svc.cluster.local:9090']
+      - job_name: 'pocket-id'
+        static_configs:
+          - targets: ['pocket-id.pocket-id.svc.cluster.local:9464']
       # Longhorn with metric filtering to reduce high-cardinality histograms
       - job_name: 'longhorn'
         static_configs:
