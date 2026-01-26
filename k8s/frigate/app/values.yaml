@@ -123,6 +123,22 @@ config: |
     stats:
       network_bandwidth: true
 
+  # Go2RTC configuration for stream management
+  go2rtc:
+    streams:
+      front_door_main:
+        - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream0
+      front_door_sub:
+        - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream1
+      back_door_main:
+        - ffmpeg:rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/11?action=play&media=video_audio_data#video=copy#audio=aac
+      back_door_sub:
+        - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/12?action=play&media=video_audio_data
+      back_garden_main:
+        - ffmpeg:rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/11?action=play&media=video_audio_data#video=copy#audio=aac
+      back_garden_sub:
+        - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/12?action=play&media=video_audio_data
+
   camera_groups:
     home:
       cameras:
@@ -183,6 +199,10 @@ config: |
     retain:
       default: 30
 
+  ffmpeg:
+    output_args:
+      record: preset-record-generic-audio-aac
+
   cameras:
     front_door:
       enabled: true
@@ -190,16 +210,12 @@ config: |
       ffmpeg:
         inputs:
           - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream0
-            input_args: preset-rtsp-generic
             roles:
               - record
               - audio
           - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream1
-            input_args: preset-rtsp-generic
             roles:
               - detect
-        output_args:
-          record: preset-record-generic-audio-aac
       objects:
         track:
           - person
@@ -229,16 +245,12 @@ config: |
       ffmpeg:
         inputs:
           - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/11?action=play&media=video_audio_data
-            input_args: preset-rtsp-generic
             roles:
               - record
               - audio
           - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/12?action=play&media=video_audio_data
-            input_args: preset-rtsp-generic
             roles:
               - detect
-        output_args:
-          record: preset-record-generic-audio-aac
       onvif:
         host: 192.168.20.6
         port: 8080
@@ -276,16 +288,12 @@ config: |
       ffmpeg:
         inputs:
           - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/11
-            input_args: preset-rtsp-generic
             roles:
               - record
               - audio
           - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/12
-            input_args: preset-rtsp-generic
             roles:
               - detect
-        output_args:
-          record: preset-record-generic-audio-aac
       onvif:
         host: 192.168.20.7
         port: 8080
