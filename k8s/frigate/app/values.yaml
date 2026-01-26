@@ -146,7 +146,7 @@ config: |
 
   notifications:
     enabled: true
-    cooldown: 10
+    email: admin@coredev.uk
 
   auth:
     enabled: false
