@@ -14,7 +14,7 @@ spec:
           namespace: tinyauth
         - name: frigate-headers
       services:
-        - name: frigate
+        - name: frigate-frigate
           port: 5000
     - match: Host(`frigate.home.coredev.uk`)
       kind: Rule
@@ -23,7 +23,7 @@ spec:
           namespace: tinyauth
         - name: frigate-headers
       services:
-        - name: frigate
+        - name: frigate-frigate
           port: 5000
   tls:
     secretName: frigate-tls
