@@ -11,33 +11,3 @@ spec:
     requests:
       storage: 10Gi
   storageClassName: longhorn
----
-# Media storage (NFS) - recordings and clips
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: frigate-pv
-spec:
-  capacity:
-    storage: 350Gi
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  nfs:
-    server: 192.168.20.40
-    path: /var/nfs/shared/Frigate
-  storageClassName: ""
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: frigate-pvc
-  namespace: frigate
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 350Gi
-  volumeName: frigate-pv
-  storageClassName: ""
