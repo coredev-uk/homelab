@@ -123,19 +123,22 @@ config: |
     stats:
       network_bandwidth: true
 
-  # Go2RTC configuration for stream management
+  # Go2RTC configuration - streams named to match cameras for automatic mapping
   go2rtc:
     streams:
-      front_door_main:
+      front_door:
         - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream0
+        - "ffmpeg:front_door#audio=opus"
       front_door_sub:
         - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream1
-      back_door_main:
-        - ffmpeg:rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/11?action=play&media=video_audio_data#video=copy#audio=aac
+      back_door:
+        - "ffmpeg:rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/11?action=play&media=video_audio_data#video=copy#audio=aac"
+        - "ffmpeg:back_door#audio=opus"
       back_door_sub:
         - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/12?action=play&media=video_audio_data
-      back_garden_main:
-        - ffmpeg:rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/11?action=play&media=video_audio_data#video=copy#audio=aac
+      back_garden:
+        - "ffmpeg:rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/11?action=play&media=video_audio_data#video=copy#audio=aac"
+        - "ffmpeg:back_garden#audio=opus"
       back_garden_sub:
         - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/12?action=play&media=video_audio_data
 
@@ -154,9 +157,12 @@ config: |
 
   auth:
     enabled: false
+    trusted_proxies:
+      - 10.244.0.0/16
 
   proxy:
     logout_url: https://id.home.coredev.uk/logout
+    default_role: admin
     header_map:
       user: remote-user
       role: remote-groups
@@ -172,9 +178,9 @@ config: |
       - dog
       - cat
     filters:
-        car:
-          threshold: 0.8
-          min_score: 0.5
+      car:
+        threshold: 0.8
+        min_score: 0.5
 
   detect:
     enabled: true
@@ -183,12 +189,12 @@ config: |
     enabled: true
     model_size: small
 
+  # Audio disabled for detection, but still available for live view via go2rtc
   audio:
-    enabled: true
+    enabled: false
 
   record:
     enabled: true
-    enabled_in_config: true
     retain:
       days: 7
       mode: motion
@@ -215,13 +221,15 @@ config: |
       webui_url: http://192.168.20.5:8080
       ffmpeg:
         inputs:
-          - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream0
+          - path: rtsp://127.0.0.1:8554/front_door
+            input_args: preset-rtsp-restream
             roles:
               - record
-              - audio
-          - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream1
+          - path: rtsp://127.0.0.1:8554/front_door_sub
+            input_args: preset-rtsp-restream
             roles:
               - detect
+              - audio
       objects:
         track:
           - person
@@ -229,7 +237,8 @@ config: |
       zones:
         entrance:
           coordinates: 0.878,0.364,0.958,0.401,0.811,1,0.578,1
-          objects: person
+          objects:
+            - person
           loitering_time: 10
           inertia: 3
         driveway:
@@ -250,13 +259,15 @@ config: |
       webui_url: http://192.168.20.6
       ffmpeg:
         inputs:
-          - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/11?action=play&media=video_audio_data
+          - path: rtsp://127.0.0.1:8554/back_door
+            input_args: preset-rtsp-restream
             roles:
               - record
-              - audio
-          - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/12?action=play&media=video_audio_data
+          - path: rtsp://127.0.0.1:8554/back_door_sub
+            input_args: preset-rtsp-restream
             roles:
               - detect
+              - audio
       onvif:
         host: 192.168.20.6
         port: 8080
@@ -293,13 +304,15 @@ config: |
       webui_url: http://192.168.20.7
       ffmpeg:
         inputs:
-          - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/11
+          - path: rtsp://127.0.0.1:8554/back_garden
+            input_args: preset-rtsp-restream
             roles:
               - record
-              - audio
-          - path: rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/12
+          - path: rtsp://127.0.0.1:8554/back_garden_sub
+            input_args: preset-rtsp-restream
             roles:
               - detect
+              - audio
       onvif:
         host: 192.168.20.7
         port: 8080
