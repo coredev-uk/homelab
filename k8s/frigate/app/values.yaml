@@ -161,6 +161,9 @@ config: |
     enabled: true
     model_size: small
 
+  audio:
+    enabled: true
+
   record:
     enabled: true
     enabled_in_config: true
@@ -196,7 +199,7 @@ config: |
             roles:
               - detect
         output_args:
-          record: preset-record-generic-audio-copy
+          record: preset-record-generic-audio-aac
       objects:
         track:
           - person
@@ -235,7 +238,7 @@ config: |
             roles:
               - detect
         output_args:
-          record: preset-record-generic-audio-copy
+          record: preset-record-generic-audio-aac
       onvif:
         host: 192.168.20.6
         port: 8080
@@ -282,7 +285,7 @@ config: |
             roles:
               - detect
         output_args:
-          record: preset-record-generic-audio-copy
+          record: preset-record-generic-audio-aac
       onvif:
         host: 192.168.20.7
         port: 8080
