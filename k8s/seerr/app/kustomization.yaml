@@ -12,3 +12,5 @@ configMapGenerator:
       - values.yaml
     options:
       disableNameSuffixHash: true
+      labels:
+        reconcile.fluxcd.io/watch: Enabled
