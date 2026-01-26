@@ -17,7 +17,7 @@ tinyauth:
     appUrl: "https://auth.home.coredev.uk"
     disableAnalytics: true
     secureCookie: true
-    sessionExpiry: 43200
+    sessionExpiry: 432000
     # Dummy user (required by TinyAuth, but OAuth auto-redirect bypasses login form)
     # This is "dummy" with password "notused" - OAuth is the actual auth method
     users: "dummy:$2a$10$UdLYoJ5lgPsC0RKqYH/jMua7zIn0g9kPqWmhYayJYLaZQ/FTmH2/u"

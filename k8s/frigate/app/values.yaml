@@ -156,6 +156,7 @@ config: |
     enabled: false
 
   proxy:
+    logout_url: https://id.home.coredev.uk/logout
     header_map:
       user: x-forwarded-user
       role: x-forwarded-groups
