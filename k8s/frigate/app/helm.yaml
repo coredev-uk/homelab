@@ -74,7 +74,7 @@ spec:
               path: fullchain.pem
             - key: tls.key
               path: privkey.pem
-      - name: media
+      - name: nfs-media
         nfs:
           server: 192.168.20.40
           path: /var/nfs/shared/Frigate
@@ -83,7 +83,7 @@ spec:
       - name: tls-certs
         mountPath: /etc/letsencrypt/live/frigate/
         readOnly: true
-      - name: media
+      - name: nfs-media
         mountPath: /media/frigate
 
     # Privileged mode required for Coral TPU access
