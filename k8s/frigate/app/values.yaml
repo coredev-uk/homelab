@@ -160,11 +160,11 @@ config: |
     header_map:
       user: x-forwarded-user
       role: x-forwarded-groups
-      role_map:
-        admin:
-          - frigate_admin
-        viewer:
-          - frigate_viewer
+    role_map:
+      admin:
+        - frigate_admin
+      viewer:
+        - frigate_viewer
 
   tls:
     enabled: false
