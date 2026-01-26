@@ -175,6 +175,7 @@ config: |
 
   record:
     enabled: true
+    enabled_in_config: true
     retain:
       days: 7
       mode: motion
