@@ -123,22 +123,6 @@ config: |
     stats:
       network_bandwidth: true
 
-  # go2rtc streams for cameras needing special handling
-  go2rtc:
-    streams:
-      front_door_main:
-        - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream0
-      front_door_sub:
-        - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream1
-      back_door_main:
-        - ffmpeg:rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/11?action=play&media=video_audio_data#video=copy#audio=aac
-      back_door_sub:
-        - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/12?action=play&media=video_audio_data
-      back_garden_main:
-        - ffmpeg:rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/11?action=play&media=video_audio_data#video=copy#audio=aac
-      back_garden_sub:
-        - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/12?action=play&media=video_audio_data
-
   camera_groups:
     home:
       cameras:
@@ -212,7 +196,7 @@ config: |
             roles:
               - detect
         output_args:
-          record: preset-record-generic-audio-aac
+          record: preset-record-generic-audio-copy
       objects:
         track:
           - person
@@ -251,7 +235,7 @@ config: |
             roles:
               - detect
         output_args:
-          record: preset-record-generic-audio-aac
+          record: preset-record-generic-audio-copy
       onvif:
         host: 192.168.20.6
         port: 8080
@@ -298,7 +282,7 @@ config: |
             roles:
               - detect
         output_args:
-          record: preset-record-generic-audio-aac
+          record: preset-record-generic-audio-copy
       onvif:
         host: 192.168.20.7
         port: 8080
