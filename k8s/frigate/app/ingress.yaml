@@ -10,8 +10,8 @@ spec:
     - match: Host(`frigate.home.coredev.uk`) && (PathPrefix(`/api`) || PathPrefix(`/vod`) || PathPrefix(`/clips`) || PathPrefix(`/recordings`))
       kind: Rule
       middlewares:
-        - name: tinyauth-forwardauth
-          namespace: tinyauth
+        # - name: tinyauth-forwardauth
+        #   namespace: tinyauth
         - name: frigate-headers
       services:
         - name: frigate-frigate
@@ -20,8 +20,8 @@ spec:
     - match: Host(`frigate.home.coredev.uk`)
       kind: Rule
       middlewares:
-        - name: tinyauth-forwardauth
-          namespace: tinyauth
+        # - name: tinyauth-forwardauth
+        #   namespace: tinyauth
         - name: frigate-headers
       services:
         - name: frigate-frigate
