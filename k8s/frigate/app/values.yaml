@@ -210,7 +210,7 @@ config: |
             roles:
               - detect
         output_args:
-          record: preset-record-generic-audio-copy
+          record: preset-record-generic-audio-aac
       objects:
         track:
           - person
