@@ -27,7 +27,16 @@
       "automerge": true
     },
     {
-      "description": "LinuxServer.io version tags - tracks 'version-X.Y.Z' format only. Per LSIO docs: version tags are dynamic (get OS updates) while build tags are static. See: https://www.linuxserver.io/blog/docker-tags-so-many-tags-so-little-time",
+      "description": "Flux system updates",
+      "matchManagers": [
+        "flux"
+      ],
+      "matchFileNames": [
+        "flux/flux-system/gotk-components.yaml"
+      ]
+    },
+    {
+      "description": "LinuxServer.io version tags - tracks 'version-X.Y.Z' format only. See: https://www.linuxserver.io/blog/docker-tags-so-many-tags-so-little-time",
       "matchDatasources": [
         "docker"
       ],
@@ -48,15 +57,7 @@
       "versioning": "loose"
     },
     {
-      "description": "Flux system updates",
-      "matchManagers": [
-        "flux"
-      ],
-      "matchFileNames": [
-        "flux/flux-system/gotk-components.yaml"
-      ]
-    },
-    {
+      "description": "Override rule for Huntarr to provide correct patch notes",
       "matchDatasources": ["docker"],
       "matchPackageNames": ["huntarr/huntarr"],
       "sourceUrl": "https://github.com/plexguide/Huntarr.io"
