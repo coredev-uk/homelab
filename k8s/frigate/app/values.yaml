@@ -1,3 +1,4 @@
+# Frigate configuration loaded from config.yml
 config: |
   mqtt:
     enabled: false
