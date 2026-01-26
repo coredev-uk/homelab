@@ -7,6 +7,15 @@ spec:
   entryPoints:
     - websecure
   routes:
+    # External access via Cloudflare tunnel - no auth (Cloudflare Access handles it)
+    - match: Host(`frigate.coredev.uk`)
+      kind: Rule
+      middlewares:
+        - name: frigate-headers
+      services:
+        - name: frigate-frigate
+          port: 8971
+    # Internal access - with tinyauth
     - match: Host(`frigate.home.coredev.uk`) && (PathPrefix(`/api`) || PathPrefix(`/vod`) || PathPrefix(`/clips`) || PathPrefix(`/recordings`))
       kind: Rule
       middlewares:
