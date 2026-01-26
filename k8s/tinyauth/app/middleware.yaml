@@ -8,5 +8,5 @@ spec:
     address: http://tinyauth-tinyauth.tinyauth.svc.cluster.local/api/auth/traefik
     trustForwardHeader: true
     authResponseHeaders:
-      - X-Forwarded-User
-      - X-Forwarded-Groups
+      - Remote-User
+      - Remote-Groups
