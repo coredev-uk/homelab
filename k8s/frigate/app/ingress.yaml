@@ -15,8 +15,7 @@ spec:
         - name: frigate-headers
       services:
         - name: frigate-frigate
-          port: 5000
-      # TODO: move to 8971 for auth
+          port: 8971
     - match: Host(`frigate.home.coredev.uk`)
       kind: Rule
       middlewares:
@@ -25,7 +24,7 @@ spec:
         - name: frigate-headers
       services:
         - name: frigate-frigate
-          port: 5000
+          port: 8971
   tls:
     secretName: frigate-tls
 ---

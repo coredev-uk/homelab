@@ -162,7 +162,7 @@ config: |
       role: x-forwarded-groups
 
   tls:
-    enabled: true
+    enabled: false
 
   # Global object tracking and filters
   objects:
