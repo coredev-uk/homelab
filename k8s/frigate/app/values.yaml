@@ -172,9 +172,7 @@ config: |
     filters:
         car:
           threshold: 0.8
-          stationary_max_frames:
-            default: 3000
-            active: 600
+          min_score: 0.5
 
   detect:
     enabled: true
