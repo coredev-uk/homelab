@@ -162,9 +162,9 @@ config: |
       role: x-forwarded-groups
       role_map:
         admin:
-          - admin
+          - frigate_admin
         viewer:
-          - viewer
+          - frigate_viewer
 
   tls:
     enabled: false
