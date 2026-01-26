@@ -126,6 +126,10 @@ config: |
   # go2rtc streams for cameras needing special handling
   go2rtc:
     streams:
+      front_door_main:
+        - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream0
+      front_door_sub:
+        - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream1
       back_door_main:
         - ffmpeg:rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/11?action=play&media=video_audio_data#video=copy#audio=aac
       back_door_sub:
