@@ -19,7 +19,7 @@ spec:
       middlewares:
         - name: tinyauth-forwardauth
           namespace: tinyauth
-        - name: frigate-headers
+        # - name: frigate-headers
       services:
         - name: frigate-frigate
           port: 8971 
