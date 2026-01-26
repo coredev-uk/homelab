@@ -4,7 +4,8 @@ metadata:
   name: frigate
   namespace: flux-system
 spec:
-  interval: 10m0s
+  interval: 1m
+  retryInterval: 30s
   path: ./k8s/frigate
   prune: true
   sourceRef:
@@ -14,11 +15,8 @@ spec:
   dependsOn:
     - name: traefik
     - name: longhorn
-    - name: pocket-id
     - name: intel-gpu
   decryption:
     provider: sops
     secretRef:
       name: sops-age
-  wait: true
-  timeout: 5m

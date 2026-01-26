@@ -4,8 +4,8 @@ metadata:
   name: traefik
   namespace: flux-system
 spec:
-  interval: 10m0s
-  retryInterval: 10s
+  interval: 1m
+  retryInterval: 30s
   path: ./k8s/traefik
   prune: true
   sourceRef:
@@ -15,9 +15,4 @@ spec:
   dependsOn:
     - name: cert-manager
   wait: true
-  timeout: 5m
-  healthChecks:
-    - apiVersion: helm.toolkit.fluxcd.io/v2
-      kind: HelmRelease
-      name: traefik
-      namespace: flux-system
+  timeout: 2m

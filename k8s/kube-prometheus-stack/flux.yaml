@@ -5,11 +5,10 @@ metadata:
   name: kube-prometheus-stack
   namespace: flux-system
 spec:
-  interval: 10m0s
+  interval: 1m
+  retryInterval: 30s
   path: ./k8s/kube-prometheus-stack
   prune: true
-  wait: true
-  timeout: 10m
   sourceRef:
     kind: GitRepository
     name: homelab

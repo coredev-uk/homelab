@@ -4,7 +4,8 @@ metadata:
   name: cert-manager-issuer
   namespace: flux-system
 spec:
-  interval: 10m0s
+  interval: 1m
+  retryInterval: 30s
   path: ./k8s/cert-manager-issuer
   prune: true
   sourceRef:
@@ -18,4 +19,4 @@ spec:
   dependsOn:
     - name: cert-manager
   wait: true
-  timeout: 5m
+  timeout: 2m

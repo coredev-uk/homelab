@@ -4,7 +4,8 @@ metadata:
   name: seerr
   namespace: flux-system
 spec:
-  interval: 10m0s
+  interval: 1m
+  retryInterval: 30s
   path: ./k8s/seerr
   prune: true
   sourceRef:
@@ -12,8 +13,4 @@ spec:
     name: homelab
     namespace: flux-system
   dependsOn:
-    - name: traefik
     - name: longhorn
-    - name: cert-manager
-  wait: true
-  timeout: 5m

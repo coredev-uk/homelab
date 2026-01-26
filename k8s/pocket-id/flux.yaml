@@ -4,7 +4,8 @@ metadata:
   name: pocket-id
   namespace: flux-system
 spec:
-  interval: 10m0s
+  interval: 1m
+  retryInterval: 30s
   path: ./k8s/pocket-id
   prune: true
   sourceRef:
@@ -12,16 +13,8 @@ spec:
     name: homelab
     namespace: flux-system
   dependsOn:
-    - name: traefik
     - name: longhorn
   decryption:
     provider: sops
     secretRef:
       name: sops-age
-  wait: true
-  timeout: 5m
-  healthChecks:
-    - apiVersion: apps/v1
-      kind: StatefulSet
-      name: pocket-id
-      namespace: pocket-id

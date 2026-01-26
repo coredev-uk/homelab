@@ -4,7 +4,8 @@ metadata:
   name: sonarr
   namespace: flux-system
 spec:
-  interval: 10m0s
+  interval: 1m
+  retryInterval: 30s
   path: ./k8s/sonarr
   prune: true
   sourceRef:
@@ -13,5 +14,3 @@ spec:
     namespace: flux-system
   dependsOn:
     - name: longhorn
-  wait: true
-  timeout: 5m

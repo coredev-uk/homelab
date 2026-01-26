@@ -4,7 +4,8 @@ metadata:
   name: intel-gpu
   namespace: flux-system
 spec:
-  interval: 10m0s
+  interval: 1m
+  retryInterval: 30s
   path: ./k8s/intel-gpu
   prune: true
   sourceRef:
@@ -12,4 +13,4 @@ spec:
     name: homelab
     namespace: flux-system
   wait: true
-  timeout: 5m
+  timeout: 2m

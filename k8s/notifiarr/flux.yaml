@@ -4,7 +4,8 @@ metadata:
   name: notifiarr
   namespace: flux-system
 spec:
-  interval: 10m0s
+  interval: 1m
+  retryInterval: 30s
   path: ./k8s/notifiarr
   prune: true
   sourceRef:
@@ -17,5 +18,3 @@ spec:
     provider: sops
     secretRef:
       name: sops-age
-  wait: true
-  timeout: 5m
