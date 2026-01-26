@@ -4,7 +4,7 @@ kind: Kustomization
 namespace: frigate
 
 configMapGenerator:
-  - name: frigate-config
+  - name: frigate-values
     files:
       - values.yaml
 

@@ -1,328 +1,115 @@
-# Frigate configuration loaded from config.yml
-config: |
-  mqtt:
+# Override image to latest stable release
+image:
+  repository: ghcr.io/blakeblackshear/frigate
+  tag: "0.16.3"
+  pullPolicy: IfNotPresent
+
+# Upgrade strategy
+strategyType: Recreate
+
+# Environment variables
+env:
+  TZ: "Europe/London"
+
+# Secrets for MQTT and RTSP credentials
+envFromSecrets:
+  - frigate-secrets
+
+# Coral TPU configuration
+coral:
+  enabled: true
+  hostPath: /dev/apex_0
+
+# Shared memory for FFmpeg
+shmSize: 1Gi
+
+# Tmpfs for cache
+tmpfs:
+  enabled: true
+  sizeLimit: 20Gi
+
+# Persistence configuration
+persistence:
+  config:
+    enabled: true
+    existingClaim: frigate-config-pvc
+    # Enable writable config - initContainer copies configmap to PVC
+    # After first boot, changes via UI persist to PVC
+    ephemeralWritableConfigYaml: true
+  media:
     enabled: false
-  
-  # Edge TPU Detector Configuration
-  detectors:
-    coral:
-      type: edgetpu
-      device: pci
-  
-  # telemetry enabled for prometheus
-  telemetry:
-    stats:
-      network_bandwidth: true
-  
-  # Go2RTC configuration for stream management
-  go2rtc:
-    streams:
-      front_door_main:
-        - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream0
-      front_door_sub:
-        - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream1
-      back_door_main:
-        - ffmpeg:rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/11?action=play&media=video_audio_data#video=copy#audio=aac
-      back_door_sub:
-        - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/12?action=play&media=video_audio_data
-      back_garden_main:
-        - ffmpeg:rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/11?action=play&media=video_audio_data#video=copy#audio=aac
-      back_garden_sub:
-        - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/12?action=play&media=video_audio_data
-  
-  # Camera groups for unified viewing
-  camera_groups:
-    home:
-      cameras:
-        - front_door
-        - back_door
-        - back_garden
-      icon: LuWebcam
-      order: 0
-  
-  notifications:
+
+# Extra volumes for TLS certs and NFS media storage
+extraVolumes:
+  - name: tls-certs
+    secret:
+      secretName: frigate-tls
+      items:
+        - key: tls.crt
+          path: fullchain.pem
+        - key: tls.key
+          path: privkey.pem
+  - name: nfs-media
+    nfs:
+      server: 192.168.20.40
+      path: /var/nfs/shared/Frigate
+
+extraVolumeMounts:
+  - name: tls-certs
+    mountPath: /etc/letsencrypt/live/frigate/
+    readOnly: true
+  - name: nfs-media
+    mountPath: /media/frigate
+
+# Privileged mode required for Coral TPU access
+securityContext:
+  privileged: true
+
+# Resource limits matching current deployment
+resources:
+  requests:
+    memory: "4Gi"
+    cpu: "500m"
+  limits:
+    memory: "4Gi"
+    cpu: "2000m"
+
+# Health probes configuration
+probes:
+  startup:
     enabled: true
-    email: admin@coredev.uk
-  
-  auth:
-    enabled: false
-  
-  proxy:
-    header_map:
-      user: x-forwarded-user
-  
-  tls:
+    initialDelaySeconds: 60
+    failureThreshold: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+  liveness:
     enabled: true
-  
-  objects:
-    track:
-      - person
-      - car
-      - dog
-      - cat
-    filters:
-      person:
-        min_score: 0.5
-        threshold: 0.8
-        min_area: 5000
-        max_area: 100000
-      car:
-        min_score: 0.6
-        threshold: 0.85
-        min_area: 15000
-        max_area: 100000
-      dog:
-        min_score: 0.4
-        threshold: 0.75
-        min_area: 3000
-        max_area: 50000
-      cat:
-        min_score: 0.4
-        threshold: 0.75
-        min_area: 1500
-        max_area: 25000
-  
-  detect:
+    initialDelaySeconds: 60
+    failureThreshold: 3
+    timeoutSeconds: 10
+    periodSeconds: 30
+  readiness:
     enabled: true
-  
-  semantic_search:
-    enabled: true
-    model_size: small
-  
-  face_recognition:
-    enabled: true
-    model_size: small
-  
-  classification:
-    bird:
-      enabled: false
-  
-  record:
-    enabled: true
-    retain:
-      days: 7
-      mode: motion
-    alerts:
-      retain:
-        days: 7
-        mode: active_objects
-    detections:
-      retain:
-        days: 7
-        mode: active_objects
-  
-  snapshots:
-    enabled: true
-    timestamp: false
-    bounding_box: true
-    retain:
-      default: 10
-  
-  motion:
-    threshold: 30
-    contour_area: 10
-    lightning_threshold: 0.8
-    improve_contrast: true
-  
-  cameras:
-    front_door:
-      enabled: true
-      webui_url: http://192.168.20.5:8080
-      ffmpeg:
-        inputs:
-          - path: 
-              rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream0
-            roles:
-              - record
-              - audio
-          - path: 
-              rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream1
-            roles:
-              - detect
-      live:
-        streams:
-          Main Stream: front_door_main # Higher quality stream (stream0)
-          Sub Stream: front_door_sub # Lower quality stream (stream1)
-      detect:
-        enabled: true
-      record:
-        enabled: true
-      snapshots:
-        enabled: true
-      objects:
-        track:
-          - person
-          - car
-        filters:
-          person:
-            min_area: 5000
-            max_area: 100000
-            threshold: 0.8
-          car:
-            min_area: 15000
-            max_area: 100000
-            threshold: 0.85
-      zones:
-        entrance:
-          coordinates: 0.878,0.364,0.958,0.401,0.811,1,0.578,1
-          objects: person
-          loitering_time: 10
-          inertia: 3
-        driveway:
-          coordinates: 0.65,0.139,0.941,0.244,0.947,0.393,0.802,0.329,0.545,0.201
-          objects:
-            - car
-            - person
-          inertia: 3
-          loitering_time: 0
-      motion: {}
-      review:
-        alerts:
-          required_zones:
-            - entrance
-            - driveway
-  
-      notifications:
-        enabled: true
-    back_door:
-      enabled: true
-      webui_url: http://192.168.20.6
-      ffmpeg:
-        output_args:
-          record: -f segment -segment_time 10 -segment_format mp4 
-            -reset_timestamps 1 -strftime 1 -c:v copy -c:a aac -b:a 32k
-        inputs:
-          - path: 
-              rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/11?action=play&media=video_audio_data
-            roles:
-              - record
-              - audio
-          - path: 
-              rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/12?action=play&media=video_audio_data
-            roles:
-              - detect
-      live:
-        streams:
-          Main Stream: back_door_main # Higher quality stream (11)
-          Sub Stream: back_door_sub # Lower quality stream (12) - used for detection
-      onvif:
-        host: 192.168.20.6
-        port: 8080
-        user: '{FRIGATE_RTSP_USER}'
-        password: '{FRIGATE_RTSP_PASSWORD}'
-        autotracking:
-          enabled: false
-      detect:
-        enabled: true
-      record:
-        enabled: true
-      snapshots:
-        enabled: true
-      objects:
-        track:
-          - person
-          - car
-        filters:
-          person:
-            min_area: 5000
-            max_area: 100000
-            threshold: 0.8
-          car:
-            min_area: 15000
-            max_area: 100000
-            threshold: 0.85
-      zones:
-        back_entrance:
-          coordinates: 
-            0.297,0.538,0.344,0.549,0.44,0.584,0.433,0.654,0.411,0.698,0.373,0.761,0.325,0.82,0.242,0.826,0.189,0.814,0.184,0.74,0.194,0.655,0.203,0.621,0.216,0.535
-          objects:
-            - person
-        back_driveway:
-          coordinates: 
-            0.3,0.476,0.642,0.43,0.566,0.339,0.531,0.296,0.521,0.281,0.493,0.261,0.467,0.257,0.435,0.258,0.405,0.241,0.404,0.315,0.367,0.283,0.312,0.265,0.289,0.27,0.288,0.325
-          objects:
-            - car
-            - person
-          inertia: 3
-          loitering_time: 0
-      review:
-        alerts:
-          required_zones:
-            - back_entrance
-            - back_driveway
-        detections:
-          required_zones:
-            - back_entrance
-            - back_driveway
-  
-      notifications:
-        enabled: true
-    back_garden:
-      enabled: true
-      webui_url: http://192.168.20.7
-      ffmpeg:
-        inputs:
-          - path: 
-              rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/11
-            roles:
-              - record
-              - audio
-          - path: 
-              rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/12
-            roles:
-              - detect
-      live:
-        streams:
-          Main Stream: back_garden_main # Higher quality stream (11)
-          Sub Stream: back_garden_sub # Lower quality stream (12) - used for detection
-      onvif:
-        host: 192.168.20.7
-        port: 8080
-        user: '{FRIGATE_RTSP_USER}'
-        password: '{FRIGATE_RTSP_PASSWORD}'
-        autotracking:
-          enabled: true
-          calibrate_on_startup: true
-          timeout: 30
-          required_zones:
-            - garden_main
-      lpr:
-        enabled: false
-      detect:
-        enabled: true
-      record:
-        enabled: true
-      snapshots:
-        enabled: true
-      objects:
-        track:
-          - person
-          - dog
-          - cat
-        filters:
-          person:
-            min_area: 5000
-            max_area: 100000
-            threshold: 0.8
-          dog:
-            min_area: 3000
-            max_area: 50000
-            threshold: 0.75
-          cat:
-            min_area: 1500
-            max_area: 25000
-            threshold: 0.75
-      zones:
-        garden_main:
-          coordinates: 
-            0.001,0.997,0,0.585,0.537,0.334,0.83,0.379,0.999,0.482,0.948,0.981
-          loitering_time: 0
-        garden_patio:
-          coordinates: 0.642,0.295,0.852,0.332,0.834,0.382,0.597,0.343
-          loitering_time: 0
-      review: {}
-      notifications:
-        enabled: true
-  
-  version: 0.16-0
-  
+    initialDelaySeconds: 30
+    failureThreshold: 3
+    timeoutSeconds: 5
+    periodSeconds: 30
+
+# Service configuration - chart already exposes all required ports
+service:
+  type: ClusterIP
+  port: 5000
+
+# Disable ingress - we use Traefik IngressRoute
+ingress:
+  enabled: false
+
+# Pod annotations for Glance dashboard
+podAnnotations:
+  glance/name: "Frigate"
+  glance/icon: "di:frigate-light"
+  glance/url: "https://frigate.home.coredev.uk"
+  glance/description: "CCTV & AI Detection"
+
+# Frigate configuration - edit config.yml and it will be embedded here
+config: ""
