@@ -7,22 +7,25 @@ spec:
   entryPoints:
     - websecure
   routes:
-    # Route for Exporter
     - match: Host(`frigate.home.coredev.uk`) && (PathPrefix(`/api`) || PathPrefix(`/vod`) || PathPrefix(`/clips`) || PathPrefix(`/recordings`))
       kind: Rule
+      middlewares:
+        - name: tinyauth-forwardauth
+          namespace: tinyauth
+        - name: frigate-headers
       services:
         - name: frigate-frigate
           port: 5000
-    # Authenticated Access
+      # TODO: move to 8971 for auth
     - match: Host(`frigate.home.coredev.uk`)
       kind: Rule
       middlewares:
         - name: tinyauth-forwardauth
           namespace: tinyauth
-        # - name: frigate-headers
+        - name: frigate-headers
       services:
         - name: frigate-frigate
-          port: 8971 
+          port: 5000
   tls:
     secretName: frigate-tls
 ---
@@ -33,8 +36,8 @@ metadata:
   namespace: frigate
 spec:
   headers:
-    # customRequestHeaders:
-    #   X-Forwarded-Proto: "https"
+    customRequestHeaders:
+      X-Forwarded-Proto: "https"
     customResponseHeaders:
       Strict-Transport-Security: "max-age=63072000"
 ---
