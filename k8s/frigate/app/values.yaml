@@ -169,6 +169,12 @@ config: |
       - car
       - dog
       - cat
+    filters:
+        car:
+          threshold: 0.8
+          stationary_max_frames:
+            default: 3000
+            active: 600
 
   detect:
     enabled: true
