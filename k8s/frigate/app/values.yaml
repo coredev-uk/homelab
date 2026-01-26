@@ -185,19 +185,16 @@ config: |
       mode: motion
     alerts:
       retain:
-        days: 7
-        mode: active_objects
+        days: 30
     detections:
       retain:
-        days: 7
-        mode: active_objects
+        days: 30
 
   snapshots:
     enabled: true
-    timestamp: false
     bounding_box: true
     retain:
-      default: 10
+      default: 30
 
   cameras:
     front_door:
