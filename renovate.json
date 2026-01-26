@@ -48,14 +48,18 @@
       "versioning": "loose"
     },
     {
-      "description": "Flux system updates are handled by the update-flux.yaml workflow",
+      "description": "Flux system updates",
       "matchManagers": [
         "flux"
       ],
       "matchFileNames": [
         "flux/flux-system/gotk-components.yaml"
-      ],
-      "enabled": false
+      ]
+    },
+    {
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["huntarr/huntarr"],
+      "sourceUrl": "https://github.com/plexguide/Huntarr.io"
     }
   ]
 }
