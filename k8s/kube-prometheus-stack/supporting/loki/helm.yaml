@@ -1,14 +1,12 @@
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
-kind: OCIRepository
+kind: HelmRepository
 metadata:
-  name: grafana-oci
+  name: grafana
   namespace: flux-system
 spec:
-  interval: 12h
-  url: oci://ghcr.io/grafana/helm-charts
-  ref:
-    semver: "6.51.x"
+  interval: 1h0m0s
+  url: https://grafana.github.io/helm-charts
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -23,8 +21,8 @@ spec:
       chart: loki
       version: 6.51.0
       sourceRef:
-        kind: OCIRepository
-        name: grafana-oci
+        kind: HelmRepository
+        name: grafana
         namespace: flux-system
       interval: 1m0s
   targetNamespace: monitoring

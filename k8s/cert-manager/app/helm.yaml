@@ -1,14 +1,12 @@
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
-kind: OCIRepository
+kind: HelmRepository
 metadata:
-  name: cert-manager-oci
+  name: jetstack
   namespace: flux-system
 spec:
-  interval: 12h
-  url: oci://quay.io/jetstack/charts
-  ref:
-    semver: "v1.19.x"
+  interval: 1h0m0s
+  url: https://charts.jetstack.io
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -22,8 +20,8 @@ spec:
       chart: cert-manager
       version: v1.19.2
       sourceRef:
-        kind: OCIRepository
-        name: cert-manager-oci
+        kind: HelmRepository
+        name: jetstack
         namespace: flux-system
       interval: 1m0s
   targetNamespace: cert-manager
