@@ -1,12 +1,14 @@
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
-kind: HelmRepository
+kind: OCIRepository
 metadata:
-  name: prometheus-community
+  name: kube-prometheus-stack-oci
   namespace: flux-system
 spec:
-  interval: 1h0m0s
-  url: https://prometheus-community.github.io/helm-charts
+  interval: 12h
+  url: oci://ghcr.io/prometheus-community/charts
+  ref:
+    semver: "81.2.x"
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -21,8 +23,8 @@ spec:
       chart: kube-prometheus-stack
       version: 81.2.2
       sourceRef:
-        kind: HelmRepository
-        name: prometheus-community
+        kind: OCIRepository
+        name: kube-prometheus-stack-oci
         namespace: flux-system
       interval: 1m0s
   targetNamespace: monitoring
