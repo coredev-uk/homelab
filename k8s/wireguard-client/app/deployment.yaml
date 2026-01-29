@@ -44,11 +44,7 @@ spec:
             - name: TZ
               value: "Europe/London"
           securityContext:
-            capabilities:
-              add:
-                - NET_ADMIN
-                - SYS_MODULE
-            privileged: false
+            privileged: true
           volumeMounts:
             - name: config
               mountPath: /config
