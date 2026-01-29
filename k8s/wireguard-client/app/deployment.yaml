@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wireguard-client
+  namespace: wireguard-client
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: wireguard-client
+  template:
+    metadata:
+      labels:
+        app: wireguard-client
+    spec:
+      initContainers:
+        - name: config-init
+          image: busybox:latest
+          command:
+            - sh
+            - -c
+            - |
+              cp /config-template/wg0.conf /config/wg0.conf
+              sed -i "s|PRIVATE_KEY_PLACEHOLDER|$(cat /secrets/privatekey)|g" /config/wg0.conf
+              chmod 600 /config/wg0.conf
+          volumeMounts:
+            - name: config-template
+              mountPath: /config-template
+            - name: config
+              mountPath: /config
+            - name: wireguard-keys
+              mountPath: /secrets
+      containers:
+        - name: wireguard
+          image: linuxserver/wireguard:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: TZ
+              value: "Europe/London"
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+                - SYS_MODULE
+            privileged: false
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: lib-modules
+              mountPath: /lib/modules
+              readOnly: true
+          resources:
+            requests:
+              memory: "32Mi"
+              cpu: "50m"
+            limits:
+              memory: "128Mi"
+              cpu: "200m"
+          startupProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "wg show wg0 | grep -q 'interface: wg0'"
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 12
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "wg show wg0 | grep -q 'interface: wg0'"
+            periodSeconds: 30
+            failureThreshold: 3
+      volumes:
+        - name: config-template
+          configMap:
+            name: wireguard-config
+        - name: config
+          emptyDir: {}
+        - name: wireguard-keys
+          secret:
+            secretName: wireguard-keys
+            defaultMode: 0400
+        - name: lib-modules
+          hostPath:
+            path: /lib/modules
+            type: Directory
