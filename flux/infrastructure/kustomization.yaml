@@ -17,6 +17,7 @@ resources:
   # Networking
   - ../../k8s/traefik/flux.yaml
   - ../../k8s/cloudflare-tunnel/flux.yaml
+  - ../../k8s/wireguard-client/flux.yaml
   
   # Storage
   - ../../k8s/longhorn/flux.yaml
