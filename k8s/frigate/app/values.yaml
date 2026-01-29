@@ -1,7 +1,7 @@
 # Override image to latest stable release
 image:
   repository: ghcr.io/blakeblackshear/frigate
-  tag: "0.16.3"
+  tag: "0.16.4"
   pullPolicy: IfNotPresent
 
 # Upgrade strategy
