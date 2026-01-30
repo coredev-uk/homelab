@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: headplane
-          image: ghcr.io/tale/headplane:0.5.1
+          image: ghcr.io/tale/headplane:0.6.1
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
@@ -32,6 +32,21 @@ spec:
               value: "Europe/London"
             - name: CONFIG_PATH
               value: "/etc/headplane/config.yaml"
+            - name: COOKIE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: headplane-secrets
+                  key: cookie-secret
+            - name: OIDC_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: headplane-secrets
+                  key: oidc-client-secret
+            - name: HEADSCALE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: headplane-secrets
+                  key: headscale-api-key
           volumeMounts:
             - name: config
               mountPath: /etc/headplane/config.yaml
