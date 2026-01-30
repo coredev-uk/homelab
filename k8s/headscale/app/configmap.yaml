@@ -63,7 +63,7 @@ data:
   acl.json: |
     {
       "tagOwners": {
-        "tag:subnet-router": ["autogroup:admin"]
+        "tag:subnet-router": ["*"]
       },
       "autoApprovers": {
         "routes": {
