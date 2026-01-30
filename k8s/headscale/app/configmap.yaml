@@ -62,8 +62,11 @@ data:
   
   acl.json: |
     {
+      "groups": {
+        "group:admin": ["paul@coredev.uk"]
+      },
       "tagOwners": {
-        "tag:subnet-router": ["*"]
+        "tag:subnet-router": ["group:admin"]
       },
       "autoApprovers": {
         "routes": {
