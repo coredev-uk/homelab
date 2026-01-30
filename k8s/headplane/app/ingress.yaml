@@ -1,0 +1,47 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: headplane-ingressroute
+  namespace: headplane
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`headplane.home.coredev.uk`)
+      kind: Rule
+      services:
+        - name: headplane
+          port: 3000
+  tls:
+    secretName: headplane-tls
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: headplane-redirect
+  namespace: headplane
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: Host(`headplane.home.coredev.uk`)
+      kind: Rule
+      middlewares:
+        - name: https-redirect
+          namespace: traefik
+      services:
+        - name: headplane
+          port: 3000
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: headplane-tls
+  namespace: headplane
+spec:
+  secretName: headplane-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+    - headplane.home.coredev.uk

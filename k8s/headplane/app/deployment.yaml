@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: headplane
+  namespace: headplane
+  annotations:
+    glance/name: "Headplane"
+    glance/icon: "mdi:airplane"
+    glance/url: "https://headplane.home.coredev.uk"
+    glance/description: "Headscale Admin UI"
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: headplane
+  template:
+    metadata:
+      labels:
+        app: headplane
+    spec:
+      containers:
+        - name: headplane
+          image: ghcr.io/tale/headplane:0.5.1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+              name: http
+          env:
+            - name: TZ
+              value: "Europe/London"
+            - name: CONFIG_PATH
+              value: "/etc/headplane/config.yaml"
+          volumeMounts:
+            - name: config
+              mountPath: /etc/headplane/config.yaml
+              subPath: config.yaml
+            - name: secrets
+              mountPath: /etc/headplane/secrets
+              readOnly: true
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          startupProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            periodSeconds: 30
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            periodSeconds: 10
+            failureThreshold: 3
+      volumes:
+        - name: config
+          configMap:
+            name: headplane-config
+        - name: secrets
+          secret:
+            secretName: headplane-secrets
+            defaultMode: 0400

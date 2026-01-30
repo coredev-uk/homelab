@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: headplane-config
+  namespace: headplane
+data:
+  config.yaml: |
+    server:
+      host: 0.0.0.0
+      port: 3000
+      cookie_secret_path: /etc/headplane/secrets/cookie-secret
+      cookie_secure: true
+    
+    headscale:
+      url: http://headscale.headscale.svc.cluster.local:8080
+      config:
+        server_url: https://headscale.coredev.uk
+        prefixes:
+          v4: 100.64.0.0/10
+          v6: fd7a:115c:a1e0::/48
+    
+    oidc:
+      issuer: https://id.home.coredev.uk
+      client_id: d5bb0835-b786-4356-b634-576b32a021ad
+      client_secret_path: /etc/headplane/secrets/oidc-client-secret
+      redirect_uri: https://headplane.home.coredev.uk/admin/oidc/callback
+      disable_api_key_login: false
+      headscale_api_key_path: /etc/headplane/secrets/headscale-api-key
+    
+    log:
+      level: info

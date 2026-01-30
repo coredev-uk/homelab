@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tailscale-subnet-router
+  namespace: tailscale-router
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: tailscale-subnet-router
+  template:
+    metadata:
+      labels:
+        app: tailscale-subnet-router
+    spec:
+      serviceAccountName: tailscale-router
+      initContainers:
+        - name: sysctler
+          image: busybox:latest
+          command:
+            - sh
+            - -c
+            - |
+              sysctl -w net.ipv4.ip_forward=1
+              sysctl -w net.ipv6.conf.all.forwarding=1
+          securityContext:
+            privileged: true
+      containers:
+        - name: tailscale
+          image: tailscale/tailscale:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TS_AUTHKEY
+              valueFrom:
+                secretKeyRef:
+                  name: tailscale-auth
+                  key: authkey
+            - name: TS_EXTRA_ARGS
+              value: "--advertise-routes=10.43.0.0/16,192.168.20.0/24 --advertise-tags=tag:subnet-router"
+            - name: TS_STATE_DIR
+              value: "/var/lib/tailscale"
+            - name: TS_USERSPACE
+              value: "false"
+            - name: TS_AUTH_ONCE
+              value: "true"
+            - name: TS_LOGIN_SERVER
+              value: "https://headscale.coredev.uk"
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: tailscale-state
+              mountPath: /var/lib/tailscale
+            - name: dev-net-tun
+              mountPath: /dev/net/tun
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "50m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+      volumes:
+        - name: tailscale-state
+          emptyDir: {}
+        - name: dev-net-tun
+          hostPath:
+            path: /dev/net/tun
+            type: CharDevice
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tailscale-router
+  namespace: tailscale-router
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: tailscale-router
+  namespace: tailscale-router
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["create", "get", "update", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tailscale-router
+  namespace: tailscale-router
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: tailscale-router
+subjects:
+  - kind: ServiceAccount
+    name: tailscale-router
+    namespace: tailscale-router
