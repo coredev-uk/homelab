@@ -50,7 +50,7 @@ data:
         - profile
       allowed_domains:
         - coredev.uk
-      strip_email_domain: true
+      username_claim: email
     
     policy:
       mode: file
