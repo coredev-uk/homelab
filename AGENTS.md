@@ -162,6 +162,9 @@ dependsOn:
   - name: intel-gpu     # Required for GPU workloads
 ```
 
+### Config Maps
+As a standard, unless the config is a small size (< 10 lines), use configMapGenerators to create configs.
+
 ## Commit Message Convention
 
 Use [Conventional Commits](https://www.conventionalcommits.org/):
