@@ -19,6 +19,11 @@ resources:
   - ../../k8s/cloudflare-tunnel/flux.yaml
   - ../../k8s/wireguard-client/flux.yaml
   
+  # VPN & Remote Access
+  - ../../k8s/headscale/flux.yaml
+  - ../../k8s/headplane/flux.yaml
+  - ../../k8s/tailscale-router/flux.yaml
+  
   # Storage
   - ../../k8s/longhorn/flux.yaml
   
