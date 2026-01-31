@@ -54,3 +54,4 @@ spec:
     kind: ClusterIssuer
   dnsNames:
     - id.home.coredev.uk
+    - oidc.coredev.uk
