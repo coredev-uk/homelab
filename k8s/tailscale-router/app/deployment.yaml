@@ -45,8 +45,6 @@ spec:
               value: "false"
             - name: TS_AUTH_ONCE
               value: "true"
-            - name: TS_ACCEPT_RISK
-              value: "all"
           securityContext:
             privileged: true
           volumeMounts:
