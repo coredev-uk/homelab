@@ -95,24 +95,19 @@ spec:
             limits:
               memory: "256Mi"
               cpu: "500m"
-          startupProbe:
-            httpGet:
-              path: /
-              port: 3000
-            initialDelaySeconds: 10
-            periodSeconds: 5
-            failureThreshold: 12
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 3000
-            periodSeconds: 30
-            failureThreshold: 3
           readinessProbe:
-            httpGet:
-              path: /
-              port: 3000
+            exec:
+              command: ["/bin/hp_healthcheck"]
+            initialDelaySeconds: 5
             periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            exec:
+              command: ["/bin/hp_healthcheck"]
+            initialDelaySeconds: 15
+            periodSeconds: 30
+            timeoutSeconds: 5
             failureThreshold: 3
       volumes:
         - name: headplane-config
