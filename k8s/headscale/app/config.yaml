@@ -41,8 +41,6 @@ oidc:
     - openid
     - email
     - profile
-  allowed_domains:
-    - coredev.uk
   username_claim: email
 
 policy:
