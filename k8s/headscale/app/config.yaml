@@ -18,6 +18,9 @@ dns:
     global:
       - 1.1.1.1
       - 1.0.0.1
+    split:
+      home.coredev.uk:
+        - 192.168.20.20
 
 derp:
   server:
