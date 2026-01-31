@@ -27,6 +27,19 @@ spec:
               sysctl -w net.ipv6.conf.all.forwarding=1
           securityContext:
             privileged: true
+        - name: nftables-setup
+          image: alpine:latest
+          command:
+            - sh
+            - -c
+            - |
+              apk add --no-cache nftables
+              nft add table ip nat 2>/dev/null || true
+              nft add chain ip nat ts-postrouting { type nat hook postrouting priority 100 \; } 2>/dev/null || true
+              nft add rule ip nat ts-postrouting meta mark and 0x00ff0000 == 0x00040000 masquerade 2>/dev/null || true
+              echo "nftables masquerade rule added"
+          securityContext:
+            privileged: true
       containers:
         - name: tailscale
           image: tailscale/tailscale:latest
@@ -45,6 +58,8 @@ spec:
               value: "false"
             - name: TS_AUTH_ONCE
               value: "true"
+            - name: TS_DEBUG_FIREWALL_MODE
+              value: "nftables"
           securityContext:
             privileged: true
           volumeMounts:
