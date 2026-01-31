@@ -77,7 +77,7 @@ spec:
             claimName: headscale-data
         - name: oidc-secret
           secret:
-            secretName: headscale-oidc
+            secretName: headscale-secrets
             defaultMode: 0400
 ---
 apiVersion: v1

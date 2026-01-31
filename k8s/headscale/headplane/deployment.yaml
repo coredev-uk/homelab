@@ -58,12 +58,12 @@ spec:
             - name: HEADPLANE_OIDC__CLIENT_ID
               valueFrom:
                 secretKeyRef:
-                  name: headplane-secrets
+                  name: headscale-secrets
                   key: oidc-client-id
             - name: HEADPLANE_OIDC__CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: headplane-secrets
+                  name: headscale-secrets
                   key: oidc-client-secret
             - name: HEADPLANE_OIDC__TOKEN_ENDPOINT_AUTH_METHOD
               value: "client_secret_post"
@@ -74,7 +74,7 @@ spec:
             - name: HEADPLANE_OIDC__HEADSCALE_API_KEY
               valueFrom:
                 secretKeyRef:
-                  name: headplane-secrets
+                  name: headscale-secrets
                   key: headscale-api-key
           volumeMounts:
             - name: headplane-config
@@ -126,7 +126,7 @@ spec:
             claimName: headplane-data
         - name: secrets
           secret:
-            secretName: headplane-secrets
+            secretName: headscale-secrets
             defaultMode: 0400
 ---
 apiVersion: v1

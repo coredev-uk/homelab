@@ -36,7 +36,7 @@ oidc:
   only_start_if_oidc_is_available: true
   issuer: https://id.home.coredev.uk
   client_id: d5bb0835-b786-4356-b634-576b32a021ad
-  client_secret_path: /etc/headscale/secrets/client-secret
+  client_secret_path: /etc/headscale/secrets/oidc-client-secret
   scope:
     - openid
     - email
