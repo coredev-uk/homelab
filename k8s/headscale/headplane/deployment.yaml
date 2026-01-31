@@ -71,11 +71,6 @@ spec:
               value: "false"
             - name: HEADPLANE_OIDC__HEADSCALE_API_KEY_PATH
               value: "/etc/headplane/secrets/headscale-api-key"
-            - name: HEADPLANE_OIDC__HEADSCALE_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: headscale-secrets
-                  key: headscale-api-key
           volumeMounts:
             - name: headplane-config
               mountPath: /etc/headplane/config.yaml
@@ -122,7 +117,7 @@ spec:
         - name: secrets
           secret:
             secretName: headscale-secrets
-            defaultMode: 0400
+            defaultMode: 0444
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
