@@ -7,7 +7,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`id.home.coredev.uk`) || Host(`id.coredev.uk`)
+    - match: Host(`id.home.coredev.uk`) || Host(`oidc.coredev.uk`)
       kind: Rule
       services:
         - name: pocket-id
@@ -24,7 +24,7 @@ spec:
   entryPoints:
     - web
   routes:
-    - match: Host(`id.home.coredev.uk`) || Host(`id.coredev.uk`)
+    - match: Host(`id.home.coredev.uk`) || Host(`oidc.coredev.uk`)
       kind: Rule
       middlewares:
         - name: https-redirect
