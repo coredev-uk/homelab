@@ -1,16 +1,10 @@
 name: Validate
 
 on:
+  workflow_dispatch:
   pull_request:
-    branches:
-      - main
-    paths:
-      - 'flux/**'
-      - 'k8s/**'
-      - '.github/workflows/validate.yaml'
   push:
-    branches:
-      - main
+    branches: [ '*' ]
     paths:
       - 'flux/**'
       - 'k8s/**'
@@ -23,119 +17,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v5
 
-      - name: Setup Flux CLI
-        uses: fluxcd/flux2/action@main
-        with:
-          version: 'latest'
+      - name: Setup yq
+        uses: fluxcd/pkg/actions/yq@main
 
-      - name: Setup Kubernetes tools
-        uses: yokawasa/action-setup-kube-tools@v0.13.1
-        with:
-          kubectl: '1.31.0'
-          kustomize: '5.4.3'
-          kubeconform: '0.7.0'
+      - name: Setup kubeconform
+        uses: fluxcd/pkg/actions/kubeconform@main
 
-      - name: Validate Flux manifests
-        run: |
-          echo "Validating Flux system manifests with kubeconform..."
-          flux install --export | kubeconform -strict -ignore-missing-schemas -summary
-          echo "✅ Flux manifests are valid"
+      - name: Setup kustomize
+        uses: fluxcd/pkg/actions/kustomize@main
 
-      - name: Validate Kustomizations
-        run: |
-          echo "Validating and testing Kustomization builds with kubeconform..."
-          
-          # Validate all app Kustomizations (skip secrets and parent dirs that include secrets)
-          find k8s -type f -name "kustomization.yaml" | while read kustomization; do
-            dir=$(dirname "$kustomization")
-            
-            # Skip secrets directories as they contain SOPS-encrypted files
-            if [[ "$dir" == */secrets ]]; then
-              echo "Skipping SOPS-encrypted secrets: $dir"
-              continue
-            fi
-            
-            # Skip parent kustomizations that include secrets as resources
-            if grep -q "^  - secrets/" "$kustomization" 2>/dev/null; then
-              echo "Skipping parent kustomization (includes secrets): $dir"
-              continue
-            fi
-            
-            echo "Building and validating: $dir"
-            kustomize build "$dir" | kubeconform -strict -ignore-missing-schemas -summary || exit 1
-          done
-
-          echo "✅ All Kustomization builds validated successfully!"
-
-      - name: Validate Flux Kustomizations
-        run: |
-          echo "Validating Flux Kustomizations..."
-          
-          # Validate infrastructure stack
-          flux build kustomization infrastructure \
-            --path ./flux/infrastructure \
-            --kustomization-file ./flux/infrastructure.yaml \
-            --dry-run
-
-          # Validate media-stack
-          flux build kustomization media-stack \
-            --path ./flux/media-stack \
-            --kustomization-file ./flux/media-stack.yaml \
-            --dry-run
-
-          # Validate monitoring
-          flux build kustomization monitoring \
-            --path ./flux/monitoring \
-            --kustomization-file ./flux/monitoring.yaml \
-            --dry-run
-
-          echo "All Flux Kustomizations validated successfully!"
-
-      - name: Validate HelmReleases
-        run: |
-          echo "Validating HelmReleases with kubeconform..."
-          
-          # Find all HelmRelease files and validate with kubeconform
-          find k8s -type f -name "helm.yaml" | while read helmfile; do
-            echo "Validating: $helmfile"
-            kubeconform -strict -ignore-missing-schemas -summary "$helmfile"
-          done
-
-          echo "✅ All HelmReleases validated successfully!"
-
-      - name: Check for YAML syntax errors
-        run: |
-          echo "Checking YAML syntax..."
-          
-          # Install yamllint if not present
-          pip install yamllint
-          
-          # Run yamllint with relaxed rules (warnings only)
-          yamllint -d '{extends: relaxed, rules: {line-length: {max: 120}}}' flux/ k8s/ || echo "⚠️ YAML linting warnings found (non-blocking)"
-
-      - name: Validate secrets structure
-        run: |
-          echo "Validating secrets structure..."
-          
-          # Check that all secret files are either encrypted or example files
-          find k8s -path "*/secrets/*.yaml" -type f ! -name "*example*" | while read secret; do
-            if ! grep -q "sops:" "$secret" 2>/dev/null; then
-              echo "⚠️  Warning: Secret file is not encrypted: $secret"
-              echo "   Run: sops --encrypt --in-place $secret"
-            fi
-          done
-
-      - name: Summary
-        if: success()
-        run: |
-          echo "✅ All validations passed!"
-          echo ""
-          echo "Validated:"
-          echo "  - Flux manifests syntax"
-          echo "  - Kustomization builds"
-          echo "  - Flux Kustomizations"
-          echo "  - HelmRelease resources"
-          echo "  - YAML syntax"
-          echo "  - Secret file structure"
+      - name: Validate manifests
+        run: .github/scripts/validate.sh
