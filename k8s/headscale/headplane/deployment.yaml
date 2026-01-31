@@ -44,7 +44,7 @@ spec:
             - name: HEADPLANE_SERVER__COOKIE_SECURE
               value: "true"
             - name: HEADPLANE_SERVER__COOKIE_SECRET_PATH
-              value: "/etc/headplane/secrets/cookie-secret"
+              value: "/etc/headplane/secrets/headplane-cookie-secret"
 
             # --- Headscale Configuration ---
             - name: HEADPLANE_HEADSCALE__URL
