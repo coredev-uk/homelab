@@ -31,6 +31,9 @@ spec:
             - name: TZ
               value: "Europe/London"
 
+            - name: HEADPLANE_LOAD_ENV_OVERRIDES
+              value: "true"
+
             # --- Server Configuration ---
             - name: HEADPLANE_SERVER__HOST
               value: "0.0.0.0"
@@ -48,9 +51,6 @@ spec:
               value: "http://headscale.headscale.svc.cluster.local:8080"
             - name: HEADPLANE_HEADSCALE__CONFIG_STRICT
               value: "true"
-            # Uncomment below if you are mounting the headscale config for validation
-            # - name: HEADPLANE_HEADSCALE__CONFIG_PATH
-            #   value: "/etc/headscale/config.yaml"
 
             # --- OIDC Configuration ---
             - name: HEADPLANE_OIDC__ISSUER
@@ -78,8 +78,9 @@ spec:
                   key: headscale-api-key
           volumeMounts:
             - name: config
-              mountPath: /etc/headplane/config.yaml
-              subPath: config.yaml
+              mountPath: /etc/headplane
+            - name: data
+              mountPath: /var/lib/headplane
             - name: secrets
               mountPath: /etc/headplane/secrets
               readOnly: true
@@ -110,14 +111,29 @@ spec:
             periodSeconds: 10
             failureThreshold: 3
       volumes:
-        # TODO: change this to pvc
         - name: config
           configMap:
             name: headplane-config
+        - name: data
+          persistentVolumeClaim:
+            claimName: headplane-data
         - name: secrets
           secret:
             secretName: headplane-secrets
             defaultMode: 0400
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: headplane-data
+  namespace: headplane 
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 250Mi
+  storageClassName: longhorn
 ---
 apiVersion: v1
 kind: Service
