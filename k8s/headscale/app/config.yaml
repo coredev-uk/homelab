@@ -21,6 +21,8 @@ dns:
     split:
       home.coredev.uk:
         - 192.168.20.20
+      infra.octanet.cloud:
+        - 10.15.155.5
 
 derp:
   server:
