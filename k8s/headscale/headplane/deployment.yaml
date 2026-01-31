@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: headplane
-  namespace: headplane
+  namespace: headscale
   annotations:
     glance/name: "Headplane"
     glance/icon: "mdi:airplane"
@@ -77,8 +77,12 @@ spec:
                   name: headplane-secrets
                   key: headscale-api-key
           volumeMounts:
-            - name: config
-              mountPath: /etc/headplane
+            - name: headplane-config
+              mountPath: /etc/headplane/config.yaml
+              subPath: config.yaml
+            - name: headscale-config
+              mountPath: /etc/headscale/config.yaml
+              subPath: config.yaml
             - name: data
               mountPath: /var/lib/headplane
             - name: secrets
@@ -111,9 +115,12 @@ spec:
             periodSeconds: 10
             failureThreshold: 3
       volumes:
-        - name: config
+        - name: headplane-config
           configMap:
             name: headplane-config
+        - name: headscale-config
+          configMap:
+            name: headscale-config
         - name: data
           persistentVolumeClaim:
             claimName: headplane-data
@@ -126,7 +133,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: headplane-data
-  namespace: headplane 
+  namespace: headscale 
 spec:
   accessModes:
     - ReadWriteOnce
@@ -139,7 +146,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: headplane
-  namespace: headplane
+  namespace: headscale
 spec:
   type: ClusterIP
   selector:

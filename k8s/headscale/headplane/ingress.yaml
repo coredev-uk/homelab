@@ -2,7 +2,7 @@ apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: headplane-ingressroute
-  namespace: headplane
+  namespace: headscale
 spec:
   entryPoints:
     - websecure
@@ -19,7 +19,7 @@ apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: headplane-redirect
-  namespace: headplane
+  namespace: headscale
 spec:
   entryPoints:
     - web
@@ -37,7 +37,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: headplane-tls
-  namespace: headplane
+  namespace: headscale
 spec:
   secretName: headplane-tls
   issuerRef:

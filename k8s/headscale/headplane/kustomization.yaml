@@ -6,7 +6,7 @@ resources:
 
 configMapGenerator:
   - name: headplane-config 
-    namespace: headplane
+    namespace: headscale
     files:
       - config.yaml
     options:
