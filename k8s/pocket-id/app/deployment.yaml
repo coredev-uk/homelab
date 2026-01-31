@@ -30,8 +30,8 @@ spec:
             - containerPort: 9464
               name: metrics
           env:
-            # - name: APP_URL
-            #   value: "https://id.home.coredev.uk"
+            - name: APP_URL
+              value: "https://oidc.coredev.uk"
             - name: TRUST_PROXY
               value: "true"
             - name: PUID
