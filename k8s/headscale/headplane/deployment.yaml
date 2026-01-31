@@ -91,15 +91,19 @@ spec:
               memory: "256Mi"
               cpu: "500m"
           readinessProbe:
-            exec:
-              command: ["/bin/hp_healthcheck"]
+            httpGet:
+              path: /api/health
+              port: 3000
+              scheme: HTTP
             initialDelaySeconds: 5
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
           livenessProbe:
-            exec:
-              command: ["/bin/hp_healthcheck"]
+            httpGet:
+              path: /api/health
+              port: 3000
+              scheme: HTTP
             initialDelaySeconds: 15
             periodSeconds: 30
             timeoutSeconds: 5
@@ -117,7 +121,7 @@ spec:
         - name: secrets
           secret:
             secretName: headscale-secrets
-            defaultMode: 0444
+            defaultMode: 0400
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
