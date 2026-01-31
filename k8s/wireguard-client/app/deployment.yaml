@@ -80,7 +80,9 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
-              name: http
+              name: headscale
+            - containerPort: 8081
+              name: pocketid
           volumeMounts:
             - name: proxy-config
               mountPath: /etc/nginx/nginx.conf
