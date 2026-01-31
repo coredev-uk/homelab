@@ -21,7 +21,6 @@ resources:
   
   # VPN & Remote Access
   - ../../k8s/headscale/flux.yaml
-  - ../../k8s/headplane/flux.yaml
   - ../../k8s/tailscale-router/flux.yaml
   
   # Storage
