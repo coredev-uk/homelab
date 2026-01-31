@@ -5,6 +5,7 @@ resources:
 
 configMapGenerator:
   - name: proxy-config
+    namespace: wireguard-client
     files:
       - nginx.conf=nginx-proxy.conf
     options:
