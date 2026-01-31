@@ -9,7 +9,7 @@ headscale:
   config_strict: true
 
 oidc:
-  issuer: https://id.home.coredev.uk
+  issuer: https://oidc.coredev.uk
   client_id: /etc/headplane/secrets/oidc-client-id 
   client_secret_path: /etc/headplane/secrets/oidc-client-secret
   redirect_uri: https://headplane.home.coredev.uk/admin/oidc/callback

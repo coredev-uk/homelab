@@ -6,7 +6,7 @@ metadata:
   annotations:
     glance/name: "Pocket ID"
     glance/icon: "sh:pocket-id"
-    glance/url: "https://id.home.coredev.uk"
+    glance/url: "https://oidc.coredev.uk"
     glance/description: "Identity Provider"
 spec:
   replicas: 1

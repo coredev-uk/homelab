@@ -529,7 +529,7 @@ pages:
               - title: Identity & Monitoring
                 links:
                   - title: Pocket ID
-                    url: https://id.home.coredev.uk
+                    url: https://oidc.coredev.uk
                     icon: sh:pocket-id
                   - title: TinyAuth
                     url: https://auth.home.coredev.uk

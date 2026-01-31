@@ -54,7 +54,7 @@ spec:
 
             # --- OIDC Configuration ---
             - name: HEADPLANE_OIDC__ISSUER
-              value: "https://id.home.coredev.uk"
+              value: "https://oidc.coredev.uk"
             - name: HEADPLANE_OIDC__CLIENT_ID
               valueFrom:
                 secretKeyRef:

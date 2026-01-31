@@ -30,9 +30,9 @@ tinyauth:
   providers:
     - id: "pocketid"
       name: "Pocket ID"
-      authUrl: "https://id.home.coredev.uk/authorize"
-      tokenUrl: "https://id.home.coredev.uk/api/oidc/token"
-      userInfoUrl: "https://id.home.coredev.uk/api/oidc/userinfo"
+      authUrl: "https://oidc.coredev.uk/authorize"
+      tokenUrl: "https://oidc.coredev.uk/api/oidc/token"
+      userInfoUrl: "https://oidc.coredev.uk/api/oidc/userinfo"
       scopes: "openid email profile groups"
       clientId: "c181ea7e-a060-4de9-88ec-06d49f46d2cb"
       # clientSecret is referenced from K8s secret

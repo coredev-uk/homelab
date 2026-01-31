@@ -42,7 +42,7 @@ spec:
             - name: QUI__OIDC_ENABLED
               value: "true"
             - name: QUI__OIDC_ISSUER
-              value: "https://id.home.coredev.uk"
+              value: "https://oidc.coredev.uk"
             - name: QUI__OIDC_CLIENT_ID
               valueFrom:
                 secretKeyRef:

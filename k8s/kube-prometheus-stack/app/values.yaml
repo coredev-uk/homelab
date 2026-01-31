@@ -145,7 +145,7 @@ grafana:
       client_id: $__env{GRAFANA_OIDC_CLIENT_ID}
       client_secret: $__env{GRAFANA_OIDC_CLIENT_SECRET}
       scopes: openid profile email groups
-      auth_url: https://id.home.coredev.uk/authorize
+      auth_url: https://oidc.coredev.uk/authorize
       token_url: http://pocket-id.pocket-id.svc.cluster.local/api/oidc/token
       api_url: http://pocket-id.pocket-id.svc.cluster.local/api/oidc/userinfo
       use_pkce: true
