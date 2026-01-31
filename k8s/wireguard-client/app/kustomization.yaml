@@ -4,6 +4,12 @@ resources:
   - deployment.yaml
 
 configMapGenerator:
+  - name: wireguard-config
+    namespace: wireguard-client
+    files:
+      - wg0.conf
+    options:
+      disableNameSuffixHash: true
   - name: proxy-config
     namespace: wireguard-client
     files:
