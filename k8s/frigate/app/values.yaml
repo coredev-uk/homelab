@@ -10,6 +10,7 @@ strategyType: Recreate
 # Environment variables
 env:
   TZ: "Europe/London"
+  OPENCV_LOG_LEVEL: "FATAL"
 
 # Secrets for MQTT and RTSP credentials
 envFromSecrets:
@@ -127,20 +128,20 @@ config: |
   go2rtc:
     streams:
       front_door:
-        - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream0
+        - "ffmpeg:rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream0"
         - "ffmpeg:front_door#audio=opus"
       front_door_sub:
-        - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream1
+        - "ffmpeg:rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.5:554/stream1"
       back_door:
         - "ffmpeg:rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/11?action=play&media=video_audio_data#video=copy#audio=aac"
         - "ffmpeg:back_door#audio=opus"
       back_door_sub:
-        - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/12?action=play&media=video_audio_data
+        - "ffmpeg:rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.6:554/12?action=play&media=video_audio_data"
       back_garden:
         - "ffmpeg:rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/11?action=play&media=video_audio_data#video=copy#audio=aac"
         - "ffmpeg:back_garden#audio=opus"
       back_garden_sub:
-        - rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/12?action=play&media=video_audio_data
+        - "ffmpeg:rtsp://{FRIGATE_RTSP_USER}:{FRIGATE_RTSP_PASSWORD}@192.168.20.7:554/12?action=play&media=video_audio_data"
 
   camera_groups:
     home:
@@ -222,11 +223,20 @@ config: |
       ffmpeg:
         inputs:
           - path: rtsp://127.0.0.1:8554/front_door
-            input_args: preset-rtsp-restream
+            input_args: preset-rtsp-restream-low-latency
             roles:
               - record
           - path: rtsp://127.0.0.1:8554/front_door_sub
-            input_args: preset-rtsp-restream
+            # input_args: preset-rtsp-restream
+            input_args:
+              - -rtsp_transport
+              - tcp
+              - -timeout
+              - "5000000"
+              - -analyzeduration
+              - "10000000" 
+              - -probesize
+              - "10000000"
             roles:
               - detect
               - audio
@@ -234,6 +244,10 @@ config: |
         track:
           - person
           - car
+      detect:
+        width: 720
+        height: 480
+        fps: 5
       zones:
         entrance:
           coordinates: 0.878,0.364,0.958,0.401,0.811,1,0.578,1
