@@ -23,3 +23,5 @@ migration-backup-*/
 # Local config
 kubeconfig
 *.local
+
+.sisyphus
