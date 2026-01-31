@@ -161,7 +161,7 @@ config: |
       - 10.244.0.0/16
 
   proxy:
-    logout_url: https://oidc.coredev.uk/logout
+    logout_url: https://oidc.coredev.uk/api/oidc/end-session
     default_role: admin
     header_map:
       user: remote-user
