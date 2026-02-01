@@ -107,7 +107,7 @@ ingress:
 podAnnotations:
   glance/name: "Frigate"
   glance/icon: "di:frigate-light"
-  glance/url: "https://frigate.home.coredev.uk"
+  glance/url: "https://frigate.coredev.uk"
   glance/description: "CCTV & AI Detection"
 
 # Frigate configuration (see https://docs.frigate.video/configuration/index)

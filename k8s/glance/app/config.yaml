@@ -586,7 +586,7 @@ pages:
               - title: Home Automation
                 links:
                   - title: Frigate
-                    url: https://frigate.home.coredev.uk
+                    url: https://frigate.coredev.uk
                     icon: si:frigate
                   - title: Homebridge
                     url: https://homebridge.home.coredev.uk

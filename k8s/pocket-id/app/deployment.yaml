@@ -95,3 +95,35 @@ spec:
         - name: data
           persistentVolumeClaim:
             claimName: pocket-id-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pocket-id-data
+  namespace: pocket-id
+spec:
+  storageClassName: longhorn
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pocket-id
+  namespace: pocket-id
+spec:
+  selector:
+    app: pocket-id
+  ports:
+    - port: 80
+      targetPort: 1411
+      protocol: TCP
+      name: http
+    - port: 9464
+      targetPort: 9464
+      protocol: TCP
+      name: metrics
+  type: ClusterIP
