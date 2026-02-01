@@ -32,6 +32,16 @@ spec:
         - name: tinyauth-tinyauth
           port: 80
 ---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: https-redirect
+  namespace: tinyauth 
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+---
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
