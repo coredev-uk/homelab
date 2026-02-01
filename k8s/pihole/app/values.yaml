@@ -71,7 +71,6 @@ dnsmasq:
   customDnsEntries:
     - address=/.home.coredev.uk/192.168.20.30
     - address=/.infra.octanet.cloud/10.15.155.5
-    - address=/oidc.coredev.uk/192.168.20.30
   
   # No custom CNAMEs needed with wildcard approach
   customCnameEntries: []
