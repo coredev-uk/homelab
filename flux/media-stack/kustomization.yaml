@@ -7,7 +7,8 @@ resources:
   - ../../k8s/sonarr/flux.yaml
   - ../../k8s/bazarr/flux.yaml
   - ../../k8s/prowlarr/flux.yaml
-  
+  - ../../k8s/mediamanager/flux.yaml
+
   # Download clients
   - ../../k8s/qbittorrent/flux.yaml
   - ../../k8s/qui/flux.yaml
