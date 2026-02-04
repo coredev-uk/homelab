@@ -65,7 +65,7 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: postgres:17
+          image: postgres:18
           env:
             - name: POSTGRES_USER
               value: "MediaManager"
@@ -164,7 +164,7 @@ spec:
             - name: config
               mountPath: /app/config
         - name: wait-for-db
-          image: postgres:17
+          image: postgres:18
           command: ['sh', '-c', 'until pg_isready -h db -U MediaManager; do echo waiting for db; sleep 2; done;']
 
       containers:
