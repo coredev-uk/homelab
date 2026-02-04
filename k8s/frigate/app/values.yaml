@@ -38,25 +38,14 @@ persistence:
   media:
     enabled: false
 
-# Extra volumes for TLS certs and NFS media storage
+# Extra volumes for NFS media storage
 extraVolumes:
-  - name: tls-certs
-    secret:
-      secretName: frigate-tls
-      items:
-        - key: tls.crt
-          path: fullchain.pem
-        - key: tls.key
-          path: privkey.pem
   - name: nfs-media
     nfs:
       server: 192.168.20.40
       path: /var/nfs/shared/Frigate
 
 extraVolumeMounts:
-  - name: tls-certs
-    mountPath: /etc/letsencrypt/live/frigate/
-    readOnly: true
   - name: nfs-media
     mountPath: /media/frigate
 
