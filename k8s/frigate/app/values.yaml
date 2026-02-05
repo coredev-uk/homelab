@@ -233,10 +233,6 @@ config: |
         track:
           - person
           - car
-      detect:
-        width: 720
-        height: 480
-        fps: 5
       zones:
         entrance:
           coordinates: 0.878,0.364,0.958,0.401,0.811,1,0.578,1
