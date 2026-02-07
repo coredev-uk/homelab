@@ -3,13 +3,3 @@ kind: Kustomization
 resources:
   - deployment.yaml
   - ingress.yaml
-
-configMapGenerator:
-  - name: headplane-config 
-    namespace: headscale
-    files:
-      - config.yaml
-    options:
-      disableNameSuffixHash: true
-      labels:
-        reconcile.fluxcd.io/watch: Enabled

@@ -137,6 +137,16 @@ spec:
   storageClassName: longhorn
 ---
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: headplane-config
+  namespace: headscale
+data:
+  config.yaml: |
+    oidc:
+      redirect_uri: https://headplane.home.coredev.uk/admin/oidc/callback
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: headplane
