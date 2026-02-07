@@ -207,7 +207,7 @@ oidc:
   use_pkce: true
 
   # If you want to disable traditional login via Headscale API keys
-  disable_api_key_login: false
+  disable_api_key_login: true
 
   # By default profile pictures are pulled from the OIDC provider when
   # we go to fetch the userinfo endpoint. Optionally, this can be set to
