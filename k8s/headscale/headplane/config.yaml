@@ -145,7 +145,7 @@ integration:
   # on how to configure the Kubernetes integration. There are requirements in
   # order to allow Headscale to be controlled by Headplane in a cluster.
   kubernetes:
-    enabled: true
+    enabled: false
     # Validates the manifest for the Pod to ensure all of the criteria
     # are set correctly. Turn this off if you are having issues with
     # shareProcessNamespace not being validated correctly.
