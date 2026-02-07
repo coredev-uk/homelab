@@ -68,7 +68,7 @@ spec:
             - name: HEADPLANE_OIDC__TOKEN_ENDPOINT_AUTH_METHOD
               value: "client_secret_post"
             - name: HEADPLANE_OIDC__DISABLE_API_KEY_LOGIN
-              value: "false"
+              value: "true"
             - name: HEADPLANE_OIDC__HEADSCALE_API_KEY_PATH
               value: "/etc/headplane/secrets/headscale-api-key"
           volumeMounts:
@@ -143,7 +143,18 @@ metadata:
   namespace: headscale
 data:
   config.yaml: |
+    server:
+      host: 0.0.0.0
+      port: 3000
+    
+    headscale:
+      url: http://headscale.headscale.svc.cluster.local:8080
+    
     oidc:
+      issuer: https://oidc.coredev.uk
+      client_id: placeholder
+      disable_api_key_login: false
+      token_endpoint_auth_method: client_secret_post
       redirect_uri: https://headplane.home.coredev.uk/admin/oidc/callback
 ---
 apiVersion: v1
