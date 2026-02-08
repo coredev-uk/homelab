@@ -80,7 +80,7 @@ spec:
 
         # Byparr - CloudFlare bypass for protected indexers (replaces FlareSolverr)
         - name: byparr
-          image: ghcr.io/thephaseless/byparr:2.0.1
+          image: ghcr.io/thephaseless/byparr:2.1.0
           ports:
             - containerPort: 8191
               name: flare-api
