@@ -43,6 +43,8 @@ ports:
     http:
       encodedCharacters:
         allowEncodedSlash: true
+      tls:
+        enabled: true
   traefik:
     port: 9000
     exposedPort: 8080
@@ -78,10 +80,6 @@ resources:
   limits:
     memory: "512Mi"
     cpu: "500m"
-
-globalArguments:
-  - "--global.checknewversion=false"
-  - "--global.sendanonymoususage=false"
 
 metrics:
   prometheus:
