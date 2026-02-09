@@ -81,6 +81,8 @@ spec:
             - containerPort: 8191
               name: flare-api
           env:
+            - name: LOG_LEVEL
+              value: "debug"
             - name: PROXY_URL
               value: "socks5://gluetun.sabnzbd:8388"
           securityContext:
