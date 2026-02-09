@@ -82,7 +82,7 @@ spec:
               name: flare-api
           env:
             - name: PROXY_SERVER
-              value: "http://gluetun.sabnzbd:8888"
+              value: "socks5://gluetun.sabnzbd:8388"
           securityContext:
             runAsUser: 0
             runAsGroup: 0

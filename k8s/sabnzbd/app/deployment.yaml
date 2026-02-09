@@ -61,6 +61,9 @@ spec:
             - name: HTTPPROXY_STEALTH
               value: "on"
 
+            - name: SHADOWSOCKS
+              value: "on"
+
             # Control server authentication
             - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
               value: "/gluetun/auth/config.toml"
@@ -235,6 +238,9 @@ spec:
     - port: 8888
       targetPort: 8888
       name: http-proxy
+    - port: 8388
+      targetPort: 8388
+      name: shadowsocks
 ---
 apiVersion: v1
 kind: ConfigMap
