@@ -76,12 +76,12 @@ spec:
 
         # Byparr - CloudFlare bypass for protected indexers (replaces FlareSolverr)
         - name: byparr
-          image: ghcr.io/thephaseless/byparr:2.1.0
+          image: ghcr.io/flaresolverr/flaresolverr:v3.4.6 #ghcr.io/thephaseless/byparr:2.1.0
           ports:
             - containerPort: 8191
               name: flare-api
           env:
-            - name: PROXY_SERVER
+            - name: PROXY_URL
               value: "socks5://gluetun.sabnzbd:8388"
           securityContext:
             runAsUser: 0
