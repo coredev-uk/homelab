@@ -1,0 +1,35 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "docker:pinDigests",
+    ":automergeMinor"
+  ],
+  "prHourlyLimit": 0,
+  "platformAutomerge": true,
+  "flux": {
+    "managerFilePatterns": [
+      "/flux/.+\\.ya?ml$/",
+      "/k8s/.+\\.ya?ml$/",
+      "!/flux/flux-system/gotk-components\\.ya?ml$"
+    ]
+  },
+  "kubernetes": {
+    "managerFilePatterns": [
+      "/k8s/.+\\.ya?ml$/"
+    ]
+  },
+  "packageRules": [
+    {
+      "description": "Flux system updates",
+      "matchManagers": ["flux"],
+      "matchFileNames": ["flux/flux-system/gotk-components.yaml"]
+    },
+    {
+      "description": "LinuxServer.io version tags - tracks 'version-X.Y.Z' format only",
+      "matchDatasources": ["docker"],
+      "matchPackageNames": ["lscr.io/linuxserver/**"],
+      "versioning": "regex:^version-v?(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)(?:-r(?<revision>\\d+))?$"
+    }
+  ]
+}

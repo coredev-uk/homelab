@@ -2,8 +2,9 @@
 # Chart: mojo2600/pihole v2.35.0
 # Migrated from manual deployment to Helm chart
 
-# Image configuration - using latest 2025.11.1
+# Image configuration
 image:
+  # renovate: versioning=loose
   repository: "pihole/pihole"
   tag: "2025.11.1"
   pullPolicy: IfNotPresent

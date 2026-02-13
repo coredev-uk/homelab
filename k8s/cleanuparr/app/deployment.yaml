@@ -29,6 +29,7 @@ spec:
     spec:
       containers:
         - name: cleanuparr
+          # renovate: sourceUrl=https://github.com/cleanuparr/cleanuparr
           image: ghcr.io/cleanuparr/cleanuparr:2.6.0
           ports:
             - containerPort: 11011

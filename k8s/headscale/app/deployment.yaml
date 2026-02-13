@@ -17,6 +17,7 @@ spec:
     spec:
       containers:
         - name: headscale
+          # renovate: changelogUrl=https://github.com/juanfont/headscale/releases
           image: headscale/headscale:v0.28.0
           imagePullPolicy: IfNotPresent
           command:

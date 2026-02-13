@@ -3,7 +3,9 @@
 
 image:
   pullPolicy: IfNotPresent
-  tag: "develop"
+  # renovate: image=ghcr.io/seerr-team/seerr
+  repository: seerr-team/seerr
+  tag: develop@sha256:14b676bf75442d3e57913ef276103d16d2e5c6c1ef61153a6f5133da7c6c74bd
 
 # Health probes configuration
 probes:

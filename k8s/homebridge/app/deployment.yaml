@@ -29,11 +29,11 @@ spec:
         app.kubernetes.io/component: homekit-bridge
         app.kubernetes.io/part-of: homelab
     spec:
-      # CRITICAL: hostNetwork is required for HomeKit mDNS discovery
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
       containers:
         - name: homebridge
+          # renovate: versioning=loose
           image: homebridge/homebridge:2026-02-11
           env:
             - name: TZ
@@ -76,9 +76,6 @@ spec:
         - name: storage
           persistentVolumeClaim:
             claimName: homebridge-pvc
-      # Optional: Pin to a specific node if needed
-      # nodeSelector:
-      #   kubernetes.io/hostname: your-node-name
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

@@ -1,5 +1,6 @@
 # Override image to latest stable release
 image:
+  # renovate: sourceUrl=https://github.com/blakeblackshear/frigate
   repository: ghcr.io/blakeblackshear/frigate
   tag: "0.16.4"
   pullPolicy: IfNotPresent
