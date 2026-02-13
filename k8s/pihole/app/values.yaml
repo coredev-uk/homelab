@@ -41,6 +41,9 @@ serviceWeb:
 serviceDhcp:
   enabled: false
 
+adlists:
+  - https://cdn.jsdelivr.net/gh/hagezi/dns-blocklists@latest/adblock/pro.txt
+
 # Persistent Storage - 1Gi Longhorn PVC
 persistentVolumeClaim:
   enabled: true
