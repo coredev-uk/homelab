@@ -35,7 +35,9 @@ spec:
           image: qmcgaw/gluetun:v3.41.1
           ports:
             - containerPort: 8000
-              name: control-api
+              name: control-api-svc
+            - containerPort: 8888
+              name: http-proxy-svc
           securityContext:
             capabilities:
               add:
@@ -111,7 +113,7 @@ spec:
           image: ghcr.io/thephaseless/byparr:2.1.0
           ports:
             - containerPort: 8191
-              name: byparr-api
+              name: byparr-api-svc
           securityContext:
             runAsUser: 0
             runAsGroup: 0
@@ -249,9 +251,6 @@ spec:
     - port: 8080
       targetPort: 8080
       name: sabnzbd-web
-    - port: 8000
-      targetPort: 8000
-      name: gluetun-control
 ---
 # Gluetun Service
 apiVersion: v1
@@ -260,14 +259,13 @@ metadata:
   name: gluetun
   namespace: sabnzbd
 spec:
-  selector:
-    app.kubernetes.io/name: sabnzbd
-    app.kubernetes.io/instance: sabnzbd
   ports:
     - name: http-proxy
       port: 8888
-      targetPort: 8888
-
+      targetPort: http-proxy-svc
+    - name: gluetun-control
+      port: 8000
+      targetPort: gluetun-control-svc
 ---
 # Byparr / Flaresolverr Service
 apiVersion: v1
@@ -276,14 +274,10 @@ metadata:
   name: byparr 
   namespace: sabnzbd
 spec:
-  selector:
-    app.kubernetes.io/name: sabnzbd
-    app.kubernetes.io/instance: sabnzbd
   ports:
-    - name: api 
+    - name: byparr-api
       port: 8191
-      targetPort: byparr-api
-
+      targetPort: byparr-api-svc
 ---
 apiVersion: v1
 kind: ConfigMap
