@@ -130,7 +130,9 @@ spec:
               path: /health
               port: 8191
             failureThreshold: 3
-            periodSeconds: 5
+            periodSeconds: 300
+            timeoutSeconds: 120
+            initialDelaySeconds: 10
 
           livenessProbe:
             httpGet:
