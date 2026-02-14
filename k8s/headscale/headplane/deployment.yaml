@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: headplane
-          image: ghcr.io/tale/headplane:0.6.1
+          image: ghcr.io/tale/headplane:0.6.1@sha256:74bec8f23ce57f235574b7b3e809a0d9ca500947da45dac485b5132fa4cc9fab
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000

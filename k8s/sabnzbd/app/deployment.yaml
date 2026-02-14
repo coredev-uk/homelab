@@ -32,7 +32,7 @@ spec:
       containers:
         # Gluetun VPN container
         - name: gluetun
-          image: qmcgaw/gluetun:v3.41.1
+          image: qmcgaw/gluetun:v3.41.1@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
           ports:
             - containerPort: 8000
               name: control-api-svc
@@ -110,7 +110,7 @@ spec:
 
         # Byparr - CloudFlare bypass for protected indexers
         - name: byparr
-          image: ghcr.io/thephaseless/byparr:2.1.0
+          image: ghcr.io/thephaseless/byparr:2.1.0@sha256:01a46a2865d9a6db5eb8ead04ec0dd33b8fbe233e8565ae70b50d4cc0af4cfb0
           ports:
             - containerPort: 8191
               name: byparr-api-svc
@@ -145,7 +145,7 @@ spec:
         # NOTE: For port forwarding access, add your domain to host_whitelist in SABnzbd config:
         # Settings -> General -> Special -> host_whitelist (add: sabnzbd.home.coredev.uk)
         - name: sabnzbd
-          image: lscr.io/linuxserver/sabnzbd:version-4.5.5
+          image: lscr.io/linuxserver/sabnzbd:version-4.5.5@sha256:1a26f56dfc047b62d5ddc20bc92bdebfbe7c3cb58d2d3523958838a09182d77a
           ports:
             - containerPort: 8080
               name: http

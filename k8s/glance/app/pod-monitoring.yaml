@@ -21,7 +21,7 @@ spec:
       containers:
         - name: glance-k8s
           # renovate: changelogUrl=https://github.com/lukasdietrich/glance-k8s/releases
-          image: ghcr.io/lukasdietrich/glance-k8s/glance-k8s:v0.4.4
+          image: ghcr.io/lukasdietrich/glance-k8s/glance-k8s:v0.4.4@sha256:b5423dc3cd0efde78f86532e0eb58f97baffbb5303fadd53d899005d50252e51
           ports:
             - containerPort: 8080
           env:
