@@ -32,7 +32,7 @@ spec:
       containers:
         # Gluetun VPN sidecar for qBittorrent
         - name: gluetun
-          image: qmcgaw/gluetun:v3.41.1
+          image: qmcgaw/gluetun:v3.41.1@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
           ports:
             - containerPort: 8000
               name: control-api-svc
@@ -105,7 +105,7 @@ spec:
 
         # qBittorrent container using Gluetun network
         - name: qbittorrent
-          image: lscr.io/linuxserver/qbittorrent:version-5.1.4-r0
+          image: lscr.io/linuxserver/qbittorrent:version-5.1.4-r0@sha256:a2eedc99b4876916943bd33e7c415efc448f6b514aa39b4f98c1e6472a717301
           env:
             - name: PUID
               value: "1000"

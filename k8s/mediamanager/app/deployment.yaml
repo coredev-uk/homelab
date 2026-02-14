@@ -65,7 +65,7 @@ spec:
     spec:
       containers:
         - name: postgres
-          image: postgres:18
+          image: postgres:18@sha256:b6b4d0b75c699a2c94dfc5a94fe09f38630f3b67ab0e1653ede1b7ac8e13c197
           env:
             - name: POSTGRES_USER
               value: "MediaManager"
@@ -156,7 +156,7 @@ spec:
 
       initContainers:
         - name: fix-permissions
-          image: busybox:1.37
+          image: busybox:1.37@sha256:b3255e7dfbcd10cb367af0d409747d511aeb66dfac98cf30e97e87e4207dd76f
           command: ['sh', '-c', 'chown -R 1000:988 /app/config && chmod -R 755 /app/config']
           securityContext:
             runAsUser: 0
@@ -164,12 +164,12 @@ spec:
             - name: config
               mountPath: /app/config
         - name: wait-for-db
-          image: postgres:18
+          image: postgres:18@sha256:b6b4d0b75c699a2c94dfc5a94fe09f38630f3b67ab0e1653ede1b7ac8e13c197
           command: ['sh', '-c', 'until pg_isready -h db -U MediaManager; do echo waiting for db; sleep 2; done;']
 
       containers:
         - name: mediamanager
-          image: ghcr.io/maxdorninger/mediamanager/mediamanager:latest
+          image: ghcr.io/maxdorninger/mediamanager/mediamanager:latest@sha256:83b80dce26f8cdbbf8afec06784a85e7eedcba05ad4be57d2f70b006304d7a8c
           ports:
             - containerPort: 8000
           env:

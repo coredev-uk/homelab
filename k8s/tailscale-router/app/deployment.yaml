@@ -18,7 +18,7 @@ spec:
       serviceAccountName: tailscale-router
       initContainers:
         - name: sysctler
-          image: busybox:latest
+          image: busybox:latest@sha256:b3255e7dfbcd10cb367af0d409747d511aeb66dfac98cf30e97e87e4207dd76f
           command:
             - sh
             - -c
@@ -28,7 +28,7 @@ spec:
           securityContext:
             privileged: true
         - name: nftables-setup
-          image: alpine:latest
+          image: alpine:latest@sha256:25109184c71bdad752c8312a8623239686a9a2071e8825f20acb8f2198c3f659
           command:
             - sh
             - -c
@@ -42,7 +42,7 @@ spec:
             privileged: true
       containers:
         - name: tailscale
-          image: tailscale/tailscale:latest
+          image: tailscale/tailscale:latest@sha256:95e528798bebe75f39b10e74e7051cf51188ee615934f232ba7ad06a3390ffa1
           imagePullPolicy: IfNotPresent
           env:
             - name: TS_AUTHKEY

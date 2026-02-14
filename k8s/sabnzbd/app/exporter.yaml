@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: sabnzbd-vpn-exporter
-          image: ghcr.io/thecfu/gluetun-exporter:0.1.1-standalone
+          image: ghcr.io/thecfu/gluetun-exporter:0.1.1-standalone@sha256:bafeabb2a9638bf6b0800c2d3d47d49c6236d879bd01eec8caea45dfca2b50c5
           env:
             - name: GLUETUN_URL
               value: "http://gluetun:8000"
