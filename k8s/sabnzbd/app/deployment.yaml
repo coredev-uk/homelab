@@ -253,21 +253,28 @@ spec:
       targetPort: 8000
       name: gluetun-control
 ---
-# Separate SABnzbd proxy service for other services to use
+# Gluetun Service
 apiVersion: v1
 kind: Service
 metadata:
   name: gluetun
   namespace: sabnzbd
 spec:
-  selector:
-    app.kubernetes.io/name: sabnzbd
-    app.kubernetes.io/instance: sabnzbd
   ports:
     - name: http-proxy
       port: 8888
       targetPort: 8888
-    - name: byparr
+
+---
+# Byparr / Flaresolverr Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: byparr 
+  namespace: sabnzbd
+spec:
+  ports:
+    - name: api 
       port: 8191
       targetPort: byparr-api
 
