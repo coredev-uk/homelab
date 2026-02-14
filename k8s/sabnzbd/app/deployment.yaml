@@ -73,7 +73,7 @@ spec:
 
             # Firewall Ports - only SABnzbd
             - name: FIREWALL_INPUT_PORTS
-              value: "8080"
+              value: "8080,8191"
 
             # Secrets
             - name: WIREGUARD_PRIVATE_KEY
@@ -145,6 +145,9 @@ spec:
         # Settings -> General -> Special -> host_whitelist (add: sabnzbd.home.coredev.uk)
         - name: sabnzbd
           image: lscr.io/linuxserver/sabnzbd:version-4.5.5
+          ports:
+            - containerPort: 8080
+              name: http
           env:
             - name: PUID
               value: "1000"
@@ -259,6 +262,9 @@ metadata:
   name: gluetun
   namespace: sabnzbd
 spec:
+  selector:
+     app.kubernetes.io/name: sabnzbd
+     app.kubernetes.io/instance: sabnzbd
   ports:
     - name: http-proxy
       port: 8888
@@ -274,6 +280,9 @@ metadata:
   name: byparr 
   namespace: sabnzbd
 spec:
+  selector:
+     app.kubernetes.io/name: sabnzbd
+     app.kubernetes.io/instance: sabnzbd
   ports:
     - name: byparr-api
       port: 8191
