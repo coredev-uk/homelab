@@ -265,7 +265,7 @@ spec:
       targetPort: http-proxy-svc
     - name: gluetun-control
       port: 8000
-      targetPort: gluetun-control-svc
+      targetPort: control-api-svc
 ---
 # Byparr / Flaresolverr Service
 apiVersion: v1
