@@ -38,7 +38,6 @@ spec:
         fsGroup: 100
 
       containers:
-        # Prowlarr - Indexer manager
         - name: prowlarr
           image: lscr.io/linuxserver/prowlarr:version-2.3.0.5236
           ports:
@@ -74,43 +73,6 @@ spec:
             initialDelaySeconds: 30
             periodSeconds: 30
 
-        # Byparr - CloudFlare bypass for protected indexers (replaces FlareSolverr)
-        - name: byparr
-          image: ghcr.io/flaresolverr/flaresolverr:v3.4.6 #ghcr.io/thephaseless/byparr:2.1.0
-          ports:
-            - containerPort: 8191
-              name: flare-api
-          env:
-            - name: LOG_LEVEL
-              value: "debug"
-            # - name: PROXY_URL
-            #   value: "socks5://gluetun.sabnzbd:8388"
-          securityContext:
-            runAsUser: 0
-            runAsGroup: 0
-            runAsNonRoot: false
-          resources:
-            requests:
-              memory: "384Mi"
-              cpu: "150m"
-            limits:
-              memory: "1.5Gi"
-              cpu: "750m"
-          # livenessProbe:
-          #   httpGet:
-          #     path: /docs
-          #     port: 8191
-          #   initialDelaySeconds: 90
-          #   periodSeconds: 30
-          #   timeoutSeconds: 10
-          # readinessProbe:
-          #   httpGet:
-          #     path: /docs
-          #     port: 8191
-          #   initialDelaySeconds: 60
-          #   periodSeconds: 15
-          #   timeoutSeconds: 5
-
       volumes:
         - name: prowlarr-config
           persistentVolumeClaim:
@@ -145,6 +107,3 @@ spec:
     - name: web-ui
       port: 9696
       targetPort: web-ui
-    - name: flaresolverr
-      port: 8191
-      targetPort: flare-api

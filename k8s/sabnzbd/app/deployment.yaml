@@ -61,9 +61,6 @@ spec:
             - name: HTTPPROXY_STEALTH
               value: "on"
 
-            - name: SHADOWSOCKS
-              value: "on"
-
             # Control server authentication
             - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
               value: "/gluetun/auth/config.toml"
@@ -108,6 +105,38 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "500m"
+
+        # Byparr - CloudFlare bypass for protected indexers
+        - name: byparr
+          image: ghcr.io/thephaseless/byparr:2.1.0
+          ports:
+            - containerPort: 8191
+              name: byparr-api
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+            runAsNonRoot: false
+          resources:
+            requests:
+              memory: "384Mi"
+              cpu: "150m"
+            limits:
+              memory: "1.5Gi"
+              cpu: "750m"
+          livenessProbe:
+            httpGet:
+              path: /docs
+              port: 8191
+            initialDelaySeconds: 90
+            periodSeconds: 30
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /docs
+              port: 8191
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            timeoutSeconds: 5
 
         # SABnzbd container using Gluetun network
         # NOTE: For port forwarding access, add your domain to host_whitelist in SABnzbd config:
@@ -235,12 +264,13 @@ spec:
     app.kubernetes.io/name: sabnzbd
     app.kubernetes.io/instance: sabnzbd
   ports:
-    - port: 8888
+    - name: http-proxy
+      port: 8888
       targetPort: 8888
-      name: http-proxy
-    - port: 8388
-      targetPort: 8388
-      name: shadowsocks
+    - name: byparr
+      port: 8191
+      targetPort: byparr-api
+
 ---
 apiVersion: v1
 kind: ConfigMap
