@@ -725,7 +725,7 @@ pages:
           - type: custom-api
             title: SABnzbd VPN Status
             cache: 1m
-            url: http://gluetun.sabnzbd/8000/v1/publicip/ip
+            url: http://gluetun.sabnzbd:8000/v1/publicip/ip
             template: |
               {{ if eq .Response.StatusCode 200 }}
                 {{ $ip := (.JSON.String "public_ip") }}
