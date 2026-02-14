@@ -682,10 +682,10 @@ pages:
           - type: custom-api
             title: qBittorrent VPN Status
             cache: 1m
-            url: http://qbittorrent.qbittorrent.svc.cluster.local:8000/v1/publicip/ip
+            url: http://gluetun.qbittorrent:8000/v1/publicip/ip
             subrequests:
               port-status:
-                url: http://qbittorrent.qbittorrent.svc.cluster.local:8000/v1/portforward
+                url: http://gluetun.qbittorrent:8000/v1/portforward
             template: |
               {{ if eq .Response.StatusCode 200 }}
                 {{ $ip := (.JSON.String "public_ip") }}
@@ -725,7 +725,7 @@ pages:
           - type: custom-api
             title: SABnzbd VPN Status
             cache: 1m
-            url: http://sabnzbd.sabnzbd.svc.cluster.local:8000/v1/publicip/ip
+            url: http://gluetun.sabnzbd/8000/v1/publicip/ip
             template: |
               {{ if eq .Response.StatusCode 200 }}
                 {{ $ip := (.JSON.String "public_ip") }}

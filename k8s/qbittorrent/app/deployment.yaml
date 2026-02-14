@@ -35,7 +35,7 @@ spec:
           image: qmcgaw/gluetun:v3.41.1
           ports:
             - containerPort: 8000
-              name: control-api
+              name: control-api-svc
           securityContext:
             capabilities:
               add:
@@ -49,7 +49,7 @@ spec:
               value: "wireguard"
 
             - name: SERVER_COUNTRIES
-              value: "United Kingdom"
+              value: "United Kingdom,Netherlands,Switzerland"
             
             - name: UPDATER_PERIOD
               value: "24h"
@@ -180,6 +180,7 @@ spec:
       storage: 2Gi
   storageClassName: longhorn
 ---
+# Web UI
 apiVersion: v1
 kind: Service
 metadata:
@@ -195,25 +196,21 @@ spec:
     - port: 8080
       targetPort: 8080
       name: qbittorrent-web
-    - port: 8000
-      targetPort: 8000
-      name: gluetun-control
-
 ---
-# Service specifically for qBittorrent Web UI
+# Gluetun Service
 apiVersion: v1
 kind: Service
 metadata:
-  name: qbittorrent-web
-  namespace: qbittorrent
+  name: gluetun
+  namespace: qbittorrent 
 spec:
   selector:
-    app.kubernetes.io/name: qbittorrent
-    app.kubernetes.io/instance: qbittorrent
+     app.kubernetes.io/name: qbittorrent 
+     app.kubernetes.io/instance: qbittorrent 
   ports:
-    - port: 8080
-      targetPort: 8080
-      name: qbittorrent-web
+    - name: gluetun-control
+      port: 8000
+      targetPort: control-api-svc
 ---
 apiVersion: v1
 kind: ConfigMap
