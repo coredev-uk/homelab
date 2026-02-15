@@ -133,6 +133,9 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 120
 
+          volumeMounts:
+            - name: shm
+              mountPath: /dev/shm
           livenessProbe:
             httpGet:
               path: /health
@@ -210,6 +213,10 @@ spec:
           configMap:
             name: scripts
             defaultMode: 0755
+        - name: shm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 2Gi
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
