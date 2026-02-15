@@ -129,9 +129,9 @@ spec:
             httpGet:
               path: /health
               port: 8191
-            failureThreshold: 1
-            periodSeconds: 10
-            timeoutSeconds: 120
+            failureThreshold: 3
+            periodSeconds: 30
+            timeoutSeconds: 900
 
           volumeMounts:
             - name: shm
