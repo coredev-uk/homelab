@@ -1,6 +1,6 @@
 #
 # Prowlarr - Indexer Manager
-# Proxy Host: "http://gluetun.prowlarr:8888"
+# Byparr runs as a sidecar for Flaresolverr-compatible request handling
 #
 apiVersion: apps/v1
 kind: Deployment
@@ -73,16 +73,12 @@ spec:
             initialDelaySeconds: 30
             periodSeconds: 30
 
-      volumes:
-        - name: prowlarr-config
-          persistentVolumeClaim:
-            claimName: prowlarr-config
-
         - name: byparr
           image: ghcr.io/thephaseless/byparr:2.1.0@sha256:01a46a2865d9a6db5eb8ead04ec0dd33b8fbe233e8565ae70b50d4cc0af4cfb0
           ports:
             - containerPort: 8191
-              name: byparr-api
+              name: byparr-http
+              protocol: TCP
           resources:
             requests:
               memory: "768Mi"
@@ -94,10 +90,10 @@ spec:
             httpGet:
               path: /health
               port: 8191
-            initialDelaySeconds: 30
-            periodSeconds: 10
-            timeoutSeconds: 30
-            failureThreshold: 60
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            timeoutSeconds: 60
+            failureThreshold: 40
           livenessProbe:
             httpGet:
               path: /health
@@ -112,6 +108,11 @@ spec:
             periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 3
+
+      volumes:
+        - name: prowlarr-config
+          persistentVolumeClaim:
+            claimName: prowlarr-config
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -144,4 +145,4 @@ spec:
       targetPort: web-ui
     - name: byparr
       port: 8191
-      targetPort: byparr-api
+      targetPort: byparr-http
