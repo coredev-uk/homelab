@@ -35,7 +35,7 @@ spec:
           image: qmcgaw/gluetun:v3.41.1@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
           ports:
             - containerPort: 8000
-              name: control-api-svc
+              name: control-server
           securityContext:
             capabilities:
               add:
@@ -210,7 +210,7 @@ spec:
   ports:
     - name: gluetun-control
       port: 8000
-      targetPort: control-api-svc
+      targetPort: control-server
 ---
 apiVersion: v1
 kind: ConfigMap

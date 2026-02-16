@@ -24,11 +24,11 @@ spec:
             - name: GLUETUN_URL
               value: "http://gluetun:8000"
             - name: EXPORTER_PORT
-              value: "8000"
+              value: "8001"
             - name: EXPORTER_INTERVAL
               value: "30"
           ports:
-            - containerPort: 8002
+            - containerPort: 8001
               name: gluetun-metrics
           resources:
             requests:
@@ -40,13 +40,13 @@ spec:
           livenessProbe:
             httpGet:
               path: /metrics
-              port: 8002
+              port: 8001
             initialDelaySeconds: 30
             periodSeconds: 30
           readinessProbe:
             httpGet:
               path: /metrics
-              port: 8002
+              port: 8001
             initialDelaySeconds: 5
             periodSeconds: 10
 ---
@@ -59,8 +59,8 @@ metadata:
     app: gluetun-exporter
 spec:
   ports:
-    - port: 8002
-      targetPort: 8002
+    - port: 8001
+      targetPort: 8001
       name: gluetun-metrics
   selector:
     app: gluetun-exporter
