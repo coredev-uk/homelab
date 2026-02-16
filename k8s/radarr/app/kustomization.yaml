@@ -5,5 +5,4 @@ namespace: radarr
 
 resources:
   - deployment.yaml
-  - init-job.yaml
   - ingress.yaml
