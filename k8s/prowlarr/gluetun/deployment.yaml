@@ -47,9 +47,6 @@ spec:
             - name: HTTPPROXY_STEALTH
               value: "on"
 
-            - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
-              value: "/gluetun/auth/config.toml"
-
             - name: BLOCK_MALICIOUS
               value: "off"
 
@@ -63,8 +60,6 @@ spec:
                   key: private-key
 
           volumeMounts:
-            - name: gluetun-auth-config
-              mountPath: /gluetun/auth
             - name: tun-device
               mountPath: /dev/net/tun
 
