@@ -1,6 +1,6 @@
 #
 # Prowlarr - Indexer Manager
-# Proxy Host: "http://gluetun.sabnzbd:8888"
+# Proxy Host: "http://gluetun.prowlarr:8888"
 #
 apiVersion: apps/v1
 kind: Deployment

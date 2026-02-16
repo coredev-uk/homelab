@@ -73,7 +73,7 @@ spec:
 
             # Firewall Ports - only SABnzbd
             - name: FIREWALL_INPUT_PORTS
-              value: "8080,8191"
+              value: "8080"
 
             # Secrets
             - name: WIREGUARD_PRIVATE_KEY
@@ -107,42 +107,6 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "500m"
-
-        # Byparr - CloudFlare bypass for protected indexers
-        - name: byparr
-          image: ghcr.io/thephaseless/byparr:2.1.0@sha256:01a46a2865d9a6db5eb8ead04ec0dd33b8fbe233e8565ae70b50d4cc0af4cfb0
-          ports:
-            - containerPort: 8191
-              name: byparr-api-svc
-          securityContext:
-            runAsUser: 0
-            runAsGroup: 0
-            runAsNonRoot: false
-          resources:
-            requests:
-              memory: "384Mi"
-              cpu: "150m"
-            limits:
-              memory: "1.5Gi"
-              cpu: "750m"
-          startupProbe:
-            httpGet:
-              path: /health
-              port: 8191
-            failureThreshold: 3
-            periodSeconds: 30
-            timeoutSeconds: 900
-
-          volumeMounts:
-            - name: shm
-              mountPath: /dev/shm
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 8191
-            periodSeconds: 900
-            timeoutSeconds: 30
-            failureThreshold: 3
 
         # SABnzbd container using Gluetun network
         # NOTE: For port forwarding access, add your domain to host_whitelist in SABnzbd config:
@@ -213,10 +177,6 @@ spec:
           configMap:
             name: scripts
             defaultMode: 0755
-        - name: shm
-          emptyDir:
-            medium: Memory
-            sizeLimit: 2Gi
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -280,21 +240,6 @@ spec:
     - name: gluetun-control
       port: 8000
       targetPort: control-api-svc
----
-# Byparr / Flaresolverr Service
-apiVersion: v1
-kind: Service
-metadata:
-  name: byparr 
-  namespace: sabnzbd
-spec:
-  selector:
-     app.kubernetes.io/name: sabnzbd
-     app.kubernetes.io/instance: sabnzbd
-  ports:
-    - name: byparr-api
-      port: 8191
-      targetPort: byparr-api-svc
 ---
 apiVersion: v1
 kind: ConfigMap

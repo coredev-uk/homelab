@@ -1,0 +1,151 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gluetun
+  namespace: prowlarr
+  labels:
+    app.kubernetes.io/name: gluetun
+    app.kubernetes.io/instance: gluetun-prowlarr
+    app.kubernetes.io/component: vpn-proxy
+    app.kubernetes.io/part-of: media-stack
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gluetun
+      app.kubernetes.io/instance: gluetun-prowlarr
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: gluetun
+        app.kubernetes.io/instance: gluetun-prowlarr
+        app.kubernetes.io/component: vpn-proxy
+        app.kubernetes.io/part-of: media-stack
+    spec:
+      containers:
+        - name: gluetun
+          image: qmcgaw/gluetun:v3.41.1@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+          env:
+            - name: VPN_SERVICE_PROVIDER
+              value: "protonvpn"
+
+            - name: VPN_TYPE
+              value: "wireguard"
+
+            - name: SERVER_COUNTRIES
+              value: "United Kingdom"
+
+            - name: HTTPPROXY
+              value: "on"
+
+            - name: HTTPPROXY_STEALTH
+              value: "on"
+
+            - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
+              value: "/gluetun/auth/config.toml"
+
+            - name: BLOCK_MALICIOUS
+              value: "off"
+
+            - name: FIREWALL_INPUT_PORTS
+              value: "8191"
+
+            - name: WIREGUARD_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: vpn-secrets
+                  key: private-key
+
+          volumeMounts:
+            - name: gluetun-auth-config
+              mountPath: /gluetun/auth
+            - name: tun-device
+              mountPath: /dev/net/tun
+
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+
+        - name: byparr
+          image: ghcr.io/thephaseless/byparr:2.1.0@sha256:01a46a2865d9a6db5eb8ead04ec0dd33b8fbe233e8565ae70b50d4cc0af4cfb0
+          ports:
+            - containerPort: 8191
+              name: byparr-api-svc
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+            runAsNonRoot: false
+          resources:
+            requests:
+              memory: "384Mi"
+              cpu: "150m"
+            limits:
+              memory: "1.5Gi"
+              cpu: "750m"
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8191
+            failureThreshold: 3
+            periodSeconds: 30
+            timeoutSeconds: 900
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8191
+            periodSeconds: 900
+            timeoutSeconds: 30
+            failureThreshold: 3
+          volumeMounts:
+            - name: shm
+              mountPath: /dev/shm
+
+      volumes:
+        - name: tun-device
+          hostPath:
+            path: /dev/net/tun
+        - name: shm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gluetun
+  namespace: prowlarr
+spec:
+  selector:
+    app.kubernetes.io/name: gluetun
+    app.kubernetes.io/instance: gluetun-prowlarr
+  ports:
+    - name: http-proxy
+      port: 8888
+      targetPort: http-proxy-svc
+    - name: gluetun-control
+      port: 8000
+      targetPort: control-api-svc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: byparr
+  namespace: prowlarr
+spec:
+  selector:
+    app.kubernetes.io/name: gluetun
+    app.kubernetes.io/instance: gluetun-prowlarr
+  ports:
+    - name: byparr-api
+      port: 8191
+      targetPort: byparr-api-svc
