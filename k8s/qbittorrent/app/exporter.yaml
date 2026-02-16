@@ -1,35 +1,35 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: qbittorrent-vpn-exporter
+  name: gluetun-exporter
   namespace: qbittorrent
   annotations:
     glance/hide: "true"
   labels:
-    app: qbittorrent-vpn-exporter
+    app: gluetun-exporter
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: qbittorrent-vpn-exporter
+      app: gluetun-exporter
   template:
     metadata:
       labels:
-        app: qbittorrent-vpn-exporter
+        app: gluetun-exporter
     spec:
       containers:
-        - name: qbittorrent-vpn-exporter
+        - name: gluetun-exporter
           image: ghcr.io/thecfu/gluetun-exporter:0.1.1-standalone@sha256:bafeabb2a9638bf6b0800c2d3d47d49c6236d879bd01eec8caea45dfca2b50c5
           env:
             - name: GLUETUN_URL
               value: "http://gluetun:8000"
             - name: EXPORTER_PORT
-              value: "8002"
+              value: "8000"
             - name: EXPORTER_INTERVAL
               value: "30"
           ports:
             - containerPort: 8002
-              name: qflood-metrics
+              name: gluetun-metrics
           resources:
             requests:
               memory: "32Mi"
@@ -53,14 +53,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: qbittorrent-vpn-exporter
+  name: gluetun-exporter
   namespace: qbittorrent
   labels:
-    app: qbittorrent-vpn-exporter
+    app: gluetun-exporter
 spec:
   ports:
     - port: 8002
       targetPort: 8002
-      name: qflood-metrics
+      name: gluetun-metrics
   selector:
-    app: qbittorrent-vpn-exporter
+    app: gluetun-exporter

@@ -6,5 +6,4 @@ namespace: sabnzbd
 resources:
   - deployment.yaml
   - ingress.yaml
-  - exporter.yaml
   - scripts.yaml

@@ -722,35 +722,6 @@ pages:
                </div>
               {{ end }}
 
-          - type: custom-api
-            title: SABnzbd VPN Status
-            cache: 1m
-            url: http://gluetun.sabnzbd:8000/v1/publicip/ip
-            template: |
-              {{ if eq .Response.StatusCode 200 }}
-                {{ $ip := (.JSON.String "public_ip") }}
-                {{ $city := (.JSON.String "city") }}
-                {{ $country := (.JSON.String "country") }}
-                {{ if eq $ip "" }}
-                 <div>
-                   <div class="color-highlight size-h4">
-                     <span class="color-negative">Disconnected ●</span> 
-                   </div>
-                 </div>
-                {{ else }}
-                 <div>
-                   <div class="color-highlight size-h4">
-                     <span class="color-positive">Connected ●</span> 
-                   </div>
-                   <div class="size-h6">{{ $ip }} - {{ $city }}, {{ $country }}</div>
-                 </div>
-                {{ end }}
-              {{ else }}
-               <div class="color-negative size-h4">
-                 VPN: Error {{ .Response.StatusCode }}
-               </div>
-              {{ end }}
-
   - name: Monitoring
     columns:
       - size: full

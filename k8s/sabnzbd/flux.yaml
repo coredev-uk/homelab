@@ -14,7 +14,3 @@ spec:
     namespace: flux-system
   dependsOn:
     - name: longhorn
-  decryption:
-    provider: sops
-    secretRef:
-      name: sops-age

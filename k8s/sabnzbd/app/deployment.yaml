@@ -30,77 +30,6 @@ spec:
         app.kubernetes.io/part-of: media-stack
     spec:
       containers:
-        # Gluetun VPN container
-        - name: gluetun
-          image: qmcgaw/gluetun:v3.41.1@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
-          ports:
-            - containerPort: 8000
-              name: control-api-svc
-          securityContext:
-            capabilities:
-              add:
-                - NET_ADMIN
-          env:
-            # VPN Provider Configuration
-            - name: VPN_SERVICE_PROVIDER
-              value: "protonvpn"
-
-            - name: VPN_TYPE
-              value: "wireguard"
-
-            - name: SERVER_COUNTRIES
-              value: "United Kingdom,Netherlands"
-            
-            - name: UPDATER_PERIOD
-              value: "24h"
-
-            # Control server authentication
-            - name: HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH
-              value: "/gluetun/auth/config.toml"
-
-            # Disable malicious to prevent blocking Usenet
-            - name: BLOCK_MALICIOUS
-              value: "off"
-
-            # Firewall Ports - only SABnzbd
-            - name: FIREWALL_INPUT_PORTS
-              value: "8080"
-
-            # Secrets
-            - name: WIREGUARD_PRIVATE_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: vpn-secrets
-                  key: private-key
-
-            - name: UPDATER_PROTONVPN_EMAIL
-              valueFrom:
-                secretKeyRef:
-                  name: vpn-secrets
-                  key: proton-email
-
-            - name: UPDATER_PROTONVPN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: vpn-secrets
-                  key: proton-password
-
-          volumeMounts:
-            - name: gluetun-auth-config
-              mountPath: /gluetun/auth
-            - name: tun-device
-              mountPath: /dev/net/tun
-
-          resources:
-            requests:
-              memory: "256Mi"
-              cpu: "100m"
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
-
-        # SABnzbd container using Gluetun network
-        # NOTE: For port forwarding access, add your domain to host_whitelist in SABnzbd config:
         # Settings -> General -> Special -> host_whitelist (add: sabnzbd.home.coredev.uk)
         - name: sabnzbd
           image: lscr.io/linuxserver/sabnzbd:version-4.5.5@sha256:1a26f56dfc047b62d5ddc20bc92bdebfbe7c3cb58d2d3523958838a09182d77a
@@ -158,9 +87,6 @@ spec:
           nfs:
             server: 192.168.20.40
             path: /var/nfs/shared/Homelab
-        - name: gluetun-auth-config
-          configMap:
-            name: gluetun-auth-config
         - name: tun-device
           hostPath:
             path: /dev/net/tun
@@ -213,22 +139,3 @@ spec:
     - port: 8080
       targetPort: 8080
       name: sabnzbd-web
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: gluetun-auth-config
-  namespace: sabnzbd
-  labels:
-    app: vpn
-    component: auth
-data:
-  config.toml: |
-    [[roles]]
-    name = "glance"
-    routes = [
-      "GET /v1/publicip/ip",
-      "GET /v1/vpn/status"
-    ]
-    auth = "none"
-
