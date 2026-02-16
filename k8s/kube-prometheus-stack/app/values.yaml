@@ -65,7 +65,7 @@ prometheus:
           - targets: ['frigate-exporter.frigate.svc.cluster.local:9100']
       - job_name: 'gluetun-exporter'
         static_configs:
-          - targets: ['gluetun-exporter.qbittorrent.svc.cluster.local:9090']
+          - targets: ['gluetun-exporter.qbittorrent.svc.cluster.local:8001']
       - job_name: 'pocket-id'
         static_configs:
           - targets: ['pocket-id.pocket-id.svc.cluster.local:9464']
