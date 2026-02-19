@@ -56,27 +56,26 @@ spec:
               cpu: "500m"
           startupProbe:
             httpGet:
-              path: /health
+              path: /api/health
               port: 9705
-            initialDelaySeconds: 15
-            periodSeconds: 5
-            timeoutSeconds: 5
-            failureThreshold: 12
+            periodSeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 4
           livenessProbe:
             httpGet:
-              path: /health
+              path: /api/health
               port: 9705
-            initialDelaySeconds: 60
+            initialDelaySeconds: 0
             periodSeconds: 30
-            timeoutSeconds: 5
+            timeoutSeconds: 10
             failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /health
+              path: /api/health
               port: 9705
-            initialDelaySeconds: 30
+            initialDelaySeconds: 0
             periodSeconds: 30
-            timeoutSeconds: 5
+            timeoutSeconds: 10
             failureThreshold: 3
       volumes:
         - name: config
