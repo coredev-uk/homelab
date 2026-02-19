@@ -27,6 +27,9 @@ spec:
         app.kubernetes.io/component: duplicate-hunter
         app.kubernetes.io/part-of: media-stack
     spec:
+      securityContext:
+        fsGroup: 988
+        fsGroupChangePolicy: "OnRootMismatch"
       containers:
         - name: huntarr
           # renovate: sourceUrl=https://github.com/plexguide/Huntarr.io
