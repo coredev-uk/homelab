@@ -30,7 +30,7 @@ spec:
       containers:
         - name: cleanuparr
           # renovate: sourceUrl=https://github.com/cleanuparr/cleanuparr
-          image: ghcr.io/cleanuparr/cleanuparr:2.6.2@sha256:04fcf3b3854daac136e5ae278937ffa193558dc2d482c58a5e2472c9748b9dee
+          image: ghcr.io/cleanuparr/cleanuparr:2.6.3@sha256:0d18e5dedbc376e48c449286f08460a9d76fb4fa842eff93f863ca120c97ea97
           ports:
             - containerPort: 11011
           env:

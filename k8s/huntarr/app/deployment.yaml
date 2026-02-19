@@ -30,7 +30,7 @@ spec:
       containers:
         - name: huntarr
           # renovate: sourceUrl=https://github.com/plexguide/Huntarr.io
-          image: huntarr/huntarr:9.2.4@sha256:ae4a435a4a2c68dbb03c0a6a30a7b9d8957d2e1653fef965c5f5d9cace991591
+          image: huntarr/huntarr:9.3.7@sha256:95e88b2595f71b1ec2e158a3b9461c573e192928c51ac2b0d9675f33d4cdba15
           ports:
             - containerPort: 9705
           env:
