@@ -36,13 +36,21 @@ spec:
           env:
             - name: TZ
               value: "Europe/London"
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "988"
             - name: HUNTARR_PORT
-              value: "9705"
-            - name: HUNTARR_SERVICE_PORT
               value: "9705"
           volumeMounts:
             - name: config
               mountPath: /config
+            - name: data
+              mountPath: /media
+              subPath: media
+            - name: data
+              mountPath: /downloads
+              subPath: downloads
           resources:
             requests:
               memory: "128Mi"
@@ -78,6 +86,11 @@ spec:
         - name: config
           persistentVolumeClaim:
             claimName: huntarr-config
+        - name: data
+          nfs:
+            server: 192.168.20.40
+            path: /var/nfs/shared/Homelab
+
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
