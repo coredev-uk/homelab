@@ -47,6 +47,8 @@ spec:
               mountPath: /config
             - name: data
               mountPath: /data
+            - name: downloads
+              mountPath: /downloads
           resources:
             requests:
               memory: "128Mi"
@@ -85,6 +87,9 @@ spec:
           nfs:
             server: 192.168.20.40
             path: /var/nfs/shared/Homelab
+        - name: downloads
+          persistentVolumeClaim:
+            claimName: temp-downloads
 
 ---
 apiVersion: v1
@@ -98,6 +103,22 @@ spec:
   resources:
     requests:
       storage: 250Mi
+  storageClassName: longhorn
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: temp-downloads
+  namespace: huntarr
+  labels:
+    recurring-job.longhorn.io/source: enabled
+    recurring-job-group.longhorn.io/default: disabled
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
   storageClassName: longhorn
 ---
 apiVersion: v1
