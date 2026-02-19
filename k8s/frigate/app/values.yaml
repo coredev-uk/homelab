@@ -148,6 +148,7 @@ config: |
 
   auth:
     enabled: false
+    session_length: 604800
     trusted_proxies:
       - 10.244.0.0/16
 
