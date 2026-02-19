@@ -46,11 +46,7 @@ spec:
             - name: config
               mountPath: /config
             - name: data
-              mountPath: /media
-              subPath: media
-            - name: data
-              mountPath: /downloads
-              subPath: downloads
+              mountPath: /data
           resources:
             requests:
               memory: "128Mi"
