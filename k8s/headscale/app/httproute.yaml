@@ -1,0 +1,58 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: headplane-admin-redirect
+  namespace: headscale
+spec:
+  redirectRegex:
+    regex: ^https://headplane\.home\.coredev\.uk/$
+    replacement: https://headplane.home.coredev.uk/admin
+    permanent: false
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: headplane-redirect
+  namespace: headscale
+spec:
+  parentRefs:
+    - name: traefik-gateway
+      namespace: traefik
+      sectionName: websecure
+  hostnames:
+    - headplane.home.coredev.uk
+  rules:
+    - matches:
+        - path:
+            type: Exact
+            value: /
+      filters:
+        - type: ExtensionRef
+          extensionRef:
+            group: traefik.io
+            kind: Middleware
+            name: headplane-admin-redirect
+      backendRefs:
+        - name: headscale-headplane
+          port: 3000
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: headplane
+  namespace: headscale
+spec:
+  parentRefs:
+    - name: traefik-gateway
+      namespace: traefik
+      sectionName: websecure
+  hostnames:
+    - headplane.home.coredev.uk
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /admin
+      backendRefs:
+        - name: headscale-headplane
+          port: 3000

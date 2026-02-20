@@ -1,0 +1,65 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: tinyauth-forwardauth
+  namespace: notifiarr
+spec:
+  forwardAuth:
+    address: http://tinyauth-tinyauth.tinyauth.svc.cluster.local/api/auth/traefik
+    trustForwardHeader: true
+    authResponseHeaders:
+      - Remote-User
+      - Remote-Groups
+---
+# API/webhook routes - no auth required
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: notifiarr-api
+  namespace: notifiarr
+spec:
+  parentRefs:
+    - name: traefik-gateway
+      namespace: traefik
+      sectionName: websecure
+  hostnames:
+    - notifiarr.home.coredev.uk
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api
+        - path:
+            type: PathPrefix
+            value: /webhook
+      backendRefs:
+        - name: notifiarr-main
+          port: 5454
+---
+# Web UI routes - tinyauth required
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: notifiarr
+  namespace: notifiarr
+spec:
+  parentRefs:
+    - name: traefik-gateway
+      namespace: traefik
+      sectionName: websecure
+  hostnames:
+    - notifiarr.home.coredev.uk
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      filters:
+        - type: ExtensionRef
+          extensionRef:
+            group: traefik.io
+            kind: Middleware
+            name: tinyauth-forwardauth
+      backendRefs:
+        - name: notifiarr-main
+          port: 5454

@@ -16,7 +16,7 @@ spec:
   dependsOn:
     - name: traefik
     - name: longhorn
-    - name: intel-gpu
+    - name: intel-gpu-resource-driver
   decryption:
     provider: sops
     secretRef:

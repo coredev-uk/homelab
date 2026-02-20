@@ -1,0 +1,100 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: radarr
+spec:
+  interval: 1h 
+  chartRef:
+    kind: OCIRepository
+    name: radarr 
+  values:
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 988 # NAS requirement
+        fsGroup: 988 # NAS requirement
+        fsGroupChangePolicy: OnRootMismatch
+      annotations:
+        glance/name: "Radarr"
+        glance/icon: "di:radarr"
+        glance/url: "https://radarr.home.coredev.uk"
+        glance/description: "Movie Management"
+
+    controllers:
+      radarr:
+        containers:
+          app:
+            image:
+              repository: ghcr.io/home-operations/radarr
+              tag: 6.1.1.10317@sha256:5e08c0eefd2770d1d29395c4f84fe5bf7dfc3a986598021306a5d8ac017a3989
+            env:
+              TZ: Europe/London
+              RADARR__APP__INSTANCENAME: Radarr
+              RADARR__APP__THEME: dark
+              RADARR__AUTH__METHOD: External
+              RADARR__AUTH__REQUIRED: DisabledForLocalAddresses
+              RADARR__LOG__LEVEL: info
+              RADARR__LOG__DBENABLED: "False"
+              RADARR__SERVER__PORT: &port 80
+              RADARR__AUTH__APIKEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: "{{ .Release.Name }}-secrets"
+                    key: RADARR__AUTH__APIKEY
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+            resources:
+              requests:
+                cpu: 100m
+              limits:
+                memory: 4Gi 
+            probes:
+              liveness:
+                enabled: true
+                spec:
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5                  
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /ping
+                    port: *port
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              startup:
+                enabled: true
+                spec:
+                  periodSeconds: 10
+                  failureThreshold: 30
+
+    service:
+      app:
+        ports:
+          http:
+            port: *port 
+
+    persistence:
+      config:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: longhorn
+        globalMounts:
+          - path: /config
+      media:
+        type: nfs
+        server: 192.168.20.40
+        path: /var/nfs/shared/Homelab
+        globalMounts:
+          - path: /media
+      tmp:
+        type: emptyDir

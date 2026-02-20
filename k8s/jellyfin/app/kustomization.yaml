@@ -5,6 +5,8 @@ kind: Kustomization
 namespace: jellyfin
 
 resources:
-  - deployment.yaml
-  - ingress.yaml
+  - ocirepository.yaml
+  - helmrelease.yaml
+  - httproute.yaml
+  - pvc.yaml
   - cronjob-restart.yaml

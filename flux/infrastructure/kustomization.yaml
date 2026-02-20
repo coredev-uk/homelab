@@ -28,7 +28,7 @@ resources:
   - ../../k8s/longhorn/flux.yaml
   
   # Hardware
-  - ../../k8s/intel-gpu/flux.yaml
+  - ../../k8s/intel-gpu-resource-driver/flux.yaml
   
   # DNS & Security
   - ../../k8s/pihole/flux.yaml

@@ -5,6 +5,7 @@ kind: Kustomization
 namespace: sabnzbd
 
 resources:
-  - deployment.yaml
-  - ingress.yaml
+  - ocirepository.yaml
+  - helmrelease.yaml
+  - httproute.yaml
   - scripts.yaml

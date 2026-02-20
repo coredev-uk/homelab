@@ -1,0 +1,130 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: jellyfin
+  namespace: jellyfin
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: jellyfin
+  values:
+    controllers:
+      main:
+        strategy: Recreate
+        containers:
+          main:
+            image:
+              repository: jellyfin/jellyfin
+              tag: 10.11.6@sha256:333b647716631443a43c7fabac4b0c46b4e2f036bad19547e00958f10f721b85
+            env:
+              JELLYFIN_PublishedServerUrl: "https://jellyfin.home.coredev.uk"
+            securityContext:
+              runAsUser: 1000
+              runAsGroup: 988
+              capabilities:
+                add:
+                  - SYS_ADMIN
+            resources:
+              claims:
+                - name: gpu
+              requests:
+                memory: 4Gi
+                cpu: 500m
+              limits:
+                memory: 4Gi
+                cpu: 6000m
+            probes:
+              startup:
+                enabled: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: &httpPort 8096
+                  initialDelaySeconds: 15
+                  periodSeconds: 5
+                  failureThreshold: 24
+              liveness:
+                enabled: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: *httpPort
+                  periodSeconds: 30
+                  timeoutSeconds: 10
+              readiness:
+                enabled: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: *httpPort
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+                  timeoutSeconds: 10
+                  failureThreshold: 5
+
+    defaultPodOptions:
+      resourceClaims:
+        - name: gpu
+          resourceClaimTemplateName: jellyfin
+      annotations:
+        glance/name: "Jellyfin"
+        glance/icon: "di:jellyfin"
+        glance/url: "https://jellyfin.home.coredev.uk"
+        glance/description: "Media Server"
+      securityContext:
+        fsGroup: 988
+        fsGroupChangePolicy: OnRootMismatch
+
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: 8096
+          https:
+            port: 8920
+          client-discovery:
+            port: 7359
+            protocol: UDP
+          dlna-discovery:
+            port: 1900
+            protocol: UDP
+
+    persistence:
+      config:
+        existingClaim: jellyfin-config
+        advancedMounts:
+          main:
+            main:
+              - path: /config
+      cache:
+        existingClaim: jellyfin-cache
+        advancedMounts:
+          main:
+            main:
+              - path: /cache
+      media:
+        type: nfs
+        server: 192.168.20.40
+        path: /var/nfs/shared/Homelab
+        advancedMounts:
+          main:
+            main:
+              - path: /media
+
+    rawResources:
+      gpu:
+        apiVersion: resource.k8s.io/v1
+        kind: ResourceClaimTemplate
+        spec:
+          spec:
+            spec:
+              devices:
+                requests:
+                  - name: gpu
+                    exactly:
+                      deviceClassName: gpu.intel.com
+

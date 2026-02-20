@@ -23,7 +23,7 @@ spec:
           image: rhysbailey/prometheus-frigate-exporter:0.1.1@sha256:6df30ca30c5a69df4f3b21c06a93043a52baf523f808de56f4a40982393b8aff
           env:
             - name: FRIGATE_STATS_URL
-              value: "http://frigate-frigate:5000/api/stats"
+              value: "http://frigate-main.frigate.svc.cluster.local:5000/api/stats"
             - name: PORT
               value: "9100"
           ports:

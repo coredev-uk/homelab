@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/v1/configmap.json
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gluetun-auth-config
+  namespace: qbittorrent
+  labels:
+    app: vpn
+    component: auth
+data:
+  config.toml: |
+    [[roles]]
+    name = "glance"
+    routes = [
+      "GET /v1/publicip/ip",
+      "GET /v1/portforward",
+      "GET /v1/vpn/status"
+    ]
+    auth = "none"

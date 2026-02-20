@@ -34,8 +34,6 @@ serviceWeb:
   https:
     enabled: true
     port: 443
-  labels:
-    tinyauth.apps.pihole.oauth.groups: cluster_admin
 
 # Disable DHCP service (not needed)
 serviceDhcp:

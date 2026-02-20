@@ -5,6 +5,8 @@ kind: Kustomization
 namespace: qbittorrent
 
 resources:
-  - deployment.yaml
-  - ingress.yaml
+  - ocirepository.yaml
+  - helmrelease.yaml
+  - httproute.yaml
+  - gluetun-auth-config.yaml
   - exporter.yaml

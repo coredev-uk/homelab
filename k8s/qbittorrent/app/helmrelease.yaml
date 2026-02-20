@@ -1,0 +1,160 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: qbittorrent
+  namespace: qbittorrent
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: qbittorrent
+  values:
+    defaultPodOptions:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 988
+        fsGroup: 988
+        fsGroupChangePolicy: OnRootMismatch
+      annotations:
+        glance/name: "qBittorrent"
+        glance/icon: "si:qbittorrent"
+        glance/url: "https://qbittorrent.home.coredev.uk"
+        glance/description: "Torrent download client"
+
+    controllers:
+      main:
+        strategy: Recreate
+        containers:
+          gluetun:
+            image:
+              repository: qmcgaw/gluetun
+              tag: v3.41.1@sha256:1a5bf4b4820a879cdf8d93d7ef0d2d963af56670c9ebff8981860b6804ebc8ab
+            securityContext:
+              runAsUser: 0
+              runAsGroup: 0
+              capabilities:
+                add:
+                  - NET_ADMIN
+            env:
+              VPN_SERVICE_PROVIDER: protonvpn
+              VPN_TYPE: wireguard
+              SERVER_COUNTRIES: "United Kingdom,Netherlands,Switzerland"
+              UPDATER_PERIOD: 24h
+              HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH: /gluetun/auth/config.toml
+              VPN_PORT_FORWARDING: "on"
+              PORT_FORWARD_ONLY: "on"
+              VPN_PORT_FORWARDING_UP_COMMAND: /bin/sh -c 'wget -O- --retry-connrefused --post-data "json={\"listen_port\":{{PORT}},\"current_network_interface\":\"{{VPN_INTERFACE}}\",\"random_port\":false,\"upnp\":false}" http://127.0.0.1:8080/api/v2/app/setPreferences 2>&1'
+              VPN_PORT_FORWARDING_DOWN_COMMAND: /bin/sh -c 'wget -O- --retry-connrefused --post-data "json={\"listen_port\":0,\"current_network_interface\":\"lo\"}" http://127.0.0.1:8080/api/v2/app/setPreferences 2>&1'
+              WIREGUARD_PRIVATE_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: vpn-secrets
+                    key: private-key
+              UPDATER_PROTONVPN_EMAIL:
+                valueFrom:
+                  secretKeyRef:
+                    name: vpn-secrets
+                    key: proton-email
+              UPDATER_PROTONVPN_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: vpn-secrets
+                    key: proton-password
+            resources:
+              requests:
+                memory: 256Mi
+                cpu: 100m
+              limits:
+                memory: 512Mi
+                cpu: 500m
+
+          main:
+            dependsOn: gluetun
+            image:
+              repository: ghcr.io/home-operations/qbittorrent
+              tag: 5.1.4@sha256:56ecd30a7f5e1357daf5eea2a6935134d329b7b268a3a9b9c67041b65fb87fc6
+            env:
+              TZ: Europe/London
+              QBT_CONFIRM_LEGAL_NOTICE: "1"
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+            resources:
+              requests:
+                memory: 1Gi
+                cpu: 100m
+              limits:
+                memory: 2Gi
+                cpu: 500m
+            probes:
+              startup:
+                enabled: true
+                spec:
+                  tcpSocket:
+                    port: &port 8080
+                  initialDelaySeconds: 60
+                  periodSeconds: 10
+                  failureThreshold: 20
+              liveness:
+                enabled: true
+                spec:
+                  tcpSocket:
+                    port: *port
+                  periodSeconds: 30
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                spec:
+                  tcpSocket:
+                    port: *port
+                  periodSeconds: 30
+                  failureThreshold: 3
+
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: 8080
+      gluetun:
+        controller: main
+        ports:
+          control:
+            port: 8000
+
+    persistence:
+      config:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 2Gi
+        storageClass: longhorn
+        advancedMounts:
+          main:
+            main:
+              - path: /config
+      data:
+        type: nfs
+        server: 192.168.20.40
+        path: /var/nfs/shared/Homelab
+        advancedMounts:
+          main:
+            main:
+              - path: /data
+      gluetun-auth:
+        type: configMap
+        name: gluetun-auth-config
+        advancedMounts:
+          main:
+            gluetun:
+              - path: /gluetun/auth
+      tun-device:
+        type: hostPath
+        hostPath: /dev/net/tun
+        advancedMounts:
+          main:
+            gluetun:
+              - path: /dev/net/tun

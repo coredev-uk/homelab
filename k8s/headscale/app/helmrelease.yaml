@@ -1,0 +1,194 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: headscale
+  namespace: headscale
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: headscale
+  values:
+    controllers:
+      main:
+        strategy: Recreate
+        containers:
+          main:
+            image:
+              repository: headscale/headscale
+              tag: v0.28.0@sha256:51b1b9182bb6219e97374fa89af6b9320d6f87ecc739e328d5357ea4fa7a5ce3
+            args:
+              - headscale
+              - serve
+            env:
+              TZ: Europe/London
+            resources:
+              requests:
+                memory: 128Mi
+                cpu: 100m
+              limits:
+                memory: 512Mi
+                cpu: 1000m
+            probes:
+              startup:
+                enabled: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: &headscalePort 8080
+                  initialDelaySeconds: 10
+                  periodSeconds: 5
+                  failureThreshold: 12
+              liveness:
+                enabled: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: *headscalePort
+                  periodSeconds: 30
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: *headscalePort
+                  periodSeconds: 10
+                  failureThreshold: 3
+
+      headplane:
+        strategy: Recreate
+        containers:
+          main:
+            image:
+              repository: ghcr.io/tale/headplane
+              tag: 0.6.1@sha256:74bec8f23ce57f235574b7b3e809a0d9ca500947da45dac485b5132fa4cc9fab
+            env:
+              TZ: Europe/London
+              HEADPLANE_LOAD_ENV_OVERRIDES: "true"
+              HEADPLANE_OIDC__HEADSCALE_API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: headscale-secrets
+                    key: headscale-api-key
+              HEADPLANE_OIDC__CLIENT_ID:
+                valueFrom:
+                  secretKeyRef:
+                    name: headscale-secrets
+                    key: oidc-client-id
+              HEADPLANE_OIDC__CLIENT_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: headscale-secrets
+                    key: oidc-client-secret
+            resources:
+              requests:
+                memory: 64Mi
+                cpu: 50m
+              limits:
+                memory: 256Mi
+                cpu: 500m
+            probes:
+              startup:
+                enabled: true
+                spec:
+                  httpGet:
+                    path: /admin/
+                    port: &headplanePort 3000
+                  initialDelaySeconds: 10
+                  periodSeconds: 5
+                  failureThreshold: 12
+              liveness:
+                enabled: true
+                spec:
+                  httpGet:
+                    path: /admin/
+                    port: *headplanePort
+                  periodSeconds: 30
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                spec:
+                  httpGet:
+                    path: /admin/
+                    port: *headplanePort
+                  periodSeconds: 10
+                  failureThreshold: 3
+
+    defaultPodOptions:
+      annotations:
+        glance/name: "Headplane"
+        glance/icon: "mdi:airplane"
+        glance/url: "https://headplane.home.coredev.uk"
+        glance/description: "Headscale Admin UI"
+
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: 8080
+          metrics:
+            port: 9090
+      headplane:
+        controller: headplane
+        ports:
+          http:
+            port: 3000
+
+    persistence:
+      headscale-config:
+        type: configMap
+        name: headscale-config
+        advancedMounts:
+          main:
+            main:
+              - path: /etc/headscale/config.yaml
+                subPath: config.yaml
+                readOnly: true
+              - path: /etc/headscale/acl.json
+                subPath: acl.json
+                readOnly: true
+          headplane:
+            main:
+              - path: /etc/headscale/config.yaml
+                subPath: config.yaml
+                readOnly: true
+      headplane-config:
+        type: configMap
+        name: headplane-config
+        advancedMounts:
+          headplane:
+            main:
+              - path: /etc/headplane/config.yaml
+                subPath: config.yaml
+                readOnly: true
+      headscale-data:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: longhorn
+        advancedMounts:
+          main:
+            main:
+              - path: /var/lib/headscale
+      headplane-data:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 250Mi
+        storageClass: longhorn
+        advancedMounts:
+          headplane:
+            main:
+              - path: /var/lib/headplane
+      oidc-secret:
+        type: secret
+        name: headscale-secrets
+        defaultMode: 0400
+        advancedMounts:
+          main:
+            main:
+              - path: /etc/headscale/secrets
+                readOnly: true

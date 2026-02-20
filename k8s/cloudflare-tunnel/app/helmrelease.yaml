@@ -1,0 +1,96 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: cloudflared
+  namespace: cloudflare-tunnel
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: cloudflare-tunnel
+  values:
+    defaultPodOptions:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+        sysctls:
+          - name: net.ipv4.ping_group_range
+            value: "65532 65532"
+
+    controllers:
+      main:
+        replicas: 2
+        containers:
+          main:
+            image:
+              repository: cloudflare/cloudflared
+              tag: 2026.2.0@sha256:404528c1cd63c3eb882c257ae524919e4376115e6fe57befca8d603656a91a4c
+            args:
+              - tunnel
+              - --no-autoupdate
+              - --loglevel
+              - info
+              - --metrics
+              - 0.0.0.0:2000
+              - run
+            env:
+              TUNNEL_TOKEN:
+                valueFrom:
+                  secretKeyRef:
+                    name: cloudflare-tunnel-token
+                    key: token
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+            resources:
+              requests:
+                memory: 64Mi
+                cpu: 50m
+              limits:
+                memory: 256Mi
+                cpu: 200m
+            probes:
+              liveness:
+                enabled: true
+                spec:
+                  httpGet:
+                    path: /ready
+                    port: &port 2000
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+                  failureThreshold: 3
+                  timeoutSeconds: 10
+              readiness:
+                enabled: true
+                spec:
+                  httpGet:
+                    path: /ready
+                    port: *port
+                  initialDelaySeconds: 10
+                  periodSeconds: 30
+                  failureThreshold: 3
+                  timeoutSeconds: 5
+              startup:
+                enabled: false
+
+    service:
+      main:
+        controller: main
+        ports:
+          metrics:
+            port: 2000
+
+    persistence:
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp

@@ -5,9 +5,10 @@ kind: Kustomization
 namespace: glance
 
 resources:
-  - ingress.yaml
-  - deployment.yaml
-  - pod-monitoring.yaml
+  - ocirepository.yaml
+  - helmrelease.yaml
+  - httproute.yaml
+  - rbac.yaml
 
 configMapGenerator:
   - name: glance-config

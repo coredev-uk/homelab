@@ -1,0 +1,66 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: tinyauth-forwardauth
+  namespace: sonarr
+spec:
+  forwardAuth:
+    address: http://tinyauth-tinyauth.tinyauth.svc.cluster.local/api/auth/traefik
+    trustForwardHeader: true
+    authResponseHeaders:
+      - Remote-User
+      - Remote-Groups
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: sonarr-api
+  namespace: sonarr
+spec:
+  parentRefs:
+    - name: traefik-gateway
+      namespace: traefik
+      sectionName: websecure
+  hostnames:
+    - sonarr.home.coredev.uk
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /api
+        - path:
+            type: Exact
+            value: /ping
+        - path:
+            type: Exact
+            value: /health
+      backendRefs:
+        - name: sonarr-main
+          port: 8989
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: sonarr
+  namespace: sonarr
+spec:
+  parentRefs:
+    - name: traefik-gateway
+      namespace: traefik
+      sectionName: websecure
+  hostnames:
+    - sonarr.home.coredev.uk
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      filters:
+        - type: ExtensionRef
+          extensionRef:
+            group: traefik.io
+            kind: Middleware
+            name: tinyauth-forwardauth
+      backendRefs:
+        - name: sonarr-main
+          port: 8989

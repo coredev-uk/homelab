@@ -17,7 +17,7 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      app: cloudflared
+      app.kubernetes.io/name: cloudflared
   policyTypes:
   - Ingress
   ingress:
@@ -40,7 +40,7 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      app: cloudflared
+      app.kubernetes.io/name: cloudflared
   policyTypes:
   - Egress
   egress:

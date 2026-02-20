@@ -1,0 +1,82 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: homebridge
+  namespace: homebridge
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: homebridge
+  values:
+    defaultPodOptions:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      annotations:
+        glance/name: "Homebridge"
+        glance/icon: "si:homebridge"
+        glance/url: "https://homebridge.home.coredev.uk"
+        glance/description: "HomeKit Bridge"
+
+    controllers:
+      main:
+        strategy: Recreate
+        containers:
+          main:
+            image:
+              repository: homebridge/homebridge
+              tag: 2026-02-11@sha256:599edae573f662b5d44ec22ae268d7ca1b0e9d4f033ec3d5823259715f1e2f6b
+            env:
+              TZ: Europe/London
+              ENABLE_AVAHI: "1"
+            resources:
+              requests:
+                memory: 256Mi
+                cpu: 250m
+              limits:
+                memory: 512Mi
+                cpu: 1000m
+            probes:
+              startup:
+                enabled: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: &port 8581
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  failureThreshold: 30
+              liveness:
+                enabled: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: *port
+                  periodSeconds: 60
+                  failureThreshold: 5
+              readiness:
+                enabled: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: *port
+                  periodSeconds: 30
+                  failureThreshold: 3
+
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: 8581
+
+    persistence:
+      storage:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: longhorn
+        globalMounts:
+          - path: /homebridge

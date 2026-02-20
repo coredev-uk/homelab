@@ -5,5 +5,6 @@ kind: Kustomization
 namespace: cleanuparr
 
 resources:
-  - deployment.yaml
-  - ingress.yaml
+  - ocirepository.yaml
+  - helmrelease.yaml
+  - httproute.yaml

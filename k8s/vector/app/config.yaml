@@ -1,0 +1,78 @@
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/v1/configmap.json
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vector-config
+  namespace: vector
+data:
+  vector.yaml: |
+    # Vector configuration for Talos logs -> Loki
+    api:
+      enabled: true
+      address: 0.0.0.0:8686
+
+    # Source: Receive logs from Talos nodes via UDP JSON
+    sources:
+      talos_kernel:
+        type: socket
+        mode: udp
+        address: 0.0.0.0:6001
+        decoding:
+          codec: json
+
+      talos_service:
+        type: socket
+        mode: udp
+        address: 0.0.0.0:6002
+        decoding:
+          codec: json
+
+    # Transform: Add labels for Loki and handle Talos JSON format
+    transforms:
+      talos_kernel_transform:
+        type: remap
+        inputs:
+          - talos_kernel
+        source: |
+          .job = "talos-kernel"
+          .node = "unknown"
+          .facility = "kern"
+          .level = "info"
+          .service = "kernel"
+          if exists(."talos-node-name") { .node = ."talos-node-name" }
+          if exists(.hostname) { .node = .hostname }
+          if exists(."talos-facility") { .facility = ."talos-facility" }
+          if exists(."talos-level") { .level = ."talos-level" }
+
+      talos_service_transform:
+        type: remap
+        inputs:
+          - talos_service
+        source: |
+          .job = "talos-service"
+          .node = "unknown"
+          .facility = "daemon"
+          .service = "unknown"
+          if exists(."talos-node-name") { .node = ."talos-node-name" }
+          if exists(.hostname) { .node = .hostname }
+          if exists(."talos-facility") { .facility = ."talos-facility" }
+          if exists(."talos-service") {
+            .service = ."talos-service"
+            .facility = ."talos-service"
+          }
+
+    # Sink: Send to Loki
+    sinks:
+      loki:
+        type: loki
+        inputs:
+          - talos_kernel_transform
+          - talos_service_transform
+        endpoint: http://monitoring-loki-gateway.monitoring.svc.cluster.local
+        encoding:
+          codec: json
+        labels:
+          job: "{{ job }}"
+          node: "{{ node }}"
+          facility: "{{ facility }}"
+          service: "{{ service }}"

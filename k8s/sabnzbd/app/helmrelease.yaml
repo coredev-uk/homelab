@@ -1,0 +1,105 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: sabnzbd
+  namespace: sabnzbd
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: app-template
+    namespace: sabnzbd
+  values:
+    defaultPodOptions:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 988
+        fsGroup: 988
+        fsGroupChangePolicy: OnRootMismatch
+      annotations:
+        glance/name: "SABnzbd"
+        glance/icon: "di:sabnzbd"
+        glance/url: "https://sabnzbd.home.coredev.uk"
+        glance/description: "Usenet download client"
+
+    controllers:
+      main:
+        strategy: Recreate
+        containers:
+          main:
+            image:
+              repository: ghcr.io/home-operations/sabnzbd
+              tag: 4.5.5@sha256:485440a3e9209a3515c01e1c73d6088726491a292302a721d4cb9e7c6375c768
+            env:
+              TZ: Europe/London
+              SABNZBD__HOST_WHITELIST_ENTRIES: sabnzbd.home.coredev.uk
+              SABNZBD__API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: sabnzbd-secrets
+                    key: SABNZBD__API_KEY
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+            resources:
+              requests:
+                memory: 512Mi
+                cpu: 200m
+              limits:
+                memory: 2Gi
+                cpu: 1000m
+            probes:
+              liveness:
+                enabled: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: &port 8080
+                  periodSeconds: 30
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: *port
+                  periodSeconds: 30
+                  failureThreshold: 3
+
+    service:
+      main:
+        controller: main
+        ports:
+          http:
+            port: 8080
+
+    persistence:
+      config:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: longhorn
+        globalMounts:
+          - path: /config
+      downloads:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 100Gi
+        storageClass: longhorn
+        globalMounts:
+          - path: /downloads
+      data:
+        type: nfs
+        server: 192.168.20.40
+        path: /var/nfs/shared/Homelab
+        globalMounts:
+          - path: /data
+      scripts:
+        type: configMap
+        name: scripts
+        defaultMode: 0755
+        globalMounts:
+          - path: /scripts

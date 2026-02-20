@@ -59,13 +59,35 @@ providers:
   kubernetesCRD:
     enabled: true
     allowCrossNamespace: true
+  kubernetesGateway:
+    enabled: true
+
+gatewayClass:
+  enabled: true
+
+gateway:
+  enabled: true
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  listeners:
+    web:
+      port: 8000
+      protocol: HTTP
+      hostname: "*.home.coredev.uk"
+      namespacePolicy: All
+    websecure:
+      port: 8443
+      protocol: HTTPS
+      hostname: "*.home.coredev.uk"
+      namespacePolicy: All
+      certificateRefs:
+        - name: wildcard-home-coredev-uk-tls
+          namespace: traefik
 
 service:
   type: LoadBalancer
   spec:
     loadBalancerIP: 192.168.20.30
-  labels:
-    tinyauth.apps.traefik.oauth.groups: cluster_admin
 
 persistence:
   enabled: true
