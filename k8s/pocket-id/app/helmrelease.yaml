@@ -1,0 +1,104 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: pocket-id
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: pocket-id
+  values:
+    controllers:
+      pocket-id:
+        annotations:
+          glance/name: "Pocket ID"
+          glance/icon: "sh:pocket-id"
+          glance/url: "https://oidc.coredev.uk"
+          glance/description: "Identity Provider"
+        strategy: Recreate
+        containers:
+          app:
+            image:
+              repository: ghcr.io/pocket-id/pocket-id
+              tag: v2.2.0@sha256:84d20a801692b9635f481522df2672a7aae522726c30953dae52e17fc2696b27
+            env:
+              APP_URL: "https://oidc.coredev.uk"
+              TRUST_PROXY: "true"
+              TZ: Europe/London
+              ANALYTICS_DISABLED: "true"
+              METRICS_ENABLED: "true"
+              OTEL_METRICS_EXPORTER: prometheus
+              OTEL_EXPORTER_PROMETHEUS_HOST: "0.0.0.0"
+              OTEL_EXPORTER_PROMETHEUS_PORT: "9464"
+              UI_CONFIG_DISABLED: "true"
+              APP_NAME: HyperionID
+              SESSION_DURATION: "120"
+              ACCENT_COLOR: "hsl(232 100% 58.1%)"
+              ENCRYPTION_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: pocket-id-secrets
+                    key: encryption-key
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+            resources:
+              requests:
+                memory: 128Mi
+                cpu: 50m
+              limits:
+                memory: 256Mi
+                cpu: 500m
+            probes:
+              startup:
+                enabled: true
+                spec:
+                  httpGet:
+                    path: /healthz
+                    port: &port 1411
+                  initialDelaySeconds: 10
+                  periodSeconds: 5
+                  failureThreshold: 12
+              liveness:
+                enabled: true
+                spec:
+                  httpGet:
+                    path: /healthz
+                    port: *port
+                  periodSeconds: 30
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                spec:
+                  httpGet:
+                    path: /healthz
+                    port: *port
+                  periodSeconds: 10
+                  failureThreshold: 3
+
+    defaultPodOptions:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+
+    service:
+      app:
+        ports:
+          http:
+            port: *port 
+          metrics:
+            port: 9464
+
+    persistence:
+      data:
+        type: persistentVolumeClaim
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: longhorn
+        globalMounts:
+          - path: /app/data
