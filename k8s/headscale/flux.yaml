@@ -18,6 +18,6 @@ spec:
   dependsOn:
     - name: longhorn
     - name: wireguard-client
-    - name: pocket-id
+    # - name: pocket-id
     - name: traefik
     - name: cert-manager

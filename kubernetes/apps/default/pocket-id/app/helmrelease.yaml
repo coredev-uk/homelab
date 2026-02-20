@@ -78,22 +78,19 @@ spec:
                     port: *port
                   periodSeconds: 10
                   failureThreshold: 3
-
     defaultPodOptions:
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000
         fsGroupChangePolicy: OnRootMismatch
-
     service:
       app:
         ports:
           http:
-            port: *port 
+            port: *port
           metrics:
             port: 9464
-
     persistence:
       data:
         type: persistentVolumeClaim
