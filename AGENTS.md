@@ -174,7 +174,7 @@ Use [Conventional Commits](https://www.conventionalcommits.org/):
 - `chore:` Maintenance (version bumps, cleanup)
 - `refactor:` Code restructure without behavior change
 
-Example: `feat: add huntarr service for torrent health monitoring`
+Example: `feat: add service for purpose`
 
 ## GitOps Workflow
 

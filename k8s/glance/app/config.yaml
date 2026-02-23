@@ -1,3 +1,4 @@
+---
 server:
   host: 0.0.0.0
   port: 8080
@@ -42,7 +43,7 @@ custom-widgets:
       {{ $url := .Options.StringOr "url" $apiBaseUrl }}
 
       {{ if or (and (ne $service "sonarr") (ne $service "radarr") (ne $service "lidarr"))
-               (and (ne $type "upcoming") (ne $type "recent") (ne $type "missing")) 
+               (and (ne $type "upcoming") (ne $type "recent") (ne $type "missing"))
                (eq $apiBaseUrl "") (eq $key "") (eq $url "") }}
         <div class="widget-error-header">
             <div class="color-negative size-h3">ERROR</div>
@@ -57,7 +58,7 @@ custom-widgets:
                 <tr><td>type</td><td>{{ $type }}</td><td>must be upcoming, recent, or missing</td></tr>
                 <tr><td>api-base-url</td><td>{{ $apiBaseUrl }}</td><td>should include http(s):// and port if needed</td></tr>
                 <tr><td>key</td><td>{{ $key }}</td><td></td></tr>
-              </table> 
+              </table>
           </p>
       {{ else }}
         {{ $requestUrl := "" }}
@@ -70,7 +71,7 @@ custom-widgets:
           {{ else if eq $type "upcoming" }}
             {{ $requestUrl = printf "%s/api/v3/calendar?includeSeries=true&start=%s&end=%s" $apiBaseUrl $now $posInterval }}
           {{ end }}
-          
+
         {{ else if eq $service "radarr" }}
           {{ if eq $type "recent" }}
             {{ $requestUrl = printf "%s/api/v3/history/since?includeMovie=true&eventType=grabbed&date=%s" $apiBaseUrl $negInterval }}
@@ -79,7 +80,7 @@ custom-widgets:
           {{ else if eq $type "upcoming" }}
             {{ $requestUrl = printf "%s/api/v3/calendar?start=%s&end=%s" $apiBaseUrl $now $posInterval }}
           {{ end }}
-          
+
         {{ else if eq $service "lidarr" }}
           {{ if eq $type "recent" }}
             {{ $requestUrl = printf "%s/api/v1/history/since?includeArtist=true&includeAlbum=true&eventType=grabbed&date=%s" $apiBaseUrl $negInterval }}
@@ -130,7 +131,7 @@ custom-widgets:
           {{ end }}
 
           {{ range $data.JSON.Array $array | sortByTime $sortByField "rfc3339" $sortTime }}
-             
+
             {{ if eq $service "sonarr" }}
               {{ $itemDate = .String "airDateUtc" }}
               {{ $isAvailable = true }}
@@ -163,7 +164,6 @@ custom-widgets:
               {{ $genres := "" }}
               {{ $buttonJustify := "left" }}
 
-
               {{ if eq $service "sonarr" }}
                 {{ $series := "" }}
                 {{ if eq $coverProxy "" }}
@@ -177,14 +177,14 @@ custom-widgets:
                 {{ $link = printf "%s/series/%s#" $url (.String "series.titleSlug") }}
                 {{ $series = .Get "series" }}
                 {{ $genres = $series.Get "genres" }}
-               
+
                 {{ if eq $type "recent" }}
                   {{ $date = (.String "date" | parseTime "rfc3339") }}
                   {{ $subtitle = .String "episode.title" }}
                   {{ $summary = .String "episode.overview" }}
                   {{ $seString = printf "S%02dE%02d" (.Int "episode.seasonNumber") (.Int "episode.episodeNumber") }}
                   {{ $datetype = "Downloaded" }}
-          
+
                   {{ if $showGrabbed }}
                     {{ $popoverTitle = .String "episode.title" }}
                     {{ $popoverSubtitle = $seString }}
@@ -232,8 +232,7 @@ custom-widgets:
                     {{ $popoverSummary = .String "series.overview" }}
                   {{ end }}
                 {{ end }}
-          
-          
+
               {{ else if eq $service "radarr" }}
                 {{ $movie := "" }}
                 {{ $status = .String "status" }}
@@ -303,7 +302,6 @@ custom-widgets:
                   {{ end }}
                 {{ end }}
 
-          
               {{ else if eq $service "lidarr" }}
                 {{ $artist := "" }}
                 {{ $album := "" }}
@@ -362,7 +360,7 @@ custom-widgets:
                   {{ $popoverSummary = .String "artist.overview" }}
                 {{ end }}
               {{ end }}
-          
+
               {{ if eq $size "small" }}
                 {{ $buttonJustify = "right" }}
                 {{ $height = "9rem" }}
@@ -378,14 +376,14 @@ custom-widgets:
                 {{ else }}
                   {{ $width = "8rem" }}
                 {{ end }}
-              {{ else if eq $size "large" }} 
+              {{ else if eq $size "large" }}
                 {{ $height = "15rem" }}
                 {{ if eq $service "lidarr" }}
                   {{ $width = "15rem" }}
                 {{ else }}
                   {{ $width = "10rem" }}
                 {{ end }}
-              {{ else if eq $size "huge" }} 
+              {{ else if eq $size "huge" }}
                 {{ $height = "18rem" }}
                 {{ if eq $service "lidarr" }}
                   {{ $width = "18rem" }}
@@ -567,9 +565,6 @@ pages:
                   - title: Notifiarr
                     url: https://notifiarr.home.coredev.uk
                     icon: mdi:bell-ring
-                  - title: Huntarr
-                    url: https://huntarr.home.coredev.uk
-                    icon: mdi:magnify
 
               - title: Downloads & Cleanup
                 links:
@@ -695,13 +690,13 @@ pages:
                 {{ if eq $ip "" }}
                  <div>
                    <div class="color-highlight size-h4">
-                     <span class="color-negative">Disconnected ●</span> 
+                     <span class="color-negative">Disconnected ●</span>
                    </div>
                  </div>
                 {{ else }}
                  <div>
                    <div class="color-highlight size-h4">
-                     <span class="color-positive">Connected ●</span> 
+                     <span class="color-positive">Connected ●</span>
                    </div>
                    <div class="size-h6">{{ $ip }} - {{ $city }}, {{ $country }}</div>
                  {{ if eq $portRequest.Response.StatusCode 200 }}
@@ -767,7 +762,6 @@ pages:
               - jesec/flood # Torrent Web UI
               - Notifiarr/notifiarr # Notifications
               - cleanuparr/cleanuparr # Media Cleanup
-              - plexguide/Huntarr.io # Duplicate Hunter
               - thephaseless/byparr # Prowlarr Bypass
             limit: 12
             collapse-after: 2
@@ -904,7 +898,7 @@ pages:
             title: Constructors Championship
             cache: 1d
             url: https://f1api.dev/api/current/constructors-championship
-            template: |
+            template: |-
               <ul class="list collapsible-container" data-collapse-after="5">
                 {{ range $i, $v := .JSON.Array "constructors_championship" }}
                 <li class="flex items-center {{ if eq $i 0 }}color-primary{{ else if eq $i 1 }}color-highlight{{ end }}">

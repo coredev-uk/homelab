@@ -207,7 +207,6 @@ kubectl get ingress -A
 ### Utilities
 - **Notifiarr**: Centralized notification system for *arr apps
 - **Cleanuparr**: Automated media library cleanup and management
-- **Huntarr**: Advanced torrent health monitoring
 - **Homebridge**: HomeKit bridge for smart home integration
 
 </details>
@@ -249,7 +248,6 @@ kubectl get ingress -A
     ├── qbittorrent/        # Torrent client
     ├── sabnzbd/            # Usenet client
     ├── cleanuparr/         # Media cleanup
-    ├── huntarr/            # Torrent management
     ├── notifiarr/          # Notifications
     ├── homebridge/         # HomeKit bridge
     ├── glance/             # Dashboard
