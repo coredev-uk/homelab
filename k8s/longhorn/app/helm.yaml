@@ -19,16 +19,8 @@ spec:
   install:
     createNamespace: true
   values:
-    # Hotfix for Longhorn 1.11.0 regressions
-    image:
-      longhorn:
-        manager:
-          tag: v1.11.0-hotfix-1
-        instanceManager:
-          tag: v1.11.0-hotfix-1
     preUpgradeChecker:
-      jobEnabled: true
-      upgradeVersionCheck: false
+      jobEnabled: false
     service:
       ui:
         type: ClusterIP
