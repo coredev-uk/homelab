@@ -21,6 +21,15 @@ spec:
   values:
     preUpgradeChecker:
       jobEnabled: false
+      upgradeVersionCheck: false
+    upgradeCheck:
+      enabled: false
+    image:
+      longhorn:
+        manager:
+          tag: v1.11.0-hotfix-1
+        instanceManager:
+          tag: v1.11.0-hotfix-1
     service:
       ui:
         type: ClusterIP
