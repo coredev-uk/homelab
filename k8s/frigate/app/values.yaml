@@ -1,3 +1,4 @@
+---
 # Override image to latest stable release
 image:
   # renovate: sourceUrl=https://github.com/blakeblackshear/frigate
@@ -101,7 +102,7 @@ podAnnotations:
   glance/description: "CCTV & AI Detection"
 
 # Frigate configuration (see https://docs.frigate.video/configuration/index)
-config: |
+config: |-
   mqtt:
     enabled: false
 
@@ -187,15 +188,18 @@ config: |
 
   record:
     enabled: true
-    retain:
+    continuous:
+      days: 3
+    motion:
       days: 7
-      mode: motion
     alerts:
       retain:
         days: 30
+        mode: all
     detections:
       retain:
         days: 30
+        mode: all
 
   snapshots:
     enabled: true
@@ -225,7 +229,7 @@ config: |
               - -timeout
               - "5000000"
               - -analyzeduration
-              - "10000000" 
+              - "10000000"
               - -probesize
               - "10000000"
             roles:
