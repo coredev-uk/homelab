@@ -73,7 +73,7 @@ dnsmasq:
   
   # Wildcard DNS entries
   customDnsEntries:
-    - address=/.home.coredev.uk/192.168.20.20
+    - address=/.home.coredev.uk/192.168.20.30
     - address=/.infra.octanet.cloud/10.15.155.5
   
   # No custom CNAMEs needed with wildcard approach
