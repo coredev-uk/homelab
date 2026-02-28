@@ -11,7 +11,7 @@ spec:
   prune: true
   sourceRef:
     kind: GitRepository
-    name: homelab
+    name: homelab-longhorn-hotfix
     namespace: flux-system
   wait: true
   timeout: 2m
