@@ -77,6 +77,35 @@ spec:
             limits:
               memory: "256Mi"
               cpu: "500m"
+          startupProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - tailscale status >/dev/null 2>&1
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 24
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - |
+                  out="$(tailscale status 2>/dev/null)" || exit 1
+                  echo "$out" | grep -q "Unable to connect to the Tailscale coordination server" && exit 1 || exit 0
+            periodSeconds: 30
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - |
+                  out="$(tailscale status 2>/dev/null)" || exit 1
+                  echo "$out" | grep -q "Unable to connect to the Tailscale coordination server" && exit 1 || exit 0
+            periodSeconds: 10
+            failureThreshold: 3
       volumes:
         - name: tailscale-state
           emptyDir: {}
