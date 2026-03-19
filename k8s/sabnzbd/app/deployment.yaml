@@ -32,7 +32,7 @@ spec:
       containers:
         # Settings -> General -> Special -> host_whitelist (add: sabnzbd.home.coredev.uk)
         - name: sabnzbd
-          image: lscr.io/linuxserver/sabnzbd:version-4.5.5@sha256:1a26f56dfc047b62d5ddc20bc92bdebfbe7c3cb58d2d3523958838a09182d77a
+          image: lscr.io/linuxserver/sabnzbd:version-4.5.5@sha256:15b1220aaa1f8ff428790a3d56f5ca2822427ea0b33e978eee43554e42579d0f
           ports:
             - containerPort: 8080
               name: http
